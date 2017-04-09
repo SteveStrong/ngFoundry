@@ -5,10 +5,16 @@ import { HttpModule } from '@angular/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { TreeviewComponent } from './treeview/treeview.component';
+import { ListviewComponent } from './listview/listview.component';
+import { NetworkviewComponent } from './networkview/networkview.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TreeviewComponent,
+    ListviewComponent,
+    NetworkviewComponent
   ],
   imports: [
     BrowserModule,
