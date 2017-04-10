@@ -9,7 +9,7 @@ import { WelcomeComponent } from "app/welcome/welcome.component";
 
 
 const routes: Routes = [
-  { path: '', children: [] },
+  { path: '', pathMatch: 'full', redirectTo: 'welcome' },
   { path: 'welcome', component: WelcomeComponent },
   { path: 'tree', component: TreeviewComponent },
   { path: 'list', component: ListviewComponent },
