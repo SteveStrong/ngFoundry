@@ -1,4 +1,27 @@
 <h1>
   {{title}}
 </h1>
+
+<div class="navbar navbar-inverse " role="navigation">
+
+        <div class="container-fluid">
+        <a class='navbar-brand' [routerLink]="['/welcome']">{{title}}</a>
+        <a *ngIf="isAdmin" class="nav navbar-brand " [routerLink]="[ '/grievancecapture'] ">New</a>
+         <!--<a *ngIf="isUser" class="nav navbar-brand " [routerLink]="[ '/userdashboard'] ">User Dashboard*</a>-->
+        <!--<a class='navbar-brand' [routerLink]="['/test']">*test</a>-->
+        <div class="nav navbar-nav navbar-right ">         
+            <!--<a class="nav navbar-brand " [routerLink]="[ '/demo1'] ">demo1</a>
+            <a class="nav navbar-brand " [routerLink]="[ '/demo2'] ">demo2</a>
+            <a class="nav navbar-brand " [routerLink]="[ '/demo3'] ">demo3</a>-->
+            <!--<a *ngIf="isUser" class="nav navbar-brand " [routerLink]="[ '/grievancecapture'] ">Create Grievance</a>-->
+
+            <a *ngIf="isAdmin" class="nav navbar-brand " [routerLink]="[ '/grievancedashboard'] ">Grievances</a>
+            <a *ngIf="isAdmin" class="nav navbar-brand " [routerLink]="[ '/casedashboard'] ">Cases</a>
+            <a *ngIf="isAdmin" class="nav navbar-brand " [routerLink]="[ '/attachmentdashboard'] ">Attachment</a>
+           <!--<a *ngIf="isAdmin" class="nav navbar-brand " [routerLink]="[ '/communicationdashboard'] ">Communication</a>-->
+           <a *ngIf="!isLoggedIn()" class="nav navbar-brand " [routerLink]="[ '/login'] ">Login</a>
+        </div>
+    </div>
+</div>
+
 <router-outlet></router-outlet>
