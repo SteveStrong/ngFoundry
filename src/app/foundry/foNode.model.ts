@@ -18,7 +18,7 @@ export class foNode extends foObject {
     init(properties?:any, subcomponents?:Array<foNode>, parent?:foObject) {
         var self = this;
      
-        Tools.forEachKeyValue(properties, function(key,value) {
+        properties && Tools.forEachKeyValue(properties, function(key,value) {
             if (Tools.isFunction(value) ) {
                 Tools.defineCalculatedProperty(self, key, value);                
             } else {

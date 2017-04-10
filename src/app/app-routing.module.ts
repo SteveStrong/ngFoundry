@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { NetworkviewComponent } from './networkview/networkview.component';
 import { ListviewComponent } from './listview/listview.component';
 import { TreeviewComponent } from './treeview/treeview.component';
-import { WelcomeComponent } from "app/welcome/welcome.component";
+import { WelcomeComponent } from "../app/welcome/welcome.component";
 
 
 const routes: Routes = [

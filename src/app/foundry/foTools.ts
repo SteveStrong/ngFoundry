@@ -217,7 +217,7 @@ export class foTools {
     applyOverKeyValue(obj, mapFunc) {  //funct has 2 args.. key,value
         var body = {};
         var keys = obj ? Object.keys(obj) : [];
-        keys.forEach(function (key) {
+        keys.forEach(key => {
             if (this.hasOwnProperty.call(obj, key)) {
                 var value = obj[key];
                 var result = mapFunc(key, value);
@@ -230,7 +230,7 @@ export class foTools {
     mapOverKeyValue(obj, mapFunc) {  //funct has 2 args.. key,value
         var list = [];
         var keys = obj ? Object.keys(obj) : [];
-        keys.forEach(function (key) {
+        keys.forEach(key => {
             if (this.hasOwnProperty.call(obj, key)) {
                 var value = obj[key];
                 var result = mapFunc(key, value);
@@ -242,7 +242,7 @@ export class foTools {
 
     forEachKeyValue(obj, mapFunc) {  //funct has 2 args.. key,value
         var keys = obj ? Object.keys(obj) : [];
-        keys.forEach(function (key) {
+        keys.forEach(key => {
             if (this.hasOwnProperty.call(obj, key)) {
                 var value = obj[key];
                 mapFunc(key, value);
