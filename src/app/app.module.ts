@@ -13,6 +13,7 @@ import { NetworkviewComponent } from './networkview/networkview.component';
 import { TreeitemComponent } from './treeview/treeitem.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { WebglviewComponent } from './webglview/webglview.component';
+import { Test1Component } from './webglview/test1.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { WebglviewComponent } from './webglview/webglview.component';
     NetworkviewComponent,
     TreeitemComponent,
     WelcomeComponent,
-    WebglviewComponent
+    WebglviewComponent,
+    Test1Component
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+//import { element } from 'protractor/built';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import * as THREE from 'three';
 //import 'webvr-polyfill';
@@ -6,8 +7,6 @@ import * as THREE from 'three';
 //import 'three/examples/js/effects/VREffect.js';
 
 function doAnimate(mySelf) {
-
-
   function animate() {
     requestAnimationFrame(animate);
 
@@ -25,6 +24,7 @@ function doAnimate(mySelf) {
   styleUrls: ['./webglview.component.css']
 })
 export class WebglviewComponent implements OnInit {
+
 
   scene: any = {}
   camera: any = {};
@@ -59,7 +59,8 @@ export class WebglviewComponent implements OnInit {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    document.body.appendChild(this.renderer.domElement);
+    var element = document.getElementById('drawhere')
+    element.appendChild(this.renderer.domElement);
   }
 
 }
