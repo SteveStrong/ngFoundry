@@ -21,11 +21,12 @@
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
     "core-js": "^2.4.1",
-    "rxjs": "^5.1.0",
+    "d3": "^4.7.4",
+    "ng2-toastr": "^4.0.1",
     "raw-loader": "^0.5.1",
+    "rxjs": "^5.1.0",
     "three": "^0.84.0",
     "webvr-polyfill": "^0.9.18",
-    "d3": "^4.7.4",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
