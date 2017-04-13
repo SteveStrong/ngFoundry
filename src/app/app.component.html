@@ -5,12 +5,16 @@
 <div class="navbar navbar-inverse " role="navigation">
   <div class="container-fluid">
     <a class='navbar-brand' [routerLink]="['/welcome']">Welcome</a>
-    <div class="nav navbar-nav navbar-right ">
 
+    <div class="nav navbar-nav navbar-right ">
+      <a class="nav navbar-brand " [routerLink]="[ '/test1'] ">test</a>
+
+      <a class="nav navbar-brand " [routerLink]="[ '/webgl'] ">WebGL</a>
       <a class="nav navbar-brand " [routerLink]="[ '/tree'] ">Tree</a>
       <a class="nav navbar-brand " [routerLink]="[ '/list'] ">List</a>
       <a class="nav navbar-brand " [routerLink]="[ '/network'] ">Network</a>
     </div>
+
   </div>
 </div>
 

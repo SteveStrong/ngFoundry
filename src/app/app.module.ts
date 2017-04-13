@@ -1,3 +1,5 @@
+
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +12,8 @@ import { ListviewComponent } from './listview/listview.component';
 import { NetworkviewComponent } from './networkview/networkview.component';
 import { TreeitemComponent } from './treeview/treeitem.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { WebglviewComponent } from './webglview/webglview.component';
+import { Test1Component } from './webglview/test1.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,9 @@ import { WelcomeComponent } from './welcome/welcome.component';
     ListviewComponent,
     NetworkviewComponent,
     TreeitemComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    WebglviewComponent,
+    Test1Component
   ],
   imports: [
     BrowserModule,
