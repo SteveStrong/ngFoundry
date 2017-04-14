@@ -1,8 +1,8 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { EmitterService } from './common/emitter.service';
 //https://www.npmjs.com/package/ng2-toastr
-import { ToastsManager, ToastOptions } from 'ng2-toastr/ng2-toastr';
+import { ToastsManager, ToastOptions, Toast } from 'ng2-toastr/ng2-toastr';
 import { environment } from '../environments/environment';
 
 @Component({
@@ -13,7 +13,9 @@ import { environment } from '../environments/environment';
 export class AppComponent implements OnInit {
   title = 'ngFoundry';
 
-  constructor(private toastrService: ToastsManager, private options: ToastOptions) {
+  constructor(private toastrService: ToastsManager, private options: ToastOptions, vcr: ViewContainerRef) {
+
+    this.toastrService.setRootViewContainerRef(vcr);
 
     this.options.showCloseButton = true;
     this.options.newestOnTop = true;

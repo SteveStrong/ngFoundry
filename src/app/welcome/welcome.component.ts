@@ -4,6 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { foNode } from "../foundry/foNode.model";
 import { foConcept } from "../foundry/foConcept.model";
 
+import { EmitterService } from '../common/emitter.service';
+
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -15,6 +17,18 @@ export class WelcomeComponent implements OnInit {
   def: foConcept = new foConcept();
 
   constructor() { }
+
+  private info(message, title?) {
+    let toast = {
+      title: title || '',
+      message: message
+    }
+    EmitterService.get("SHOWINFO").emit(toast);
+  }
+
+  doToast(): void {
+    this.info("info message","my title")
+  }
 
   ngOnInit(): void {
 
