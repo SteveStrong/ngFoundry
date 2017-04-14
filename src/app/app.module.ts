@@ -17,7 +17,8 @@ import { NetworkviewComponent } from './networkview/networkview.component';
 import { TreeitemComponent } from './treeview/treeitem.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { WebglviewComponent } from './webglview/webglview.component';
-import { Test1Component } from './webglview/test1.component';
+import { TestForcediagramComponent } from './networkview/test-forcediagram.component';
+import { TestSceen1Component } from './webglview/test-sceen1.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { Test1Component } from './webglview/test1.component';
     TreeitemComponent,
     WelcomeComponent,
     WebglviewComponent,
-    Test1Component
+    TestForcediagramComponent,
+    TestSceen1Component
   ],
   imports: [
     BrowserAnimationsModule,

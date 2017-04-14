@@ -28,6 +28,24 @@ export class Sceen3D {
         doAnimate(this);
     }
 
+    setRoot(nativeElement) {
+        this.scene = new THREE.Scene();
+
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+        this.camera.position.z = 1000;
+
+        this.geometry = new THREE.BoxGeometry(100, 400, 900);
+        this.material = new THREE.MeshBasicMaterial({ color: 0x990033, wireframe: false });
+
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.scene.add(this.mesh);
+
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        nativeElement.append(this.renderer.domElement);
+    }
+
     init(id) {
         this.scene = new THREE.Scene();
 
