@@ -13,7 +13,7 @@ import { environment } from '../environments/environment';
 export class AppComponent implements OnInit {
   title = 'ngFoundry';
 
-  constructor(private toastrService: ToastsManager, private options: ToastOptions, vcr: ViewContainerRef) {
+  constructor(private toastrService: ToastsManager, private options: ToastOptions, private vcr: ViewContainerRef) {
 
     this.toastrService.setRootViewContainerRef(vcr);
 
