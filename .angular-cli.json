@@ -20,9 +20,6 @@
       "prefix": "foundry",
       "styles": [
         "styles.css",
-        // "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
-        // "https://opensource.keycdn.com/fontawesome/4.7.0/font-awesome.min.css",
-        // "http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css",
         "../node_modules/ng2-toastr/bundles/ng2-toastr.min.css"
       ],
       "scripts": [],
