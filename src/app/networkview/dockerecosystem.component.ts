@@ -47,10 +47,11 @@ export class DockerecosystemComponent implements OnInit {
 
         var node = svg.append("g")
           .attr("class", "nodes-style")
-          .selectAll("circle")
+          .selectAll("rect")
           .data(this.graph.nodes)
-          .enter().append("circle")
-          .attr("r", 5)
+          .enter().append("rect")
+          .attr("width", 40)
+          .attr("height", 5)
           .attr("fill", function (d) { return color(d.group); })
           .call(d3.drag()
             .on("start", dragstarted)
@@ -75,8 +76,8 @@ export class DockerecosystemComponent implements OnInit {
             .attr("y2", function (d) { return d.target.y; });
 
           node
-            .attr("cx", function (d) { return d.x; })
-            .attr("cy", function (d) { return d.y; });
+            .attr("x", function (d) { return d.x; })
+            .attr("y", function (d) { return d.y; });
         }
 
       })
