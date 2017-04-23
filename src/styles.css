@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+
+    .links-style line {
+      stroke: grey;
+      stroke-opacity: 0.6;
+    }
+    
+    .nodes-style {
+      stroke: #fff;
+      stroke-width: 1.5px;
+    }
+
+    .node-body {
+      stroke: #333;
+      stroke-width: 1.5px;
+    }
+
+    .svg-canvas {
+      /*background-color: #333;*/
+      border: red;
+      border-style: solid;
+    }

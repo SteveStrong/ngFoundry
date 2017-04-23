@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-treeview',
+  selector: 'foundry-treeview',
   templateUrl: './treeview.component.html',
   styleUrls: ['./treeview.component.css']
 })

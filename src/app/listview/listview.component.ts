@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-listview',
+  selector: 'foundry-listview',
   templateUrl: './listview.component.html',
   styleUrls: ['./listview.component.css']
 })

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-networkview',
+  selector: 'foundry-networkview',
   templateUrl: './networkview.component.html',
   styleUrls: ['./networkview.component.css']
 })

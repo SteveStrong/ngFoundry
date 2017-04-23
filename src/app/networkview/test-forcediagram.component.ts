@@ -1,26 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { Http } from '@angular/http';
 
 import * as d3 from 'd3';
 
 
 @Component({
-  selector: 'app-test-forcediagram',
+  selector: 'foundry-test-forcediagram',
   templateUrl: './test-forcediagram.component.html',
   styleUrls: ['./test-forcediagram.component.css']
 })
 export class TestForcediagramComponent implements OnInit {
   graph: any = {}
 
-  constructor(private http: Http) {
+  constructor(private http: Http, private vcr: ViewContainerRef) {
 
   }
 
   ngOnInit() {
 
-    var svg = d3.select("svg"),
-      width = +svg.attr("width"),
-      height = +svg.attr("height");
+
+  var root = this.vcr.element.nativeElement;
+  let width = 1000;
+  let height = 600;
+
+  var svg = d3.select(root)
+    .append("svg")
+    .attr("class", "svg-canvas")
+    .attr("width", width)
+    .attr("height", height)
 
     var color = d3.scaleOrdinal(d3.schemeCategory20);
 

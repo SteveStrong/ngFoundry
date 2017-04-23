@@ -6,14 +6,14 @@ import { ToastsManager, ToastOptions, Toast } from 'ng2-toastr/ng2-toastr';
 import { environment } from '../environments/environment';
 
 @Component({
-  selector: 'app-root',
+  selector: 'foundry-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   title = 'ngFoundry';
 
-  constructor(private toastrService: ToastsManager, private options: ToastOptions, vcr: ViewContainerRef) {
+  constructor(private toastrService: ToastsManager, private options: ToastOptions, private vcr: ViewContainerRef) {
 
     this.toastrService.setRootViewContainerRef(vcr);
 
