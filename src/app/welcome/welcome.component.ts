@@ -7,7 +7,7 @@ import { foConcept } from "../foundry/foConcept.model";
 import { EmitterService } from '../common/emitter.service';
 
 @Component({
-  selector: 'app-welcome',
+  selector: 'foundry-welcome',
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.css']
 })

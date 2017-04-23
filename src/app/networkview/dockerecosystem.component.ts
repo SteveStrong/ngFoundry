@@ -3,13 +3,12 @@ import { Http } from '@angular/http';
 
 import * as d3 from 'd3';
 
-
 @Component({
-  selector: 'foundry-test-forcediagram',
-  templateUrl: './test-forcediagram.component.html',
-  styleUrls: ['./test-forcediagram.component.css']
+  selector: 'foundry-dockerecosystem',
+  templateUrl: './dockerecosystem.component.html',
+  styleUrls: ['./dockerecosystem.component.css']
 })
-export class TestForcediagramComponent implements OnInit {
+export class DockerecosystemComponent implements OnInit {
   graph: any = {}
 
   constructor(private http: Http, private vcr: ViewContainerRef) {
@@ -18,9 +17,8 @@ export class TestForcediagramComponent implements OnInit {
 
   ngOnInit() {
 
-
   var root = this.vcr.element.nativeElement;
-  let width = 1000;
+  let width = 960;
   let height = 600;
 
   var svg = d3.select(root)

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { Sceen3D } from "../foundryDrivers/threeDriver";
 
 @Component({
-  selector: 'app-test-sceen1',
+  selector: 'foundry-test-sceen1',
   templateUrl: './test-sceen1.component.html',
   styleUrls: ['./test-sceen1.component.css']
 })

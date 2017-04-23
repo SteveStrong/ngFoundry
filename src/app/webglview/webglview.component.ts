@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 
 @Component({
-  selector: 'app-webglview',
+  selector: 'foundry-webglview',
   templateUrl: './webglview.component.html',
   styleUrls: ['./webglview.component.css']
 })

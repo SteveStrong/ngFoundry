@@ -19,6 +19,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { WebglviewComponent } from './webglview/webglview.component';
 import { TestForcediagramComponent } from './networkview/test-forcediagram.component';
 import { TestSceen1Component } from './webglview/test-sceen1.component';
+import { DockerecosystemComponent } from './networkview/dockerecosystem.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { TestSceen1Component } from './webglview/test-sceen1.component';
     WelcomeComponent,
     WebglviewComponent,
     TestForcediagramComponent,
-    TestSceen1Component
+    TestSceen1Component,
+    DockerecosystemComponent
   ],
   imports: [
     BrowserAnimationsModule,
