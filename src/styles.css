@@ -5,7 +5,18 @@
       stroke-opacity: 0.6;
     }
     
-    .nodes-style circle {
+    .nodes-style {
       stroke: #fff;
       stroke-width: 1.5px;
+    }
+
+    .node-body {
+      stroke: #333;
+      stroke-width: 1.5px;
+    }
+
+    .svg-canvas {
+      /*background-color: #333;*/
+      border: red;
+      border-style: solid;
     }

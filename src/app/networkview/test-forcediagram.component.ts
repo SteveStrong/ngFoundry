@@ -25,6 +25,7 @@ export class TestForcediagramComponent implements OnInit {
 
   var svg = d3.select(root)
     .append("svg")
+    .attr("class", "svg-canvas")
     .attr("width", width)
     .attr("height", height)
 
