@@ -1,9 +1,7 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { Diagram } from "../foundryDrivers/diagramDriver";
 
-
-//import * as d3 from 'd3';
-
+import { foConcept } from '../foundry/foConcept.model'
 
 import { DockerecosystemService } from "./dockerecosystem.service";
 
@@ -66,7 +64,7 @@ export class DockerecosystemComponent implements OnInit {
     //   })
 
 
-    let test = {
+    let test1 = {
       "nodes": [
         { "id": "Myriel", "group": 1 },
         { "id": "Napoleon", "group": 1 },
@@ -78,7 +76,24 @@ export class DockerecosystemComponent implements OnInit {
       ]
     }
 
-    this.myDiagram.renderGraph(test);
+    this.myDiagram.renderGraph(test1);
+
+    let nodeDef = new foConcept({
+      id: "steve",
+      group: 1,
+    });
+
+    let test2 = {
+      nodes: [],
+      links: []
+    }
+
+    test2.nodes.push(nodeDef.newInstance({
+      id: function() { return  "Hello all " + this.myGuid }
+    }))
+
+    console.log(test2);
+    this.myDiagram.renderGraph(test2);
 
   }
 
