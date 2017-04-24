@@ -81,19 +81,35 @@ export class DockerecosystemComponent implements OnInit {
     let nodeDef = new foConcept({
       id: "steve",
       group: 1,
+      width: 80,
+      height: 40,
+      geom: function(x) {
+            x.append("g")
+            .attr("class", "node-body")
+            .append("rect")
+            .attr("width", function (d) { return d.width; })
+            .attr("height", function (d) { return d.height; })
+            .append("text")
+            //.attr("dy", ".75em")
+            .attr("y", function (d) { return d.height / 2; })
+            .attr("x", function (d) { return d.width / 2; })
+            .attr("text-anchor", "middle")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "10px")
+            .text(function (d) { return d.id; })
+      }
     });
 
-    let test2 = {
-      nodes: [],
-      links: []
-    }
+    let nodes = [];
+    let links = [];
 
-    test2.nodes.push(nodeDef.newInstance({
+
+    nodes.push(nodeDef.newInstance({
       id: function() { return  "Hello all " + this.myGuid }
     }))
 
-    console.log(test2);
-    this.myDiagram.renderGraph(test2);
+    console.log(nodes);
+    this.myDiagram.renderDiagram(nodes, _=>{}, links, _=>{} );
 
   }
 
