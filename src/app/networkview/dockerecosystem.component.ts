@@ -1,7 +1,11 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
-import { Http } from '@angular/http';
+
 
 import * as d3 from 'd3';
+
+
+import { DockerecosystemService } from "./dockerecosystem.service";
+
 
 function makeTransform(dx: number, dy: number, s: number = 0) {
   if (s) {
@@ -29,12 +33,9 @@ export class DockerecosystemComponent implements OnInit {
   width: number = 960;
   height: number = 600;
 
-  constructor(private http: Http, private vcr: ViewContainerRef) {
+  constructor(private vcr: ViewContainerRef, private service: DockerecosystemService) {
 
   }
-
-
-
 
 
   scaleOut() {
@@ -74,12 +75,12 @@ export class DockerecosystemComponent implements OnInit {
 
     //this.zoomListener(this.svgRoot);
 
-    var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 
-    this.http.get('dockerecosystem.json')
+
+    this.service.getEcosystem()
       .subscribe(res => {
-        this.graph = res.json()
+        this.graph = res.json();
 
         var allLinks = this.graph.links.map(function (item) {
           return item;
@@ -94,6 +95,7 @@ export class DockerecosystemComponent implements OnInit {
 
         var boxWidth = 80;
         var boxHeight = 40;
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var counter = 0;
         var allNodes = this.graph.nodes.map(function (item) {
