@@ -7,6 +7,7 @@ function makeTransform(dx: number, dy: number, s: number = 0) {
     return `translate(${dx},${dy})`
 }
 
+
 export class Diagram {
 
     svgRoot: any = {}
@@ -67,6 +68,8 @@ export class Diagram {
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
+
+
 
         node.append("rect")
             .attr("width", function (d) { return d.width; })
@@ -175,8 +178,8 @@ export class Diagram {
 
 
     renderDiagram(nodes, nodeRenderFn, links, linkRenderFn) {
- 
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+        //var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var link = this.svgRoot.append("g")
             .attr("class", "links-style")
@@ -191,27 +194,31 @@ export class Diagram {
             .data(nodes)
             .enter().append("g")
             .attr("class", "node-body")
+            
+
+            nodeRenderFn && nodeRenderFn(node);
 
 
-        node.append("rect")
-            .attr("width", function (d) { return d.width; })
-            .attr("height", function (d) { return d.height; })
-            .attr("fill", function (d) { return color(d.group); });
+
+        // node.append("rect")
+        //     .attr("width", function (d) { return d.width; })
+        //     .attr("height", function (d) { return d.height; })
+        //     .attr("fill", function (d) { return color(d.group); });
 
 
-        node.append("text")
-            //.attr("dy", ".75em")
-            .attr("y", function (d) { return d.height / 2; })
-            .attr("x", function (d) { return d.width / 2; })
-            .attr("text-anchor", "middle")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "10px")
-            .text(function (d) { return d.id; })
+        // node.append("text")
+        //     //.attr("dy", ".75em")
+        //     .attr("y", function (d) { return d.height / 2; })
+        //     .attr("x", function (d) { return d.width / 2; })
+        //     .attr("text-anchor", "middle")
+        //     .attr("font-family", "sans-serif")
+        //     .attr("font-size", "10px")
+        //     .text(function (d) { return d.id; })
 
         node.call(d3.drag()
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended));
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
 
         var simulation = d3.forceSimulation()
             .force("x", d3.forceX(function (d) { return d.x; }).strength(4))

@@ -1,17 +1,9 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { Diagram } from "../foundryDrivers/diagramDriver";
 
-import { foConcept } from '../foundry/foConcept.model'
-
+import { DockerecosystemModel } from './dockerecosystem.model'
 import { DockerecosystemService } from "./dockerecosystem.service";
 
-
-function makeTransform(dx: number, dy: number, s: number = 0) {
-  if (s) {
-    return `translate(${dx},${dy}) scale (${s})`
-  }
-  return `translate(${dx},${dy})`
-}
 
 
 @Component({
@@ -21,6 +13,7 @@ function makeTransform(dx: number, dy: number, s: number = 0) {
 })
 export class DockerecosystemComponent implements OnInit {
   myDiagram: Diagram = new Diagram();
+  myModel: DockerecosystemModel = new DockerecosystemModel();
 
   constructor(private vcr: ViewContainerRef, private service: DockerecosystemService) {
 
@@ -78,38 +71,28 @@ export class DockerecosystemComponent implements OnInit {
 
     this.myDiagram.renderGraph(test1);
 
-    let nodeDef = new foConcept({
-      id: "steve",
-      group: 1,
-      width: 80,
-      height: 40,
-      geom: function(x) {
-            x.append("g")
-            .attr("class", "node-body")
-            .append("rect")
-            .attr("width", function (d) { return d.width; })
-            .attr("height", function (d) { return d.height; })
-            .append("text")
-            //.attr("dy", ".75em")
-            .attr("y", function (d) { return d.height / 2; })
-            .attr("x", function (d) { return d.width / 2; })
-            .attr("text-anchor", "middle")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", "10px")
-            .text(function (d) { return d.id; })
-      }
-    });
+
 
     let nodes = [];
     let links = [];
+    let nodeDef = this.myModel.nodeDef;
 
+    for (var i = 0; i < 2; i++) {
+      var obj = nodeDef.newInstance({
+        index: i,
+        id: function () { return "Hello all " + this.myGuid }
+      });
+      nodes.push(obj);
+    }
 
-    nodes.push(nodeDef.newInstance({
-      id: function() { return  "Hello all " + this.myGuid }
-    }))
 
     console.log(nodes);
-    this.myDiagram.renderDiagram(nodes, _=>{}, links, _=>{} );
+    // this.myDiagram.renderDiagram(
+    //   nodes, (i) => { 
+    //     return this.myModel.doGeom(i) 
+    //   },
+    //   links, _ => { }
+    // );
 
   }
 

@@ -10,6 +10,10 @@
       stroke-width: 1.5px;
     }
 
+    .text-style {
+      color:black;
+    }
+
     .node-body {
       stroke: #333;
       stroke-width: 1.5px;
