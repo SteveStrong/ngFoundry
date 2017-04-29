@@ -13,13 +13,26 @@ export class SwimlaneviewComponent implements OnInit {
     height: 1000
   }
 
+  trans = "transform(300, 0)"
+
   circles = [
-    { 'x': 15, 'y': 10, 'r': 3 },
-    { 'x': 35, 'y': 60, 'r': 20 },
-    { 'x': 55, 'y': 10, 'r': 4 },
+    { 'x': 105, 'y': 10, 'r': 30 },
+    { 'x': 305, 'y': 60, 'r': 20 },
+    { 'x': 505, 'y': 10, 'r': 40 },
   ];
 
-  
+  lanes = [
+    { 'x': 0, 'y': 10, 'name': "Steveii9" },
+    { 'x': 300, 'y': 30, 'name': "Stu"  },
+    { 'x': 600, 'y':10, 'name': "Don" },
+     { 'x': 900, 'y':10, 'name': "Debra" },
+  ];
+
+  doMove(obj) {
+    var result =  `${obj.x}  ${obj.y}`;
+    return result;
+  }
+
 
 
   constructor() { }
