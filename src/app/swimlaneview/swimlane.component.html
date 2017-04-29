@@ -1,7 +1,11 @@
+<svg:rect x="0" y="0" [attr.height]="size.height" [attr.width]="size.width" style="stroke:#000">
+</svg:rect>
 
-  
-  <svg:rect x="0" y="0" [attr.height]="size.height" [attr.width]="size.width" style="stroke:#000">
-  </svg:rect>
-
-  <svg:text y="100">{{ text }}</svg:text>
-
+<svg:text id="name" y="300">{{ text }}</svg:text>
+<svg:g>
+  <svg:polyline points="100,100 150,100 170,150 120,150" />
+  <svg:polyline points="170,100 220,100 240,150 190,150" />
+  <svg:polyline class="orange" points="120,45 170,45 150,95 100,95" />
+  <svg:polyline class="orange" points="190,155 240,155 220,205 170,205" />
+  <svg:text id="sp" x="240" y="150">sitepoint</svg:text>
+</svg:g>

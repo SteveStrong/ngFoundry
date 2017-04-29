@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 //http://stackoverflow.com/questions/32211013/how-can-i-nest-directives-that-render-svg-in-angular-2
 
@@ -8,13 +8,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./swimlane.component.css']
 })
 export class SwimlaneComponent implements OnInit {
+  @Input() text = "Steve"
 
   size = {
-    width: 100,
+    width: 250,
     height: 1000
   }
 
-  text = "Steve"
+
 
   constructor() { }
 
