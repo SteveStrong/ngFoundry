@@ -19,7 +19,9 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { WebglviewComponent } from './webglview/webglview.component';
 import { TestForcediagramComponent } from './networkview/test-forcediagram.component';
 import { TestSceen1Component } from './webglview/test-sceen1.component';
+
 import { DockerecosystemComponent } from './networkview/dockerecosystem.component';
+import { DockerecosystemService } from "./networkview/dockerecosystem.service";
 
 @NgModule({
   declarations: [
@@ -43,7 +45,7 @@ import { DockerecosystemComponent } from './networkview/dockerecosystem.componen
     HttpModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [DockerecosystemService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
