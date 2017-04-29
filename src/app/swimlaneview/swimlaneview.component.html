@@ -1,0 +1,22 @@
+<p>
+  swimlaneview works!
+</p>
+
+
+<!--<svg viewBox="0 0 250 250">
+  <polygon points="125,30 125,30 125,30 31.9,63.2 46.1,186.3 125,230 125,230 125,230 203.9,186.3 218.1,63.2" />
+  <polygon points="125,30 125,52.2 125,52.1 125,153.4 125,153.4 125,230 125,230 203.9,186.3 218.1,63.2 125,30" />
+  <path d="M125,52.1L66.8,182.6h0h21.7h0l11.7-29.2h49.4l11.7,29.2h0h21.7h0L125,52.1L125,52.1L125,52.1L125,52.1
+      L125,52.1z M142,135.4H108l17-40.9L142,135.4z"/>
+</svg>-->
+
+<svg:svg [attr.height]="graph.height" [attr.width]="graph.width" style="stroke-width: 0px; background-color:darksalmon; stroke:black; fill:blueviolet">
+  <svg:g transform="translate(130 200) rotate(45 50 50) scale(2.5)">
+    <svg:circle *ngFor="let circle of circles" [attr.cx]="circle.x" [attr.cy]="circle.y" [attr.r]="circle.r">
+    </svg:circle>
+   </svg:g>
+   <svg:g transform="translate(200 0)" style="stroke-width: 10px; fill:indigo" foundry-swimlane></svg:g>
+   <svg:g transform="translate(400 0)" foundry-swimlane></svg:g>
+   <svg:g transform="translate(600 0)" foundry-swimlane></svg:g>
+   <svg:g transform="translate(800 0)" foundry-swimlane></svg:g>
+</svg:svg>

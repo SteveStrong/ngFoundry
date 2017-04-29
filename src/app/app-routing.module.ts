@@ -7,6 +7,7 @@ import { ListviewComponent } from './listview/listview.component';
 import { TreeviewComponent } from './treeview/treeview.component';
 import { WelcomeComponent } from "../app/welcome/welcome.component";
 import { WebglviewComponent } from './webglview/webglview.component';
+import { SwimlaneviewComponent } from 'app/swimlaneview/swimlaneview.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'welcome' },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'webgl', component: WebglviewComponent },
   { path: 'tree', component: TreeviewComponent },
   { path: 'list', component: ListviewComponent },
+  { path: 'swim', component: SwimlaneviewComponent },
   { path: 'network', component: NetworkviewComponent }
 ];
 

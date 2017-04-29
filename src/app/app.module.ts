@@ -22,6 +22,8 @@ import { TestSceen1Component } from './webglview/test-sceen1.component';
 
 import { DockerecosystemComponent } from './networkview/dockerecosystem.component';
 import { DockerecosystemService } from "./networkview/dockerecosystem.service";
+import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
+import { SwimlaneComponent } from './swimlaneview/swimlane.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { DockerecosystemService } from "./networkview/dockerecosystem.service";
     WebglviewComponent,
     TestForcediagramComponent,
     TestSceen1Component,
-    DockerecosystemComponent
+    DockerecosystemComponent,
+    SwimlaneviewComponent,
+    SwimlaneComponent
   ],
   imports: [
     BrowserAnimationsModule,
