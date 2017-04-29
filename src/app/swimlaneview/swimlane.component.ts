@@ -17,10 +17,12 @@ function makeTransform(dx: number, dy: number, s: number = 0) {
 })
 export class SwimlaneComponent implements OnInit {
   displayText = "Steve";
+  @Input() myIndex:number = 0;
   @Input() Spec = { 'x': 0, 'y': 10, 'name': "Mike" }
 
   size = {
     width: 250,
+    gap:10,
     height: 1000
   }
 
@@ -31,7 +33,8 @@ export class SwimlaneComponent implements OnInit {
   ngOnInit() {
     var root = this.vcr.element.nativeElement;
     this.displayText = this.Spec.name;
-    root.setAttribute("transform", makeTransform(this.Spec.x, this.Spec.y));
+    var xLoc = 100 + (this.size.width + this.size.gap) * this.myIndex;
+    root.setAttribute("transform", makeTransform(xLoc, this.Spec.y));
   }
 
 }
