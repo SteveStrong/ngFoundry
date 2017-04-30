@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 
 import { Tools } from '../foundry/foTools'
-import { SwimDictionary, SwimElementDef, SwimLaneDef, SwimElementView, SwimLaneView } from "./swim.model";
+import { SwimDictionary, SwimElementDef, SwimLaneDef, SwimDef, SwimElementView, SwimLaneView, SwimView } from "./swim.model";
 
 @Injectable()
 export class SwimService {
   Dictionary: SwimDictionary = new SwimDictionary();
-  viewElementDef: SwimElementDef = this.Dictionary.swimViewDef;
-  viewLaneDef: SwimLaneDef = this.Dictionary.swimLaneViewDef;
+  viewElementDef: SwimElementDef = this.Dictionary.swimElementDef;
+  viewLaneDef: SwimLaneDef = this.Dictionary.swimLaneDef;
+   viewDef: SwimDef = this.Dictionary.swimDef;
 
   constructor() { }
 

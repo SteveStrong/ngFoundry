@@ -73,6 +73,42 @@ export class SwimLaneView extends foComponent {
 
 }
 
+
+export class SwimDef extends foConcept {
+    constructor(properties?: any) {
+        super(properties);
+        this.myType = 'SwimDef';
+        this.createCustom((properties?, subcomponents?, parent?) => {
+            return new SwimView(properties, subcomponents, parent);
+        });
+    }
+}
+
+export class SwimView extends foComponent {
+    nativeElement;
+
+    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+        super(properties, subcomponents, parent);
+        this.myType = 'SwimView';
+    }
+    translate(root?) {
+        this.nativeElement = root ? root : this.nativeElement;
+        return makeTransform(this['pinX'], this['pinY'])
+    }
+
+    refresh() {
+        if (this.nativeElement) {
+            this.nativeElement.setAttribute("transform", this.translate());
+        }
+    }
+
+    isSelected = false;
+    toggleSelected() {
+        this.isSelected = !this.isSelected;
+    }
+
+
+}
 export class SwimDictionary {
 
     elementDefaults = {
@@ -85,7 +121,7 @@ export class SwimDictionary {
         }
     }
 
-    swimViewDef: SwimElementDef = new SwimElementDef(this.elementDefaults);
+    swimElementDef: SwimElementDef = new SwimElementDef(this.elementDefaults);
 
 
     laneDefaults = {
@@ -117,5 +153,11 @@ export class SwimDictionary {
         }
     }
 
-    swimLaneViewDef: SwimLaneDef = new SwimLaneDef(this.laneDefaults);
+    swimLaneDef: SwimLaneDef = new SwimLaneDef(this.laneDefaults);
+
+
+    swimDefaults = {
+    }
+
+    swimDef: SwimDef = new SwimDef(this.swimDefaults);
 }
