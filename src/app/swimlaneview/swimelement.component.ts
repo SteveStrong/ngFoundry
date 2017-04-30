@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
-import { SwimDictionary, SwimDef, SwimView } from "./swim.model";
 
+import { SwimElementView } from "./swim.model";
 import { EmitterService } from '../common/emitter.service';
+
 //http://stackoverflow.com/questions/32211013/how-can-i-nest-directives-that-render-svg-in-angular-2
 
 
@@ -11,8 +12,7 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimelement.component.css']
 })
 export class SwimelementComponent implements OnInit {
-  @Input() viewModel:SwimView;
-
+  @Input() viewModel: SwimElementView;
 
   constructor(private vcr: ViewContainerRef) { }
 
@@ -20,6 +20,7 @@ export class SwimelementComponent implements OnInit {
     var root = this.vcr.element.nativeElement;
     root.setAttribute("transform", this.viewModel.translate());
   }
+
 
   private info(message, title?) {
     let toast = {

@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-//import { SwimlaneComponent } from "./swimlane.component";
+import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
+
+import { SwimService } from "../swimlaneview/swim.service";
+import { SwimDictionary, SwimLaneDef, SwimLaneView } from "./swim.model";
 
 @Component({
   selector: 'foundry-swimlaneview',
@@ -7,6 +9,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./swimlaneview.component.css']
 })
 export class SwimlaneviewComponent implements OnInit {
+  swimLanes: SwimLaneView[];
 
   graph = {
     width: 1800,
@@ -20,19 +23,12 @@ export class SwimlaneviewComponent implements OnInit {
     { 'x': 505, 'y': 10, 'r': 40 },
   ];
 
-  lanes = [
-    { 'x': 10, 'y': 10, 'name': "Steve" },
-    // { 'x': 300, 'y': 30, 'name': "Stu"  },
-    // { 'x': 600, 'y':10, 'name': "Don" },
-    //  { 'x': 900, 'y':10, 'name': "Debra" },
-  ];
 
 
-  constructor() { }
+  constructor(private vcr: ViewContainerRef, private service: SwimService) { }
 
   ngOnInit() {
-
-    //this.style = this.sanitizer.bypassSecurityTrustStyle("stroke-width: 0px; background-color: blue; stroke:black; fill:blueviolet");
+    this.swimLanes = this.service.getSwimLanes();
   }
 
 }
