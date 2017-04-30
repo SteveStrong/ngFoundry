@@ -33,49 +33,6 @@ export class SwimService {
     return Observable.throw(errMsg);
   }
 
-  getModel(total: number): svgShapeView[] {
-    let elements = [
-      { 'name': "Steve" },
-      { 'name': "Stu" },
-      { 'name': "Don" },
-      { 'name': "Linda" },
-      { 'name': "Anne" },
-      { 'name': "Debra" },
-      { 'name': "Evan" },
-    ].slice(0, total)
-
-    let i = 0;
-    let result = elements.map(item => {
-      (item as any).index = i++;
-      return this.viewElementDef.newInstance(item) as svgShapeView;
-    });
-
-    return result;
-  }
-
-  getSwimLanes(): svgShapeView[] {
-    let lanes = [
-      { 'title': "GitHub" },
-      { 'title': "Docker" },
-      { 'title': "Data Center" },
-      { 'title': "done" },
-      { 'title': "vvvvv" }
-    ];
-
-    let i = 0;
-    let result = lanes.map(item => {
-      (item as any).index = i++;
-      let elements = this.getModel(i);
-
-      let found = this.viewLaneDef.newInstance(item, elements) as svgShapeView;
-
-      return found;
-    });
-
-
-    return result;
-  }
-
 
   getRootView() {
     let result = this.viewDef.newInstance() as svgShapeView;
@@ -86,7 +43,7 @@ export class SwimService {
     let source = this.http.get('caas.json');
     source.subscribe(res => {
       let body = res.json();
-      //let lanes = this.getSwimLanes();
+
       let result = this.viewDef.newInstance() as svgShapeView;
 
       let lanes = [
