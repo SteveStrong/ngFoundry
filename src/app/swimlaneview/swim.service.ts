@@ -84,7 +84,7 @@ export class SwimService {
   }
 
 
-  getRootView(){
+  getRootView() {
     let result = this.viewDef.newInstance() as SwimView;
     return result;
   }
@@ -95,6 +95,17 @@ export class SwimService {
       let body = res.json();
       //let lanes = this.getSwimLanes();
       let result = this.viewDef.newInstance() as SwimView;
+
+      let lanes = [
+        { 'title': "GitHub" },
+        { 'title': "Docker" },
+        { 'title': "Data Center" },
+      ];
+
+      lanes.map(item => {
+        let found = this.viewLaneDef.newInstance(item) as SwimLaneView;
+        result.addSubcomponent(found);
+      })
 
       callback && callback(result);
 
