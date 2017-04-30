@@ -22,6 +22,10 @@ import { TestSceen1Component } from './webglview/test-sceen1.component';
 
 import { DockerecosystemComponent } from './networkview/dockerecosystem.component';
 import { DockerecosystemService } from "./networkview/dockerecosystem.service";
+import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
+import { SwimlaneComponent } from './swimlaneview/swimlane.component';
+import { SwimelementComponent } from './swimlaneview/swimelement.component';
+import { SwimService } from "./swimlaneview/swim.service";
 
 @NgModule({
   declarations: [
@@ -34,7 +38,10 @@ import { DockerecosystemService } from "./networkview/dockerecosystem.service";
     WebglviewComponent,
     TestForcediagramComponent,
     TestSceen1Component,
-    DockerecosystemComponent
+    DockerecosystemComponent,
+    SwimlaneviewComponent,
+    SwimlaneComponent,
+    SwimelementComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -45,7 +52,7 @@ import { DockerecosystemService } from "./networkview/dockerecosystem.service";
     HttpModule,
     AppRoutingModule
   ],
-  providers: [DockerecosystemService],
+  providers: [DockerecosystemService,SwimService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,0 +1,26 @@
+<!--<svg:g  transform="translate(-100 -100)  scale(1.0)">
+  <svg:polyline points="100,100 150,100 170,150 120,150" />
+  <svg:polyline points="170,100 220,100 240,150 190,150" />
+  <svg:polyline class="orange" points="120,45 170,45 150,95 100,95" />
+  <svg:polyline class="orange" points="190,155 240,155 220,205 170,205" />
+  <svg:text id="sp" x="240" y="150"> {{ displayText }}</svg:text>
+</svg:g>-->
+
+<svg:g (click)="doClick()">
+  <svg:rect x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke:#000; fill: yellow">
+  </svg:rect>
+  <svg:text id="display" x="20" [attr.y]="viewModel.height/2" > {{ viewModel.name }}</svg:text>
+
+<svg:rect *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke-width: 3; stroke:red; fill: none">
+        <!--<animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="20s"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            repeatCount="indefinite"
+        />-->
+        </svg:rect>
+
+</svg:g>

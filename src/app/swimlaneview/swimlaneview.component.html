@@ -1,0 +1,12 @@
+
+<svg:svg [attr.height]="graph.height" [attr.width]="graph.width" style="stroke-width: 0px; background-color:darksalmon; stroke:black; fill:blueviolet">
+
+   <svg:g *ngFor="let swimLane of swimLanes" foundry-swimlane [viewModel]="swimLane" >
+     
+   </svg:g>
+
+  <!--<svg:g transform="translate(130 200) rotate(45 50 50) scale(1.5)">
+    <svg:circle *ngFor="let circle of circles" [attr.cx]="circle.x" [attr.cy]="circle.y" [attr.r]="circle.r">
+    </svg:circle>
+   </svg:g>-->
+</svg:svg>

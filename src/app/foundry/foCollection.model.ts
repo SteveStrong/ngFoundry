@@ -18,7 +18,15 @@ export class foCollection<T extends foObject> extends foObject {
     get length() {
         return this._members.length;    
     }
+
+    get hasMembers():boolean {
+        return this.length > 0;
+    }
     
+    map(funct) {
+        return this._members.map(funct);
+    }
+
     findMember(name: string) {
         return this._members[0];
     }

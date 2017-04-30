@@ -1,0 +1,26 @@
+polyline
+{
+	stroke: 0;
+	stroke-linejoin: butt;
+	fill: #003565;
+}
+
+
+polyline.orange
+{
+	fill: #ff6400;
+}
+
+text#horz
+{
+	font-family: verdana, sans-serif;
+	font-size: 270%;
+	fill: #003565;
+}
+
+text#vert
+{
+	font-family: verdana, sans-serif;
+	font-size: 170%;
+	fill: goldenrod;
+}
