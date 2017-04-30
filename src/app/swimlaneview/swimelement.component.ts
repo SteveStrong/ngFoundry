@@ -1,15 +1,9 @@
 import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
-import { foConcept } from "../foundry/foConcept.model";
+import { SwimDictionary, SwimDef, SwimView } from "./swim.model";
 
 import { EmitterService } from '../common/emitter.service';
 //http://stackoverflow.com/questions/32211013/how-can-i-nest-directives-that-render-svg-in-angular-2
 
-function makeTransform(dx: number, dy: number, s: number = 0) {
-    if (s) {
-        return `translate(${dx},${dy}) scale (${s})`
-    }
-    return `translate(${dx},${dy})`
-}
 
 @Component({
   selector: '[foundry-swimelement]',
@@ -17,23 +11,22 @@ function makeTransform(dx: number, dy: number, s: number = 0) {
   styleUrls: ['./swimelement.component.css']
 })
 export class SwimelementComponent implements OnInit {
-  displayText = "Steve";
+  Dictionary:SwimDictionary = new SwimDictionary();
+  viewDef:SwimDef = this.Dictionary.swimViewDef;
+  viewModel:SwimView;
+
   @Input() myIndex:number = 0;
-  @Input() Spec = { 'x': 0, 'y': 10, 'name': "Mike" }
+  @Input() Spec = {  'name': "Mike" }
   
-  size = {
-    width: 240,
-    gap:5,
-    height: 90
-  }
 
   constructor(private vcr: ViewContainerRef) { }
 
   ngOnInit() {
     var root = this.vcr.element.nativeElement;
-    this.displayText = this.Spec.name;
-    var yLoc = this.size.gap + (this.size.height + this.size.gap) * this.myIndex;
-    root.setAttribute("transform", makeTransform(this.size.gap, yLoc));
+    this.viewModel = this.viewDef.newInstance(this.Spec) as SwimView;
+    this.viewModel.index = this.myIndex;
+
+    root.setAttribute("transform", this.viewModel.translate());
   }
 
     private info(message, title?) {
@@ -44,12 +37,9 @@ export class SwimelementComponent implements OnInit {
     EmitterService.get("SHOWINFO").emit(toast);
   }
 
-  doToast(): void {
-    this.info("info message","my title")
-  }
 
   doClick() {
-    this.doToast();
+   this.info("info message",this.viewModel['name'])
   }
 
 }

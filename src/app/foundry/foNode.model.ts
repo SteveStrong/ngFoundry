@@ -5,6 +5,7 @@ import { foObject, iObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
 
 export class foNode extends foObject {
+    index:Number = 0;
     private _myGuid:string;
     
     _subcomponents: foCollection<foNode>;

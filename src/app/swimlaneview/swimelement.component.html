@@ -7,7 +7,7 @@
 </svg:g>-->
 
 <svg:g (click)="doClick()">
-  <svg:rect x="0" y="0" [attr.height]="size.height" [attr.width]="size.width" style="stroke:#000; fill: yellow">
+  <svg:rect x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke:#000; fill: yellow">
   </svg:rect>
-  <svg:text id="display" x="20" [attr.y]="size.height/2" > {{ displayText }}</svg:text>
+  <svg:text id="display" x="20" [attr.y]="viewModel.height/2" > {{ viewModel.name }}</svg:text>
 </svg:g>
