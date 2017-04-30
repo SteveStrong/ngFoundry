@@ -1,7 +1,3 @@
-<h3>
-  {{title}}
-</h3>
-
 <div class="navbar navbar-inverse " role="navigation">
   <div class="container-fluid">
     <a class='navbar-brand' [routerLink]="['/welcome']">Welcome</a>
@@ -17,4 +13,6 @@
   </div>
 </div>
 
-<router-outlet></router-outlet>
+<div class="content" style="padding-top:0px">
+    <router-outlet></router-outlet>
+</div>

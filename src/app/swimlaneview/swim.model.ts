@@ -99,6 +99,8 @@ export class SwimView extends foComponent {
     refresh() {
         if (this.nativeElement) {
             this.nativeElement.setAttribute("transform", this.translate());
+        } else {
+            this.nodes.map( item => item.refresh() )
         }
     }
 
@@ -157,6 +159,9 @@ export class SwimDictionary {
 
 
     swimDefaults = {
+        title: "The Docker Ecosystem. - dockercon17",
+        width: 1800,
+        height: 1000
     }
 
     swimDef: SwimDef = new SwimDef(this.swimDefaults);

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewContainerRef, NgZone } from '@angular/core';
 
 import { SwimService } from "../swimlaneview/swim.service";
-import { SwimLaneView } from "./swim.model";
+import { SwimView } from "./swim.model";
 import { EmitterService } from '../common/emitter.service';
 
 @Component({
@@ -10,13 +10,7 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimlaneview.component.css']
 })
 export class SwimlaneviewComponent implements OnInit {
-  swimLanes: SwimLaneView[];
-
-  graph = {
-    width: 1800,
-    height: 600
-  }
-
+  viewModel: SwimView;
 
   circles = [
     { 'x': 105, 'y': 10, 'r': 30 },
@@ -29,14 +23,17 @@ export class SwimlaneviewComponent implements OnInit {
   constructor(private vcr: ViewContainerRef, private service: SwimService, private zone: NgZone) { }
 
   ngOnInit() {
-    this.swimLanes = this.service.getSwimLanes();
+    this.viewModel = this.service.getRootView()
+
+    this.service.getEcosystem(result => {
+      this.viewModel = result;
+    });
 
     EmitterService.get("RECOMPUTE").subscribe(_ => {
-      this.swimLanes.forEach(item => {
-        item.refresh()
-      })
-
+      this.viewModel.refresh();
+      //this.swimLanes.forEach(item => {
+      //  item.refresh()
     });
-  }
 
+  }
 }

@@ -1,9 +1,11 @@
+<svg:svg [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke-width: 0px; background-color:none; stroke:black; fill:blueviolet">
+  <svg:text id="title" x="10" y="35">{{ viewModel.title }}</svg:text>
+  <svg:g transform="translate(0 40)">
+    <svg:g *ngFor="let component of viewModel.subcomponents()" foundry-swimlane [viewModel]="component">
 
-<svg:svg [attr.height]="graph.height" [attr.width]="graph.width" style="stroke-width: 0px; background-color:darksalmon; stroke:black; fill:blueviolet">
+    </svg:g>
+  </svg:g>
 
-   <svg:g *ngFor="let swimLane of swimLanes" foundry-swimlane [viewModel]="swimLane" >
-     
-   </svg:g>
 
   <!--<svg:g transform="translate(130 200) rotate(45 50 50) scale(1.5)">
     <svg:circle *ngFor="let circle of circles" [attr.cx]="circle.x" [attr.cy]="circle.y" [attr.r]="circle.r">
