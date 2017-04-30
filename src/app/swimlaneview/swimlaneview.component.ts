@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewContainerRef, NgZone } from '@angular/core';
 
 import { SwimService } from "../swimlaneview/swim.service";
-import { SwimView } from "./swim.model";
+import { svgShapeView } from "./swim.model";
 import { EmitterService } from '../common/emitter.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimlaneview.component.css']
 })
 export class SwimlaneviewComponent implements OnInit {
-  viewModel: SwimView;
+  viewModel: svgShapeView;
 
   circles = [
     { 'x': 105, 'y': 10, 'r': 30 },

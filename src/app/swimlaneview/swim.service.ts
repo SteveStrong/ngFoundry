@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 
 import { Tools } from '../foundry/foTools'
-import { SwimDictionary, SwimElementDef, SwimLaneDef, SwimDef, SwimElementView, SwimLaneView, SwimView } from "./swim.model";
+import { SwimDictionary, SwimElementDef, SwimLaneDef, SwimDef, svgShapeView } from "./swim.model";
 
 @Injectable()
 export class SwimService {
@@ -33,7 +33,7 @@ export class SwimService {
     return Observable.throw(errMsg);
   }
 
-  getModel(total: number): SwimElementView[] {
+  getModel(total: number): svgShapeView[] {
     let elements = [
       { 'name': "Steve" },
       { 'name': "Stu" },
@@ -47,13 +47,13 @@ export class SwimService {
     let i = 0;
     let result = elements.map(item => {
       (item as any).index = i++;
-      return this.viewElementDef.newInstance(item) as SwimElementView;
+      return this.viewElementDef.newInstance(item) as svgShapeView;
     });
 
     return result;
   }
 
-  getSwimLanes(): SwimLaneView[] {
+  getSwimLanes(): svgShapeView[] {
     let lanes = [
       { 'title': "GitHub" },
       { 'title': "Docker" },
@@ -67,7 +67,7 @@ export class SwimService {
       (item as any).index = i++;
       let elements = this.getModel(i);
 
-      let found = this.viewLaneDef.newInstance(item, elements) as SwimLaneView;
+      let found = this.viewLaneDef.newInstance(item, elements) as svgShapeView;
 
       return found;
     });
@@ -78,7 +78,7 @@ export class SwimService {
 
 
   getRootView() {
-    let result = this.viewDef.newInstance() as SwimView;
+    let result = this.viewDef.newInstance() as svgShapeView;
     return result;
   }
 
@@ -87,7 +87,7 @@ export class SwimService {
     source.subscribe(res => {
       let body = res.json();
       //let lanes = this.getSwimLanes();
-      let result = this.viewDef.newInstance() as SwimView;
+      let result = this.viewDef.newInstance() as svgShapeView;
 
       let lanes = [
         { 'title': "GitHub" },
@@ -96,7 +96,7 @@ export class SwimService {
       ];
 
       lanes.map(item => {
-        let found = this.viewLaneDef.newInstance(item) as SwimLaneView;
+        let found = this.viewLaneDef.newInstance(item) as svgShapeView;
         result.addSubcomponent(found);
 
         let elements = [
@@ -106,7 +106,7 @@ export class SwimService {
         ];
 
         elements.map(item => {
-           let element = this.viewElementDef.newInstance(item) as SwimElementView;
+           let element = this.viewElementDef.newInstance(item) as svgShapeView;
            found.addSubcomponent(element);
         });
 

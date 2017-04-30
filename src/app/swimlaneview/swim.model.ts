@@ -16,76 +16,23 @@ export class SwimElementDef extends foConcept {
         super(properties);
         this.myType = 'SwimElementDef';
         this.createCustom((properties?, subcomponents?, parent?) => {
-            return new SwimElementView(properties, subcomponents, parent);
+            return new svgShapeView(properties, subcomponents, parent);
         });
     }
 }
 
-export class SwimElementView extends foComponent {
-    nativeElement;
-
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-        this.myType = 'SwimElementView';
-    }
-
-    translate(root?) {
-        this.nativeElement = root ? root : this.nativeElement;
-        return makeTransform(this['pinX'], this['pinY'])
-    }
-
-    refresh() {
-        if (this.nativeElement) {
-            this.nativeElement.setAttribute("transform", this.translate());
-        } 
-        this.nodes.map(item => item.refresh())
-    }
-
-    isSelected = false;
-    toggleSelected() {
-        this.isSelected = !this.isSelected;
-    }
-
-}
 
 export class SwimLaneDef extends foConcept {
     constructor(properties?: any) {
         super(properties);
         this.myType = 'SwimLaneDef';
         this.createCustom((properties?, subcomponents?, parent?) => {
-            return new SwimLaneView(properties, subcomponents, parent);
+            return new svgShapeView(properties, subcomponents, parent);
         });
     }
 }
 
-export class SwimLaneView extends foComponent {
-    nativeElement;
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-        this.myType = 'SwimLaneView';
-    }
-    translate(root?) {
-        this.nativeElement = root ? root : this.nativeElement;
-        return makeTransform(this['pinX'], this['pinY'])
-    }
-
-    refresh() {
-        if (this.nativeElement) {
-            this.nativeElement.setAttribute("transform", this.translate());
-        } 
-        this.nodes.map(item => item.refresh())
-        
-    }
-
-    isSelected = false;
-    toggleSelected() {
-        this.isSelected = !this.isSelected;
-    }
-
-    previous: SwimElementView;
-
-}
 
 
 export class SwimDef extends foConcept {
@@ -93,17 +40,17 @@ export class SwimDef extends foConcept {
         super(properties);
         this.myType = 'SwimDef';
         this.createCustom((properties?, subcomponents?, parent?) => {
-            return new SwimView(properties, subcomponents, parent);
+            return new svgShapeView(properties, subcomponents, parent);
         });
     }
 }
 
-export class SwimView extends foComponent {
+export class svgShapeView extends foComponent {
     nativeElement;
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myType = 'SwimView';
+        this.myType = 'svgShapeView';
     }
     translate(root?) {
         this.nativeElement = root ? root : this.nativeElement;
@@ -113,9 +60,8 @@ export class SwimView extends foComponent {
     refresh() {
         if (this.nativeElement) {
             this.nativeElement.setAttribute("transform", this.translate());
-        } else {
-            this.nodes.map(item => item.refresh())
         }
+        this.nodes.map(item => item.refresh())
     }
 
     isSelected = false;
@@ -133,13 +79,13 @@ export class SwimDictionary {
         height: 90,
         pinX: function () { return this.gap; },
         pinY: function () {
-            return this.topEdge + this.height / 2;
+            return this.topEdge + 50;
         },
         topEdge: function () {
             if (this.prevChild) {
                 return this.prevChild.bottomEdge + this.gap;
             }
-            return this.gap;
+            return 0;
         },
         bottomEdge: function () {
             return this.topEdge + this.height;

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
 
-import { SwimElementView } from "./swim.model";
+import { svgShapeView } from "./swim.model";
 import { EmitterService } from '../common/emitter.service';
 
 //http://stackoverflow.com/questions/32211013/how-can-i-nest-directives-that-render-svg-in-angular-2
@@ -12,7 +12,7 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimelement.component.css']
 })
 export class SwimelementComponent implements OnInit {
-  @Input() viewModel: SwimElementView;
+  @Input() viewModel: svgShapeView;
 
   constructor(private vcr: ViewContainerRef) { }
 
