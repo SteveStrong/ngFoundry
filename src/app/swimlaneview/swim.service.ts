@@ -98,6 +98,18 @@ export class SwimService {
       lanes.map(item => {
         let found = this.viewLaneDef.newInstance(item) as SwimLaneView;
         result.addSubcomponent(found);
+
+        let elements = [
+          { 'name': "Steve" },
+          { 'name': "Debra" },
+          { 'name': "Evan" },
+        ];
+
+        elements.map(item => {
+           let element = this.viewElementDef.newInstance(item) as SwimElementView;
+           found.addSubcomponent(element);
+        });
+
       })
 
       callback && callback(result);

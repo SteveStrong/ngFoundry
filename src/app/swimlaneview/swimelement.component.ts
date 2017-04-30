@@ -18,7 +18,7 @@ export class SwimelementComponent implements OnInit {
 
   ngOnInit() {
     var root = this.vcr.element.nativeElement;
-    root.setAttribute("transform", this.viewModel.translate());
+    root.setAttribute("transform", this.viewModel.translate(root));
   }
 
 
@@ -26,6 +26,7 @@ export class SwimelementComponent implements OnInit {
   doClick() {
     this.viewModel.toggleSelected();
     this.viewModel['width'] += this.viewModel['gap'];
+    this.viewModel['height'] += this.viewModel['gap'];
     EmitterService.info("info message", this.viewModel['name']);
 
     EmitterService.get("RECOMPUTE").emit();

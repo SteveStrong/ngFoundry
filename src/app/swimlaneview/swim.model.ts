@@ -22,13 +22,25 @@ export class SwimElementDef extends foConcept {
 }
 
 export class SwimElementView extends foComponent {
+    nativeElement;
+
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myType = 'SwimElementView';
     }
-    translate() {
+
+    translate(root?) {
+        this.nativeElement = root ? root : this.nativeElement;
         return makeTransform(this['pinX'], this['pinY'])
     }
+
+    refresh() {
+        if (this.nativeElement) {
+            this.nativeElement.setAttribute("transform", this.translate());
+        } 
+        this.nodes.map(item => item.refresh())
+    }
+
     isSelected = false;
     toggleSelected() {
         this.isSelected = !this.isSelected;
@@ -61,7 +73,9 @@ export class SwimLaneView extends foComponent {
     refresh() {
         if (this.nativeElement) {
             this.nativeElement.setAttribute("transform", this.translate());
-        }
+        } 
+        this.nodes.map(item => item.refresh())
+        
     }
 
     isSelected = false;
@@ -100,7 +114,7 @@ export class SwimView extends foComponent {
         if (this.nativeElement) {
             this.nativeElement.setAttribute("transform", this.translate());
         } else {
-            this.nodes.map( item => item.refresh() )
+            this.nodes.map(item => item.refresh())
         }
     }
 
@@ -119,7 +133,16 @@ export class SwimDictionary {
         height: 90,
         pinX: function () { return this.gap; },
         pinY: function () {
-            return this.gap + (this.height + this.gap) * (1 + this.index);
+            return this.topEdge + this.height / 2;
+        },
+        topEdge: function () {
+            if (this.prevChild) {
+                return this.prevChild.bottomEdge + this.gap;
+            }
+            return this.gap;
+        },
+        bottomEdge: function () {
+            return this.topEdge + this.height;
         }
     }
 
@@ -139,7 +162,6 @@ export class SwimDictionary {
         height: 800,
         pinX: function () {
             return this.leftEdge;
-            //return this.gap + (this.width + this.gap) * this.index;
         },
         pinY: function () {
             return this.gap;
