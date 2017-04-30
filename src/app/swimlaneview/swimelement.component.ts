@@ -22,19 +22,13 @@ export class SwimelementComponent implements OnInit {
   }
 
 
-  private info(message, title?) {
-    let toast = {
-      title: title || '',
-      message: message
-    }
-    EmitterService.get("SHOWINFO").emit(toast);
-  }
-
 
   doClick() {
     this.viewModel.toggleSelected();
     this.viewModel['width'] += this.viewModel['gap'];
-    this.info("info message", this.viewModel['name'])
+    EmitterService.info("info message", this.viewModel['name']);
+
+    EmitterService.get("RECOMPUTE").emit();
   }
 
 }

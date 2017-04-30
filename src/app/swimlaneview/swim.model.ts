@@ -47,13 +47,21 @@ export class SwimLaneDef extends foConcept {
 }
 
 export class SwimLaneView extends foComponent {
+    nativeElement;
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myType = 'SwimLaneView';
     }
-    translate() {
+    translate(root?) {
+        this.nativeElement = root ? root : this.nativeElement;
         return makeTransform(this['pinX'], this['pinY'])
+    }
+
+    refresh() {
+        if (this.nativeElement) {
+            this.nativeElement.setAttribute("transform", this.translate());
+        }
     }
 
     isSelected = false;
@@ -99,7 +107,7 @@ export class SwimDictionary {
             return this.gap;
         },
         leftEdge: function () {
-            if ( this.previous ) {
+            if (this.previous) {
                 return this.previous.rightEdge + this.gap;
             }
             return this.gap;

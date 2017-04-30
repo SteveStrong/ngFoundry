@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, Input, ViewContainerRef, NgZone } from '@angular/core';
 
 import { SwimService } from "../swimlaneview/swim.service";
-import { SwimDictionary, SwimLaneDef, SwimLaneView } from "./swim.model";
+import { SwimLaneView } from "./swim.model";
+import { EmitterService } from '../common/emitter.service';
 
 @Component({
   selector: 'foundry-swimlaneview',
@@ -13,7 +14,7 @@ export class SwimlaneviewComponent implements OnInit {
 
   graph = {
     width: 1800,
-    height: 1000
+    height: 600
   }
 
 
@@ -25,10 +26,17 @@ export class SwimlaneviewComponent implements OnInit {
 
 
 
-  constructor(private vcr: ViewContainerRef, private service: SwimService) { }
+  constructor(private vcr: ViewContainerRef, private service: SwimService, private zone: NgZone) { }
 
   ngOnInit() {
     this.swimLanes = this.service.getSwimLanes();
+
+    EmitterService.get("RECOMPUTE").subscribe(_ => {
+      this.swimLanes.forEach(item => {
+        item.refresh()
+      })
+
+    });
   }
 
 }

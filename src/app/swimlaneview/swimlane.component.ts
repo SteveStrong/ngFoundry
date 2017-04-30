@@ -12,34 +12,20 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimlane.component.css']
 })
 export class SwimlaneComponent implements OnInit {
-
   @Input() viewModel: SwimLaneView;
 
-  size = {
-    width: 250,
-    gap: 10,
-    height: 1000
-  }
 
   constructor(private vcr: ViewContainerRef) { }
 
   ngOnInit() {
     var root = this.vcr.element.nativeElement;
-    root.setAttribute("transform", this.viewModel.translate());
-  }
-
-  private error(message, title?) {
-    let toast = {
-      title: title || '',
-      message: message
-    }
-    EmitterService.get("SHOWERROR").emit(toast);
+    root.setAttribute("transform", this.viewModel.translate(root));
   }
 
 
   doClick() {
     this.viewModel.toggleSelected();
-    this.error("error message", this.viewModel['title'])
+    EmitterService.success("render this", this.viewModel['title'])
   }
 
 }
