@@ -11,25 +11,17 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimelement.component.css']
 })
 export class SwimelementComponent implements OnInit {
-  Dictionary:SwimDictionary = new SwimDictionary();
-  viewDef:SwimDef = this.Dictionary.swimViewDef;
-  viewModel:SwimView;
+  @Input() viewModel:SwimView;
 
-  @Input() myIndex:number = 0;
-  @Input() Spec = {  'name': "Mike" }
-  
 
   constructor(private vcr: ViewContainerRef) { }
 
   ngOnInit() {
     var root = this.vcr.element.nativeElement;
-    this.viewModel = this.viewDef.newInstance(this.Spec) as SwimView;
-    this.viewModel.index = this.myIndex;
-
     root.setAttribute("transform", this.viewModel.translate());
   }
 
-    private info(message, title?) {
+  private info(message, title?) {
     let toast = {
       title: title || '',
       message: message
@@ -39,7 +31,7 @@ export class SwimelementComponent implements OnInit {
 
 
   doClick() {
-   this.info("info message",this.viewModel['name'])
+    this.info("info message", this.viewModel['name'])
   }
 
 }

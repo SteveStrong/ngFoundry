@@ -1,7 +1,7 @@
-<svg:rect x="0" y="0" [attr.height]="size.height" [attr.width]="size.width" style="stroke:#000">
+<svg:rect (click)="doClick()"  [attr.height]="size.height" [attr.width]="size.width" style="stroke:#000">
 </svg:rect>
 
-<svg:text id="name" y="10">{{ displayText }}</svg:text>
-<svg:g *ngFor="let element of elements; let i = index" foundry-swimelement [Spec]="element" [myIndex]="i">
+<svg:text id="name" x="10" y="40" >{{ titleText }}</svg:text>
 
+<svg:g *ngFor="let element of elements; " foundry-swimelement [viewModel]="element">
 </svg:g>

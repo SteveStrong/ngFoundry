@@ -25,6 +25,7 @@ import { DockerecosystemService } from "./networkview/dockerecosystem.service";
 import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
 import { SwimlaneComponent } from './swimlaneview/swimlane.component';
 import { SwimelementComponent } from './swimlaneview/swimelement.component';
+import { SwimService } from "./swimlaneview/swim.service";
 
 @NgModule({
   declarations: [
@@ -51,7 +52,7 @@ import { SwimelementComponent } from './swimlaneview/swimelement.component';
     HttpModule,
     AppRoutingModule
   ],
-  providers: [DockerecosystemService],
+  providers: [DockerecosystemService,SwimService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
