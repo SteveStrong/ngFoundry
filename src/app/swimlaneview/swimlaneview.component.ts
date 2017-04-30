@@ -21,10 +21,10 @@ export class SwimlaneviewComponent implements OnInit {
   ];
 
   lanes = [
-    { 'x': 10, 'y': 10, 'name': "Steveii9" },
-    { 'x': 300, 'y': 30, 'name': "Stu"  },
-    { 'x': 600, 'y':10, 'name': "Don" },
-     { 'x': 900, 'y':10, 'name': "Debra" },
+    { 'x': 10, 'y': 10, 'name': "Steve" },
+    // { 'x': 300, 'y': 30, 'name': "Stu"  },
+    // { 'x': 600, 'y':10, 'name': "Don" },
+    //  { 'x': 900, 'y':10, 'name': "Debra" },
   ];
 
 

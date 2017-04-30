@@ -3,10 +3,10 @@ import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
 //http://stackoverflow.com/questions/32211013/how-can-i-nest-directives-that-render-svg-in-angular-2
 
 function makeTransform(dx: number, dy: number, s: number = 0) {
-    if (s) {
-        return `translate(${dx},${dy}) scale (${s})`
-    }
-    return `translate(${dx},${dy})`
+  if (s) {
+    return `translate(${dx},${dy}) scale (${s})`
+  }
+  return `translate(${dx},${dy})`
 }
 
 
@@ -17,15 +17,21 @@ function makeTransform(dx: number, dy: number, s: number = 0) {
 })
 export class SwimlaneComponent implements OnInit {
   displayText = "Steve";
-  @Input() myIndex:number = 0;
+  @Input() myIndex: number = 0;
   @Input() Spec = { 'x': 0, 'y': 10, 'name': "Mike" }
 
   size = {
     width: 250,
-    gap:10,
+    gap: 10,
     height: 1000
   }
 
+  elements = [
+    {  'name': "Steve" },
+    {  'name': "Stu" },
+    {  'name': "Don" },
+    {  'name': "Debra" },
+  ];
 
 
   constructor(private vcr: ViewContainerRef) { }

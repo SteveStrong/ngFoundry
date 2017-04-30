@@ -24,6 +24,7 @@ import { DockerecosystemComponent } from './networkview/dockerecosystem.componen
 import { DockerecosystemService } from "./networkview/dockerecosystem.service";
 import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
 import { SwimlaneComponent } from './swimlaneview/swimlane.component';
+import { SwimelementComponent } from './swimlaneview/swimelement.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SwimlaneComponent } from './swimlaneview/swimlane.component';
     TestSceen1Component,
     DockerecosystemComponent,
     SwimlaneviewComponent,
-    SwimlaneComponent
+    SwimlaneComponent,
+    SwimelementComponent
   ],
   imports: [
     BrowserAnimationsModule,
