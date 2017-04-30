@@ -93,8 +93,8 @@ export class SwimService {
     let source = this.http.get('caas.json');
     source.subscribe(res => {
       let body = res.json();
-      let lanes = this.getSwimLanes();
-      let result = this.viewDef.newInstance({}, lanes) as SwimView;
+      //let lanes = this.getSwimLanes();
+      let result = this.viewDef.newInstance() as SwimView;
 
       callback && callback(result);
 
