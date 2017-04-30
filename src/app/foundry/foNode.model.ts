@@ -71,7 +71,7 @@ export class foNode extends foObject {
 
     get prevChild() {
         let prev: number = this.index - 1;
-        if (this.myParent && prev > 0) {
+        if (this.myParent && prev > -1 ) {
             let found = this.myParent.getChildAt(prev);
             return found;
         }
@@ -79,7 +79,7 @@ export class foNode extends foObject {
 
     get nextChild() {
         let next: number = this.index + 1;
-        if (this.myParent && next > 0) {
+        if (this.myParent && next < this._subcomponents.length) {
             let found = this.myParent.getChildAt(next);
             return found;
         }

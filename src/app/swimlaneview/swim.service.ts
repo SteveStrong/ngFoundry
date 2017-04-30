@@ -72,13 +72,6 @@ export class SwimService {
       return found;
     });
 
-    let last = result[0];
-    result.forEach(item => {
-      if (item != last) {
-        item.previous = last;
-        last = item;
-      }
-    })
 
     return result;
   }

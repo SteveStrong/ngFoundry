@@ -145,8 +145,8 @@ export class SwimDictionary {
             return this.gap;
         },
         leftEdge: function () {
-            if (this.previous) {
-                return this.previous.rightEdge + this.gap;
+            if (this.prevChild) {
+                return this.prevChild.rightEdge + this.gap;
             }
             return this.gap;
         },
