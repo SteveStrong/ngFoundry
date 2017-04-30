@@ -4,41 +4,13 @@ import { foObject, iObject } from '../foundry/foObject.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-function makeTransform(dx: number, dy: number, s: number = 0) {
-    if (s) {
-        return `translate(${dx},${dy}) scale (${s})`
-    }
-    return `translate(${dx},${dy})`
-}
 
-export class SwimElementDef extends foConcept {
+
+
+export class svgConcept extends foConcept {
     constructor(properties?: any) {
         super(properties);
-        this.myType = 'SwimElementDef';
-        this.createCustom((properties?, subcomponents?, parent?) => {
-            return new svgShapeView(properties, subcomponents, parent);
-        });
-    }
-}
-
-
-export class SwimLaneDef extends foConcept {
-    constructor(properties?: any) {
-        super(properties);
-        this.myType = 'SwimLaneDef';
-        this.createCustom((properties?, subcomponents?, parent?) => {
-            return new svgShapeView(properties, subcomponents, parent);
-        });
-    }
-}
-
-
-
-
-export class SwimDef extends foConcept {
-    constructor(properties?: any) {
-        super(properties);
-        this.myType = 'SwimDef';
+        this.myType = 'svgConcept';
         this.createCustom((properties?, subcomponents?, parent?) => {
             return new svgShapeView(properties, subcomponents, parent);
         });
@@ -52,9 +24,17 @@ export class svgShapeView extends foComponent {
         super(properties, subcomponents, parent);
         this.myType = 'svgShapeView';
     }
+
+    private makeTransform(dx: number, dy: number, s: number = 0) {
+        if (s) {
+            return `translate(${dx},${dy}) scale (${s})`
+        }
+        return `translate(${dx},${dy})`
+    }
+
     translate(root?) {
         this.nativeElement = root ? root : this.nativeElement;
-        return makeTransform(this['pinX'], this['pinY'])
+        return this.makeTransform(this['pinX'], this['pinY'])
     }
 
     refresh() {
@@ -92,7 +72,7 @@ export class SwimDictionary {
         }
     }
 
-    swimElementDef: SwimElementDef = new SwimElementDef(this.elementDefaults);
+    swimElementDef: svgConcept = new svgConcept(this.elementDefaults);
 
 
     laneDefaults = {
@@ -123,7 +103,7 @@ export class SwimDictionary {
         }
     }
 
-    swimLaneDef: SwimLaneDef = new SwimLaneDef(this.laneDefaults);
+    swimLaneDef: svgConcept = new svgConcept(this.laneDefaults);
 
 
     swimDefaults = {
@@ -132,5 +112,5 @@ export class SwimDictionary {
         height: 1000
     }
 
-    swimDef: SwimDef = new SwimDef(this.swimDefaults);
+    swimDef: svgConcept = new svgConcept(this.swimDefaults);
 }

@@ -8,14 +8,14 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 
 import { Tools } from '../foundry/foTools'
-import { SwimDictionary, SwimElementDef, SwimLaneDef, SwimDef, svgShapeView } from "./swim.model";
+import { SwimDictionary, svgConcept, svgShapeView } from "./swim.model";
 
 @Injectable()
 export class SwimService {
   Dictionary: SwimDictionary = new SwimDictionary();
-  viewElementDef: SwimElementDef = this.Dictionary.swimElementDef;
-  viewLaneDef: SwimLaneDef = this.Dictionary.swimLaneDef;
-  viewDef: SwimDef = this.Dictionary.swimDef;
+  viewElementDef: svgConcept = this.Dictionary.swimElementDef;
+  viewLaneDef: svgConcept = this.Dictionary.swimLaneDef;
+  viewDef: svgConcept = this.Dictionary.swimDef;
 
   constructor(private http: Http) { }
 
