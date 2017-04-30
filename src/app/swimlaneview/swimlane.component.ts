@@ -38,6 +38,7 @@ export class SwimlaneComponent implements OnInit {
 
 
   doClick() {
+    this.viewModel.toggleSelected();
     this.error("error message", this.viewModel['title'])
   }
 

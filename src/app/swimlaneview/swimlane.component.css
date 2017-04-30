@@ -11,16 +11,16 @@ polyline.orange
 	fill: #ff6400;
 }
 
-text#sp
-{
-	font-family: verdana, sans-serif;
-	font-size: 170%;
-	fill: #003565;
-}
-
-text#name
+text#horz
 {
 	font-family: verdana, sans-serif;
 	font-size: 270%;
+	fill: #003565;
+}
+
+text#vert
+{
+	font-family: verdana, sans-serif;
+	font-size: 170%;
 	fill: goldenrod;
 }

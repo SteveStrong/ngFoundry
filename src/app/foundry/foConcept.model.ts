@@ -39,9 +39,9 @@ export class foConcept extends foKnowledge {
         return Tools.stringify(result);
     }
     
-    newInstance(properties?:any){
+    newInstance(properties?:any, subcomponents?:Array<foNode>, parent?:foObject){
         let fullSpec = Tools.union(this._spec, properties)
-        let result = this._create(fullSpec);
+        let result = this._create(fullSpec,subcomponents,parent);
         return result;
     }
     

@@ -43,10 +43,20 @@ export class SwimService {
     let i = 0;
     let result = lanes.map(item => {
       (item as any).index = i++;
-      let found = this.viewLaneDef.newInstance(item) as SwimLaneView;
-      (found as any).elements = this.getModel(i + 3);
+      let elements = this.getModel(i);
+
+      let found = this.viewLaneDef.newInstance(item, elements) as SwimLaneView;
+
       return found;
     });
+
+    let last = result[0];
+    result.forEach(item => {
+      if (item != last) {
+        item.previous = last;
+        last = item;
+      }
+    })
 
     return result;
   }

@@ -1,7 +1,24 @@
-<svg:rect (click)="doClick()"  [attr.height]="size.height" [attr.width]="size.width" style="stroke:#000">
+<svg:rect (click)="doClick()"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke:#000">
 </svg:rect>
 
-<svg:text id="name" x="10" y="40" >{{ viewModel.title }}</svg:text>
+<svg:text *ngIf="viewModel.hasSubcomponents" id="horz" x="10" y="40"  >{{ viewModel.title }}</svg:text>
+<svg:text *ngIf="!viewModel.hasSubcomponents" id="vert" x="20" y="20" style="writing-mode: tb;" >{{ viewModel.title }}</svg:text>
 
-<svg:g *ngFor="let element of viewModel.elements; " foundry-swimelement [viewModel]="element">
+<svg:g *ngFor="let element of viewModel.subcomponents()" foundry-swimelement [viewModel]="element">
 </svg:g>
+
+<!--
+http://tutorials.jenkov.com/svg/rect-element.html
+-->
+
+<svg:rect *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke-width: 3; stroke:#000; fill: none">
+        <!--<animateTransform
+            attributeName="transform"
+            begin="0s"
+            dur="20s"
+            type="rotate"
+            from="0 60 60"
+            to="360 60 60"
+            repeatCount="indefinite"
+        />-->
+        </svg:rect>

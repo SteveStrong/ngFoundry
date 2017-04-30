@@ -22,13 +22,18 @@ export class SwimElementDef extends foConcept {
 }
 
 export class SwimElementView extends foComponent {
-    constructor(properties?:any, subcomponents?:Array<foComponent>, parent?:foObject) {
-        super(properties,subcomponents,parent);
+    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+        super(properties, subcomponents, parent);
         this.myType = 'SwimElementView';
     }
-    translate () {
+    translate() {
         return makeTransform(this['pinX'], this['pinY'])
     }
+    isSelected = false;
+    toggleSelected() {
+        this.isSelected = !this.isSelected;
+    }
+
 }
 
 export class SwimLaneDef extends foConcept {
@@ -42,13 +47,22 @@ export class SwimLaneDef extends foConcept {
 }
 
 export class SwimLaneView extends foComponent {
-    constructor(properties?:any, subcomponents?:Array<foComponent>, parent?:foObject) {
-        super(properties,subcomponents,parent);
+
+    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+        super(properties, subcomponents, parent);
         this.myType = 'SwimLaneView';
     }
-    translate () {
+    translate() {
         return makeTransform(this['pinX'], this['pinY'])
     }
+
+    isSelected = false;
+    toggleSelected() {
+        this.isSelected = !this.isSelected;
+    }
+
+    previous: SwimElementView;
+
 }
 
 export class SwimDictionary {
@@ -57,9 +71,9 @@ export class SwimDictionary {
         width: 240,
         gap: 5,
         height: 90,
-        pinX: function() { return this.gap; },
+        pinX: function () { return this.gap; },
         pinY: function () {
-            return this.gap + (this.height + this.gap) * ( 1 + this.index);
+            return this.gap + (this.height + this.gap) * (1 + this.index);
         }
     }
 
@@ -67,14 +81,31 @@ export class SwimDictionary {
 
 
     laneDefaults = {
-        width: 250,
+
+        width: function () {
+            if (!this.hasSubcomponents) {
+                return 50;
+            }
+            let width = Math.max.apply(Math, this.nodes.map(function (o) { return o.width; }))
+            return width + 2 * this.gap;
+        },
         gap: 5,
         height: 800,
-        pinX: function() { 
-            return this.gap + (this.width + this.gap) * this.index;
+        pinX: function () {
+            return this.leftEdge;
+            //return this.gap + (this.width + this.gap) * this.index;
         },
         pinY: function () {
             return this.gap;
+        },
+        leftEdge: function () {
+            if ( this.previous ) {
+                return this.previous.rightEdge + this.gap;
+            }
+            return this.gap;
+        },
+        rightEdge: function () {
+            return this.leftEdge + this.width;
         }
     }
 

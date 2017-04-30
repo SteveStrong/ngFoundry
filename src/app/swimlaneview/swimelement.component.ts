@@ -32,6 +32,8 @@ export class SwimelementComponent implements OnInit {
 
 
   doClick() {
+    this.viewModel.toggleSelected();
+    this.viewModel['width'] += this.viewModel['gap'];
     this.info("info message", this.viewModel['name'])
   }
 
