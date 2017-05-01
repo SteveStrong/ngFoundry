@@ -44,12 +44,14 @@ export class SwimService {
     source.subscribe(res => {
       let body = res.json();
 
-      let categories = Tools.distinctItems(body.products.map(Tools.pluck('category')));
-      let lanes = categories.map(item => {
-        return { 'title': item, 'myName': item }
-      })
+      let categories = body.categories;
 
       let result = this.viewDef.newInstance() as svgShapeView;
+
+      //categories = Tools.distinctItems(body.products.map(Tools.pluck('category')));
+      let lanes = categories.map(item => {
+        return { 'title': item, 'myName': item }
+      });
 
       lanes.map(item => {
         let found = this.viewLaneDef.newInstance(item) as svgShapeView;

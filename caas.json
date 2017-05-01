@@ -1,4 +1,15 @@
 {
+  "categories": [
+    "App Dev",
+    "Source Control",
+    "Build Service",
+    "Cloud Provider",
+    "Image Repo",
+    "Container Service",
+    "Orchestration",
+    "Storage",
+    "Versioning"
+  ],
   "products": [
     {
       "product": "Docker data center",
@@ -13,7 +24,7 @@
       "url": "www.google.com"
     },
     {
-      "product": "Azure",
+      "product": "Microsoft Azure",
       "category": "Cloud Provider",
       "company": "microsoft",
       "url": "azure.microsoft.com"
