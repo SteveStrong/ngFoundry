@@ -33,7 +33,7 @@ export class foTools {
 
 
 
-    public stringify(target:any, func = undefined, deep = 3) {
+    public stringify(target: any, func = undefined, deep = 3) {
         function resolveReference(value) {
             if (value && value.asReference) {
                 return 'resolveRef(' + value.asReference() + ',' + value.myType + ')';
@@ -259,11 +259,31 @@ export class foTools {
         return obj;
     };
 
-    pluck(name){
-        return function(x) { return x[name]}
+    pluck(name) {
+        return function (x) { return x[name] }
+    }
+
+    distinctItems(list) {
+        let distinct = {}
+        list.forEach(item => {
+            distinct[item] = item;
+        })
+        return Object.keys(distinct);
+    }
+
+    groupBy(pluckBy, list) {
+        let dictionary = {}
+        list.forEach(item => {
+            let key = pluckBy(item);
+            if (!dictionary[key] ) {
+                dictionary[key] = [];
+            }
+            dictionary[key].push(item);
+        })
+        return dictionary;
     }
 
 }
 
 
-export let Tools:foTools = new foTools();
+export let Tools: foTools = new foTools();

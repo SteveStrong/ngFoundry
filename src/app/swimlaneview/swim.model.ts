@@ -49,12 +49,20 @@ export class svgShapeView extends foComponent {
         this.isSelected = !this.isSelected;
     }
 
+    textLength() {
+        if (this.nativeElement && this.nativeElement.getComputedTextLength) {
+            return this.nativeElement.getComputedTextLength();
+        }
+        return 240;
+    }
 
 }
 export class SwimDictionary {
 
     elementDefaults = {
-        width: 240,
+        width: function () {
+            return 240; //this.textLength();
+        },
         gap: 5,
         height: 90,
         pinX: function () { return this.gap; },

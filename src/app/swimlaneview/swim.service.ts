@@ -44,35 +44,32 @@ export class SwimService {
     source.subscribe(res => {
       let body = res.json();
 
-      let categories = body.products.map(Tools.pluck('category'));
+      let categories = Tools.distinctItems(body.products.map(Tools.pluck('category')));
       let lanes = categories.map(item => {
-         return { 'title': item }
+        return { 'title': item, 'myName': item }
       })
 
       let result = this.viewDef.newInstance() as svgShapeView;
 
-      // let lanes = [
-      //   { 'title': "GitHub" },
-      //   { 'title': "Docker" },
-      //   { 'title': "Data Center" },
-      // ];
-
       lanes.map(item => {
         let found = this.viewLaneDef.newInstance(item) as svgShapeView;
         result.addSubcomponent(found);
+        result[item.myName] = found;
+      });
 
-        let elements = [
-          { 'name': "Steve" },
-          { 'name': "Debra" },
-          { 'name': "Evan" },
-        ];
+      let groups = Tools.groupBy(Tools.pluck('category'), body.products)
 
-        elements.map(item => {
-           let element = this.viewElementDef.newInstance(item) as svgShapeView;
-           found.addSubcomponent(element);
-        });
+      Tools.mapOverKeyValue(groups, (key, list) => {
+        let product = result[key] as svgShapeView;
+        list.forEach(item => {
+          let spec = { 'name': item.product, 'myName': item.product }
+          let element = this.viewElementDef.newInstance(spec) as svgShapeView;
+          product.addSubcomponent(element);
+        })
 
       })
+
+
 
       callback && callback(result);
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { svgShapeView } from "./swim.model";
 import { EmitterService } from '../common/emitter.service';
@@ -13,6 +13,7 @@ import { EmitterService } from '../common/emitter.service';
 })
 export class SwimelementComponent implements OnInit {
   @Input() viewModel: svgShapeView;
+  @ViewChild('display') svgText;
 
   constructor(private vcr: ViewContainerRef) { }
 
@@ -20,7 +21,6 @@ export class SwimelementComponent implements OnInit {
     var root = this.vcr.element.nativeElement;
     root.setAttribute("transform", this.viewModel.translate(root));
   }
-
 
 
   doClick() {

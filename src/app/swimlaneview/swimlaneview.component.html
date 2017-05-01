@@ -1,6 +1,6 @@
 <svg:svg id="lane" [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
   <svg:text id="title" x="10" y="35">{{ viewModel.title }}</svg:text>
-  <svg:g transform="translate(0 40)">
+  <svg:g transform="translate(0 50)">
     <svg:g *ngFor="let component of viewModel.subcomponents()" foundry-swimlane [viewModel]="component">
 
     </svg:g>

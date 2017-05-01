@@ -7,11 +7,11 @@
 </svg:g>-->
 
 <svg:g (click)="doClick()">
-  <svg:rect x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke:#000; fill: yellow">
+  <svg:rect id="page" x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
   </svg:rect>
-  <svg:text id="display" x="20" [attr.y]="viewModel.height/2" > {{ viewModel.name }}</svg:text>
+  <svg:text id="display" x="20" [attr.y]="viewModel.height/3" > {{ viewModel.name }}</svg:text>
 
-<svg:rect *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke-width: 3; stroke:red; fill: none">
+<svg:rect id="select" *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
         <!--<animateTransform
             attributeName="transform"
             begin="0s"

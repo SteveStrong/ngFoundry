@@ -14,13 +14,13 @@ polyline.orange
 text#display
 {
 	font-family: verdana, sans-serif;
-	font-size: 170%;
+	font-size: 120%;
 	fill: #003565;
 }
 
-text#name
+
+rect#page
 {
-	font-family: verdana, sans-serif;
-	font-size: 270%;
-	fill: goldenrod;
+	stroke:#000;
+	fill: yellow;
 }
