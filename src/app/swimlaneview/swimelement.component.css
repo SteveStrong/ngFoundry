@@ -24,3 +24,10 @@ rect#page
 	stroke:#000;
 	fill: yellow;
 }
+
+rect#select
+{
+	stroke-width: 4px;  
+	stroke:red;
+	fill: none
+}
