@@ -2,31 +2,37 @@
   "products": [
     {
       "product": "docker data center",
-      "category": "",
+      "category": "container Service",
       "company": "docker",
       "url": "www.google.com"
     },
     {
       "product": "open shift",
-      "category": "",
+      "category":  "container Service",
       "company": "redhat",
       "url": "www.google.com"
     },
     {
       "product": "Azure",
-      "category": "",
+      "category": "cloud provider",
+      "company": "microsoft",
+      "url": "azure.microsoft.com"
+    },
+        {
+      "product": "Azure Container Service",
+      "category": "container Service",
       "company": "microsoft",
       "url": "azure.microsoft.com"
     },
     {
       "product": "Amazon Web Services",
-      "category": "",
+      "category": "cloud provider",
       "company": "amazon",
       "url": "www.google.com"
     },
         {
       "product": "Google Container Engine",
-      "category": "",
+      "category": "cloud provider",
       "company": "google",
       "url": "cloud.google.com"
     }

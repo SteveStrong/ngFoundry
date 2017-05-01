@@ -11,7 +11,7 @@
 http://tutorials.jenkov.com/svg/rect-element.html
 -->
 
-<svg:rect *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" style="stroke-width: 3; stroke:#000; fill: none">
+<svg:rect id="select" *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
         <!--<animateTransform
             attributeName="transform"
             begin="0s"

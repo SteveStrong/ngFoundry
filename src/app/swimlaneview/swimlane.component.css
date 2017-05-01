@@ -14,7 +14,7 @@ polyline.orange
 text#horz
 {
 	font-family: verdana, sans-serif;
-	font-size: 270%;
+	font-size: 170%;
 	fill: #003565;
 }
 
@@ -24,3 +24,10 @@ text#vert
 	font-size: 170%;
 	fill: goldenrod;
 }
+
+rect#select
+{
+	stroke-width: 4px;  
+	stroke:red;
+	fill: none
+} 

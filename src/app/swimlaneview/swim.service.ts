@@ -44,13 +44,18 @@ export class SwimService {
     source.subscribe(res => {
       let body = res.json();
 
+      let categories = body.products.map(Tools.pluck('category'));
+      let lanes = categories.map(item => {
+         return { 'title': item }
+      })
+
       let result = this.viewDef.newInstance() as svgShapeView;
 
-      let lanes = [
-        { 'title': "GitHub" },
-        { 'title': "Docker" },
-        { 'title': "Data Center" },
-      ];
+      // let lanes = [
+      //   { 'title': "GitHub" },
+      //   { 'title': "Docker" },
+      //   { 'title': "Data Center" },
+      // ];
 
       lanes.map(item => {
         let found = this.viewLaneDef.newInstance(item) as svgShapeView;

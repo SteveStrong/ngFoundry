@@ -259,6 +259,10 @@ export class foTools {
         return obj;
     };
 
+    pluck(name){
+        return function(x) { return x[name]}
+    }
+
 }
 
 
