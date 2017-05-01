@@ -7,10 +7,17 @@
     "Image Repo",
     "Container Service",
     "Orchestration",
+    "Monitoring",
     "Storage",
     "Versioning"
   ],
   "products": [
+        {
+      "product": "storageos",
+      "category": "Storage",
+      "company": "storageos",
+      "url": "http://docs.storageos.com/"
+    },
     {
       "product": "Docker data center",
       "category": "Container Service",
