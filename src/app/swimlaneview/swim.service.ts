@@ -1,65 +1,81 @@
 import { Injectable } from '@angular/core';
+import { Http, Response } from '@angular/http';
+import { EmitterService } from '../common/emitter.service';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
 
 import { Tools } from '../foundry/foTools'
-import { SwimDictionary, SwimElementDef, SwimLaneDef, SwimDef, SwimElementView, SwimLaneView, SwimView } from "./swim.model";
+import { SwimDictionary, svgConcept, svgShapeView } from "./swim.model";
 
 @Injectable()
 export class SwimService {
   Dictionary: SwimDictionary = new SwimDictionary();
-  viewElementDef: SwimElementDef = this.Dictionary.swimElementDef;
-  viewLaneDef: SwimLaneDef = this.Dictionary.swimLaneDef;
-   viewDef: SwimDef = this.Dictionary.swimDef;
+  viewElementDef: svgConcept = this.Dictionary.swimElementDef;
+  viewLaneDef: svgConcept = this.Dictionary.swimLaneDef;
+  viewDef: svgConcept = this.Dictionary.swimDef;
 
-  constructor() { }
+  constructor(private http: Http) { }
 
-  getModel(total: number): SwimElementView[] {
-    let elements = [
-      { 'name': "Steve" },
-      { 'name': "Stu" },
-      { 'name': "Don" },
-      { 'name': "Linda" },
-      { 'name': "Anne" },
-      { 'name': "Debra" },
-      { 'name': "Evan" },
-    ].slice(0, total)
+  private handleError(error: Response | any) {
+    // In a real world app, you might use a remote logging infrastructure
+    let errMsg: string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+    } else {
+      errMsg = error.message ? error.message : error.toString();
+    }
+    EmitterService.error(errMsg, 'SwimService');
+    return Observable.throw(errMsg);
+  }
 
-    let i = 0;
-    let result = elements.map(item => {
-      (item as any).index = i++;
-      return this.viewElementDef.newInstance(item) as SwimElementView;
-    });
 
+  getRootView() {
+    let result = this.viewDef.newInstance() as svgShapeView;
     return result;
   }
 
-  getSwimLanes(): SwimLaneView[] {
-    let lanes = [
-      { 'title': "GitHub" },
-      { 'title': "Docker" },
-      { 'title': "Data Center" },
-      { 'title': "done" },
-      { 'title': "vvvvv" }
-    ];
+  getEcosystem(callback): any {
+    let source = this.http.get('caas.json');
+    source.subscribe(res => {
+      let body = res.json();
 
-    let i = 0;
-    let result = lanes.map(item => {
-      (item as any).index = i++;
-      let elements = this.getModel(i);
+      let categories = Tools.distinctItems(body.products.map(Tools.pluck('category')));
+      let lanes = categories.map(item => {
+        return { 'title': item, 'myName': item }
+      })
 
-      let found = this.viewLaneDef.newInstance(item, elements) as SwimLaneView;
+      let result = this.viewDef.newInstance() as svgShapeView;
 
-      return found;
-    });
+      lanes.map(item => {
+        let found = this.viewLaneDef.newInstance(item) as svgShapeView;
+        result.addSubcomponent(found);
+        result[item.myName] = found;
+      });
 
-    let last = result[0];
-    result.forEach(item => {
-      if (item != last) {
-        item.previous = last;
-        last = item;
-      }
-    })
+      let groups = Tools.groupBy(Tools.pluck('category'), body.products)
 
-    return result;
+      Tools.mapOverKeyValue(groups, (key, list) => {
+        let product = result[key] as svgShapeView;
+        list.forEach(item => {
+          let spec = { 'name': item.product, 'myName': item.product }
+          let element = this.viewElementDef.newInstance(spec) as svgShapeView;
+          product.addSubcomponent(element);
+        })
+
+      })
+
+
+
+      callback && callback(result);
+
+    }, this.handleError)
+
+    return source;
   }
 
 }

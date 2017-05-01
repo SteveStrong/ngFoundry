@@ -4,64 +4,44 @@ import { foObject, iObject } from '../foundry/foObject.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-function makeTransform(dx: number, dy: number, s: number = 0) {
-    if (s) {
-        return `translate(${dx},${dy}) scale (${s})`
-    }
-    return `translate(${dx},${dy})`
-}
 
-export class SwimElementDef extends foConcept {
+
+
+export class svgConcept extends foConcept {
     constructor(properties?: any) {
         super(properties);
-        this.myType = 'SwimElementDef';
+        this.myType = 'svgConcept';
         this.createCustom((properties?, subcomponents?, parent?) => {
-            return new SwimElementView(properties, subcomponents, parent);
+            return new svgShapeView(properties, subcomponents, parent);
         });
     }
 }
 
-export class SwimElementView extends foComponent {
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-        this.myType = 'SwimElementView';
-    }
-    translate() {
-        return makeTransform(this['pinX'], this['pinY'])
-    }
-    isSelected = false;
-    toggleSelected() {
-        this.isSelected = !this.isSelected;
-    }
-
-}
-
-export class SwimLaneDef extends foConcept {
-    constructor(properties?: any) {
-        super(properties);
-        this.myType = 'SwimLaneDef';
-        this.createCustom((properties?, subcomponents?, parent?) => {
-            return new SwimLaneView(properties, subcomponents, parent);
-        });
-    }
-}
-
-export class SwimLaneView extends foComponent {
+export class svgShapeView extends foComponent {
     nativeElement;
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myType = 'SwimLaneView';
+        this.myType = 'svgShapeView';
     }
+
+    private makeTransform(dx: number, dy: number, s: number = 0) {
+        if (s) {
+            return `translate(${dx},${dy}) scale (${s})`
+        }
+        return `translate(${dx},${dy})`
+    }
+
     translate(root?) {
         this.nativeElement = root ? root : this.nativeElement;
-        return makeTransform(this['pinX'], this['pinY'])
+        return this.makeTransform(this['pinX'], this['pinY'])
     }
 
     refresh() {
         if (this.nativeElement) {
             this.nativeElement.setAttribute("transform", this.translate());
         }
+        this.nodes.map(item => item.refresh())
     }
 
     isSelected = false;
@@ -69,44 +49,12 @@ export class SwimLaneView extends foComponent {
         this.isSelected = !this.isSelected;
     }
 
-    previous: SwimElementView;
-
-}
-
-
-export class SwimDef extends foConcept {
-    constructor(properties?: any) {
-        super(properties);
-        this.myType = 'SwimDef';
-        this.createCustom((properties?, subcomponents?, parent?) => {
-            return new SwimView(properties, subcomponents, parent);
-        });
-    }
-}
-
-export class SwimView extends foComponent {
-    nativeElement;
-
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-        this.myType = 'SwimView';
-    }
-    translate(root?) {
-        this.nativeElement = root ? root : this.nativeElement;
-        return makeTransform(this['pinX'], this['pinY'])
-    }
-
-    refresh() {
-        if (this.nativeElement) {
-            this.nativeElement.setAttribute("transform", this.translate());
-        }
-    }
-
-    isSelected = false;
-    toggleSelected() {
-        this.isSelected = !this.isSelected;
-    }
-
+    // textLength() {
+    //     if (this.nativeElement && this.nativeElement.getComputedTextLength) {
+    //         return this.nativeElement.getComputedTextLength();
+    //     }
+    //     return 240;
+    // }
 
 }
 export class SwimDictionary {
@@ -117,11 +65,20 @@ export class SwimDictionary {
         height: 90,
         pinX: function () { return this.gap; },
         pinY: function () {
-            return this.gap + (this.height + this.gap) * (1 + this.index);
+            return this.topEdge + 50;
+        },
+        topEdge: function () {
+            if (this.prevChild) {
+                return this.prevChild.bottomEdge + this.gap;
+            }
+            return 0;
+        },
+        bottomEdge: function () {
+            return this.topEdge + this.height;
         }
     }
 
-    swimElementDef: SwimElementDef = new SwimElementDef(this.elementDefaults);
+    swimElementDef: svgConcept = new svgConcept(this.elementDefaults);
 
 
     laneDefaults = {
@@ -137,14 +94,13 @@ export class SwimDictionary {
         height: 800,
         pinX: function () {
             return this.leftEdge;
-            //return this.gap + (this.width + this.gap) * this.index;
         },
         pinY: function () {
             return this.gap;
         },
         leftEdge: function () {
-            if (this.previous) {
-                return this.previous.rightEdge + this.gap;
+            if (this.prevChild) {
+                return this.prevChild.rightEdge + this.gap;
             }
             return this.gap;
         },
@@ -153,11 +109,14 @@ export class SwimDictionary {
         }
     }
 
-    swimLaneDef: SwimLaneDef = new SwimLaneDef(this.laneDefaults);
+    swimLaneDef: svgConcept = new svgConcept(this.laneDefaults);
 
 
     swimDefaults = {
+        title: "The Docker Ecosystem. - dockercon17",
+        width: 1800,
+        height: 1000
     }
 
-    swimDef: SwimDef = new SwimDef(this.swimDefaults);
+    swimDef: svgConcept = new svgConcept(this.swimDefaults);
 }

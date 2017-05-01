@@ -4,3 +4,20 @@ circle
 	fill: red;
     stroke-width: 5;
 }
+
+text#title
+{
+	font-family: verdana, sans-serif;
+	font-size: 270%;
+	fill: black;
+}
+
+svg#lane
+{
+	stroke-width: 1px; 
+	background-color:none; 
+	stroke:black; 
+	fill:navajowhite
+}  
+
+

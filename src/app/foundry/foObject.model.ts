@@ -6,7 +6,8 @@ export interface iObject {
     myType: string;
     myName: string;
     myParent: iObject;
-    asReference();
+    asReference(): string;
+    getChildAt(i:number):iObject;
 }
 
 export class foObject implements iObject {
@@ -27,6 +28,10 @@ export class foObject implements iObject {
 
     get hasParent() {
         return this.myParent ? true : false;
+    }
+        
+    getChildAt(i:number):iObject {
+        return undefined;
     }
 
     get debug() {

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewContainerRef } from '@angular/core';
-import { SwimLaneView } from "./swim.model";
+import { svgShapeView } from "./swim.model";
 
 import { EmitterService } from '../common/emitter.service';
 
@@ -12,7 +12,7 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./swimlane.component.css']
 })
 export class SwimlaneComponent implements OnInit {
-  @Input() viewModel: SwimLaneView;
+  @Input() viewModel: svgShapeView;
 
 
   constructor(private vcr: ViewContainerRef) { }

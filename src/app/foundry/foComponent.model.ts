@@ -39,12 +39,6 @@ export class foComponent extends foNode {
         return result.members;
     }
 
-    get nodes():foCollection<foNode> {
-        return this._subcomponents;
-    }
 
-    get hasSubcomponents():boolean {
-        return this._subcomponents && this._subcomponents.hasMembers;
-    }
 
 }
