@@ -1,10 +1,12 @@
 //http://blog.codeship.com/jasmine-node-js-application-testing-tutorial/
 
-var fo = require("../Foundry.js");
+import { Tools } from '../foundry/foTools'
+import { foComponent } from '../foundry/foComponent.model'
+
 
 
 describe("Foundry: Block", function () {
-    var block;
+    var block: foComponent;
 
     var blockSpec = {
         height: 1,
@@ -18,7 +20,7 @@ describe("Foundry: Block", function () {
     };
 
     beforeEach(function() {
-        block = fo.makeComponent(blockSpec);
+        block = new foComponent(blockSpec);
     });
 
     it("should should have the right sided base", function() {

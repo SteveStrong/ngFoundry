@@ -1,23 +1,23 @@
-﻿var fo = require("../Foundry.js");
-
+﻿import { Tools } from '../foundry/foTools'
+import { foComponent } from '../foundry/foComponent.model'
 
 describe("Foundry: Array as a property", function () {
-     var obj;
+     var obj: foComponent;
 
     beforeEach(function () {
         var x = {
             items: [1, 2, 3, 4, 5],
             stringItems: ['washington', 'bush',  'addams', 'jefferson', 'bush' ]
         };
-        obj = fo.makeComponent(x);
+        obj = new foComponent(x);
         return obj;
     });
 
     it("should be a components", function () {
-        expect(fo.utils.isaComponent(obj)).toBe(true);
+        //expect(foTools.isaComponent(obj)).toBe(true);
 
         expect(obj.Properties.count).toEqual(2);
-        expect(obj.Subcomponents.isEmpty()).toBe(true);
+        expect(obj.nodes.isEmpty()).toBe(true);
     });
 
     it("have managed items list", function () {
@@ -25,7 +25,7 @@ describe("Foundry: Array as a property", function () {
         expect(obj.items.isEmpty()).toBe(false);
         expect(obj.items.length).toEqual(5);
 
-        expect(fo.utils.isArray(obj.items)).toBe(true);
+        expect(Tools.isArray(obj.items)).toBe(true);
     });
 
     it("can map", function () {
