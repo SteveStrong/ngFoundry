@@ -9,7 +9,7 @@
 <svg:g (click)="doClick()">
   <svg:rect id="page" x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
   </svg:rect>
-  <svg:text id="display" x="20" [attr.y]="viewModel.height/3" > {{ viewModel.name }}</svg:text>
+  <svg:text id="display" x="20" [attr.y]="viewModel.height/3" > {{ viewModel['name'] }}</svg:text>
 
 <svg:rect id="select" *ngIf="viewModel.isSelected"  [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
         <!--<animateTransform

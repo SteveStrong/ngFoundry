@@ -54,7 +54,7 @@ import { SwimService } from "./swimlaneview/swim.service";
     HttpModule,
     AppRoutingModule
   ],
-  providers: [DockerecosystemService,SwimService],
+  providers: [DockerecosystemService, SwimService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
