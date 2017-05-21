@@ -19,6 +19,10 @@ export class svgConcept extends foConcept {
 
 export class svgShapeView extends foComponent {
     nativeElement;
+    height;
+    width;
+    name;
+    title;
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
