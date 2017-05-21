@@ -6,7 +6,7 @@ import { foComponent } from '../foundry/foComponent.model'
 
 
 describe("Foundry: Block", function () {
-    var block: foComponent;
+    var block: any;
 
     var blockSpec = {
         height: 1,

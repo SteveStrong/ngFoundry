@@ -2,7 +2,7 @@
 import { foComponent } from '../foundry/foComponent.model'
 
 describe("Foundry: Array as a property", function () {
-     var obj: foComponent;
+     var obj: any;
 
     beforeEach(function () {
         var x = {
