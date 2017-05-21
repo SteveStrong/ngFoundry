@@ -1,8 +1,4 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
-
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.core.js" />
-/// <reference path="../Foundry/Foundry.rules.factory.js" />
+﻿import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 
 describe("Foundry: Array as a property", function () {
