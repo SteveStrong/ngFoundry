@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewContainerRef, ViewChild, ComponentFactoryResolver } from '@angular/core';
+
+import { SwimlaneviewComponent } from '../swimlaneview/swimlaneview.component';
+import { TestSvgCircleComponent } from '../networkview/test-svg-circle.component';
 
 @Component({
   selector: 'foundry-test-svg',
@@ -6,7 +9,10 @@ import { Component, OnInit, ViewContainerRef, ViewChild } from '@angular/core';
   styleUrls: ['./test-svg.component.css']
 })
 export class TestSvgComponent implements OnInit {
+  @ViewChild('container', { read: ViewContainerRef }) _container;
+
   SVGDocument = null;
+  SVGDrawing = null;
   SVGRoot: SVGSVGElement = null;
 
   TrueCoords = null;
@@ -14,13 +20,16 @@ export class TestSvgComponent implements OnInit {
   BackDrop = null;
   DragTarget = null;
 
-  constructor(private vcr: ViewContainerRef) { }
+  circledata = [
+    { height: 20, width: 50, isSelected: false, title: 'hello shapes' }
+  ];
+
+  constructor(private vcr: ViewContainerRef, private resolve: ComponentFactoryResolver) { }
 
   ngOnInit() {
-    let root = this.vcr.element.nativeElement
-
-    this.SVGDocument = root;
-    this.SVGRoot = root.firstChild;
+    this.SVGDocument = this.vcr.element.nativeElement as HTMLElement;
+    this.SVGDrawing = this.SVGDocument.querySelector('#drawing')
+    this.SVGRoot = this.SVGDocument.querySelector('#page')
 
     // these svg points hold x and y values...
     //    very handy, but they do not display on the screen (just so you know)
@@ -35,17 +44,38 @@ export class TestSvgComponent implements OnInit {
   }
 
   addCircle(evt) {
+    var group = document.createElementNS("http://www.w3.org/2000/svg", 'g'); //Create a path in SVG's namespace
     var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'circle'); //Create a path in SVG's namespace
-    newElement.setAttribute("cx", '50'); 
-     newElement.setAttribute("cy", '50');
-    newElement.setAttribute("r", '50'); 
-     newElement.setAttribute("style", 'fill:green; ');
-    this.SVGRoot.appendChild(newElement);
+    newElement.setAttribute("cx", '0');
+    newElement.setAttribute("cy", '0');
+    newElement.setAttribute("r", '50');
+    newElement.setAttribute("style", 'fill:red; ');
+    group.appendChild(newElement)
+    let newX = 300;
+     let newY = 30;
+    group.setAttribute('transform', 'translate(' + newX + ',' + newY + ')');
+    this.SVGRoot.appendChild(group);
+  }
+
+  addComponent(evt) {
+
+    //let widgetComponent = this.resolve.resolveComponentFactory(SwimlaneviewComponent);
+
+    let widgetComponent = this.resolve.resolveComponentFactory(TestSvgCircleComponent);
+    let cmpRef: any = this._container.createComponent(widgetComponent);
+
+    setTimeout(function () {
+      if (cmpRef.instance && cmpRef.instance.hasOwnProperty('title')) {
+        cmpRef.instance.title = "Hello Steve";
+      }
+    }, 1000);
+
   }
 
   Grab(evt) {
     // find out which element we moused down on
     var targetElement = evt.target;
+     targetElement = targetElement.parentNode;  //force to parent group
 
     // you cannot drag the background itself, so ignore any attempts to mouse down on it
     if (this.BackDrop != targetElement) {
@@ -69,7 +99,9 @@ export class TestSvgComponent implements OnInit {
       var transMatrix = this.DragTarget.getCTM();
       this.GrabPoint.x = this.TrueCoords.x - Number(transMatrix.e);
       this.GrabPoint.y = this.TrueCoords.y - Number(transMatrix.f);
-
+    console.log(` shape was hit X: ${evt.offsetX}  Y: ${evt.offsetY}`);
+    } else {
+       console.log(` backdrop was hit X: ${evt.offsetX}  Y: ${evt.offsetY}`);
     }
   };
 
