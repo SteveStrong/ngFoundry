@@ -57,6 +57,9 @@ export class TestSvgComponent implements OnInit {
     this.SVGRoot.appendChild(group);
   }
 
+
+//https://blog.lacolaco.net/post/dynamic-component-creation-in-angular-2/
+
   addComponent(evt) {
 
     //let widgetComponent = this.resolve.resolveComponentFactory(SwimlaneviewComponent);
