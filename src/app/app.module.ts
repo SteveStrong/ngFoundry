@@ -8,6 +8,7 @@ import { HttpModule } from '@angular/http';
 
 
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
+import { MaptoKeysPipe } from './common/maptokeys.pipe';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -30,6 +31,7 @@ import { SwimService } from "./swimlaneview/swim.service";
 @NgModule({
   declarations: [
     AppComponent,
+    MaptoKeysPipe,
     TreeviewComponent,
     ListviewComponent,
     NetworkviewComponent,
@@ -52,7 +54,7 @@ import { SwimService } from "./swimlaneview/swim.service";
     HttpModule,
     AppRoutingModule
   ],
-  providers: [DockerecosystemService,SwimService],
+  providers: [DockerecosystemService, SwimService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
