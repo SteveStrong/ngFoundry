@@ -13,7 +13,8 @@ import { EmitterService } from '../common/emitter.service';
 })
 export class SwimelementComponent implements OnInit {
   @Input() viewModel: svgShapeView;
-  @ViewChild('display') svgText;
+  ///@ViewChild('display') svgText;
+  
 
   constructor(private vcr: ViewContainerRef) { }
 

@@ -1,0 +1,11 @@
+
+  <svg:g (click)="doClick()" transform="translate (40 40) ">
+    <svg:rect x="0" y="0" [attr.height]="height" [attr.width]="width" style='fill:green; '>
+    </svg:rect>
+    <circle cx='25' cy='25' r='20' style='fill:orange; ' />
+    <svg:text id="display" x="20" [attr.y]="height/3"> {{ title }}</svg:text>
+
+    <svg:rect id="select" *ngIf="isSelected" [attr.height]="height" [attr.width]="width">
+    </svg:rect>
+
+  </svg:g>

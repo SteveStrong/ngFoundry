@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NetworkviewComponent } from './networkview.component';
+import { TestSvgCircleComponent } from './test-svg-circle.component';
 
-describe('NetworkviewComponent', () => {
-  let component: NetworkviewComponent;
-  let fixture: ComponentFixture<NetworkviewComponent>;
+describe('TestSvgCircleComponent', () => {
+  let component: TestSvgCircleComponent;
+  let fixture: ComponentFixture<TestSvgCircleComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NetworkviewComponent ]
+      declarations: [ TestSvgCircleComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NetworkviewComponent);
+    fixture = TestBed.createComponent(TestSvgCircleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

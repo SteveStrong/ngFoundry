@@ -15,6 +15,10 @@ export class foCollection<T extends foObject> extends foObject {
         list && list.forEach(item => this.addMember(item));
     }
 
+    isEmpty(): boolean {
+        return this._members.length == 0;
+    }
+
     get length() {
         return this._members.length;
     }

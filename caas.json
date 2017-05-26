@@ -1,5 +1,59 @@
 {
+  "categories": [
+    "App Dev",
+    "Source Control",
+    "Build Service",
+    "Cloud Provider",
+    "Image Repo",
+    "Container Service",
+    "Orchestration",
+    "Monitoring",
+    "Storage",
+    "Versioning"
+  ],
+  "containers": [
+    {
+      "product": "Jira",
+      "category": "Planing",
+      "pull": "docker pull cptactionhank/atlassian-jira",
+      "image": "https://hub.docker.com/r/cptactionhank/atlassian-jira/",
+      "notes": "Atlassian JIRA Core in a Docker container This is a containerized installation of Atlassian JIRA Core with Docker, and it's a match made in heaven for us all to enjoy. The aim of this image is to keep the installation as straight forward as possible, but with a few Docker related twists. You can get started by clicking the appropriate link below and reading the documentation."
+    },
+    {
+      "product": "Git",
+      "category": "SCM"
+    },
+    {
+      "product": "Hygieia",
+      "category": "Planing",
+      "compose": "https://github.com/capitalone/Hygieia/blob/master/docker-compose.yml",
+      "source": "https://github.com/capitalone/Hygieia",
+      "image": "https://hub.docker.com/r/capitalone/hygieia-ui/",
+      "pull": "docker pull capitalone/hygieia-ui"
+    },
+    {
+      "product": "Jenkins",
+      "category": "Building",
+      "image": "https://hub.docker.com/_/jenkins/",
+      "pull": "docker pull jenkins",
+      "url": "https://hub.docker.com/r/cptactionhank/atlassian-jira/"
+    },
+    {
+      "product": "Docker Trusted Registry",
+      "category": "Artifact",
+      "image": "https://hub.docker.com/_/jenkins/",
+      "pull": "docker pull jenkins",
+      "url": "https://docs.docker.com/datacenter/dtr/2.1/guides/",
+      "notes": "Docker Trusted Registry (DTR) is the enterprise-grade image storage solution from Docker. You install it behind your firewall so that you can securely store and manage the Docker images you use in your applications."
+    }
+  ],
   "products": [
+    {
+      "product": "storageos",
+      "category": "Storage",
+      "company": "storageos",
+      "url": "http://docs.storageos.com/"
+    },
     {
       "product": "Docker data center",
       "category": "Container Service",
@@ -13,7 +67,7 @@
       "url": "www.google.com"
     },
     {
-      "product": "Azure",
+      "product": "Microsoft Azure",
       "category": "Cloud Provider",
       "company": "microsoft",
       "url": "azure.microsoft.com"

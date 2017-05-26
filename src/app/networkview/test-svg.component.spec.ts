@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DockerecosystemComponent } from './dockerecosystem.component';
+import { TestSvgComponent } from './test-svg.component';
 
-describe('DockerecosystemComponent', () => {
-  let component: DockerecosystemComponent;
-  let fixture: ComponentFixture<DockerecosystemComponent>;
+describe('TestSvgComponent', () => {
+  let component: TestSvgComponent;
+  let fixture: ComponentFixture<TestSvgComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DockerecosystemComponent ]
+      declarations: [ TestSvgComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DockerecosystemComponent);
+    fixture = TestBed.createComponent(TestSvgComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

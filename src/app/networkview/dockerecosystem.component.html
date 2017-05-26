@@ -1,6 +1,18 @@
 <p>
   dockerecosystem works!
   <a href="https://bl.ocks.org/mbostock/4062045">forcediagram</a>
-  <button (click)="scaleIn()" >Scale in</button>
-  <button (click)="scaleOut()" >Scale out</button>
+  <button (click)="scaleIn()">Scale in</button>
+  <button (click)="scaleOut()">Scale out</button>
+
+
 </p>
+
+
+<div id="no-drop" class="draggable drag-drop"> #no-drop </div>
+
+<div id="yes-drop" class="draggable drag-drop"> #yes-drop </div>
+
+<div id="outer-dropzone" class="dropzone">
+  #outer-dropzone
+  <div id="inner-dropzone" class="dropzone">#inner-dropzone</div>
+</div>

@@ -1,13 +1,7 @@
-<!--<svg:g  transform="translate(-100 -100)  scale(1.0)">
-  <svg:polyline points="100,100 150,100 170,150 120,150" />
-  <svg:polyline points="170,100 220,100 240,150 190,150" />
-  <svg:polyline class="orange" points="120,45 170,45 150,95 100,95" />
-  <svg:polyline class="orange" points="190,155 240,155 220,205 170,205" />
-  <svg:text id="sp" x="240" y="150"> {{ displayText }}</svg:text>
-</svg:g>-->
+
 
 <svg:g (click)="doClick()">
-  <svg:rect id="page" x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
+  <svg:rect id="shape" x="0" y="0" [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
   </svg:rect>
   <svg:text id="display" x="20" [attr.y]="viewModel.height/3" > {{ viewModel['name'] }}</svg:text>
 

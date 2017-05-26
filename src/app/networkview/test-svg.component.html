@@ -1,0 +1,23 @@
+<div>
+
+  <div class="row">
+    <button (click)='addCircle($event)'>Add Circle</button>
+    <button (click)='addComponent($event)'>Add Component</button>
+  </div>
+
+  <div class="row">
+    <div id="drawing" class="col-sm-4 col-sm-offset-2">
+
+      <svg #container id='page' width='800' height='300' (mousedown)='Grab($event)' (mousemove)='Drag($event)' (mouseup)='Drop($event)'>
+
+
+        <rect id='BackDrop' x='-10%' y='-10%' width='110%' height='110%' fill='yellow' pointer-events='all' />
+
+        <g foundry-circle />
+
+      </svg>
+
+    </div>
+  </div>
+
+</div>

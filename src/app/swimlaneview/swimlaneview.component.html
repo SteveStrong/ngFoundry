@@ -1,14 +1,26 @@
-<svg:svg id="lane" [attr.height]="viewModel.height" [attr.width]="viewModel.width" >
-  <svg:text id="title" x="10" y="35">{{ viewModel.title }}</svg:text>
-  <svg:g transform="translate(0 50)">
-    <svg:g *ngFor="let component of viewModel.subcomponents()" foundry-swimlane [viewModel]="component">
+<div>
 
-    </svg:g>
-  </svg:g>
+  <div class="row">
+    <button (click)='addCircle($event)'>Add Circle</button>
+
+  </div>
+
+  <div id="drawing" class="row">
+    <svg:svg id="page" [attr.height]="viewModel.height" [attr.width]="viewModel.width" (mousedown)='Grab($event)' (mousemove)='Drag($event)'
+      (mouseup)='Drop($event)'>
+      <svg:text id="title" x="10" y="35">{{ viewModel.title }}</svg:text>
+      <svg:g transform="translate(0 50)">
+        <svg:g *ngFor="let component of viewModel.subcomponents()" foundry-swimlane [viewModel]="component">
+
+        </svg:g>
+      </svg:g>
 
 
-  <!--<svg:g transform="translate(130 200) rotate(45 50 50) scale(1.5)">
+      <!--<svg:g transform="translate(130 200) rotate(45 50 50) scale(1.5)">
     <svg:circle *ngFor="let circle of circles" [attr.cx]="circle.x" [attr.cy]="circle.y" [attr.r]="circle.r">
     </svg:circle>
    </svg:g>-->
-</svg:svg>
+    </svg:svg>
+  </div>
+
+</div>

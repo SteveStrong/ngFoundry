@@ -27,6 +27,8 @@ import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
 import { SwimlaneComponent } from './swimlaneview/swimlane.component';
 import { SwimelementComponent } from './swimlaneview/swimelement.component';
 import { SwimService } from "./swimlaneview/swim.service";
+import { TestSvgComponent } from './networkview/test-svg.component';
+import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { SwimService } from "./swimlaneview/swim.service";
     DockerecosystemComponent,
     SwimlaneviewComponent,
     SwimlaneComponent,
-    SwimelementComponent
+    SwimelementComponent,
+    TestSvgComponent,
+    TestSvgCircleComponent
   ],
   imports: [
     BrowserAnimationsModule,
