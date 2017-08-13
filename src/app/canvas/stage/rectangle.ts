@@ -1,6 +1,6 @@
 
 
-import { iShape } from "./iShape";
+import { iShape } from "./shape";
 
 export class cRectangle implements iShape {
     public x: number = 0;
@@ -22,9 +22,13 @@ export class cRectangle implements iShape {
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
         ctx.beginPath();
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = "white";
+        ctx.fillStyle = this.color;
         ctx.lineWidth = this.lineWidth;
-        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+        ctx.rect(this.x + 2, this.y + 2, this.width + 2, this.height + 2);
+
         ctx.stroke();
         ctx.restore();
     }

@@ -1,4 +1,4 @@
-import { iShape } from "./iShape";
+import { iShape } from "./shape";
 import { cPoint } from "./point";
 
 export class cAsteroid implements iShape {

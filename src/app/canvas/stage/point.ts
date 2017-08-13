@@ -1,4 +1,3 @@
-import { iShape } from "./iShape";
 
 export class cPoint {
     public x: number = 0;

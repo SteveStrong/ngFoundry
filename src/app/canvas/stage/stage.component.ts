@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { iShape } from "./iShape";
+import { iShape } from "./shape";
 import { cCircle } from "./circle";
 import { cRectangle } from "./rectangle";
 import { cAsteroid } from "./asteroid";
+import { cTriangle } from "./triangle";
+import { cText } from "./text";
+import { cClock } from "./clock";
 
 function doAnimate(mySelf) {
   function animate() {
@@ -32,6 +35,16 @@ export class StageComponent implements OnInit {
     this.canvas = <HTMLCanvasElement>document.getElementById("canvas");
     this.context = this.canvas.getContext("2d");
 
+    // Redraw the circle every time the mouse moves
+    this.canvas.addEventListener('mousemove',function(e){
+
+    });
+
+    // Clear the canvas when the mouse leaves the canvas region
+    this.canvas.addEventListener('mouseout',function(e){
+
+    });
+
     var shape_array = this.shape_array;
     shape_array.push(new cAsteroid());
     shape_array.push(new cAsteroid());
@@ -39,8 +52,13 @@ export class StageComponent implements OnInit {
     shape_array.push(new cAsteroid());
     shape_array.push(new cAsteroid());
 
+    shape_array.push(new cTriangle(20, 50, 500, 500));
+
     shape_array.push(new cCircle(20, 50, 30));
     shape_array.push(new cCircle(120, 70, 50));
+
+    shape_array.push(new cText(20, 50, "Steve"));
+    shape_array.push(new cClock(320, 50));
 
     shape_array.push(new cRectangle(500, 500, 80, 60));
 
