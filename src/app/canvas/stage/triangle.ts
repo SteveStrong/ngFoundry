@@ -9,7 +9,8 @@ export class cTriangle implements iShape {
     public height: number = 10;
     public lineWidth: number = 2;
     public color: string = "red";
-
+    public isSelected: boolean;
+    
     private _ctx: CanvasRenderingContext2D;
 
     constructor(x: number, y: number, width: number, height: number, color: string = "red", line_width: number = 2) {
@@ -47,8 +48,12 @@ export class cTriangle implements iShape {
         this._ctx.closePath();
         this._ctx.fill();
     }
-    public hitTest = (x: number, y:number): boolean => {
+    public hitTest = (x: number, y: number): boolean => {
         return false;
+    }
+    public drawHover = (ctx: CanvasRenderingContext2D): void => {
+    }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
     }
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
@@ -57,7 +62,7 @@ export class cTriangle implements iShape {
 
         ctx.strokeStyle = this.color;
         ctx.fillStyle = this.color;
-        
+
         ctx.lineWidth = this.lineWidth;
 
         var centerX = this.width / 2;

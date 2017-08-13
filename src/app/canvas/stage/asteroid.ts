@@ -8,12 +8,14 @@ export class cAsteroid implements iShape {
     public velocityY: number = 0;
     public lineWidth: number = 5;
     public color: string = "white";
+    public isSelected: boolean;
+
     public size: number = 20;
     public rotation: number = 0;
     public rotationSpeed: number = 0;
     public pointList: Array<cPoint> = new Array<cPoint>();
 
-    public hitTest = (x: number, y:number): boolean => {
+    public hitTest = (x: number, y: number): boolean => {
         return false;
     }
 
@@ -38,9 +40,13 @@ export class cAsteroid implements iShape {
         this.rotation += this.rotationSpeed;
     }
 
+    public drawHover = (ctx: CanvasRenderingContext2D): void => {
+    }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    }
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.moveShape();
-        
+
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);

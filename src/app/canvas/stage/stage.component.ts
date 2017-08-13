@@ -67,6 +67,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       let loc = getMousePos(e);
       shape = mySelf.findHitShape(loc.x, loc.y);
       if (!shape) return;
+      shape.isSelected = true;
       offset.x = shape.x - loc.x;
       offset.y = shape.y - loc.y;
     });
@@ -78,21 +79,16 @@ export class StageComponent implements OnInit, AfterViewInit {
         shape.y = loc.y + offset.y;
       }
       let overshape = mySelf.findHitShape(loc.x, loc.y);
-      if ( overshape) {
-         overshape.draw(mySelf.context);
+      if (overshape) {
+        overshape.drawHover(mySelf.context);
       }
     });
 
     canvas.addEventListener('mouseup', function (e) {
+      if (shape) {
+        shape.isSelected = false;
+      }
       shape = null;
-    });
-
-    canvas.addEventListener('mouseover', function (e) {
-
-    });
-
-    // Clear the canvas when the mouse leaves the canvas region
-    canvas.addEventListener('mouseout', function (e) {
     });
 
   }

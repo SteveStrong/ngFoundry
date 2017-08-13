@@ -6,6 +6,7 @@ export class cText implements iShape {
     public radius: number = 10;
     public lineWidth: number = 2;
     public color: string = "red";
+        public isSelected: boolean;
     public text: string = "Hello";
 
     private _ctx: CanvasRenderingContext2D;
@@ -27,7 +28,10 @@ export class cText implements iShape {
         if (y > this.y + height) return false;
         return true;
     }
-
+    public drawHover = (ctx: CanvasRenderingContext2D): void => {
+    }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    }
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
         this._ctx = ctx;

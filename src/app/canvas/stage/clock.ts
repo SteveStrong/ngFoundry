@@ -7,6 +7,7 @@ export class cClock implements iShape {
     public radius: number = 10;
     public lineWidth: number = 2;
     public color: string = "red";
+        public isSelected: boolean;
     private _text: cText;
 
     constructor(x: number, y: number, color: string = "red", line_width: number = 2) {
@@ -41,8 +42,12 @@ export class cClock implements iShape {
         return clockText;
 
     }
-    public hitTest = (x: number, y:number): boolean => {
+    public hitTest = (x: number, y: number): boolean => {
         return false;
+    }
+    public drawHover = (ctx: CanvasRenderingContext2D): void => {
+    }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
     }
     public draw = (ctx: CanvasRenderingContext2D): void => {
 

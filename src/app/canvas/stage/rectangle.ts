@@ -9,6 +9,7 @@ export class cRectangle implements iShape {
     public width: number = 0;
     public height: number = 0;
     public color: string = "blue";
+    public isSelected: boolean;
 
     constructor(x: number, y: number, width: number, height: number, color: string = "blue", line_width: number = 2) {
         this.x = x;
@@ -25,18 +26,25 @@ export class cRectangle implements iShape {
         if (y > this.y + this.height) return false;
         return true;
     }
+    public drawHover = (ctx: CanvasRenderingContext2D): void => {
+    }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.save();
+
+        ctx.restore();
+    }
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
-        //ctx.beginPath();
-
         ctx.fillStyle = this.color;
         ctx.lineWidth = this.lineWidth;
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = this.lineWidth * 3;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
+        if ( this.isSelected){
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = this.lineWidth * 1;
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
         ctx.restore();
     }
 
