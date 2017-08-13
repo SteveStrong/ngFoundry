@@ -29,6 +29,7 @@ import { SwimelementComponent } from './swimlaneview/swimelement.component';
 import { SwimService } from "./swimlaneview/swim.service";
 import { TestSvgComponent } from './networkview/test-svg.component';
 import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
+import { StageComponent } from './canvas/stage/stage.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { TestSvgCircleComponent } from './networkview/test-svg-circle.component'
     SwimlaneComponent,
     SwimelementComponent,
     TestSvgComponent,
-    TestSvgCircleComponent
+    TestSvgCircleComponent,
+    StageComponent
   ],
   imports: [
     BrowserAnimationsModule,
