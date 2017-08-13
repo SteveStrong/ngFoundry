@@ -41,7 +41,9 @@ export class cClock implements iShape {
         return clockText;
 
     }
-
+    public hitTest = (x: number, y:number): boolean => {
+        return false;
+    }
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
         this._text.text = this.clockText();

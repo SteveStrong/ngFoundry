@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 
 import { iShape } from "./shape";
+import { cPoint } from "./point";
 import { cCircle } from "./circle";
 import { cRectangle } from "./rectangle";
 import { cAsteroid } from "./asteroid";
@@ -22,47 +23,119 @@ function doAnimate(mySelf) {
   templateUrl: './stage.component.html',
   styleUrls: ['./stage.component.css']
 })
-export class StageComponent implements OnInit {
+export class StageComponent implements OnInit, AfterViewInit {
+  // a reference to the canvas element from our template
+  @ViewChild('canvas') public canvasRef: ElementRef;
+  @Input() public width = 1000;
+  @Input() public height = 800;
+
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
 
-  shape_array: Array<iShape> = new Array<iShape>();
+  shapes: Array<iShape> = new Array<iShape>();
 
 
   constructor() { }
 
-  ngOnInit() {
-    this.canvas = <HTMLCanvasElement>document.getElementById("canvas");
-    this.context = this.canvas.getContext("2d");
+  findHitShape(x: number, y: number): iShape {
+    for (var i: number = 0; i < this.shapes.length; i++) {
+      let shape: iShape = this.shapes[i];
+      if (shape.hitTest(x, y)) {
+        return shape
+      }
+    }
+    return null;
+  }
+
+  setupMouseEvents(canvas: HTMLCanvasElement) {
 
     // Redraw the circle every time the mouse moves
-    this.canvas.addEventListener('mousemove',function(e){
+
+    function getMousePos(evt) {
+      var rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
+
+    let shape: iShape = null;
+    let mySelf = this;
+    let offset: cPoint = new cPoint();
+
+    canvas.addEventListener('mousedown', function (e) {
+      let loc = getMousePos(e);
+      shape = mySelf.findHitShape(loc.x, loc.y);
+      if (!shape) return;
+      offset.x = shape.x - loc.x;
+      offset.y = shape.y - loc.y;
+    });
+
+    canvas.addEventListener('mousemove', function (e) {
+      let loc = getMousePos(e);
+      if (shape) {
+        shape.x = loc.x + offset.x;
+        shape.y = loc.y + offset.y;
+      }
+      let overshape = mySelf.findHitShape(loc.x, loc.y);
+      if ( overshape) {
+         overshape.draw(mySelf.context);
+      }
+    });
+
+    canvas.addEventListener('mouseup', function (e) {
+      shape = null;
+    });
+
+    canvas.addEventListener('mouseover', function (e) {
 
     });
 
     // Clear the canvas when the mouse leaves the canvas region
-    this.canvas.addEventListener('mouseout',function(e){
-
+    canvas.addEventListener('mouseout', function (e) {
     });
 
-    var shape_array = this.shape_array;
-    shape_array.push(new cAsteroid());
-    shape_array.push(new cAsteroid());
-    shape_array.push(new cAsteroid());
-    shape_array.push(new cAsteroid());
-    shape_array.push(new cAsteroid());
+  }
 
-    shape_array.push(new cTriangle(20, 50, 500, 500));
 
-    shape_array.push(new cCircle(20, 50, 30));
-    shape_array.push(new cCircle(120, 70, 50));
+  public ngAfterViewInit() {
+    // get the context
+    this.canvas = this.canvasRef.nativeElement;
+    this.context = this.canvas.getContext("2d");
 
-    shape_array.push(new cText(20, 50, "Steve"));
-    shape_array.push(new cClock(320, 50));
+    // set the width and height
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
 
-    shape_array.push(new cRectangle(500, 500, 80, 60));
+    // set some default properties about the line
+    this.context.lineWidth = 3;
+    this.context.lineCap = 'round';
+    this.context.strokeStyle = '#000';
+
+    // we'll implement this method to start capturing mouse events
+    this.setupMouseEvents(this.canvas);
 
     this.go();
+  }
+
+  ngOnInit() {
+    //this.canvas = <HTMLCanvasElement>document.getElementById("canvas");
+    var list = this.shapes;
+    // list.push(new cAsteroid());
+    // list.push(new cAsteroid());
+    // list.push(new cAsteroid());
+    // list.push(new cAsteroid());
+    // list.push(new cAsteroid());
+
+    //list.push(new cTriangle(20, 50, 500, 500));
+
+    list.push(new cCircle(20, 50, 30));
+    list.push(new cCircle(120, 70, 50));
+
+    list.push(new cText(20, 50, "Steve"));
+    //list.push(new cClock(320, 50));
+
+    list.push(new cRectangle(500, 500, 80, 60));
   }
 
   go() {
@@ -71,19 +144,13 @@ export class StageComponent implements OnInit {
 
   draw(ctx: CanvasRenderingContext2D) {
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "yellow";
     ctx.fillRect(0, 0, 1280, 720);
-    ctx.beginPath();
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 5;
-    ctx.arc(400, 400, 100, 0, 2 * Math.PI);
-    ctx.stroke();
 
-    var shape: iShape;
-   for (var i: number = 0; i < this.shape_array.length; i++) {
-      shape = this.shape_array[i];
+    for (var i: number = 0; i < this.shapes.length; i++) {
+      let shape: iShape = this.shapes[i];
       shape.draw(ctx);
-   }
+    }
 
   }
 

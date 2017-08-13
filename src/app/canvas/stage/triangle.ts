@@ -10,7 +10,7 @@ export class cTriangle implements iShape {
     public lineWidth: number = 2;
     public color: string = "red";
 
-    _ctx: CanvasRenderingContext2D;
+    private _ctx: CanvasRenderingContext2D;
 
     constructor(x: number, y: number, width: number, height: number, color: string = "red", line_width: number = 2) {
         this.x = x;
@@ -47,7 +47,9 @@ export class cTriangle implements iShape {
         this._ctx.closePath();
         this._ctx.fill();
     }
-
+    public hitTest = (x: number, y:number): boolean => {
+        return false;
+    }
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
         ctx.save();

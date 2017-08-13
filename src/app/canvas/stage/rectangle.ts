@@ -18,17 +18,24 @@ export class cRectangle implements iShape {
         this.color = color;
         this.lineWidth = line_width;
     }
-
+    public hitTest = (x: number, y: number): boolean => {
+        if (x < this.x) return false;
+        if (x > this.x + this.width) return false;
+        if (y < this.y) return false;
+        if (y > this.y + this.height) return false;
+        return true;
+    }
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
-        ctx.beginPath();
-        ctx.strokeStyle = "white";
+        //ctx.beginPath();
+
         ctx.fillStyle = this.color;
         ctx.lineWidth = this.lineWidth;
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
-        ctx.rect(this.x + 2, this.y + 2, this.width + 2, this.height + 2);
-
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = this.lineWidth * 3;
+        ctx.rect(this.x, this.y, this.width, this.height);
         ctx.stroke();
         ctx.restore();
     }

@@ -6,7 +6,9 @@ export class cText implements iShape {
     public radius: number = 10;
     public lineWidth: number = 2;
     public color: string = "red";
-    public text: string ="Hello";
+    public text: string = "Hello";
+
+    private _ctx: CanvasRenderingContext2D;
 
     constructor(x: number, y: number, text: string, color: string = "red", line_width: number = 2) {
         this.x = x;
@@ -15,20 +17,35 @@ export class cText implements iShape {
         this.color = color;
         this.lineWidth = line_width;
     }
+    public hitTest = (x: number, y: number): boolean => {
+        var textSize: TextMetrics = this._ctx.measureText(this.text);
+        var height = 1.5 * parseInt(this._ctx.font);
+
+        if (x < this.x) return false;
+        if (x > this.x + textSize.width) return false;
+        if (y < this.y) return false;
+        if (y > this.y + height) return false;
+        return true;
+    }
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
+        this._ctx = ctx;
+
         ctx.beginPath();
+
+
 
         ctx.font = '50pt Arial';
         ctx.fillStyle = 'gray';
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.lineWidth;
 
-        ctx.fillText(this.text , this.x, this.y);
+        ctx.fillText(this.text, this.x, this.y);
         ctx.strokeText(this.text, this.x, this.y);
         ctx.stroke();
         ctx.restore();
-    
+
     }
 }
 

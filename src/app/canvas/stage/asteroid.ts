@@ -13,7 +13,11 @@ export class cAsteroid implements iShape {
     public rotationSpeed: number = 0;
     public pointList: Array<cPoint> = new Array<cPoint>();
 
-    public draw = (ctx: CanvasRenderingContext2D): void => {
+    public hitTest = (x: number, y:number): boolean => {
+        return false;
+    }
+
+    public moveShape() {
         this.x += this.velocityX;
         this.y += this.velocityY;
 
@@ -32,6 +36,11 @@ export class cAsteroid implements iShape {
         }
 
         this.rotation += this.rotationSpeed;
+    }
+
+    public draw = (ctx: CanvasRenderingContext2D): void => {
+        this.moveShape();
+        
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);

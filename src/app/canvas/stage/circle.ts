@@ -13,12 +13,23 @@ export class cCircle implements iShape {
         this.color = color;
         this.lineWidth = line_width;
     }
+    public hitTest = (x: number, y: number): boolean => {
+
+        let dx = this.x - x;
+        let dy = this.y - y;
+        if ( dx * dx + dy * dy > this.radius * this.radius) return false;
+
+        return true;
+    }
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
         ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.lineWidth;
         ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+         
+        ctx.arc(this.x, this.y, 2, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.restore();
     }
