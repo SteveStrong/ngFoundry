@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { StageComponent } from './canvas/stage/stage.component';
+import { StageComponent } from './canvas/stage.component';
 import { NetworkviewComponent } from './networkview/networkview.component';
 import { ListviewComponent } from './listview/listview.component';
 import { TreeviewComponent } from './treeview/treeview.component';

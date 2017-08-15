@@ -30,7 +30,7 @@ import { SwimService } from "./swimlaneview/swim.service";
 import { TestSvgComponent } from './networkview/test-svg.component';
 import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
 
-import { StageComponent } from './canvas/stage/stage.component';
+import { StageComponent } from './canvas/stage.component';
 
 @NgModule({
   declarations: [
