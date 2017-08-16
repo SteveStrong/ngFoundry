@@ -1,8 +1,8 @@
-import { iShape } from "./shape";
+import { iFullShape } from "./shape";
 
 
 
-export class cTriangle implements iShape {
+export class cTriangle implements iFullShape {
     public x: number = 0;
     public y: number = 0;
     public width: number = 10;

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { EmitterService } from '../common/emitter.service';
 
-import { iShape } from "./shape";
+import { iShape, iPoint } from "./shape";
 import { cPoint } from "./point";
 import { cCircle } from "./circle";
 import { cRectangle } from "./rectangle";
@@ -11,7 +11,8 @@ import { cText } from "./text";
 import { cClock } from "./clock";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
-import { interactionManager } from "./interactionManager";
+import { shapeManager } from "./shapeManager";
+import { selectionManager } from "./selectionManager";
 import { PubSub } from "../foundry/foPubSub";
 
 
@@ -27,7 +28,8 @@ export class StageComponent implements OnInit, AfterViewInit {
   @Input() public height = 800;
 
   screen2D: Sceen2D = new Sceen2D();
-  interaction: interactionManager = new interactionManager();
+  shapeManager: shapeManager = new shapeManager();
+  selectionManager: selectionManager = new selectionManager();
 
   shapes: Array<iShape> = new Array<iShape>();
   selections: Array<iShape> = new Array<iShape>();
@@ -35,10 +37,10 @@ export class StageComponent implements OnInit, AfterViewInit {
   constructor() {
   }
 
-  findHitShape(x: number, y: number): iShape {
+  findHitShape(loc:iPoint): iShape {
     for (var i: number = 0; i < this.shapes.length; i++) {
       let shape: iShape = this.shapes[i];
-      if (shape.hitTest(x, y)) {
+      if (shape.hitTest(loc)) {
         return shape
       }
     }
@@ -51,15 +53,14 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     let shape: iShape = null;
     let mySelf = this;
-    let offset: cPoint = new cPoint();
+    let offset: cPoint = null;
 
-    PubSub.Sub('mousedown', (loc, e) => {
-      shape = mySelf.findHitShape(loc.x, loc.y);
+    PubSub.Sub('mousedown', (loc:iPoint, e) => {
+      shape = mySelf.findHitShape(loc);
       if (shape) {
         shape.isSelected = true;
         mySelf.selections.push(shape);
-        offset.x = shape.x - loc.x;
-        offset.y = shape.y - loc.y;
+        offset = shape.getOffset(loc);
       } else {
         let found = mySelf.selections.pop();
         found.isSelected = false;
@@ -72,18 +73,17 @@ export class StageComponent implements OnInit, AfterViewInit {
       EmitterService.get("SHOWERROR").emit(toast);
     });
 
-    PubSub.Sub('mousemove', (loc, e) => {
+    PubSub.Sub('mousemove', (loc:iPoint, e) => {
       if (shape) {
-        shape.x = loc.x + offset.x;
-        shape.y = loc.y + offset.y;
+        shape.doMove(loc, offset);
       }
-      let overshape = mySelf.findHitShape(loc.x, loc.y);
+      let overshape = mySelf.findHitShape(loc);
       if (overshape) {
         //overshape.drawHover(mySelf.context);
       }
     });
 
-    PubSub.Sub('mouseup', (loc, e) => {
+    PubSub.Sub('mouseup', (loc:iPoint, e) => {
       shape = null;
     });
 
@@ -119,11 +119,11 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     //list.push(new cTriangle(20, 50, 500, 500));
 
-    list.push(new cCircle(20, 50, 30));
-    list.push(new cCircle(120, 70, 50));
+    // list.push(new cCircle(20, 50, 30));
+    // list.push(new cCircle(120, 70, 50));
 
-    list.push(new cText(20, 50, "Steve"));
-    //list.push(new cClock(320, 50));
+    // list.push(new cText(20, 50, "Steve"));
+    // //list.push(new cClock(320, 50));
     list.push(new cRectangle(400, 200, 180, 60));
     list.push(new cRectangle(100, 50, 80, 60));
     list.push(new cRectangle(300, 300, 120, 60));

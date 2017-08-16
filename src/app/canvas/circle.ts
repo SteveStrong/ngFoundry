@@ -1,6 +1,6 @@
-import { iShape } from "./shape";
+import { iFullShape } from "./shape";
 
-export class cCircle implements iShape {
+export class cCircle implements iFullShape {
     public x: number = 0;
     public y: number = 0;
     public radius: number = 10;

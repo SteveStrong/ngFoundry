@@ -1,6 +1,7 @@
 
 
-import { iShape } from "./shape";
+import { iShape, iPoint } from "./shape";
+import { cPoint } from "./point";
 
 export class cRectangle implements iShape {
     public x: number = 0;
@@ -19,19 +20,25 @@ export class cRectangle implements iShape {
         this.color = color;
         this.lineWidth = line_width;
     }
-    public hitTest = (x: number, y: number): boolean => {
-        if (x < this.x) return false;
-        if (x > this.x + this.width) return false;
-        if (y < this.y) return false;
-        if (y > this.y + this.height) return false;
+    public hitTest = (hit: iPoint): boolean => {
+        if (hit.x < this.x) return false;
+        if (hit.x > this.x + this.width) return false;
+        if (hit.y < this.y) return false;
+        if (hit.y > this.y + this.height) return false;
         return true;
+    }
+    public getOffset = (loc: iPoint): iPoint => {
+        return new cPoint(this.x - loc.x, this.y - loc.y);
+    }
+    public doMove = (loc: iPoint, offset: iPoint): iPoint => {
+        this.x = loc.x + offset.x;
+        this.y = loc.y + offset.y;
+        //structual type
+        return { x: this.x, y: this.y }
     }
     public drawHover = (ctx: CanvasRenderingContext2D): void => {
     }
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-        ctx.save();
-
-        ctx.restore();
     }
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
@@ -39,9 +46,10 @@ export class cRectangle implements iShape {
         ctx.lineWidth = this.lineWidth;
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
-        if ( this.isSelected){
+        if (this.isSelected) {
             ctx.strokeStyle = "red";
             ctx.lineWidth = this.lineWidth * 1;
+            ctx.beginPath()
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }

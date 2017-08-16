@@ -1,7 +1,7 @@
-import { iShape } from "./shape";
+import { iFullShape } from "./shape";
 import { cPoint } from "./point";
 
-export class cAsteroid implements iShape {
+export class cAsteroid implements iFullShape {
     public x: number = 0;
     public y: number = 0;
     public velocityX: number = 0;

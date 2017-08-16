@@ -1,6 +1,8 @@
 
 import { PubSub } from "../foundry/foPubSub";
 
+import { cPoint } from "../canvas/point";
+
 function doAnimate(mySelf) {
     function animate() {
         requestAnimationFrame(animate);
@@ -41,12 +43,9 @@ export class Sceen2D {
 
     setupMouseEvents(canvas: HTMLCanvasElement) {
 
-        function getMousePos(evt) {
+        function getMousePos(evt):cPoint {
             var rect = canvas.getBoundingClientRect();
-            return {
-                x: evt.clientX - rect.left,
-                y: evt.clientY - rect.top
-            };
+            return new cPoint(evt.clientX - rect.left,evt.clientY - rect.top);
         }
 
 
