@@ -4,7 +4,7 @@ import { EmitterService } from '../common/emitter.service';
 import { iShape, iPoint } from "./shape";
 import { cPoint } from "./point";
 import { cCircle } from "./circle";
-import { cRectangle } from "./rectangle";
+import { cRectangle } from "./crectangle";
 import { cAsteroid } from "./asteroid";
 import { cTriangle } from "./triangle";
 import { cText } from "./text";
@@ -14,7 +14,8 @@ import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { shapeManager } from "./shapeManager";
 import { selectionManager } from "./selectionManager";
 import { PubSub } from "../foundry/foPubSub";
-
+import { foRectangle } from "./rectangle";
+import { foShape } from "./shape.model";
 
 
 @Component({
@@ -34,10 +35,13 @@ export class StageComponent implements OnInit, AfterViewInit {
   shapes: Array<iShape> = new Array<iShape>();
   selections: Array<iShape> = new Array<iShape>();
 
+
+  model = [this.shapes];
+
   constructor() {
   }
 
-  findHitShape(loc:iPoint): iShape {
+  findHitShape(loc: iPoint): iShape {
     for (var i: number = 0; i < this.shapes.length; i++) {
       let shape: iShape = this.shapes[i];
       if (shape.hitTest(loc)) {
@@ -55,7 +59,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     let mySelf = this;
     let offset: cPoint = null;
 
-    PubSub.Sub('mousedown', (loc:iPoint, e) => {
+    PubSub.Sub('mousedown', (loc: iPoint, e) => {
       shape = mySelf.findHitShape(loc);
       if (shape) {
         shape.isSelected = true;
@@ -73,7 +77,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       EmitterService.get("SHOWERROR").emit(toast);
     });
 
-    PubSub.Sub('mousemove', (loc:iPoint, e) => {
+    PubSub.Sub('mousemove', (loc: iPoint, e) => {
       if (shape) {
         shape.doMove(loc, offset);
       }
@@ -83,7 +87,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       }
     });
 
-    PubSub.Sub('mouseup', (loc:iPoint, e) => {
+    PubSub.Sub('mouseup', (loc: iPoint, e) => {
       shape = null;
     });
 
@@ -124,10 +128,19 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     // list.push(new cText(20, 50, "Steve"));
     // //list.push(new cClock(320, 50));
+    list.push(new foRectangle({
+      x: 100,
+      y: 200,
+      width: 90,
+      height: 100
+    }));
+
     list.push(new cRectangle(400, 200, 180, 60));
     list.push(new cRectangle(100, 50, 80, 60));
     list.push(new cRectangle(300, 300, 120, 60));
     list.push(new cRectangle(500, 500, 80, 60));
+
+
   }
 
 

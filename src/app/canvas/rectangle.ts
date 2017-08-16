@@ -2,55 +2,67 @@
 
 import { iShape, iPoint } from "./shape";
 import { cPoint } from "./point";
+import { foShape } from "./shape.model";
 
-export class cRectangle implements iShape {
-    public x: number = 0;
-    public y: number = 0;
-    public lineWidth: number = 5;
-    public width: number = 0;
-    public height: number = 0;
-    public color: string = "blue";
-    public isSelected: boolean;
+export class foRectangle implements iShape {
+    private shape: foShape;
 
-    constructor(x: number, y: number, width: number, height: number, color: string = "blue", line_width: number = 2) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.color = color;
-        this.lineWidth = line_width;
+    get isSelected(): boolean {
+        return this.shape.isSelected;
+    }
+    set isSelected(value: boolean) {
+        this.shape.isSelected = value;
+    }
+
+    constructor(properties?: any) {
+        this.shape = new foShape(properties);
     }
     public hitTest = (hit: iPoint): boolean => {
-        if (hit.x < this.x) return false;
-        if (hit.x > this.x + this.width) return false;
-        if (hit.y < this.y) return false;
-        if (hit.y > this.y + this.height) return false;
+        let x = this.shape['x'];
+        let y = this.shape['y'];
+        let width = this.shape['width'];
+        let height = this.shape['height'];
+        if (hit.x < x) return false;
+        if (hit.x > x + width) return false;
+        if (hit.y < y) return false;
+        if (hit.y > y + height) return false;
         return true;
     }
     public getOffset = (loc: iPoint): iPoint => {
-        return new cPoint(this.x - loc.x, this.y - loc.y);
+        let x = this.shape['x'];
+        let y = this.shape['y'];
+        return new cPoint(x - loc.x, y - loc.y);
     }
     public doMove = (loc: iPoint, offset: iPoint): iPoint => {
-        this.x = loc.x + offset.x;
-        this.y = loc.y + offset.y;
+        this.shape['x'] = loc.x + offset.x;
+        this.shape['y'] = loc.y + offset.y;
         //structual type
-        return { x: this.x, y: this.y }
+        return {
+            x: this.shape['x'],
+            y: this.shape['y']
+        }
     }
-    public drawHover = (ctx: CanvasRenderingContext2D): void => {
-    }
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-    }
+
+    public drawHover = (ctx: CanvasRenderingContext2D): void => { }
+
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => { }
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
+        let x = this.shape['x'];
+        let y = this.shape['y'];
+        let width = this.shape['width'];
+        let height = this.shape['height'];
+
         ctx.save();
-        ctx.fillStyle = this.color;
-        ctx.lineWidth = this.lineWidth;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillStyle = 'green';
+        ctx.lineWidth = 1;
+        ctx.fillRect(x, y, width, height);
 
         if (this.isSelected) {
             ctx.strokeStyle = "red";
-            ctx.lineWidth = this.lineWidth * 1;
+            ctx.lineWidth = 4;
             ctx.beginPath()
-            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.rect(x, y, width, height);
             ctx.stroke();
         }
         ctx.restore();
