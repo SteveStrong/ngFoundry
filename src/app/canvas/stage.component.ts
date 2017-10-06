@@ -14,7 +14,6 @@ import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { shapeManager } from "./shapeManager";
 import { selectionManager } from "./selectionManager";
 import { PubSub } from "../foundry/foPubSub";
-import { foRectangle } from "./rectangle";
 import { foShape } from "./shape.model";
 
 
@@ -67,7 +66,10 @@ export class StageComponent implements OnInit, AfterViewInit {
         offset = shape.getOffset(loc);
       } else {
         let found = mySelf.selections.pop();
-        found.isSelected = false;
+        if (found) {
+          found.isSelected = false;
+        }
+
       }
 
       let toast = {
@@ -102,8 +104,9 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     this.screen2D.render = (context: CanvasRenderingContext2D) => {
       context.fillStyle = "yellow";
-      context.fillRect(0, 0, 1280, 720);
+      context.fillRect(0, 0, this.width, this.height);
 
+      this.drawGrid(context);
       for (var i: number = 0; i < this.shapes.length; i++) {
         let shape: iShape = this.shapes[i];
         shape.draw(context);
@@ -111,6 +114,30 @@ export class StageComponent implements OnInit, AfterViewInit {
     }
 
     this.screen2D.go();
+  }
+
+  drawGrid(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = 'gray';
+    //ctx.lineWidth = 0;
+
+    let size = 50;
+    //draw vertical...
+    for (var i = 0; i < this.width; i += size) {
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, this.height);
+    }
+
+    //draw horizontal...
+    for (var i = 0; i < this.height; i += size) {
+      ctx.moveTo(0, i);
+      ctx.lineTo(this.width, i);
+    }
+
+
+    ctx.stroke();
+    ctx.restore();
   }
 
   ngOnInit() {
@@ -128,17 +155,17 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     // list.push(new cText(20, 50, "Steve"));
     // //list.push(new cClock(320, 50));
-    list.push(new foRectangle({
-      x: 100,
-      y: 200,
-      width: 90,
-      height: 100
+    list.push(new foShape({
+      _x: 20,
+      _y: 10,
+      _width: 190,
+      _height: 100
     }));
 
-    list.push(new cRectangle(400, 200, 180, 60));
-    list.push(new cRectangle(100, 50, 80, 60));
-    list.push(new cRectangle(300, 300, 120, 60));
-    list.push(new cRectangle(500, 500, 80, 60));
+    // list.push(new cRectangle(400, 200, 180, 60));
+    // list.push(new cRectangle(100, 50, 80, 60));
+    // list.push(new cRectangle(300, 300, 120, 60));
+    // list.push(new cRectangle(500, 500, 80, 60));
 
 
   }
