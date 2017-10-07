@@ -7,12 +7,12 @@ export interface iObject {
     myName: string;
     myParent: iObject;
     asReference(): string;
-    getChildAt(i:number):iObject;
+    getChildAt(i: number): iObject;
 }
 
 export class foObject implements iObject {
-    myType: string = 'foObject';
     myName: string = 'unknown';
+    myType: string = 'foObject';
     myParent: iObject = undefined;
 
     constructor() {
@@ -29,14 +29,32 @@ export class foObject implements iObject {
     get hasParent() {
         return this.myParent ? true : false;
     }
-        
-    getChildAt(i:number):iObject {
+
+    getChildAt(i: number): iObject {
         return undefined;
     }
 
     get debug() {
         return Tools.stringify(this);
         //return JSON.stringify(this,undefined,3);
+    }
+
+    get asJson() {
+        let data = Tools.stringify(this);
+        return JSON.parse(data);
+    }
+
+    jsonMerge(source: any) {
+        let result = Tools.asJson(this);
+        if (!Tools.isEmpty(source)) {
+            Tools.forEachKeyValue(source, (key, value) => {
+                if (!result[key] && !Tools.isEmpty(value)) {
+                    let json = value && value.asJson;
+                    result[key] = json ? json : value;
+                }
+            });
+        }
+        return result;
     }
 
 }

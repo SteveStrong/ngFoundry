@@ -13,7 +13,7 @@ export class foTools {
      * http://stackoverflow.com/questions/6588977/how-to-to-extract-a-javascript-function-from-a-javascript-file
      * @param funct
      */
-    public getFunctionName(funct) {
+    getFunctionName(funct) {
         let ret = funct.toString();  //do with regx
         ret = ret.substr('function '.length);
         ret = ret.substr(0, ret.indexOf('('));
@@ -31,9 +31,12 @@ export class foTools {
         return uuid;
     };
 
+    asJson(target: any) {
+        let result = this.stringify(target);
+        return JSON.parse(result);
+    }
 
-
-    public stringify(target: any, func = undefined, deep = 3) {
+    stringify(target: any, func = undefined, deep = 3) {
         function resolveReference(value) {
             if (value && value.asReference) {
                 return 'resolveRef(' + value.asReference() + ',' + value.myType + ')';
@@ -41,15 +44,18 @@ export class foTools {
             return value;
         }
         function resolveCircular(key, value) {
-            if (key.startsWith('_')) return;
-
 
             switch (key) {
                 case 'myParent':
                     return resolveReference(value);
                 case 'myMembers':
                     return value ? value.map(function (item) { return resolveReference(item); }) : value;
+                case '_lookup':
+                    return value;
+                case '_members':
+                    return value;
             }
+            if (key.startsWith('_')) return;
             //if (this.isCustomLinkName(key)) {
             //    return resolveReference(value);
             //}
@@ -107,6 +113,11 @@ export class foTools {
         if (obj.length > 0) return false;
         if (obj.length === 0) return true;
 
+        // If it isn't an object at this point
+        // it is empty, but it can't be anything *but* empty
+        // Is it empty?  Depends on your application.
+        if (typeof obj !== "object") return true;
+
         // Otherwise, does it have any properties of its own?
         // Note that this doesn't handle
         // toString and valueOf enumeration bugs in IE < 9
@@ -116,6 +127,20 @@ export class foTools {
 
         return true;
 
+    };
+
+    decomposeHostPath(filename) {
+        var string = filename.toLowerCase();
+        string = string.replace('http://', "")
+        string = string.replace('https://', "")
+
+        var host = string.split('/')[0];
+        var path = string.replace(host, '');
+        return {
+            fullpath: filename,
+            host: host,
+            path: path,
+        }
     };
 
     extend(target, source) {
@@ -209,7 +234,7 @@ export class foTools {
     };
 
 
-    asArray(obj, funct) {
+    asArray(obj, funct?) {
         if (this.isArray(obj)) return obj;
         return this.mapOverKeyValue(obj, function (key, value) { return funct ? funct(key, value) : value; });
     };
@@ -275,7 +300,7 @@ export class foTools {
         let dictionary = {}
         list.forEach(item => {
             let key = pluckBy(item);
-            if (!dictionary[key] ) {
+            if (!dictionary[key]) {
                 dictionary[key] = [];
             }
             dictionary[key].push(item);

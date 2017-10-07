@@ -1,11 +1,11 @@
 
 
-import { foObject } from './foObject.model'
+import { foKnowledge } from './foKnowledge.model'
 
-export class foProperty extends foObject {
+export class foProperty extends foKnowledge {
 
-  constructor() {
-    super();
+  constructor(spec:any=undefined) {
+    super(spec);
     this.myType = 'foProperty';
   }
   

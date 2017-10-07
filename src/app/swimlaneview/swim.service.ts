@@ -39,8 +39,18 @@ export class SwimService {
     return result;
   }
 
+  // load() {
+  //   console.log('json called');
+  //   return new Promise(resolve => {
+  //     this.http.get('sampledata/caas.json').map(response => {
+  //       this.data = response.json();
+  //       resolve(this.data);
+  //     });
+  //   });
+  // }
+
   getEcosystem(callback): any {
-    let source = this.http.get('caas.json');
+    let source = this.http.get('assets/caas.json');
     source.subscribe(res => {
       let body = res.json();
 
