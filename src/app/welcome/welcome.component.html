@@ -16,7 +16,7 @@
 
     <div class="col-md-4">
         <h1>SignalR Chat</h1>
-        <input #chat (keyup)="onKeyUp(chat.value)" (keyup.enter)="onInput(chat.value)">
+        <input type="text" #chat (keyup)="onKeyUp(chat.value)" (keyup.enter)="onInput(chat.value)">
         <button (click)="doPost()">Go</button>
         <br>
         <pre class="well">{{typeinText}}</pre>

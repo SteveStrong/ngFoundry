@@ -30,7 +30,7 @@ export class WelcomeComponent implements OnInit {
   }
 
   doPost() {
-    let text = this.inputRef.value || this.typeinText;
+    let text = this.inputRef.innerText || this.typeinText;
     this.signalR.send(text);
     this.typeinText = '';
   }
