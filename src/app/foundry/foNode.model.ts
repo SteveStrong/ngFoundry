@@ -39,6 +39,13 @@ export class foNode extends foObject {
         return this._myGuid;
     }
 
+    set myGuid(value) {
+        if (!this._myGuid) {
+            this._myGuid = value;
+        }
+    }
+    
+
     //todo modify api to take bote item and array
     addSubcomponent(obj: foNode) {
         if (!obj) return;

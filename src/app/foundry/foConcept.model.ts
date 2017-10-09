@@ -42,9 +42,9 @@ export class foConcept extends foKnowledge {
 
     establishAttribute(key: string, spec: any = undefined) {
         let attributes = this.attributes;
-        let attribute = attributes.get(key);
+        let attribute = attributes.getItem(key);
         if (!attribute) {
-            attribute = attributes.add(key, new foAttribute(spec));
+            attribute = attributes.addItem(key, new foAttribute(spec));
             attribute.myName = key;
 
             PubSub.Pub("attribute", ["added", this, attribute]);
@@ -61,10 +61,10 @@ export class foConcept extends foKnowledge {
 
     establishProjection(key: string, spec: any = undefined) {
         let projections = this.projections;
-        let projection = projections.get(key);
+        let projection = projections.getItem(key);
         if (!projection) {
             projection = new foProjection(this, spec);
-            projections.add(key, projection);
+            projections.addItem(key, projection);
             projection.myName = key;
         }
         return projection;
@@ -140,10 +140,10 @@ export class foProjection extends foConcept {
     establishViewAttribute(attribute: foAttribute, spec: any = undefined) {
         let attributes = this.attributes;
         let key = attribute.myName;
-        let view = <foViewAttribute>attributes.get(key);
+        let view = <foViewAttribute>attributes.getItem(key);
         if (!view) {
             view = new foViewAttribute(attribute, spec);
-            this.attributes.add(key, view);
+            this.attributes.addItem(key, view);
             view.myName = key;
            
         }

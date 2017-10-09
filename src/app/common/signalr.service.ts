@@ -34,7 +34,7 @@ export class SignalRService {
 
   public pubChannel(name: string, payload: any) {
     if (this.hub) {
-      this.hub.invoke(name,payload);
+      this.hub.invoke("broadcast", name, payload);
     }
   }
 

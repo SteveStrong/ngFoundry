@@ -14,13 +14,15 @@ import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { shapeManager } from "./shapeManager";
 import { selectionManager } from "./selectionManager";
 import { PubSub } from "../foundry/foPubSub";
+import { Tools } from "../foundry/foTools";
 import { foShape } from "./shape.model";
+import { foDictionary } from "../foundry/foDictionary.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite } from "gsap";
+import { TweenLite, Back } from "gsap";
 
 
 @Component({
@@ -37,18 +39,18 @@ export class StageComponent implements OnInit, AfterViewInit {
   shapeManager: shapeManager = new shapeManager();
   selectionManager: selectionManager = new selectionManager();
 
-  shapes: Array<iShape> = new Array<iShape>();
+  shapelist: Array<iShape> = new Array<iShape>();
   selections: Array<iShape> = new Array<iShape>();
+  dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
-
-  model = [this.shapes];
+  model = [this.shapelist];
 
   constructor(private signalR: SignalRService) {
   }
 
   findHitShape(loc: iPoint): iShape {
-    for (var i: number = 0; i < this.shapes.length; i++) {
-      let shape: iShape = this.shapes[i];
+    for (var i: number = 0; i < this.shapelist.length; i++) {
+      let shape: iShape = this.shapelist[i];
       if (shape.hitTest(loc)) {
         return shape;
       }
@@ -93,13 +95,43 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
       let drop = shape.getLocation();
+      drop['myGuid'] = shape['myGuid'];
       shape = null;
-      Toast.success(JSON.stringify(loc), "mouseup");
+      //Toast.success(JSON.stringify(loc), "mouseup");
       this.signalR.pubChannel("move", drop);
     });
 
   }
 
+  private createShape(init?:any):foShape {
+    let base = {
+      x: 20,
+      y: 10,
+      width: 190,
+      height: 100
+    }
+    let shape = new foShape(Tools.union(base,init));
+    return shape;
+  }
+
+  private addToModel(shape:foShape){
+    this.dictionary.findItem(shape.myGuid, () => {
+      this.dictionary.addItem(shape.myGuid, shape);
+      this.shapelist.push(shape);
+    });
+  }
+
+  doAddShape() {
+    let shape = this.createShape({
+      x: 120,
+      y: 110
+    });
+    this.addToModel(shape);
+
+    let json = shape.asJson;
+    //Toast.success(JSON.stringify(json), "add shape");
+    this.signalR.pubChannel("addShape", json);
+  }
 
   public ngAfterViewInit() {
 
@@ -114,8 +146,8 @@ export class StageComponent implements OnInit, AfterViewInit {
       context.fillRect(0, 0, this.width, this.height);
 
       this.drawGrid(context);
-      for (var i: number = 0; i < this.shapes.length; i++) {
-        let shape: iShape = this.shapes[i];
+      for (var i: number = 0; i < this.shapelist.length; i++) {
+        let shape: iShape = this.shapelist[i];
         shape.draw(context);
       }
     }
@@ -124,18 +156,28 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     this.signalR.start().then(() => {
       this.signalR.subChannel("move", data => {
-        let shape: iShape = this.shapes[0];
+        this.dictionary.found(data.myGuid, shape => {
+            let loc = <iPoint>data;
+            console.log(loc);
+    
+            //shape.setLocation(loc);
+            //loc['opacity'] = 0.5;
+            loc['ease'] = Back.easeOut;
+            //Toast.info(JSON.stringify(loc), "move");
+            TweenLite.to(shape, .8, loc);
+        });
 
-        let loc = <iPoint>data;
-        console.log(loc);
-
-
-        //shape.setLocation(loc);
-        loc['opacity'] = 0.5;
-        Toast.info(JSON.stringify(loc), "move");
-        TweenLite.to(shape, .2, loc);
 
       });
+
+      this.signalR.subChannel("addShape", json => {
+        console.log(json);
+        this.dictionary.findItem(json.myGuid, () => {
+          let shape = this.createShape(json);
+          this.addToModel(shape);
+        });
+      });
+
     });
   }
 
@@ -164,14 +206,6 @@ export class StageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    var list = this.shapes;
-
-    list.push(new foShape({
-      x: 20,
-      y: 10,
-      width: 190,
-      height: 100
-    }));
   }
 
 
