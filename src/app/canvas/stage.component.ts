@@ -18,6 +18,7 @@ import { foShape } from "./shape.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
+import { TweenLite } from "gsap";
 
 
 @Component({
@@ -119,18 +120,18 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     this.screen2D.go();
 
-    this.signalR.start().then( () => {
+    this.signalR.start().then(() => {
       this.signalR.subChannel("move", data => {
         let shape: iShape = this.shapes[0];
 
         let loc = <iPoint>data;
         console.log(loc);
-       
 
-        shape.setLocation(loc);
+
+        //shape.setLocation(loc);
         Toast.info(JSON.stringify(loc), "move");
-        //this.screen2D.go();
-        
+        TweenLite.to(shape, .2, loc);
+
       });
     });
   }

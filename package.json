@@ -25,6 +25,7 @@
     "core-js": "^2.4.1",
     "d3": "^4.7.4",
     "font-awesome": "^4.7.0",
+    "gsap": "^1.20.3",
     "interactjs": "^1.2.8",
     "mdn-polyfills": "^2.1.1",
     "ng2-toastr": "4.1.2",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@angular/cli": "1.4.5",
     "@angular/compiler-cli": "4.4.4",
+    "@types/gsap": "^1.19.1",
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",
     "codelyzer": "~2.0.0",
