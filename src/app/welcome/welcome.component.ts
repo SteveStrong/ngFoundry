@@ -1,5 +1,5 @@
 ///import { parse } from 'querystring';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { foNode } from "../foundry/foNode.model";
 import { foConcept } from "../foundry/foConcept.model";
@@ -15,7 +15,7 @@ import { SignalRService } from "../common/signalr.service";
   styleUrls: ['./welcome.component.css']
 })
 export class WelcomeComponent implements OnInit {
-
+  @ViewChild('chat')  public inputRef: HTMLInputElement;
   typeinText: string = '';
   postList: Array<any> = [];
   model = [];
@@ -25,14 +25,13 @@ export class WelcomeComponent implements OnInit {
 
   }
 
-
-
   doToast(): void {
     Toast.info("info message", "my title")
   }
 
   doPost() {
-    this.signalR.send(this.typeinText);
+    let text = this.inputRef.value || this.typeinText;
+    this.signalR.send(text);
     this.typeinText = '';
   }
 
@@ -47,10 +46,13 @@ export class WelcomeComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.signalR.receive(data => {
-      Toast.info(JSON.stringify(data), "receive");
-      this.postList.push(data);
+    this.signalR.start().then( () => {
+      this.signalR.receive(data => {
+        Toast.info(JSON.stringify(data), "receive");
+        this.postList.push(data);
+      });
     });
+
 
     let xxx = function () { return "hello" }
     let yyy = xxx.toString();

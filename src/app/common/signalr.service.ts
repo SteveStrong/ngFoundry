@@ -17,7 +17,7 @@ export class SignalRService {
     if (!this.connection) {
       this.connection = new HubConnection(this.hubURL);
     }
-    this.ping();
+    //this.ping();
   }
 
   public get hub(): HubConnection {
@@ -40,16 +40,16 @@ export class SignalRService {
     }
   }
 
-  ping() {
-    this.connection.start()
-      .then(() => {
+  start():Promise<void> {
+    let promise = this.connection.start();
+
+    promise.then(() => {
         this._started = true;
         Toast.success("Connected..", this.hubURL);
       }).catch ( error => {
         Toast.error(JSON.stringify(error), this.hubURL);
       });
-
-
+      return promise;
   }
 
 

@@ -19,10 +19,11 @@
         <input #chat (keyup)="onKeyUp(chat.value)" (keyup.enter)="onInput(chat.value)">
         <button (click)="doPost()">Go</button>
         <br>
-        <pre class="well" >{{typeinText}}</pre>
+        <pre class="well">{{typeinText}}</pre>
     </div>
 
     <div class="col-md-4">
         <h1>SignalR Text</h1>
+        <div *ngFor="let item of postList">{{item}}</div>
     </div>
 </div>
