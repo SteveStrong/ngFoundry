@@ -92,7 +92,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       let drop = shape.getLocation();
       shape = null;
       Toast.success(JSON.stringify(loc), "mouseup");
-      this.signalR.pubChannel("move", JSON.stringify(drop));
+      this.signalR.pubChannel("move", drop);
     });
 
   }
@@ -123,14 +123,13 @@ export class StageComponent implements OnInit, AfterViewInit {
       this.signalR.subChannel("move", data => {
         let shape: iShape = this.shapes[0];
 
-        let xxx = JSON.parse(data)
-        let loc = <iPoint>JSON.parse(xxx);
+        let loc = <iPoint>data;
         console.log(loc);
        
 
         shape.setLocation(loc);
         Toast.info(JSON.stringify(loc), "move");
-        this.screen2D.go();
+        //this.screen2D.go();
         
       });
     });
