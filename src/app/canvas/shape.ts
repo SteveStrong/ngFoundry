@@ -9,7 +9,8 @@ export interface iShape {
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint): boolean;
     getOffset(loc: iPoint): iPoint;
-    doMove(loc: iPoint, offset: iPoint): iPoint;
+    getLocation(): iPoint;
+    doMove(loc: iPoint, offset?: iPoint): iPoint;
     isSelected: boolean;
 }
 
