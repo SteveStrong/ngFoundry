@@ -30,6 +30,7 @@ import { SwimService } from "./swimlaneview/swim.service";
 import { TestSvgComponent } from './networkview/test-svg.component';
 import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
 
+import { SignalRService } from "./common/signalr.service";
 import { StageComponent } from './canvas/stage.component';
 
 @NgModule({
@@ -62,7 +63,11 @@ import { StageComponent } from './canvas/stage.component';
     HttpModule,
     AppRoutingModule
   ],
-  providers: [DockerecosystemService, SwimService],
+  providers: [
+    DockerecosystemService, 
+    SwimService, 
+    SignalRService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
