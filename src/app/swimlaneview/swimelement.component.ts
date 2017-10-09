@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { svgShapeView } from "./swim.model";
-import { EmitterService } from '../common/emitter.service';
+import { Toast, EmitterService } from '../common/emitter.service';
 
 //http://stackoverflow.com/questions/32211013/how-can-i-nest-directives-that-render-svg-in-angular-2
 
@@ -28,7 +28,7 @@ export class SwimelementComponent implements OnInit {
     this.viewModel.toggleSelected();
     this.viewModel['width'] += this.viewModel['gap'];
     this.viewModel['height'] += this.viewModel['gap'];
-    EmitterService.info("info message", this.viewModel['name']);
+    Toast.info("info message", this.viewModel['name']);
 
     EmitterService.get("RECOMPUTE").emit();
   }

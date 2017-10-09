@@ -13,10 +13,17 @@
 
         <pre class="well">{{model | json}}</pre>
     </div>
-    <!--<foundry-test-forcediagram class="col-md-4">
 
-    </foundry-test-forcediagram>
-    <foundry-test-sceen1 class="col-md-4">
+    <div class="col-md-4">
+        <h1>SignalR Chat</h1>
+        <input type="text" #chat (keyup)="onKeyUp(chat.value)" (keyup.enter)="onInput(chat.value)">
+        <button (click)="doPost()">Go</button>
+        <br>
+        <pre class="well">{{typeinText}}</pre>
+    </div>
 
-    </foundry-test-sceen1>-->
+    <div class="col-md-4">
+        <h1>SignalR Text</h1>
+        <div *ngFor="let item of postList">{{item}}</div>
+    </div>
 </div>

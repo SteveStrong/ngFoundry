@@ -1,10 +1,13 @@
 ///import { parse } from 'querystring';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
 import { foNode } from "../foundry/foNode.model";
 import { foConcept } from "../foundry/foConcept.model";
 
-import { EmitterService } from '../common/emitter.service';
+import { Toast } from '../common/emitter.service';
+import { SignalRService } from "../common/signalr.service";
+
+//https://www.npmjs.com/package/ng2-tag-input
 
 @Component({
   selector: 'foundry-welcome',
@@ -12,25 +15,44 @@ import { EmitterService } from '../common/emitter.service';
   styleUrls: ['./welcome.component.css']
 })
 export class WelcomeComponent implements OnInit {
-
+  @ViewChild('chat')  public inputRef: HTMLInputElement;
+  typeinText: string = '';
+  postList: Array<any> = [];
   model = [];
   def: foConcept = new foConcept();
 
-  constructor() { }
+  constructor(private signalR: SignalRService) {
 
-  private info(message, title?) {
-    let toast = {
-      title: title || '',
-      message: message
-    }
-    EmitterService.get("SHOWINFO").emit(toast);
   }
 
   doToast(): void {
-    this.info("info message","my title")
+    Toast.info("info message", "my title")
+  }
+
+  doPost() {
+    let text = this.inputRef.innerText || this.typeinText;
+    this.signalR.send(text);
+    this.typeinText = '';
+  }
+
+  onKeyUp(value: string) {
+    this.typeinText = value;
+  }
+
+  onInput(value: string) {
+    this.typeinText = value;
+    this.doPost();
   }
 
   ngOnInit(): void {
+
+    this.signalR.start().then( () => {
+      this.signalR.receive(data => {
+        Toast.info(JSON.stringify(data), "receive");
+        this.postList.push(data);
+      });
+    });
+
 
     let xxx = function () { return "hello" }
     let yyy = xxx.toString();

@@ -30,6 +30,13 @@ export class cRectangle implements iShape {
     public getOffset = (loc: iPoint): iPoint => {
         return new cPoint(this.x - loc.x, this.y - loc.y);
     }
+
+    public getLocation = (): iPoint => {
+        let x = this.x;
+        let y = this.y;
+        return new cPoint(x, y);
+    }
+
     public doMove = (loc: iPoint, offset: iPoint): iPoint => {
         this.x = loc.x + offset.x;
         this.y = loc.y + offset.y;

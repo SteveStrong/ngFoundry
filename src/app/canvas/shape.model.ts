@@ -57,9 +57,25 @@ export class foShape extends foComponent implements iShape {
         return new cPoint(x - loc.x, y - loc.y);
     }
 
-    public doMove = (loc: iPoint, offset: iPoint): iPoint => {
-        this.x = loc.x + offset.x;
-        this.y = loc.y + offset.y;
+    public getLocation = (): iPoint => {
+        let x = this.x;
+        let y = this.y;
+        return new cPoint(x, y);
+    }
+
+    public setLocation = (loc: iPoint): iPoint => {
+        this._x = loc.x;
+        this._y = loc.y;
+        //structual type
+        return {
+            x: this.x,
+            y: this.y
+        }
+    }
+
+    public doMove = (loc: iPoint, offset?: iPoint): iPoint => {
+        this.x = loc.x + (offset ? 0 : offset.x);
+        this.y = loc.y + (offset ? 0 : offset.y);
         //structual type
         return {
             x: this.x,

@@ -20,14 +20,12 @@ export class AppComponent implements OnInit {
     this.options.showCloseButton = true;
     this.options.newestOnTop = true;
     this.options.positionClass = "toast-top-right"; //"toast-bottom-left"  toast-top-full-width
-
-
   }
 
-  // if (!environment.production) {
-  //   this._url.setBaseUrl('http://localhost:13114');
-  //   //this._url.useLocalCashe();
-  // }
+  public get IsProduction() {
+    return environment.production;
+  }
+
 
   openToast(type, title, message) {
     this.toastrService[type](title, message, this.options);

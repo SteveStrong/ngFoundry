@@ -4,7 +4,7 @@ import { EmitterService } from '../common/emitter.service';
 import { iShape, iPoint } from "./shape";
 import { cPoint } from "./point";
 import { cCircle } from "./circle";
-import { cRectangle } from "./crectangle";
+//import { cRectangle } from "./crectangle";
 import { cAsteroid } from "./asteroid";
 import { cTriangle } from "./triangle";
 import { cText } from "./text";
@@ -15,6 +15,9 @@ import { shapeManager } from "./shapeManager";
 import { selectionManager } from "./selectionManager";
 import { PubSub } from "../foundry/foPubSub";
 import { foShape } from "./shape.model";
+
+import { Toast } from '../common/emitter.service';
+import { SignalRService } from "../common/signalr.service";
 
 
 @Component({
@@ -37,14 +40,14 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   model = [this.shapes];
 
-  constructor() {
+  constructor(private signalR: SignalRService) {
   }
 
   findHitShape(loc: iPoint): iShape {
     for (var i: number = 0; i < this.shapes.length; i++) {
       let shape: iShape = this.shapes[i];
       if (shape.hitTest(loc)) {
-        return shape
+        return shape;
       }
     }
     return null;
@@ -72,11 +75,7 @@ export class StageComponent implements OnInit, AfterViewInit {
 
       }
 
-      let toast = {
-        title: "Dockerecosystem Service",
-        message: JSON.stringify(loc)
-      }
-      EmitterService.get("SHOWERROR").emit(toast);
+      //Toast.success(JSON.stringify(loc), "mousedown");
     });
 
     PubSub.Sub('mousemove', (loc: iPoint, e) => {
@@ -90,13 +89,18 @@ export class StageComponent implements OnInit, AfterViewInit {
     });
 
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
+      let drop = shape.getLocation();
       shape = null;
+      Toast.success(JSON.stringify(loc), "mouseup");
+      this.signalR.pubChannel("move", JSON.stringify(drop));
     });
 
   }
 
 
   public ngAfterViewInit() {
+
+
 
     let canvas = this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
     // we'll implement this method to start capturing mouse events
@@ -114,6 +118,22 @@ export class StageComponent implements OnInit, AfterViewInit {
     }
 
     this.screen2D.go();
+
+    this.signalR.start().then( () => {
+      this.signalR.subChannel("move", data => {
+        let shape: iShape = this.shapes[0];
+
+        let xxx = JSON.parse(data)
+        let loc = <iPoint>JSON.parse(xxx);
+        console.log(loc);
+       
+
+        shape.setLocation(loc);
+        Toast.info(JSON.stringify(loc), "move");
+        this.screen2D.go();
+        
+      });
+    });
   }
 
   drawGrid(ctx: CanvasRenderingContext2D) {

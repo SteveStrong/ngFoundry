@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response } from '@angular/http';
-import { EmitterService } from '../common/emitter.service';
+import { Toast } from '../common/emitter.service';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
@@ -29,7 +29,7 @@ export class SwimService {
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
-    EmitterService.error(errMsg, 'SwimService');
+    Toast.error(errMsg, 'SwimService');
     return Observable.throw(errMsg);
   }
 

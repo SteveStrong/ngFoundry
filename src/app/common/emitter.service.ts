@@ -16,26 +16,37 @@ export class EmitterService {
             this._emitters[ID] = new EventEmitter();
         return this._emitters[ID];
     }
+}
 
-    static toast(channel, message, title?) {
+class popupToast {
+    error(message: string, title?: string) {
         let toast = {
             title: title || '',
             message: message
         }
-        this.get(channel).emit(toast);
+        EmitterService.get("SHOWERROR").emit(toast);
     }
-
-    static info(message, title?) {
-        this.toast("SHOWINFO", message, title);
+    warning(message: string, title?: string) {
+        let toast = {
+            title: title || '',
+            message: message
+        }
+        EmitterService.get("SHOWWARNING").emit(toast);
     }
-    static success(message, title?) {
-        this.toast("SHOWSUCCESS", message, title);
+    success(message: string, title?: string) {
+        let toast = {
+            title: title || '',
+            message: message
+        }
+        EmitterService.get("SHOWSUCCESS").emit(toast);
     }
-    static warning(message, title?) {
-        this.toast("SHOWWARNING", message, title);
-    }
-
-    static error(message, title?) {
-        this.toast("SHOWERROR", message, title);
+    info(message: string, title?: string) {
+        let toast = {
+            title: title || '',
+            message: message
+        }
+        EmitterService.get("SHOWINFO").emit(toast);
     }
 }
+
+export let Toast: popupToast = new popupToast();
