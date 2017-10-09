@@ -10,6 +10,7 @@ export interface iShape {
     hitTest(hit: iPoint): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
+    setLocation(loc: iPoint): iPoint;
     doMove(loc: iPoint, offset?: iPoint): iPoint;
     isSelected: boolean;
 }

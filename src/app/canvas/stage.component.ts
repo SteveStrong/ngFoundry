@@ -100,18 +100,7 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   public ngAfterViewInit() {
 
-    this.signalR.start().then( () => {
-      this.signalR.subChannel("move", data => {
-        let shape: iShape = this.shapes[0];
 
-        let loc = <iPoint>JSON.parse(data);
-        Toast.info(JSON.stringify(data), "move");
-
-        shape.doMove(loc);
-
-        
-      });
-    });
 
     let canvas = this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
     // we'll implement this method to start capturing mouse events
@@ -129,6 +118,22 @@ export class StageComponent implements OnInit, AfterViewInit {
     }
 
     this.screen2D.go();
+
+    this.signalR.start().then( () => {
+      this.signalR.subChannel("move", data => {
+        let shape: iShape = this.shapes[0];
+
+        let xxx = JSON.parse(data)
+        let loc = <iPoint>JSON.parse(xxx);
+        console.log(loc);
+       
+
+        shape.setLocation(loc);
+        Toast.info(JSON.stringify(loc), "move");
+        this.screen2D.go();
+        
+      });
+    });
   }
 
   drawGrid(ctx: CanvasRenderingContext2D) {
