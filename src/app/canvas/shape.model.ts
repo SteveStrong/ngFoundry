@@ -64,8 +64,8 @@ export class foShape extends foComponent implements iShape {
     }
 
     public setLocation = (loc: iPoint): iPoint => {
-        this._x = loc.x;
-        this._y = loc.y;
+        this.x = loc.x;
+        this.y = loc.y;
         //structual type
         return {
             x: this.x,
@@ -74,8 +74,8 @@ export class foShape extends foComponent implements iShape {
     }
 
     public doMove = (loc: iPoint, offset?: iPoint): iPoint => {
-        this.x = loc.x + (offset ? 0 : offset.x);
-        this.y = loc.y + (offset ? 0 : offset.y);
+        this.x = loc.x + (offset ? offset.x : 0);
+        this.y = loc.y + (offset ? offset.y: 0);
         //structual type
         return {
             x: this.x,
