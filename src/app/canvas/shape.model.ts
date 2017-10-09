@@ -18,6 +18,7 @@ export class foShape extends foComponent implements iShape {
     private _y: number;
     private _width: number;
     private _height: number;
+    private _opacity: number = 1;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) { this._x = value; }
@@ -30,6 +31,9 @@ export class foShape extends foComponent implements iShape {
 
     get height(): number { return this._height || 0.0; }
     set height(value: number) { this._height = value; }
+
+    get opacity(): number { return this._opacity || 1; }
+    set opacity(value: number) { this._opacity = value; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -96,6 +100,7 @@ export class foShape extends foComponent implements iShape {
         ctx.save();
         ctx.fillStyle = 'green';
         ctx.lineWidth = 1;
+        ctx.globalAlpha = this.opacity;
         ctx.fillRect(x, y, width, height);
 
         if (this.isSelected) {

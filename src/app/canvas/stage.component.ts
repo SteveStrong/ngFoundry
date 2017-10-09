@@ -18,6 +18,8 @@ import { foShape } from "./shape.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
+
+//https://greensock.com/docs/TweenMax
 import { TweenLite } from "gsap";
 
 
@@ -129,6 +131,7 @@ export class StageComponent implements OnInit, AfterViewInit {
 
 
         //shape.setLocation(loc);
+        loc['opacity'] = 0.5;
         Toast.info(JSON.stringify(loc), "move");
         TweenLite.to(shape, .2, loc);
 
@@ -162,32 +165,13 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     var list = this.shapes;
-    // list.push(new cAsteroid());
-    // list.push(new cAsteroid());
-    // list.push(new cAsteroid());
-    // list.push(new cAsteroid());
-    // list.push(new cAsteroid());
 
-    //list.push(new cTriangle(20, 50, 500, 500));
-
-    // list.push(new cCircle(20, 50, 30));
-    // list.push(new cCircle(120, 70, 50));
-
-    // list.push(new cText(20, 50, "Steve"));
-    // //list.push(new cClock(320, 50));
     list.push(new foShape({
-      _x: 20,
-      _y: 10,
-      _width: 190,
-      _height: 100
+      x: 20,
+      y: 10,
+      width: 190,
+      height: 100
     }));
-
-    // list.push(new cRectangle(400, 200, 180, 60));
-    // list.push(new cRectangle(100, 50, 80, 60));
-    // list.push(new cRectangle(300, 300, 120, 60));
-    // list.push(new cRectangle(500, 500, 80, 60));
-
-
   }
 
 
