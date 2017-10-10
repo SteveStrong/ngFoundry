@@ -41,9 +41,9 @@ export class foLibrary extends foKnowledge {
 
     establishConcept(key: string, spec: any = undefined) {
         let concepts = this.concepts;
-        let concept = concepts.get(key);
+        let concept = concepts.getItem(key);
         if (!concept) {
-            concept = concepts.add(key, new foConcept(spec));
+            concept = concepts.addItem(key, new foConcept(spec));
             concept.myName = key;
         }
         return concept;
@@ -55,9 +55,9 @@ export class foLibrary extends foKnowledge {
 
     establishProperty(key: string, spec: any = undefined) {
         let properties = this.properties;
-        let property = properties.get(key);
+        let property = properties.getItem(key);
         if (!property) {
-            property = properties.add(key, new foProperty(spec));
+            property = properties.addItem(key, new foProperty(spec));
             property.myName = key;
         }
         return property;
