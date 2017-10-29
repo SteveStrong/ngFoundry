@@ -7,13 +7,28 @@
 
 </p>
 <div class="row">
-  <button class='btn btn-success'>add</button>
+  <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="btn-group mr-2" role="group" aria-label="First group">
+      <button (click)="doAddShape()" type="button" class="btn btn-secondary">add</button>
+      <button type="button" class="btn btn-secondary">delete</button>
+      <button type="button" class="btn btn-secondary">undo</button>
+      <button type="button" class="btn btn-secondary">duplicate</button>
+    </div>
+    <div class="btn-group mr-2" role="group" aria-label="Second group">
+      <button type="button" class="btn btn-secondary">5</button>
+      <button type="button" class="btn btn-secondary">6</button>
+      <button type="button" class="btn btn-secondary">7</button>
+    </div>
+    <div class="btn-group" role="group" aria-label="Third group">
+      <button type="button" class="btn btn-secondary">8</button>
+    </div>
+  </div>
 </div>
 <div class="row">
   <canvas class="col-md-8" #canvas>
   </canvas>
   <div class="col-md-4">
-    <pre class="well">{{model | json}}</pre>
+    <pre class="well">{{dictionary | json}}</pre>
   </div>
 
 </div>

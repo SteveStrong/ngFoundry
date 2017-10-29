@@ -12,13 +12,32 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
         this.myType = 'foDictionary';
     }
 
-    add(key: string, obj: T) {
+    addItem(key: string, obj: T): T {
         this._lookup[key] = obj;
         return obj;
     }
 
-    get(key: string): T {
-        return this._lookup[key];
+    getItem(key: string): T {
+        let result: T = this._lookup[key];
+        return result;
+    }
+
+    findItem(key: string, onMissing?): T {
+        let found = this.getItem(key);
+        if (!found && onMissing) {
+            onMissing();
+            found = this.getItem(key);
+        }
+        return found;
+    }
+
+    found(key: string, onFound?): T {
+        let found = this.getItem(key);
+        if (found && onFound) {
+            onFound(found);
+            found = this.getItem(key);
+        }
+        return found;
     }
 
     get keys() {
@@ -48,6 +67,13 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
             let value = this._lookup[key];
             mapFunc(key, value);
         });
+    };
+
+    applyTo(mapFunc) {  //funct has 1 args.. value
+        for(let key in this._lookup) {
+            let value = this._lookup[key];
+            mapFunc(value);
+        };
     };
 
     get asJson() {

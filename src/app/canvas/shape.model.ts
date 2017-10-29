@@ -38,9 +38,16 @@ export class foShape extends foComponent implements iShape {
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myType = 'foShape';
-
+        this.myGuid;
     }
 
+    get asJson() {
+        return {
+            myGuid: this.myGuid,
+            x: this.x,
+            y: this.y
+        }
+    }
 
     public hitTest = (hit: iPoint): boolean => {
         let x = this.x;
