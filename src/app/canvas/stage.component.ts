@@ -43,7 +43,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
-  model = [this.shapelist];
+  //model = [this.dictionary];
 
   constructor(private signalR: SignalRService) {
   }
@@ -73,11 +73,9 @@ export class StageComponent implements OnInit, AfterViewInit {
         mySelf.selections.push(shape);
         offset = shape.getOffset(loc);
       } else {
-        let found = mySelf.selections.pop();
-        if (found) {
-          found.isSelected = false;
-        }
-
+        this.dictionary.applyTo( item => {
+          item.isSelected = false;
+        });
       }
 
       //Toast.success(JSON.stringify(loc), "mousedown");

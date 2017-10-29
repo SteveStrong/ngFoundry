@@ -69,6 +69,13 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
         });
     };
 
+    applyTo(mapFunc) {  //funct has 1 args.. value
+        for(let key in this._lookup) {
+            let value = this._lookup[key];
+            mapFunc(value);
+        };
+    };
+
     get asJson() {
         let result = this.jsonMerge(this._lookup);
         return result;
