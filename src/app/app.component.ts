@@ -5,6 +5,8 @@ import { EmitterService } from './common/emitter.service';
 import { ToastsManager, ToastOptions, Toast } from 'ng2-toastr/ng2-toastr';
 import { environment } from '../environments/environment';
 
+//import { Point } from "./foundry/foDecorators";
+
 @Component({
   selector: 'foundry-root',
   templateUrl: './app.component.html',
@@ -14,6 +16,8 @@ export class AppComponent implements OnInit {
   title = 'ngFoundry';
 
   constructor(private toastrService: ToastsManager, private options: ToastOptions, private vcr: ViewContainerRef) {
+
+    //let pt = new Point(0,0);
 
     this.toastrService.setRootViewContainerRef(vcr);
 
