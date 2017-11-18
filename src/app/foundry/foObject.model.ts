@@ -1,6 +1,6 @@
 import { Tools } from './foTools'
 
-
+//https://www.typescriptlang.org/docs/handbook/decorators.html
 
 export interface iObject {
     myType: string;
@@ -12,11 +12,18 @@ export interface iObject {
 
 export class foObject implements iObject {
     myName: string = 'unknown';
-    myType: string = 'foObject';
+    myType: string = '';
     myParent: iObject = undefined;
 
     constructor() {
 
+    }
+
+    //https://www.npmjs.com/package/reflect-metadata
+    //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
+    get myTyp1() {
+        let comp:any = this.constructor;
+        return comp.name;
     }
 
     asReference() {

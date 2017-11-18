@@ -12,14 +12,14 @@ import { environment } from '../../environments/environment';
 export class SignalRService {
 
   private _started: boolean = false;
-  private hubURL = environment.signalRServer;
+  //private hubURL = environment.signalRServer;
+  private hubURL = environment.signalfoundry;
   private connection: HubConnection;
 
   constructor() {
     if (!this.connection) {
       this.connection = new HubConnection(this.hubURL);
     }
-    //this.ping();
   }
 
   public get hub(): HubConnection {
