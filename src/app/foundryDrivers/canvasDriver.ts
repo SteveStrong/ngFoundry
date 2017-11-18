@@ -36,30 +36,30 @@ export class Sceen2D {
         this.context.lineCap = 'round';
         this.context.strokeStyle = '#000';
 
-        this.setupMouseEvents(nativeElement);
+        this.pubMouseEvents(nativeElement);
 
         return nativeElement;
     }
 
-    setupMouseEvents(canvas: HTMLCanvasElement) {
+    pubMouseEvents(canvas: HTMLCanvasElement) {
+        var rect = canvas.getBoundingClientRect();
 
-        function getMousePos(evt):cPoint {
-            var rect = canvas.getBoundingClientRect();
-            return new cPoint(evt.clientX - rect.left,evt.clientY - rect.top);
+        function getMousePos(evt):cPoint {   
+            return new cPoint(evt.clientX - rect.left, evt.clientY - rect.top);
         }
 
 
-        canvas.addEventListener('mousedown', function (e) {
+        canvas.addEventListener('mousedown',  (e) => {
             let loc = getMousePos(e);
             PubSub.Pub('mousedown', loc, e);
         });
 
-        canvas.addEventListener('mousemove', function (e) {
+        canvas.addEventListener('mousemove', (e) => {
             let loc = getMousePos(e);
             PubSub.Pub('mousemove', loc, e);
         });
 
-        canvas.addEventListener('mouseup', function (e) {
+        canvas.addEventListener('mouseup', (e) => {
             let loc = getMousePos(e);
             PubSub.Pub('mouseup', loc, e);
         });

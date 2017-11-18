@@ -43,6 +43,8 @@ export class StageComponent implements OnInit, AfterViewInit {
   selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
+  mouseLoc:any = {};
+
   //model = [this.dictionary];
 
   constructor(private signalR: SignalRService) {
@@ -77,7 +79,7 @@ export class StageComponent implements OnInit, AfterViewInit {
           item.isSelected = false;
         });
       }
-
+      this.mouseLoc = loc;
       //Toast.success(JSON.stringify(loc), "mousedown");
     });
 
@@ -90,6 +92,8 @@ export class StageComponent implements OnInit, AfterViewInit {
       if (overshape) {
         //overshape.drawHover(mySelf.context);
       }
+
+      this.mouseLoc = loc;
     });
 
     PubSub.Sub('mouseup', (loc: iPoint, e) => {

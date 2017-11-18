@@ -110,6 +110,20 @@ export class foShape extends foComponent implements iShape {
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(x, y, width, height);
 
+        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
+        let fontsize = 20;
+        ctx.font = `${fontsize}px Calibri`;
+        ctx.fillStyle = 'blue';
+
+        let text = `x1=${x} y1=${y}|x2=${x+width} y2=${y+height}|`;
+        let array = text.split('|');
+        let dx = x + 10;
+        let dy = y + 20;
+        for (var i = 0; i < array.length; i++) {
+            ctx.fillText(array[i], dx, dy);
+            dy += (fontsize + 4);
+         }
+
         if (this.isSelected) {
             ctx.strokeStyle = "red";
             ctx.lineWidth = 4;
