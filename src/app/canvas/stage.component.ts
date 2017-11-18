@@ -82,6 +82,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     });
 
     PubSub.Sub('mousemove', (loc: iPoint, e) => {
+
       if (shape) {
         shape.doMove(loc, offset);
       }
@@ -92,6 +93,8 @@ export class StageComponent implements OnInit, AfterViewInit {
     });
 
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
+      if ( !shape ) return;
+
       let drop = shape.getLocation();
       drop['myGuid'] = shape['myGuid'];
       shape = null;
