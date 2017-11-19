@@ -10,6 +10,12 @@ export interface iObject {
     getChildAt(i: number): iObject;
 }
 
+export interface ifoNode {
+    override(properties?: any);
+    addSubcomponent(obj: ifoNode);
+    removeSubcomponent(obj: ifoNode);
+}
+
 export class foObject implements iObject {
     myName: string = 'unknown';
     myType: string = '';

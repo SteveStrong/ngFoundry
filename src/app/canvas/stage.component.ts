@@ -95,17 +95,19 @@ export class StageComponent implements OnInit, AfterViewInit {
           if (overshape) {
             overshape['hold'] = overshape.getSize(1);
             let size = overshape.getSize(1.1);
-            size['ease'] = Back.easeOut.config(1.7);
+            size['ease'] = Back.easeOut.config(10);
             size['onComplete'] = () => {
               overshape.setColor('orange');
+              overshape.override(overshape['hold']);
             }
             TweenMax.to(overshape, 0.5, size);
           }
         } else if (!overshape.hitTest(loc)) {
           let size = overshape['hold'];
-          size['ease'] = Back.easeOut.config(1.7);
+          size['ease'] = Back.easeOut.config(10);
           size['onComplete'] = () => {
             overshape.setColor('green');
+            overshape.override(overshape['hold']);
             delete overshape['hold'];
             overshape = null;
           }
@@ -150,8 +152,10 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   doAddShape() {
     let shape = this.createShape({
-      x: 120,
-      y: 110
+      x: 150,
+      y: 100,
+      height: 150,
+      width: 200,
     });
     this.addToModel(shape);
 

@@ -1,10 +1,11 @@
 
 import { Tools } from './foTools'
 
-import { foObject, iObject } from './foObject.model'
+import { foObject, iObject, ifoNode } from './foObject.model'
 import { foCollection } from './foCollection.model'
 
-export class foNode extends foObject {
+
+export class foNode extends foObject implements ifoNode {
     private _index: number = 0;
     private _myGuid: string;
 
@@ -16,8 +17,18 @@ export class foNode extends foObject {
         this.init(properties, subcomponents, parent)
     }
 
+
     init(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
-        var self = this;
+ 
+        this.override(properties);
+
+        this._subcomponents = new foCollection<foNode>();
+        subcomponents && subcomponents.forEach(item => this.addSubcomponent(item));
+        return this;
+    }
+
+    override(properties?: any) {
+        const self = this;
 
         properties && Tools.forEachKeyValue(properties, function (key, value) {
             if (Tools.isFunction(value)) {
@@ -27,9 +38,7 @@ export class foNode extends foObject {
             }
         });
 
-        this._subcomponents = new foCollection<foNode>();
-        subcomponents && subcomponents.forEach(item => this.addSubcomponent(item));
-        return this;
+        return self;
     }
 
     get myGuid() {

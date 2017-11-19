@@ -1,4 +1,6 @@
 
+import { ifoNode } from '../foundry/foObject.model'
+
 export interface iPoint {
     x: number;
     y: number;
@@ -9,7 +11,7 @@ export interface iSize {
     height: number;
 }
 
-export interface iShape {
+export interface iShape extends ifoNode {
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint): boolean;

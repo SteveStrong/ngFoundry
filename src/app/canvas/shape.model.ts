@@ -1,6 +1,6 @@
 
 import { Tools } from '../foundry/foTools'
-import { foObject, iObject } from '../foundry/foObject.model'
+import { foObject, iObject, ifoNode } from '../foundry/foObject.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
@@ -8,7 +8,7 @@ import { iShape, iPoint, iSize } from "./shape";
 import { cPoint } from "./point";
 
 
-export class foShape extends foComponent implements iShape {
+export class foShape extends foComponent implements iShape, ifoNode {
     private _isSelected: boolean = false;
 
     get isSelected(): boolean { return this._isSelected; }
@@ -88,7 +88,7 @@ export class foShape extends foComponent implements iShape {
         }
     }
 
-    public getSize = (scale:number=1): iSize => {
+    public getSize = (scale: number = 1): iSize => {
         //structual type
         return {
             width: this.width * scale,
@@ -96,16 +96,18 @@ export class foShape extends foComponent implements iShape {
         }
     }
 
-    public scaleSize = (scale:number): iSize => {
+    public scaleSize = (scale: number): iSize => {
         //structual type
+        this.x -= (this.width * (scale - 1)) / 2.0;
+        this.y -= (this.height * (scale - 1)) / 2.0;
         this.width *= scale;
         this.height *= scale;
-        return this.getSize();
+        return this.getSize(1.0);
     }
 
     public doMove = (loc: iPoint, offset?: iPoint): iPoint => {
         this.x = loc.x + (offset ? offset.x : 0);
-        this.y = loc.y + (offset ? offset.y: 0);
+        this.y = loc.y + (offset ? offset.y : 0);
         //structual type
         return {
             x: this.x,
@@ -113,12 +115,12 @@ export class foShape extends foComponent implements iShape {
         }
     }
 
-    public setColor(color:string): string {
+    public setColor(color: string): string {
         this.color = color;
         return this.color;
     };
 
-    setOpacity(opacity:number): number {
+    public setOpacity(opacity: number): number {
         this.opacity = opacity;
         return this.opacity;
     };
