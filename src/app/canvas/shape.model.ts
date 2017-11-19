@@ -4,7 +4,7 @@ import { foObject, iObject } from '../foundry/foObject.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { iShape, iPoint } from "./shape";
+import { iShape, iPoint, iSize } from "./shape";
 import { cPoint } from "./point";
 
 
@@ -19,6 +19,7 @@ export class foShape extends foComponent implements iShape {
     private _width: number;
     private _height: number;
     private _opacity: number = 1;
+    private _color: string = 'green';
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) { this._x = value; }
@@ -34,6 +35,9 @@ export class foShape extends foComponent implements iShape {
 
     get opacity(): number { return this._opacity || 1; }
     set opacity(value: number) { this._opacity = value; }
+
+    get color(): string { return this._color || 'green'; }
+    set color(value: string) { this._color = value; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -84,6 +88,21 @@ export class foShape extends foComponent implements iShape {
         }
     }
 
+    public getSize = (scale:number=1): iSize => {
+        //structual type
+        return {
+            width: this.width * scale,
+            height: this.height * scale
+        }
+    }
+
+    public scaleSize = (scale:number): iSize => {
+        //structual type
+        this.width *= scale;
+        this.height *= scale;
+        return this.getSize();
+    }
+
     public doMove = (loc: iPoint, offset?: iPoint): iPoint => {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y: 0);
@@ -93,6 +112,16 @@ export class foShape extends foComponent implements iShape {
             y: this.y
         }
     }
+
+    public setColor(color:string): string {
+        this.color = color;
+        return this.color;
+    };
+    
+    setOpacity(opacity:number): number {
+        this.opacity = opacity;
+        return this.opacity;
+    };
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
@@ -105,7 +134,7 @@ export class foShape extends foComponent implements iShape {
         let height = this.height;
 
         ctx.save();
-        ctx.fillStyle = 'green';
+        ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(x, y, width, height);

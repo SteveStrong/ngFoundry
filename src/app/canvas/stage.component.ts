@@ -22,7 +22,7 @@ import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite, Back } from "gsap";
+import { TweenLite, TweenMax, Back, Power2 } from "gsap";
 
 
 @Component({
@@ -43,17 +43,18 @@ export class StageComponent implements OnInit, AfterViewInit {
   selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
-  mouseLoc:any = {};
+  mouseLoc: any = {};
+  sitOnShape: any = {};
 
   //model = [this.dictionary];
 
   constructor(private signalR: SignalRService) {
   }
 
-  findHitShape(loc: iPoint): iShape {
+  findHitShape(loc: iPoint, exclude: iShape = null): iShape {
     for (var i: number = 0; i < this.shapelist.length; i++) {
       let shape: iShape = this.shapelist[i];
-      if (shape.hitTest(loc)) {
+      if (shape != exclude && shape.hitTest(loc)) {
         return shape;
       }
     }
@@ -65,19 +66,20 @@ export class StageComponent implements OnInit, AfterViewInit {
     // Redraw the circle every time the mouse moves
 
     let shape: iShape = null;
+    let overshape: iShape = null;
     let mySelf = this;
     let offset: cPoint = null;
 
     PubSub.Sub('mousedown', (loc: iPoint, e) => {
       shape = mySelf.findHitShape(loc);
+      this.dictionary.applyTo(item => {
+        item.isSelected = false;
+      });
+
       if (shape) {
         shape.isSelected = true;
         mySelf.selections.push(shape);
         offset = shape.getOffset(loc);
-      } else {
-        this.dictionary.applyTo( item => {
-          item.isSelected = false;
-        });
       }
       this.mouseLoc = loc;
       //Toast.success(JSON.stringify(loc), "mousedown");
@@ -87,17 +89,39 @@ export class StageComponent implements OnInit, AfterViewInit {
 
       if (shape) {
         shape.doMove(loc, offset);
-      }
-      let overshape = mySelf.findHitShape(loc);
-      if (overshape) {
-        //overshape.drawHover(mySelf.context);
-      }
 
+        if (!overshape) {
+          overshape = mySelf.findHitShape(loc, shape);
+          if (overshape) {
+            overshape.setColor('orange');
+            let size = overshape.getSize(1.2);
+            size['ease'] = Power2.easeInOut;
+            size['onComplete'] = () => {
+              overshape.scaleSize(1.2);
+            }
+            TweenMax.to(overshape, .5, size);
+            //overshape.scaleSize(1.2);
+          }
+        } else if ( !overshape.hitTest(loc)){
+          overshape.setColor('green');
+          let size = overshape.getSize();
+          //size['ease'] = Back.easeOut;
+          size['onComplete'] = () => {
+            overshape.scaleSize(0.8);
+          }
+          //TweenLite.to(overshape, 0.8, size);
+          overshape.scaleSize(0.8);
+          overshape = null;
+        }
+
+      }
+      this.sitOnShape = overshape || {};
       this.mouseLoc = loc;
+
     });
 
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
-      if ( !shape ) return;
+      if (!shape) return;
 
       let drop = shape.getLocation();
       drop['myGuid'] = shape['myGuid'];
@@ -108,18 +132,18 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   }
 
-  private createShape(init?:any):foShape {
+  private createShape(init?: any): foShape {
     let base = {
       x: 20,
       y: 10,
       width: 190,
       height: 100
     }
-    let shape = new foShape(Tools.union(base,init));
+    let shape = new foShape(Tools.union(base, init));
     return shape;
   }
 
-  private addToModel(shape:foShape){
+  private addToModel(shape: foShape) {
     this.dictionary.findItem(shape.myGuid, () => {
       this.dictionary.addItem(shape.myGuid, shape);
       this.shapelist.push(shape);
@@ -162,14 +186,14 @@ export class StageComponent implements OnInit, AfterViewInit {
     this.signalR.start().then(() => {
       this.signalR.subChannel("move", data => {
         this.dictionary.found(data.myGuid, shape => {
-            let loc = <iPoint>data;
-            console.log(loc);
-    
-            //shape.setLocation(loc);
-            //loc['opacity'] = 0.5;
-            loc['ease'] = Back.easeOut;
-            //Toast.info(JSON.stringify(loc), "move");
-            TweenLite.to(shape, .8, loc);
+          let loc = <iPoint>data;
+          console.log(loc);
+
+          //shape.setLocation(loc);
+          //loc['opacity'] = 0.5;
+          loc['ease'] = Back.easeOut;
+          //Toast.info(JSON.stringify(loc), "move");
+          TweenLite.to(shape, .8, loc);
         });
 
 
