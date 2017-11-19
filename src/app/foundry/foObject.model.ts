@@ -1,5 +1,5 @@
 import { Tools } from './foTools'
-import { iObject } from './foInterface'
+import { iObject, Action } from './foInterface'
 
 
 export class foObject implements iObject {
@@ -14,7 +14,7 @@ export class foObject implements iObject {
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
     get myComputedType() {
-        let comp:any = this.constructor;
+        let comp: any = this.constructor;
         return comp.name;
     }
 
@@ -32,6 +32,10 @@ export class foObject implements iObject {
     getChildAt(i: number): iObject {
         return undefined;
     }
+
+    // applyToSubComponents(func: (item: T): void, deep: boolean = true) {
+    // }
+
 
     get debug() {
         return Tools.stringify(this);

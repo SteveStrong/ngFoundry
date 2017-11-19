@@ -1,6 +1,6 @@
 
 import { Tools } from './foTools'
-import { iObject, ifoNode } from './foInterface'
+import { iObject, iNode } from './foInterface'
 
 import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'

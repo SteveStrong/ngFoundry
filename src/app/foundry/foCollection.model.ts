@@ -1,9 +1,9 @@
 import { foObject } from './foObject.model'
-
+import { iObject } from './foInterface'
 
 //we want foCollection to be observable
 
-export class foCollection<T extends foObject> extends foObject {
+export class foCollection<T extends iObject> extends foObject {
     private _memberType;
     private _members: Array<T>;
 
@@ -48,6 +48,22 @@ export class foCollection<T extends foObject> extends foObject {
     }
 
     get members() {
+        return this._members;
+    }
+
+    applyToSubComponents(func: (item:T) => {}, deep: boolean = true) {
+        this.hasMembers && this.members.forEach(item => {
+            func(item);
+            deep && item.applyToSubComponents(func, deep);
+        });
+    }
+
+    moveToTop(item: T) {
+        let loc = this._members.indexOf(item);
+        if (loc != -1) {
+            this._members.splice(loc, 1);
+            this._members.push(item);
+        }
         return this._members;
     }
 }

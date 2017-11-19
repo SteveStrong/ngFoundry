@@ -1,13 +1,12 @@
 import { Tools } from './foTools'
 
-import { iObject } from './foObject.model'
+
 import { foTools } from './foTools'
 
 import { foObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
 
-interface iKnowledge extends iObject {
-}
+
 
 export class foKnowledge extends foObject {
 

@@ -1,6 +1,9 @@
 
 import { Tools } from '../foundry/foTools'
-import { foObject, iObject, ifoNode } from '../foundry/foObject.model'
+//import { iObject, iNode } from '../foundry/foInterface'
+
+import { foObject } from '../foundry/foObject.model'
+import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
@@ -8,7 +11,7 @@ import { iShape, iPoint, iSize } from "./shape";
 import { cPoint } from "./point";
 
 
-export class foShape extends foComponent implements iShape, ifoNode {
+export class foShape extends foNode implements iShape {
     private _isSelected: boolean = false;
 
     get isSelected(): boolean { return this._isSelected; }
@@ -129,10 +132,15 @@ export class foShape extends foComponent implements iShape, ifoNode {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        let result = this._subcomponents.members as Array<foShape>;
-        result && result.forEach(item => {
-            item.doMove(loc, offset);
-        });
+        // let result = this._subcomponents.members as Array<foShape>;
+        // result && result.forEach(item => {
+        //     item.doMove(loc, offset);
+        // });
+
+        // this.applyToSubComponents((item) => {
+        //      item.doMove(loc, offset);
+        //   }, true);
+
         //structual type
         return {
             x: this.x,
@@ -187,11 +195,6 @@ export class foShape extends foComponent implements iShape, ifoNode {
             ctx.rect(x, y, width, height);
             ctx.stroke();
         }
-
-        let result = this._subcomponents.members as Array<foShape>;
-        result && result.forEach(item => {
-            item.draw(ctx)
-        });
 
         ctx.restore();
     }

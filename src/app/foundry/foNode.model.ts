@@ -1,12 +1,12 @@
 
 import { Tools } from './foTools'
-import { iObject, ifoNode } from './foInterface'
+import { iObject, iNode, Action } from './foInterface'
 
 import { foObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
 
 
-export class foNode extends foObject implements ifoNode {
+export class foNode extends foObject implements iNode {
     private _index: number = 0;
     private _myGuid: string;
 
@@ -114,14 +114,11 @@ export class foNode extends foObject implements ifoNode {
         return this._subcomponents && this._subcomponents.hasMembers;
     }
 
-    applyToSelfAndComponents(func: (item) => {}, deep: boolean = true): any {
-        let result = func(this);
-        if (deep && this.hasSubcomponents) {
-            this.Subcomponents.forEach(item => {
-                item.applyToSelfAndComponents(func,deep);
-            });
-        }
-        return result;
+    applyToSubComponents<C>(func: Action<C>, deep: boolean = true) {
+        this.hasSubcomponents && this.Subcomponents.forEach(item => {
+            func(item);
+            deep && item.applyToSubComponents(func, deep);
+        });
     }
 
 }

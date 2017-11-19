@@ -1,11 +1,12 @@
 import { Tools } from './foTools'
+import { iObject } from './foInterface'
 import { PubSub } from './foPubSub'
 
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
 import { foAttribute, foViewAttribute } from './foAttribute.model'
 
-import { foObject, iObject } from './foObject.model'
+import { foObject } from './foObject.model'
 import { foComponent } from './foComponent.model'
 import { foNode } from './foNode.model'
 

@@ -1,7 +1,8 @@
 
 import { foTools } from './foTools'
+import { iObject } from './foInterface'
 
-import { foObject, iObject } from './foObject.model'
+import { foObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
 import { foComponent } from './foComponent.model'
 
