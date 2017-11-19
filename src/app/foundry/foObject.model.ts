@@ -27,7 +27,7 @@ export class foObject implements iObject {
 
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
-    get myTyp1() {
+    get myComputedType() {
         let comp:any = this.constructor;
         return comp.name;
     }

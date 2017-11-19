@@ -18,8 +18,8 @@ export class foShape extends foComponent implements iShape, ifoNode {
     private _y: number;
     private _width: number;
     private _height: number;
-    private _opacity: number = 1;
-    private _color: string = 'green';
+    private _opacity: number;
+    private _color: string;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) { this._x = value; }
@@ -36,8 +36,12 @@ export class foShape extends foComponent implements iShape, ifoNode {
     get opacity(): number { return this._opacity || 1; }
     set opacity(value: number) { this._opacity = value; }
 
-    get color(): string { return this._color || 'green'; }
-    set color(value: string) { this._color = value; }
+    get color(): string { 
+        return this._color || 'green'; 
+    }
+    set color(value: string) { 
+        this._color = value; 
+    }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -78,7 +82,7 @@ export class foShape extends foComponent implements iShape, ifoNode {
         if (loc.x + size.width < x) return false;
         if (loc.y > y + height) return false;
         if (loc.y + size.height < y) return false;
-        
+
         return true;
     }
 
@@ -124,6 +128,11 @@ export class foShape extends foComponent implements iShape, ifoNode {
     public doMove = (loc: iPoint, offset?: iPoint): iPoint => {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
+
+        let result = this._subcomponents.members as Array<foShape>;
+        result && result.forEach(item => {
+            item.doMove(loc, offset);
+        });
         //structual type
         return {
             x: this.x,
@@ -178,6 +187,12 @@ export class foShape extends foComponent implements iShape, ifoNode {
             ctx.rect(x, y, width, height);
             ctx.stroke();
         }
+
+        let result = this._subcomponents.members as Array<foShape>;
+        result && result.forEach(item => {
+            item.draw(ctx)
+        });
+
         ctx.restore();
     }
 

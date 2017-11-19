@@ -122,7 +122,7 @@ export class StageComponent implements OnInit, AfterViewInit {
               overshape.setColor('orange');
               overshape.override(target);
             }
-            TweenMax.to(overshape, 0.5, size);
+            TweenMax.to(overshape, 0.3, size);
           }
         } else if (!overshape.overlapTest(shape)) {
           let target = overshape['hold'];
@@ -134,7 +134,7 @@ export class StageComponent implements OnInit, AfterViewInit {
             delete overshape['hold'];
             overshape = null;
           }
-          TweenLite.to(overshape, 0.5, size);
+          TweenLite.to(overshape, 0.3, size);
         }
 
       }
@@ -158,9 +158,9 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   private createShape(init?: any): foShape {
     let base = {
-      x: 20,
-      y: 10,
-      width: 190,
+      x: 50,
+      y: 50,
+      width: 200,
       height: 100
     }
     let shape = new foShape(Tools.union(base, init));
@@ -183,14 +183,22 @@ export class StageComponent implements OnInit, AfterViewInit {
     });
     this.addToModel(shape);
 
+
+    let subshape = this.createShape({
+      color: 'blue',
+      x: 450,
+      y: 100,
+      height: 50,
+      width: 300,
+    });
+    shape.addSubcomponent(subshape);
+
     let json = shape.asJson;
     //Toast.success(JSON.stringify(json), "add shape");
     this.signalR.pubChannel("addShape", json);
   }
 
   public ngAfterViewInit() {
-
-
 
     let canvas = this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
     // we'll implement this method to start capturing mouse events
