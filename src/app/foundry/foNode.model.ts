@@ -1,7 +1,8 @@
 
 import { Tools } from './foTools'
+import { iObject, ifoNode } from './foInterface'
 
-import { foObject, iObject, ifoNode } from './foObject.model'
+import { foObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
 
 
@@ -19,7 +20,7 @@ export class foNode extends foObject implements ifoNode {
 
 
     init(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
- 
+
         this.override(properties);
 
         this._subcomponents = new foCollection<foNode>();
@@ -53,7 +54,7 @@ export class foNode extends foObject implements ifoNode {
             this._myGuid = value;
         }
     }
-    
+
 
     //todo modify api to take bote item and array
     addSubcomponent(obj: foNode) {
@@ -79,15 +80,15 @@ export class foNode extends foObject implements ifoNode {
         return this._index;
     }
 
-    getChildAt(i:number):iObject {
-        if ( this.hasSubcomponents ){
+    getChildAt(i: number): iObject {
+        if (this.hasSubcomponents) {
             return this._subcomponents.getMember(i);
-        } 
+        }
     }
 
     get prevChild() {
         let prev: number = this.index - 1;
-        if (this.myParent && prev > -1 ) {
+        if (this.myParent && prev > -1) {
             let found = this.myParent.getChildAt(prev);
             return found;
         }
@@ -111,6 +112,16 @@ export class foNode extends foObject implements ifoNode {
 
     get hasSubcomponents(): boolean {
         return this._subcomponents && this._subcomponents.hasMembers;
+    }
+
+    applyToSelfAndComponents(func: (item) => {}, deep: boolean = true): any {
+        let result = func(this);
+        if (deep && this.hasSubcomponents) {
+            this.Subcomponents.forEach(item => {
+                item.applyToSelfAndComponents(func,deep);
+            });
+        }
+        return result;
     }
 
 }

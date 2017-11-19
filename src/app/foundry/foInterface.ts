@@ -12,4 +12,5 @@ export interface ifoNode {
     override(properties?: any);
     addSubcomponent(obj: ifoNode);
     removeSubcomponent(obj: ifoNode);
+    applyToSelfAndComponents(func: (item) => {}, deep: boolean):any;
 }
