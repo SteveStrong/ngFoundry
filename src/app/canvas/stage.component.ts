@@ -22,7 +22,7 @@ import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power2 } from "gsap";
+import { TweenLite, TweenMax, Back, Power2, Bounce } from "gsap";
 
 
 @Component({
@@ -93,25 +93,23 @@ export class StageComponent implements OnInit, AfterViewInit {
         if (!overshape) {
           overshape = mySelf.findHitShape(loc, shape);
           if (overshape) {
-            overshape.setColor('orange');
-            let size = overshape.getSize(1.2);
-            size['ease'] = Power2.easeInOut;
+            overshape['hold'] = overshape.getSize(1);
+            let size = overshape.getSize(1.1);
+            size['ease'] = Back.easeOut.config(1.7);
             size['onComplete'] = () => {
-              overshape.scaleSize(1.2);
+              overshape.setColor('orange');
             }
-            TweenMax.to(overshape, .5, size);
-            //overshape.scaleSize(1.2);
+            TweenMax.to(overshape, 0.5, size);
           }
-        } else if ( !overshape.hitTest(loc)){
-          overshape.setColor('green');
-          let size = overshape.getSize();
-          //size['ease'] = Back.easeOut;
+        } else if (!overshape.hitTest(loc)) {
+          let size = overshape['hold'];
+          size['ease'] = Back.easeOut.config(1.7);
           size['onComplete'] = () => {
-            overshape.scaleSize(0.8);
+            overshape.setColor('green');
+            delete overshape['hold'];
+            overshape = null;
           }
-          //TweenLite.to(overshape, 0.8, size);
-          overshape.scaleSize(0.8);
-          overshape = null;
+          TweenLite.to(overshape, 0.5, size);
         }
 
       }
