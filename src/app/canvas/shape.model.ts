@@ -66,6 +66,22 @@ export class foShape extends foComponent implements iShape, ifoNode {
         return true;
     }
 
+    public overlapTest = (hit: iShape): boolean => {
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+
+        let loc = hit.getLocation();
+        let size = hit.getSize(1.0);
+        if (loc.x > x + width) return false;
+        if (loc.x + size.width < x) return false;
+        if (loc.y > y + height) return false;
+        if (loc.y + size.height < y) return false;
+        
+        return true;
+    }
+
     public getOffset = (loc: iPoint): iPoint => {
         let x = this.x;
         let y = this.y;

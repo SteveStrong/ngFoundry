@@ -22,7 +22,7 @@ import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power2, Bounce } from "gsap";
+import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 
 
 @Component({
@@ -40,15 +40,25 @@ export class StageComponent implements OnInit, AfterViewInit {
   selectionManager: selectionManager = new selectionManager();
 
   shapelist: Array<iShape> = new Array<iShape>();
-  selections: Array<iShape> = new Array<iShape>();
+  //selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
   mouseLoc: any = {};
   sitOnShape: any = {};
 
+
   //model = [this.dictionary];
 
   constructor(private signalR: SignalRService) {
+  }
+
+  moveToTop(array: Array<iShape>, item: iShape) {
+    let loc = array.indexOf(item);
+    if (loc != -1) {
+      array.splice(loc, 1);
+      array.push(item);
+    }
+    return array;
   }
 
   findHitShape(loc: iPoint, exclude: iShape = null): iShape {
@@ -61,25 +71,36 @@ export class StageComponent implements OnInit, AfterViewInit {
     return null;
   }
 
+  findShapeUnder(source: iShape): iShape {
+    for (var i: number = 0; i < this.shapelist.length; i++) {
+      let shape: iShape = this.shapelist[i];
+      if (shape != source && source.overlapTest(shape)) {
+        return shape;
+      }
+    }
+    return null;
+  }
+
   setupMouseEvents(canvas: HTMLCanvasElement) {
 
     // Redraw the circle every time the mouse moves
 
     let shape: iShape = null;
     let overshape: iShape = null;
-    let mySelf = this;
+    //let mySelf = this;
     let offset: cPoint = null;
 
     PubSub.Sub('mousedown', (loc: iPoint, e) => {
-      shape = mySelf.findHitShape(loc);
+      shape = this.findHitShape(loc);
       this.dictionary.applyTo(item => {
         item.isSelected = false;
       });
 
       if (shape) {
+        this.moveToTop(this.shapelist, shape);
         shape.isSelected = true;
-        mySelf.selections.push(shape);
-        offset = shape.getOffset(loc);
+        //this.selections.push(shape);
+        offset = shape.getOffset(loc);    
       }
       this.mouseLoc = loc;
       //Toast.success(JSON.stringify(loc), "mousedown");
@@ -91,23 +112,25 @@ export class StageComponent implements OnInit, AfterViewInit {
         shape.doMove(loc, offset);
 
         if (!overshape) {
-          overshape = mySelf.findHitShape(loc, shape);
+          overshape = this.findShapeUnder(shape);
           if (overshape) {
             overshape['hold'] = overshape.getSize(1);
             let size = overshape.getSize(1.1);
-            size['ease'] = Back.easeOut.config(10);
+            let target = overshape.getSize(1.1);
+            size['ease'] = Power0.easeNone;
             size['onComplete'] = () => {
               overshape.setColor('orange');
-              overshape.override(overshape['hold']);
+              overshape.override(target);
             }
             TweenMax.to(overshape, 0.5, size);
           }
-        } else if (!overshape.hitTest(loc)) {
+        } else if (!overshape.overlapTest(shape)) {
+          let target = overshape['hold'];
           let size = overshape['hold'];
-          size['ease'] = Back.easeOut.config(10);
+          size['ease'] = Power0.easeNone;
           size['onComplete'] = () => {
             overshape.setColor('green');
-            overshape.override(overshape['hold']);
+            overshape.override(target);
             delete overshape['hold'];
             overshape = null;
           }
@@ -123,6 +146,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
       if (!shape) return;
 
+      this.moveToTop(this.shapelist, shape);
       let drop = shape.getLocation();
       drop['myGuid'] = shape['myGuid'];
       shape = null;
@@ -177,6 +201,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       context.fillRect(0, 0, this.width, this.height);
 
       this.drawGrid(context);
+
       for (var i: number = 0; i < this.shapelist.length; i++) {
         let shape: iShape = this.shapelist[i];
         shape.draw(context);
@@ -186,6 +211,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     this.screen2D.go();
 
     this.signalR.start().then(() => {
+
       this.signalR.subChannel("move", data => {
         this.dictionary.found(data.myGuid, shape => {
           let loc = <iPoint>data;
