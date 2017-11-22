@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { EmitterService } from '../common/emitter.service';
 
-import { iShape, iPoint } from "./shape";
+import { iPoint, iSize } from "./shape";
 import { cPoint } from "./point";
 import { cCircle } from "./circle";
 //import { cRectangle } from "./crectangle";
@@ -11,12 +11,15 @@ import { cText } from "./text";
 import { cClock } from "./clock";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
-import { shapeManager } from "./shapeManager";
-import { selectionManager } from "./selectionManager";
+
 import { PubSub } from "../foundry/foPubSub";
 import { Tools } from "../foundry/foTools";
-import { foShape } from "./shape.model";
 import { foDictionary } from "../foundry/foDictionary.model";
+
+import { foShape } from "./shape.model";
+import { shapeManager } from "./shapeManager";
+import { selectionManager } from "./selectionManager";
+
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
@@ -39,7 +42,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   shapeManager: shapeManager = new shapeManager();
   selectionManager: selectionManager = new selectionManager();
 
-  shapelist: Array<iShape> = new Array<iShape>();
+  shapelist: Array<foShape> = new Array<foShape>();
   //selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
@@ -52,7 +55,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   constructor(private signalR: SignalRService) {
   }
 
-  moveToTop(array: Array<iShape>, item: iShape) {
+  moveToTop(array: Array<foShape>, item: foShape) {
     let loc = array.indexOf(item);
     if (loc != -1) {
       array.splice(loc, 1);
@@ -61,9 +64,9 @@ export class StageComponent implements OnInit, AfterViewInit {
     return array;
   }
 
-  findHitShape(loc: iPoint, exclude: iShape = null): iShape {
+  findHitShape(loc: iPoint, exclude: foShape = null): foShape {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: iShape = this.shapelist[i];
+      let shape: foShape = this.shapelist[i];
       if (shape != exclude && shape.hitTest(loc)) {
         return shape;
       }
@@ -71,9 +74,9 @@ export class StageComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  findShapeUnder(source: iShape): iShape {
+  findShapeUnder(source: foShape): foShape {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: iShape = this.shapelist[i];
+      let shape: foShape = this.shapelist[i];
       if (shape != source && source.overlapTest(shape)) {
         return shape;
       }
@@ -85,8 +88,8 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     // Redraw the circle every time the mouse moves
 
-    let shape: iShape = null;
-    let overshape: iShape = null;
+    let shape: foShape = null;
+    let overshape: foShape = null;
     //let mySelf = this;
     let offset: cPoint = null;
 
@@ -211,7 +214,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       this.drawGrid(context);
 
       for (var i: number = 0; i < this.shapelist.length; i++) {
-        let shape: iShape = this.shapelist[i];
+        let shape: foShape = this.shapelist[i];
         shape.draw(context);
       }
     }
