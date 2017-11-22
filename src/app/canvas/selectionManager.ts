@@ -10,7 +10,6 @@ export class selectionManager extends foComponent {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myType = 'selectionManager';
     }
 
 

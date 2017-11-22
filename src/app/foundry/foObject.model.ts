@@ -1,41 +1,53 @@
 import { Tools } from './foTools'
-import { iObject, Action } from './foInterface'
+import { iObject, Action, ModelRef } from './foInterface'
 
 
 export class foObject implements iObject {
     myName: string = 'unknown';
-    myType: string = '';
-    myParent: iObject = undefined;
+    myParent: ModelRef<iObject>;
 
-    constructor() {
-
+    constructor(properties?: any, parent?: foObject) {
+        this.myParent = () => { return parent };
+        this.override(properties);
     }
 
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
-    get myComputedType() {
+    get myType(): string {
         let comp: any = this.constructor;
         return comp.name;
     }
 
-    asReference() {
-        if (this.myParent === undefined) {
-            return "\'root\'";
+    asReference(): string {
+        let parent = this.myParent && this.myParent();
+        if (!parent) {
+            return `root`;
         }
-        return this.myName + "." + this.myParent.asReference();
+        return `${this.myName}.${parent.asReference()}`;
     }
 
     get hasParent() {
-        return this.myParent ? true : false;
+        let parent = this.myParent && this.myParent();
+        return parent ? true : false;
     }
 
     getChildAt(i: number): iObject {
         return undefined;
     }
 
-    // applyToSubComponents(func: (item: T): void, deep: boolean = true) {
-    // }
+    override(properties?: any) {
+        const self = this;
 
+        properties && Tools.forEachKeyValue(properties, function (key, value) {
+            if (Tools.isFunction(value)) {
+                Tools.defineCalculatedProperty(self, key, value);
+            } else {
+                self[key] = value;
+            }
+        });
+
+        return self;
+    }
 
     get debug() {
         return Tools.stringify(this);
@@ -59,7 +71,6 @@ export class foObject implements iObject {
         }
         return result;
     }
-
 }
 
 

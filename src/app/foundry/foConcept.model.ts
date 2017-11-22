@@ -27,7 +27,6 @@ export class foConcept extends foKnowledge {
     constructor(properties?: any) {
         super(properties);
         this._spec = properties || {};
-        this.myType = 'foConcept';
 
         this.createNode();
         //this.createComponent();
@@ -129,7 +128,6 @@ export class foProjection extends foConcept {
     constructor(source: foConcept, properties?: any) {
         super(properties);
         this._mySource = source;
-        this.myType = 'foProjection';
 
         PubSub.Sub("attribute", (action, source, attribute) => {
             if (this._mySource === source) {

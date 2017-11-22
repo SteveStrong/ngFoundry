@@ -10,8 +10,6 @@ export class foComponent extends foNode {
     
     constructor(properties?:any, subcomponents?:Array<foNode>, parent?:foObject) {
         super(properties,subcomponents,parent);
-       
-        this.myType = 'foComponent';
     }
     
         

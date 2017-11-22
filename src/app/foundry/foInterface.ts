@@ -5,22 +5,25 @@ export interface Action<T>
     (item: T): void;
 }
 
+export interface ModelRef<T>
+{
+    (): T;
+}
+
 export interface Func<T,TResult>
 {
     (item: T): TResult;
 }
 
 export interface iObject {
-    myType: string;
     myName: string;
-    myParent: iObject;
+    myParent: ModelRef<iObject>;
     asReference(): string;
     getChildAt(i: number): iObject;
-    applyToSubComponents<C>(func: Action<C>, deep: boolean);
-}
+    override(properties?: any);
+ }
 
 export interface iNode {
-    override(properties?: any);
     addSubcomponent(obj: iNode);
     removeSubcomponent(obj: iNode);
 }

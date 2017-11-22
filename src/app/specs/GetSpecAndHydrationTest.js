@@ -32,7 +32,7 @@ describe("Foundry: GetSpec", function () {
     });
 
     it("Should be dehydratable and rehydratable", function () {
-        var result = obj.dehydrate();
+        var result = obj.dehydrate() ;
 
         expect(result).toBeDefined();
 

@@ -48,7 +48,6 @@ export class foShape extends foNode implements iShape {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myType = 'foShape';
         this.myGuid;
     }
 

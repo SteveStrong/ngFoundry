@@ -9,7 +9,6 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
 
     constructor(spec: any = undefined) {
         super(spec);
-        this.myType = 'foDictionary';
     }
 
     addItem(key: string, obj: T): T {

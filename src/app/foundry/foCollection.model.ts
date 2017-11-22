@@ -1,5 +1,5 @@
 import { foObject } from './foObject.model'
-import { iObject } from './foInterface'
+import { iObject, Action, Func } from './foInterface'
 
 //we want foCollection to be observable
 
@@ -9,7 +9,6 @@ export class foCollection<T extends iObject> extends foObject {
 
     constructor(list: Array<T> = undefined) {
         super();
-        this.myType = 'foCollection';
 
         this._members = new Array<T>();
         list && list.forEach(item => this.addMember(item));
@@ -29,6 +28,10 @@ export class foCollection<T extends iObject> extends foObject {
 
     map(funct) {
         return this._members.map(funct);
+    }
+
+    forEach(funct:Action<T>) {
+        this._members.forEach(funct);
     }
 
     findMember(name: string) {
@@ -51,12 +54,6 @@ export class foCollection<T extends iObject> extends foObject {
         return this._members;
     }
 
-    applyToSubComponents(func: (item:T) => {}, deep: boolean = true) {
-        this.hasMembers && this.members.forEach(item => {
-            func(item);
-            deep && item.applyToSubComponents(func, deep);
-        });
-    }
 
     moveToTop(item: T) {
         let loc = this._members.indexOf(item);

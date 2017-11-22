@@ -1,9 +1,6 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
-
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.core.js" />
-/// <reference path="../Foundry/Foundry.rules.factory.js" />
-
+﻿
+import { Tools } from '../foundry/foTools'
+import { foComponent } from '../foundry/foComponent.model'
 
 describe("Foundry: Test Template", function () {
     var obj;

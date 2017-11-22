@@ -12,7 +12,6 @@ export class shapeManager extends foComponent {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myType = 'shapeManager';
     }
 
 //   findHitShape(x: number, y: number): iShape {
