@@ -14,6 +14,7 @@ import { Sceen2D } from "../foundryDrivers/canvasDriver";
 
 import { PubSub } from "../foundry/foPubSub";
 import { Tools } from "../foundry/foTools";
+import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
 
 import { foShape } from "./shape.model";
@@ -42,31 +43,20 @@ export class StageComponent implements OnInit, AfterViewInit {
   shapeManager: shapeManager = new shapeManager();
   selectionManager: selectionManager = new selectionManager();
 
-  shapelist: Array<foShape> = new Array<foShape>();
+  shapelist: foCollection<foShape> = new foCollection<foShape>();
   //selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
   mouseLoc: any = {};
   sitOnShape: any = {};
 
-
-  //model = [this.dictionary];
-
   constructor(private signalR: SignalRService) {
   }
 
-  moveToTop(array: Array<foShape>, item: foShape) {
-    let loc = array.indexOf(item);
-    if (loc != -1) {
-      array.splice(loc, 1);
-      array.push(item);
-    }
-    return array;
-  }
-
+ 
   findHitShape(loc: iPoint, exclude: foShape = null): foShape {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: foShape = this.shapelist[i];
+      let shape: foShape = this.shapelist.getMember(i);
       if (shape != exclude && shape.hitTest(loc)) {
         return shape;
       }
@@ -76,7 +66,7 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   findShapeUnder(source: foShape): foShape {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: foShape = this.shapelist[i];
+      let shape: foShape = this.shapelist.getMember(i);
       if (shape != source && source.overlapTest(shape)) {
         return shape;
       }
@@ -100,7 +90,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       });
 
       if (shape) {
-        this.moveToTop(this.shapelist, shape);
+        this.shapelist.moveToTop(shape);
         shape.isSelected = true;
         //this.selections.push(shape);
         offset = shape.getOffset(loc);    
@@ -149,7 +139,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
       if (!shape) return;
 
-      this.moveToTop(this.shapelist, shape);
+      this.shapelist.moveToTop(shape);
       let drop = shape.getLocation();
       drop['myGuid'] = shape['myGuid'];
       shape = null;
@@ -173,7 +163,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   private addToModel(shape: foShape) {
     this.dictionary.findItem(shape.myGuid, () => {
       this.dictionary.addItem(shape.myGuid, shape);
-      this.shapelist.push(shape);
+      this.shapelist.addMember(shape);
     });
   }
 
@@ -213,10 +203,7 @@ export class StageComponent implements OnInit, AfterViewInit {
 
       this.drawGrid(context);
 
-      for (var i: number = 0; i < this.shapelist.length; i++) {
-        let shape: foShape = this.shapelist[i];
-        shape.draw(context);
-      }
+      this.shapelist.forEach(item => item.render(context));
     }
 
     this.screen2D.go();

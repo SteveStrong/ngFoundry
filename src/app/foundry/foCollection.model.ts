@@ -14,6 +14,10 @@ export class foCollection<T extends iObject> extends foObject {
         list && list.forEach(item => this.addMember(item));
     }
 
+    getChildAt(i: number): T {
+        return this._members[i]
+    }
+
     isEmpty(): boolean {
         return this._members.length == 0;
     }
@@ -34,11 +38,11 @@ export class foCollection<T extends iObject> extends foObject {
         this._members.forEach(funct);
     }
 
-    findMember(name: string) {
+    findMember(name: string):T {
         return this._members[0];
     }
 
-    getMember(id) {
+    getMember(id):T {
         return this._members[id]
     }
 

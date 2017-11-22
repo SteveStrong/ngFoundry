@@ -3,6 +3,7 @@ import { Tools } from '../foundry/foTools'
 //import { iObject, iNode } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
+import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
@@ -13,6 +14,8 @@ import { cPoint } from "./point";
 
 export class foShape extends foNode implements iShape {
     private _isSelected: boolean = false;
+
+    _subcomponents: foCollection<foShape>;
 
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
@@ -131,14 +134,9 @@ export class foShape extends foNode implements iShape {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        // let result = this._subcomponents.members as Array<foShape>;
-        // result && result.forEach(item => {
-        //     item.doMove(loc, offset);
-        // });
-
-        // this.applyToSubComponents((item) => {
-        //      item.doMove(loc, offset);
-        //   }, true);
+        this._subcomponents.forEach(item => {
+            item.doMove(loc, offset);
+        });
 
         //structual type
         return {
@@ -156,6 +154,13 @@ export class foShape extends foNode implements iShape {
         this.opacity = opacity;
         return this.opacity;
     };
+
+    public render = (ctx: CanvasRenderingContext2D, deep:boolean=true): void =>{
+        this.draw(ctx);
+        deep && this._subcomponents.forEach( item => {
+            item.render(ctx, deep);
+        })
+    }
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 

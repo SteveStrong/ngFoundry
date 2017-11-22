@@ -12,6 +12,7 @@ export interface iSize {
 }
 
 export interface iShape extends iNode {
+    render(ctx: CanvasRenderingContext2D, deep:boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint): boolean;
