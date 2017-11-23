@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
 import { cPoint } from "../foundry/foGeometry";
-import { iShape, iPoint, iSize } from '../foundry/foInterface'
+import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { foCollection } from '../foundry/foCollection.model'
@@ -182,8 +182,10 @@ export class foShape2D extends foGlyph  {
 }
 
 export class Stencil {
+    static afterCreate: Action<foShape2D>;
     static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
+        this.afterCreate && this.afterCreate(instance);
         return instance;
     }
 }

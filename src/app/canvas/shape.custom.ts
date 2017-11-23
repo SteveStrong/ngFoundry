@@ -2,7 +2,7 @@
 import { foShape2D } from "../foundry/foShape2D.model";
 
 
-export class rawBrick extends foShape2D {
+export class brick extends foShape2D {
   constructor(properties?: any) {
     super(properties);
   }
@@ -10,36 +10,58 @@ export class rawBrick extends foShape2D {
 
 export class legoCore extends foShape2D {
 
-  constructor(properties?: any) {
-    super(properties);
-  }
-
-  description: string = "legoCore";
-
-}
-
-export class lego extends legoCore {
+  description: string;
 
   constructor(properties?: any) {
     super(properties);
   }
-
-  description: string = "lego"
-
 }
 
 
-export class door extends lego {
+export class OneByOne extends legoCore {
 
   constructor(properties?: any) {
     super(properties);
   }
+}
 
-  description: string = "The Door Is Red";
+export class TwoByOne extends legoCore {
+
+  constructor(properties?: any) {
+    super(properties);
+  }
+}
+
+export class TwoByTwo extends legoCore {
+
+  constructor(properties?: any) {
+    super(properties);
+  }
+}
+
+export class TwoByFour extends legoCore {
+
+  constructor(properties?: any) {
+    super(properties);
+  }
+}
+
+export class OneByTen extends legoCore {
+
+  constructor(properties?: any) {
+    super(properties);
+  }
+}
+
+export class TenByTen extends legoCore {
+
+  constructor(properties?: any) {
+    super(properties);
+  }
 }
 
 
-export class wall extends lego {
+export class wall extends legoCore {
 
   constructor(properties?: any) {
     super(properties);
@@ -86,7 +108,7 @@ export class wall extends lego {
 
 }
 
-export class house extends lego {
+export class house extends legoCore {
   description: string = "The Wall Is Solid";
 
   constructor(properties?: any) {

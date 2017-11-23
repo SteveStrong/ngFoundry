@@ -34,6 +34,11 @@ export class foNode extends foObject implements iNode {
         }
     }
 
+    addAsSubcomponent(obj: foNode) {
+        if (!obj) return;
+        obj.addSubcomponent(this);
+        return this;
+    }
 
     //todo modify api to take bote item and array
     addSubcomponent(obj: foNode) {

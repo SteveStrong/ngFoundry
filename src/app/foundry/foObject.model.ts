@@ -11,6 +11,11 @@ export class foObject implements iObject {
         this.override(properties);
     }
 
+    static typeName(): string {
+        let comp: any = this.constructor;
+        return comp.name;
+    }
+
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
     get myType(): string {

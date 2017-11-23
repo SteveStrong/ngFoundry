@@ -12,9 +12,9 @@ import { Tools } from "../foundry/foTools";
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
 
-import { foGlyph,  Pallet } from "../foundry/foGlyph.model";
+import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { rawBrick, door, wall, house, legoCore } from "./shape.custom";
+import { legoCore, brick, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
 
 
 import { Toast } from '../common/emitter.service';
@@ -45,7 +45,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   constructor(private signalR: SignalRService) {
   }
 
- 
+
   findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
     for (var i: number = 0; i < this.shapelist.length; i++) {
       let shape: foGlyph = this.shapelist.getMember(i);
@@ -85,7 +85,7 @@ export class StageComponent implements OnInit, AfterViewInit {
         this.shapelist.moveToTop(shape);
         shape.isSelected = true;
         //this.selections.push(shape);
-        offset = shape.getOffset(loc);    
+        offset = shape.getOffset(loc);
       }
       this.mouseLoc = loc;
       //Toast.success(JSON.stringify(loc), "mousedown");
@@ -141,16 +141,6 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   }
 
-  private createGlyph(init?: any): foGlyph {
-    let base = {
-      x: 50,
-      y: 50,
-      width: 200,
-      height: 100
-    }
-    let shape = new foGlyph(Tools.union(base, init));
-    return shape;
-  }
 
   private addToModel(shape: foGlyph) {
     this.dictionary.findItem(shape.myGuid, () => {
@@ -159,60 +149,61 @@ export class StageComponent implements OnInit, AfterViewInit {
     });
   }
 
-  doAddShape() {
-    let shape = this.createGlyph({
+  doCreateLego<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
+    let instance = Stencil.create(type,properties);
+    return instance;
+  }
+
+  ngOnInit() {
+    Pallet.afterCreate = (item: foGlyph) => {
+      this.addToModel(item);
+    }
+
+    Stencil.afterCreate = (item: foShape2D) => {
+      this.addToModel(item);
+    }
+
+  }
+
+  doAddGlyph() {
+    let shape = Pallet.create(foGlyph, {
       x: 150,
       y: 100,
       height: 150,
       width: 200,
     });
-    this.addToModel(shape);
+    this.signalR.pubChannel("addGlyph", shape.asJson);
+  }
 
+  doAddSubGlyph() {
+    let shape = Pallet.create(foGlyph, {
+      x: 150,
+      y: 100,
+      height: 150,
+      width: 200,
+    });
 
-    let subshape = this.createGlyph({
+    Pallet.create(foGlyph, {
       color: 'blue',
       x: 450,
       y: 100,
       height: 50,
       width: 300,
-    });
-    shape.addSubcomponent(subshape);
+    }).addAsSubcomponent(shape);
 
-
-    let json = shape.asJson;
-    //Toast.success(JSON.stringify(json), "add shape");
-    this.signalR.pubChannel("addShape", json);
+    this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
-  doAddHouse() {
-    let shape = Stencil.create(house, {
+  doAddTenByTen() {
+    let name = TenByTen.typeName();
+    let shape = this.doCreateLego(TenByTen, {
       color: 'green',
       x: 50,
       y: 50,
       height: 150,
       width: 300,
     });
-    this.addToModel(shape);
-
-    let subshape1 = Stencil.create(wall, {
-      color: 'blue',
-      height: 125,
-      width: 75, 
-    });
-    shape.addSubcomponent(subshape1);
-
-    let subshape2 = Stencil.create(wall, {
-      color: 'black',
-      height: 25,
-      width: 25, 
-      y: 50,
-    });
-    shape.addSubcomponent(subshape2);
-
-
-    let json = shape.asJson;
-    //Toast.success(JSON.stringify(json), "add shape");
-    this.signalR.pubChannel("addShape", json);
+    this.signalR.pubChannel("addShape", shape.asJson);
   }
 
   public ngAfterViewInit() {
@@ -249,11 +240,10 @@ export class StageComponent implements OnInit, AfterViewInit {
 
       });
 
-      this.signalR.subChannel("addShape", json => {
+      this.signalR.subChannel("addGlyph", json => {
         console.log(json);
         this.dictionary.findItem(json.myGuid, () => {
-          let shape = this.createGlyph(json);
-          this.addToModel(shape);
+          Pallet.create(foGlyph, json);
         });
       });
 
@@ -284,8 +274,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     ctx.restore();
   }
 
-  ngOnInit() {
-  }
+
 
 
 }

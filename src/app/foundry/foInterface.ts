@@ -24,6 +24,7 @@ export interface iObject {
  }
 
 export interface iNode {
+    addAsSubcomponent(obj: iNode);
     addSubcomponent(obj: iNode);
     removeSubcomponent(obj: iNode);
 }
