@@ -4,7 +4,6 @@ export class foMethod extends foObject {
 
   constructor() {
     super();
-    this.myType = 'foMethod';
   }
   
 }

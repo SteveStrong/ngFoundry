@@ -1,7 +1,8 @@
 
 import { Tools } from './foTools'
+import { iObject, iNode } from './foInterface'
 
-import { foObject, iObject } from './foObject.model'
+import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
 import { foCollection } from './foCollection.model'
 
@@ -9,8 +10,6 @@ export class foComponent extends foNode {
     
     constructor(properties?:any, subcomponents?:Array<foNode>, parent?:foObject) {
         super(properties,subcomponents,parent);
-       
-        this.myType = 'foComponent';
     }
     
         
@@ -20,18 +19,13 @@ export class foComponent extends foNode {
         this.myName = properties &&  properties['myName'] ? properties['myName'] : 'unknown'; 
 
         //create a different behaviour
-        Tools.forEachKeyValue(properties, function(key,value) {
-            if (Tools.isFunction(value) ) {
-                Tools.defineCalculatedProperty(self, key, value);                
-            } else {
-                self[key] = value;                
-            }
-        });
+        this.override(properties);
         
         this._subcomponents = new foCollection<foComponent>();
         subcomponents && subcomponents.forEach(item => this.addSubcomponent(item));   
         return this;
     }
+
 
     //return a new collection that could be destroyed
     subcomponents():Array<foComponent> {

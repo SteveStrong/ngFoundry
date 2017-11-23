@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { EmitterService } from '../common/emitter.service';
 
-import { iShape, iPoint } from "./shape";
+import { iPoint, iSize } from "./shape";
 import { cPoint } from "./point";
 import { cCircle } from "./circle";
 //import { cRectangle } from "./crectangle";
@@ -11,18 +11,24 @@ import { cText } from "./text";
 import { cClock } from "./clock";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
-import { shapeManager } from "./shapeManager";
-import { selectionManager } from "./selectionManager";
+
 import { PubSub } from "../foundry/foPubSub";
 import { Tools } from "../foundry/foTools";
-import { foShape } from "./shape.model";
+import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
+
+import { foShape } from "./shape.model";
+import { stencil, rawBrick, door, wall, house, legoCore } from "./shape.custom";
+
+import { shapeManager } from "./shapeManager";
+import { selectionManager } from "./selectionManager";
+
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite, Back } from "gsap";
+import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 
 
 @Component({
@@ -39,19 +45,31 @@ export class StageComponent implements OnInit, AfterViewInit {
   shapeManager: shapeManager = new shapeManager();
   selectionManager: selectionManager = new selectionManager();
 
-  shapelist: Array<iShape> = new Array<iShape>();
-  selections: Array<iShape> = new Array<iShape>();
+  shapelist: foCollection<foShape> = new foCollection<foShape>();
+  //selections: Array<iShape> = new Array<iShape>();
   dictionary: foDictionary<foShape> = new foDictionary<foShape>();
 
-  //model = [this.dictionary];
+  mouseLoc: any = {};
+  sitOnShape: any = {};
 
   constructor(private signalR: SignalRService) {
   }
 
-  findHitShape(loc: iPoint): iShape {
+ 
+  findHitShape(loc: iPoint, exclude: foShape = null): foShape {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: iShape = this.shapelist[i];
-      if (shape.hitTest(loc)) {
+      let shape: foShape = this.shapelist.getMember(i);
+      if (shape != exclude && shape.hitTest(loc)) {
+        return shape;
+      }
+    }
+    return null;
+  }
+
+  findShapeUnder(source: foShape): foShape {
+    for (var i: number = 0; i < this.shapelist.length; i++) {
+      let shape: foShape = this.shapelist.getMember(i);
+      if (shape != source && source.overlapTest(shape)) {
         return shape;
       }
     }
@@ -62,36 +80,68 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     // Redraw the circle every time the mouse moves
 
-    let shape: iShape = null;
-    let mySelf = this;
+    let shape: foShape = null;
+    let overshape: foShape = null;
+    //let mySelf = this;
     let offset: cPoint = null;
 
     PubSub.Sub('mousedown', (loc: iPoint, e) => {
-      shape = mySelf.findHitShape(loc);
-      if (shape) {
-        shape.isSelected = true;
-        mySelf.selections.push(shape);
-        offset = shape.getOffset(loc);
-      } else {
-        this.dictionary.applyTo( item => {
-          item.isSelected = false;
-        });
-      }
+      shape = this.findHitShape(loc);
+      this.dictionary.applyTo(item => {
+        item.isSelected = false;
+      });
 
+      if (shape) {
+        this.shapelist.moveToTop(shape);
+        shape.isSelected = true;
+        //this.selections.push(shape);
+        offset = shape.getOffset(loc);    
+      }
+      this.mouseLoc = loc;
       //Toast.success(JSON.stringify(loc), "mousedown");
     });
 
     PubSub.Sub('mousemove', (loc: iPoint, e) => {
+
       if (shape) {
         shape.doMove(loc, offset);
+
+        if (!overshape) {
+          overshape = this.findShapeUnder(shape);
+          if (overshape) {
+            overshape['hold'] = overshape.getSize(1);
+            let size = overshape.getSize(1.1);
+            let target = overshape.getSize(1.1);
+            size['ease'] = Power0.easeNone;
+            size['onComplete'] = () => {
+              overshape.setColor('orange');
+              overshape.override(target);
+            }
+            TweenMax.to(overshape, 0.3, size);
+          }
+        } else if (!overshape.overlapTest(shape)) {
+          let target = overshape['hold'];
+          let size = overshape['hold'];
+          size['ease'] = Power0.easeNone;
+          size['onComplete'] = () => {
+            overshape.setColor('green');
+            overshape.override(target);
+            delete overshape['hold'];
+            overshape = null;
+          }
+          TweenLite.to(overshape, 0.3, size);
+        }
+
       }
-      let overshape = mySelf.findHitShape(loc);
-      if (overshape) {
-        //overshape.drawHover(mySelf.context);
-      }
+      this.sitOnShape = overshape || {};
+      this.mouseLoc = loc;
+
     });
 
     PubSub.Sub('mouseup', (loc: iPoint, e) => {
+      if (!shape) return;
+
+      this.shapelist.moveToTop(shape);
       let drop = shape.getLocation();
       drop['myGuid'] = shape['myGuid'];
       shape = null;
@@ -101,30 +151,74 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   }
 
-  private createShape(init?:any):foShape {
+  private createShape(init?: any): foShape {
     let base = {
-      x: 20,
-      y: 10,
-      width: 190,
+      x: 50,
+      y: 50,
+      width: 200,
       height: 100
     }
-    let shape = new foShape(Tools.union(base,init));
+    let shape = new foShape(Tools.union(base, init));
     return shape;
   }
 
-  private addToModel(shape:foShape){
+  private addToModel(shape: foShape) {
     this.dictionary.findItem(shape.myGuid, () => {
       this.dictionary.addItem(shape.myGuid, shape);
-      this.shapelist.push(shape);
+      this.shapelist.addMember(shape);
     });
   }
 
   doAddShape() {
     let shape = this.createShape({
-      x: 120,
-      y: 110
+      x: 150,
+      y: 100,
+      height: 150,
+      width: 200,
     });
     this.addToModel(shape);
+
+
+    let subshape = this.createShape({
+      color: 'blue',
+      x: 450,
+      y: 100,
+      height: 50,
+      width: 300,
+    });
+    shape.addSubcomponent(subshape);
+
+
+    let json = shape.asJson;
+    //Toast.success(JSON.stringify(json), "add shape");
+    this.signalR.pubChannel("addShape", json);
+  }
+
+  doAddHouse() {
+    let shape = stencil.create(house, {
+      color: 'green',
+      x: 50,
+      y: 50,
+      height: 150,
+      width: 300,
+    });
+    this.addToModel(shape);
+
+    let subshape1 = stencil.create(wall, {
+      color: 'blue',
+      height: 125,
+      width: 75, 
+    });
+    shape.addSubcomponent(subshape1);
+
+    let subshape2 = stencil.create(wall, {
+      color: 'black',
+      height: 25,
+      width: 25, 
+      y: 50,
+    });
+    shape.addSubcomponent(subshape2);
+
 
     let json = shape.asJson;
     //Toast.success(JSON.stringify(json), "add shape");
@@ -132,8 +226,6 @@ export class StageComponent implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit() {
-
-
 
     let canvas = this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
     // we'll implement this method to start capturing mouse events
@@ -144,25 +236,24 @@ export class StageComponent implements OnInit, AfterViewInit {
       context.fillRect(0, 0, this.width, this.height);
 
       this.drawGrid(context);
-      for (var i: number = 0; i < this.shapelist.length; i++) {
-        let shape: iShape = this.shapelist[i];
-        shape.draw(context);
-      }
+
+      this.shapelist.forEach(item => item.render(context));
     }
 
     this.screen2D.go();
 
     this.signalR.start().then(() => {
+
       this.signalR.subChannel("move", data => {
         this.dictionary.found(data.myGuid, shape => {
-            let loc = <iPoint>data;
-            console.log(loc);
-    
-            //shape.setLocation(loc);
-            //loc['opacity'] = 0.5;
-            loc['ease'] = Back.easeOut;
-            //Toast.info(JSON.stringify(loc), "move");
-            TweenLite.to(shape, .8, loc);
+          let loc = <iPoint>data;
+          console.log(loc);
+
+          //shape.setLocation(loc);
+          //loc['opacity'] = 0.5;
+          loc['ease'] = Back.easeOut;
+          //Toast.info(JSON.stringify(loc), "move");
+          TweenLite.to(shape, .8, loc);
         });
 
 

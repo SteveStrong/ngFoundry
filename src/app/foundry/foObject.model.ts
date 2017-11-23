@@ -1,44 +1,52 @@
 import { Tools } from './foTools'
+import { iObject, Action, ModelRef } from './foInterface'
 
-//https://www.typescriptlang.org/docs/handbook/decorators.html
-
-export interface iObject {
-    myType: string;
-    myName: string;
-    myParent: iObject;
-    asReference(): string;
-    getChildAt(i: number): iObject;
-}
 
 export class foObject implements iObject {
     myName: string = 'unknown';
-    myType: string = '';
-    myParent: iObject = undefined;
+    myParent: ModelRef<iObject>;
 
-    constructor() {
-
+    constructor(properties?: any, parent?: foObject) {
+        this.myParent = () => { return parent };
+        this.override(properties);
     }
 
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
-    get myTyp1() {
-        let comp:any = this.constructor;
+    get myType(): string {
+        let comp: any = this.constructor;
         return comp.name;
     }
 
-    asReference() {
-        if (this.myParent === undefined) {
-            return "\'root\'";
+    asReference(): string {
+        let parent = this.myParent && this.myParent();
+        if (!parent) {
+            return `root`;
         }
-        return this.myName + "." + this.myParent.asReference();
+        return `${this.myName}.${parent.asReference()}`;
     }
 
     get hasParent() {
-        return this.myParent ? true : false;
+        let parent = this.myParent && this.myParent();
+        return parent ? true : false;
     }
 
     getChildAt(i: number): iObject {
         return undefined;
+    }
+
+    override(properties?: any) {
+        const self = this;
+
+        properties && Tools.forEachKeyValue(properties, function (key, value) {
+            if (Tools.isFunction(value)) {
+                Tools.defineCalculatedProperty(self, key, value);
+            } else {
+                self[key] = value;
+            }
+        });
+
+        return self;
     }
 
     get debug() {
@@ -63,7 +71,6 @@ export class foObject implements iObject {
         }
         return result;
     }
-
 }
 
 

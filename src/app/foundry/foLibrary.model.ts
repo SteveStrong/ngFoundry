@@ -13,9 +13,8 @@ export class foLibrary extends foKnowledge {
     private _properties: foDictionary<foProperty> = new foDictionary<foProperty>({ myName: 'properties' });
     //private _projection: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'projections' });
 
-    constructor(spec: any = undefined) {
+    constructor(spec?: any) {
         super(spec);
-        this.myType = 'foLibrary';
     }
 
     get debug() {

@@ -39,7 +39,7 @@ export class foTools {
     stringify(target: any, func = undefined, deep = 3) {
         function resolveReference(value) {
             if (value && value.asReference) {
-                return 'resolveRef(' + value.asReference() + ',' + value.myType + ')';
+                return 'resolveRef(' + value.asReference() + ',' + value.constructor.name + ')';
             }
             return value;
         }

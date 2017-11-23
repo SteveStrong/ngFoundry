@@ -8,7 +8,6 @@ export class Shape extends foConcept {
 
     constructor(properties?: any) {
         super(properties);
-        this.myType = 'Shape';
     }
 
     localGeom(item) {

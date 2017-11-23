@@ -1,8 +1,4 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
-
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.core.js" />
-/// <reference path="../Foundry/Foundry.rules.factory.js" />
+﻿
 
 describe("Foundry: GetSpec", function () {
     var obj;
@@ -32,7 +28,7 @@ describe("Foundry: GetSpec", function () {
     });
 
     it("Should be dehydratable and rehydratable", function () {
-        var result = obj.dehydrate();
+        var result = obj.dehydrate() ;
 
         expect(result).toBeDefined();
 

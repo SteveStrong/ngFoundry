@@ -1,36 +1,25 @@
 
 import { Tools } from './foTools'
+import { iObject, iNode, Action } from './foInterface'
 
-import { foObject, iObject } from './foObject.model'
+import { foObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
 
-export class foNode extends foObject {
+
+export class foNode extends foObject implements iNode {
     private _index: number = 0;
     private _myGuid: string;
 
     _subcomponents: foCollection<foNode>;
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
-        super();
-        this.myType = 'foNode';
-        this.init(properties, subcomponents, parent)
-    }
-
-    init(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
-        var self = this;
-
-        properties && Tools.forEachKeyValue(properties, function (key, value) {
-            if (Tools.isFunction(value)) {
-                Tools.defineCalculatedProperty(self, key, value);
-            } else {
-                self[key] = value;
-            }
-        });
+        super(properties, parent);
 
         this._subcomponents = new foCollection<foNode>();
         subcomponents && subcomponents.forEach(item => this.addSubcomponent(item));
         return this;
     }
+
 
     get myGuid() {
         if (!this._myGuid) {
@@ -44,13 +33,14 @@ export class foNode extends foObject {
             this._myGuid = value;
         }
     }
-    
+
 
     //todo modify api to take bote item and array
     addSubcomponent(obj: foNode) {
         if (!obj) return;
-        if (!obj.myParent) {
-            obj.myParent = this;
+        let parent = obj.myParent && obj.myParent();
+        if (!parent) {
+            obj.myParent = () => { return this; };
             obj._index = this._subcomponents.length;
         }
         this._subcomponents.addMember(obj);
@@ -59,7 +49,8 @@ export class foNode extends foObject {
 
     removeSubcomponent(obj: foNode) {
         if (!obj) return;
-        if (obj.myParent == this) {
+        let parent = this.myParent && this.myParent();
+        if (parent == this) {
             obj.myParent = undefined;
             obj._index = 0;
         }
@@ -70,24 +61,24 @@ export class foNode extends foObject {
         return this._index;
     }
 
-    getChildAt(i:number):iObject {
-        if ( this.hasSubcomponents ){
-            return this._subcomponents.getMember(i);
-        } 
+    getChildAt(i: number): iObject {
+        return this.hasSubcomponents && this._subcomponents.getMember(i);
     }
 
     get prevChild() {
         let prev: number = this.index - 1;
-        if (this.myParent && prev > -1 ) {
-            let found = this.myParent.getChildAt(prev);
+        let parent = this.myParent && this.myParent();
+        if (parent && prev > -1) {
+            let found = parent.getChildAt(prev);
             return found;
         }
     }
 
     get nextChild() {
         let next: number = this.index + 1;
-        if (this.myParent && next < this._subcomponents.length) {
-            let found = this.myParent.getChildAt(next);
+        let parent = this.myParent && this.myParent();
+        if (parent && next < this._subcomponents.length) {
+            let found = parent.getChildAt(next);
             return found;
         }
     }
@@ -103,5 +94,4 @@ export class foNode extends foObject {
     get hasSubcomponents(): boolean {
         return this._subcomponents && this._subcomponents.hasMembers;
     }
-
 }

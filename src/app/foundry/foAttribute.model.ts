@@ -5,7 +5,6 @@ export class foAttribute extends foKnowledge {
 
   constructor(spec: any = undefined) {
     super(spec);
-    this.myType = 'foAttribute';
   }
 
 }
@@ -18,7 +17,6 @@ export class foViewAttribute extends foAttribute {
   constructor(source: foAttribute, spec: any = undefined) {
     super(spec);
     this._mySource = source;
-    this.myType = 'foViewAttribute';
   }
 
 //https://toddmotto.com/typescript-setters-getter
