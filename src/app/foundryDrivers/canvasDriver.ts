@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foundry/foPubSub";
 
-import { cPoint } from "../canvas/point";
+import { cPoint } from "../foundry/foGeometry";
 
 function doAnimate(mySelf) {
     function animate() {

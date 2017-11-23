@@ -1,5 +1,5 @@
 
-import { iPoint } from "./shape";
+import {  iPoint } from './foInterface';
 
 export class cPoint implements iPoint {
     public x: number;

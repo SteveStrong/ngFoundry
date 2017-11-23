@@ -1,6 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
-//import { iObject, iNode } from '../foundry/foInterface'
+import { cPoint } from "../foundry/foGeometry";
+import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { foCollection } from '../foundry/foCollection.model'
@@ -8,46 +9,13 @@ import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { iShape, iPoint, iSize } from "./shape";
-import { cPoint } from "./point";
+import { foGlyph } from '../foundry/foGlyph.model'
 
 
-export class foShape extends foNode implements iShape {
-    private _isSelected: boolean = false;
+//a Shape is a graphic designed to behave like a visio shape
+//and have all the same properties
+export class foShape2D extends foGlyph  {
 
-    _subcomponents: foCollection<foShape>;
-
-    get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) { this._isSelected = value; }
-
-    private _x: number;
-    private _y: number;
-    private _width: number;
-    private _height: number;
-    private _opacity: number;
-    private _color: string;
-
-    get x(): number { return this._x || 0.0; }
-    set x(value: number) { this._x = value; }
-
-    get y(): number { return this._y || 0.0 }
-    set y(value: number) { this._y = value; }
-
-    get width(): number { return this._width || 0.0; }
-    set width(value: number) { this._width = value; }
-
-    get height(): number { return this._height || 0.0; }
-    set height(value: number) { this._height = value; }
-
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'green';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
 
     public pinX = (): number => { return this.width / 2; }
     public pinY = (): number => { return this.height / 2 }
@@ -159,7 +127,7 @@ export class foShape extends foNode implements iShape {
     };
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-       
+
         this.draw(ctx);
         ctx.save();
         ctx.translate(this.x, this.y);
@@ -211,8 +179,12 @@ export class foShape extends foNode implements iShape {
         ctx.restore();
     }
 
-    toggleSelected() {
-        this._isSelected = !this._isSelected;
+}
+
+export class stencil {
+    static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
+        let instance = new type(properties);
+        return instance;
     }
 }
 

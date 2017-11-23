@@ -10,7 +10,7 @@ export class foNode extends foObject implements iNode {
     private _index: number = 0;
     private _myGuid: string;
 
-    _subcomponents: foCollection<foNode>;
+    protected _subcomponents: foCollection<foNode>;
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, parent);

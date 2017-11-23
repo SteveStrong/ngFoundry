@@ -1,9 +1,4 @@
 
-import { iNode, iPoint, iSize, iShape } from '../foundry/foInterface'
-
-
-
-
 
 export interface iFullShape {
     draw(ctx: CanvasRenderingContext2D): void;

@@ -1,27 +1,20 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { EmitterService } from '../common/emitter.service';
 
-import { iPoint, iSize } from "./shape";
-import { cPoint } from "./point";
-import { cCircle } from "./circle";
-//import { cRectangle } from "./crectangle";
-import { cAsteroid } from "./asteroid";
-import { cTriangle } from "./triangle";
-import { cText } from "./text";
-import { cClock } from "./clock";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
+import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { PubSub } from "../foundry/foPubSub";
+import { cPoint } from "../foundry/foGeometry";
 import { Tools } from "../foundry/foTools";
+
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
 
-import { foShape } from "./shape.model";
-import { stencil, rawBrick, door, wall, house, legoCore } from "./shape.custom";
-
-import { shapeManager } from "./shapeManager";
-import { selectionManager } from "./selectionManager";
+import { foGlyph,  } from "../foundry/foGlyph.model";
+import { foShape2D, stencil } from "../foundry/foShape2D.model";
+import { rawBrick, door, wall, house, legoCore } from "./shape.custom";
 
 
 import { Toast } from '../common/emitter.service';
@@ -42,12 +35,9 @@ export class StageComponent implements OnInit, AfterViewInit {
   @Input() public height = 800;
 
   screen2D: Sceen2D = new Sceen2D();
-  shapeManager: shapeManager = new shapeManager();
-  selectionManager: selectionManager = new selectionManager();
 
-  shapelist: foCollection<foShape> = new foCollection<foShape>();
-  //selections: Array<iShape> = new Array<iShape>();
-  dictionary: foDictionary<foShape> = new foDictionary<foShape>();
+  shapelist: foCollection<foGlyph> = new foCollection<foGlyph>();
+  dictionary: foDictionary<foGlyph> = new foDictionary<foGlyph>();
 
   mouseLoc: any = {};
   sitOnShape: any = {};
@@ -56,9 +46,9 @@ export class StageComponent implements OnInit, AfterViewInit {
   }
 
  
-  findHitShape(loc: iPoint, exclude: foShape = null): foShape {
+  findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: foShape = this.shapelist.getMember(i);
+      let shape: foGlyph = this.shapelist.getMember(i);
       if (shape != exclude && shape.hitTest(loc)) {
         return shape;
       }
@@ -66,9 +56,9 @@ export class StageComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  findShapeUnder(source: foShape): foShape {
+  findShapeUnder(source: foGlyph): foGlyph {
     for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: foShape = this.shapelist.getMember(i);
+      let shape: foGlyph = this.shapelist.getMember(i);
       if (shape != source && source.overlapTest(shape)) {
         return shape;
       }
@@ -80,8 +70,8 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     // Redraw the circle every time the mouse moves
 
-    let shape: foShape = null;
-    let overshape: foShape = null;
+    let shape: foGlyph = null;
+    let overshape: foGlyph = null;
     //let mySelf = this;
     let offset: cPoint = null;
 
@@ -151,18 +141,18 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   }
 
-  private createShape(init?: any): foShape {
+  private createGlyph(init?: any): foGlyph {
     let base = {
       x: 50,
       y: 50,
       width: 200,
       height: 100
     }
-    let shape = new foShape(Tools.union(base, init));
+    let shape = new foGlyph(Tools.union(base, init));
     return shape;
   }
 
-  private addToModel(shape: foShape) {
+  private addToModel(shape: foGlyph) {
     this.dictionary.findItem(shape.myGuid, () => {
       this.dictionary.addItem(shape.myGuid, shape);
       this.shapelist.addMember(shape);
@@ -170,7 +160,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   }
 
   doAddShape() {
-    let shape = this.createShape({
+    let shape = this.createGlyph({
       x: 150,
       y: 100,
       height: 150,
@@ -179,7 +169,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     this.addToModel(shape);
 
 
-    let subshape = this.createShape({
+    let subshape = this.createGlyph({
       color: 'blue',
       x: 450,
       y: 100,
@@ -262,7 +252,7 @@ export class StageComponent implements OnInit, AfterViewInit {
       this.signalR.subChannel("addShape", json => {
         console.log(json);
         this.dictionary.findItem(json.myGuid, () => {
-          let shape = this.createShape(json);
+          let shape = this.createGlyph(json);
           this.addToModel(shape);
         });
       });

@@ -1,30 +1,30 @@
 
-import { Tools } from './foTools'
-import { iObject, iNode, iShape, iPoint, iSize } from '../foundry/foInterface'
+import { Tools } from './foTools';
+import { cPoint } from './foGeometry';
 
-import { foObject } from './foObject.model'
-import { foCollection } from './foCollection.model'
-import { foNode } from './foNode.model'
-import { foConcept } from './foConcept.model'
-import { foComponent } from './foComponent.model'
+import { iObject, iNode, iShape, iPoint, iSize } from './foInterface';
 
-import { cPoint } from "./point";
+import { foObject } from './foObject.model';
+import { foCollection } from './foCollection.model';
+import { foNode } from './foNode.model';
+import { foConcept } from './foConcept.model';
+import { foComponent } from './foComponent.model';
 
 
+//a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
-    private _isSelected: boolean = false;
 
-    _subcomponents: foCollection<foGlyph>;
-
+    protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
 
-    private _x: number;
-    private _y: number;
-    private _width: number;
-    private _height: number;
-    private _opacity: number;
-    private _color: string;
+    protected _subcomponents: foCollection<foGlyph>;
+    protected _x: number;
+    protected _y: number;
+    protected _width: number;
+    protected _height: number;
+    protected _opacity: number;
+    protected _color: string;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) { this._x = value; }
@@ -47,10 +47,6 @@ export class foGlyph extends foNode implements iShape {
     set color(value: string) {
         this._color = value;
     }
-
-    public pinX = (): number => { return this.width / 2; }
-    public pinY = (): number => { return this.height / 2 }
-    public angle = (): number => { return 0; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -158,14 +154,10 @@ export class foGlyph extends foNode implements iShape {
     };
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-       
         this.draw(ctx);
-        ctx.save();
-        ctx.translate(this.x, this.y);
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
-        ctx.restore();
     }
 
 

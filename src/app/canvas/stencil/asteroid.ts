@@ -1,5 +1,5 @@
 import { iFullShape } from "./shape";
-import { cPoint } from "./point";
+import { cPoint } from "../../foundry/foGeometry";
 
 export class cAsteroid implements iFullShape {
     public x: number = 0;

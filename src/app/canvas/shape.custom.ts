@@ -1,14 +1,14 @@
 
-import { foShape } from "./shape.model";
+import { foShape2D } from "../foundry/foShape2D.model";
 
 
-export class rawBrick extends foShape {
+export class rawBrick extends foShape2D {
   constructor(properties?: any) {
     super(properties);
   }
 }
 
-export class legoCore extends foShape {
+export class legoCore extends foShape2D {
 
   constructor(properties?: any) {
     super(properties);
@@ -95,9 +95,4 @@ export class house extends lego {
 }
 
 
-export class stencil {
-  static create<T extends foShape>(type: { new(p?: any): T; }, properties?: any): T {
-    let instance = new type(properties);
-    return instance;
-  }
-}
+
