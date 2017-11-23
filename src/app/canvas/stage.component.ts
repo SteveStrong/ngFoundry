@@ -12,8 +12,8 @@ import { Tools } from "../foundry/foTools";
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
 
-import { foGlyph,  } from "../foundry/foGlyph.model";
-import { foShape2D, stencil } from "../foundry/foShape2D.model";
+import { foGlyph,  Pallet } from "../foundry/foGlyph.model";
+import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { rawBrick, door, wall, house, legoCore } from "./shape.custom";
 
 
@@ -185,7 +185,7 @@ export class StageComponent implements OnInit, AfterViewInit {
   }
 
   doAddHouse() {
-    let shape = stencil.create(house, {
+    let shape = Stencil.create(house, {
       color: 'green',
       x: 50,
       y: 50,
@@ -194,14 +194,14 @@ export class StageComponent implements OnInit, AfterViewInit {
     });
     this.addToModel(shape);
 
-    let subshape1 = stencil.create(wall, {
+    let subshape1 = Stencil.create(wall, {
       color: 'blue',
       height: 125,
       width: 75, 
     });
     shape.addSubcomponent(subshape1);
 
-    let subshape2 = stencil.create(wall, {
+    let subshape2 = Stencil.create(wall, {
       color: 'black',
       height: 25,
       width: 25, 

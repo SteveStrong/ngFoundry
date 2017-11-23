@@ -207,3 +207,10 @@ export class foGlyph extends foNode implements iShape {
     }
 }
 
+export class Pallet {
+    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
+        let instance = new type(properties);
+        return instance;
+    }
+}
+

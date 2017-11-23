@@ -181,7 +181,7 @@ export class foShape2D extends foGlyph  {
 
 }
 
-export class stencil {
+export class Stencil {
     static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
         return instance;
