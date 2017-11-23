@@ -42,12 +42,16 @@ export class foShape extends foNode implements iShape {
     get opacity(): number { return this._opacity || 1; }
     set opacity(value: number) { this._opacity = value; }
 
-    get color(): string { 
-        return this._color || 'green'; 
+    get color(): string {
+        return this._color || 'green';
     }
-    set color(value: string) { 
-        this._color = value; 
+    set color(value: string) {
+        this._color = value;
     }
+
+    public pinX = (): number => { return this.width / 2; }
+    public pinY = (): number => { return this.height / 2 }
+    public angle = (): number => { return 0; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -87,7 +91,6 @@ export class foShape extends foNode implements iShape {
         if (loc.x + size.width < x) return false;
         if (loc.y > y + height) return false;
         if (loc.y + size.height < y) return false;
-
         return true;
     }
 
@@ -130,13 +133,13 @@ export class foShape extends foNode implements iShape {
         return this.getSize(1.0);
     }
 
-    public doMove = (loc: iPoint, offset?: iPoint): iPoint => {
+    public doMove(loc: iPoint, offset?: iPoint): iPoint {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        this._subcomponents.forEach(item => {
-            item.doMove(loc, offset);
-        });
+        // this._subcomponents.forEach(item => {
+        //     item.doMove(loc, offset);
+        // });
 
         //structual type
         return {
@@ -155,12 +158,17 @@ export class foShape extends foNode implements iShape {
         return this.opacity;
     };
 
-    public render = (ctx: CanvasRenderingContext2D, deep:boolean=true): void =>{
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+       
         this.draw(ctx);
-        deep && this._subcomponents.forEach( item => {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
-        })
+        });
+        ctx.restore();
     }
+
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 

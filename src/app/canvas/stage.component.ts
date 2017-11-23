@@ -18,6 +18,8 @@ import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
 
 import { foShape } from "./shape.model";
+import { stencil, rawBrick, door, wall, house, legoCore } from "./shape.custom";
+
 import { shapeManager } from "./shapeManager";
 import { selectionManager } from "./selectionManager";
 
@@ -185,6 +187,38 @@ export class StageComponent implements OnInit, AfterViewInit {
       width: 300,
     });
     shape.addSubcomponent(subshape);
+
+
+    let json = shape.asJson;
+    //Toast.success(JSON.stringify(json), "add shape");
+    this.signalR.pubChannel("addShape", json);
+  }
+
+  doAddHouse() {
+    let shape = stencil.create(house, {
+      color: 'green',
+      x: 50,
+      y: 50,
+      height: 150,
+      width: 300,
+    });
+    this.addToModel(shape);
+
+    let subshape1 = stencil.create(wall, {
+      color: 'blue',
+      height: 125,
+      width: 75, 
+    });
+    shape.addSubcomponent(subshape1);
+
+    let subshape2 = stencil.create(wall, {
+      color: 'black',
+      height: 25,
+      width: 25, 
+      y: 50,
+    });
+    shape.addSubcomponent(subshape2);
+
 
     let json = shape.asJson;
     //Toast.success(JSON.stringify(json), "add shape");
