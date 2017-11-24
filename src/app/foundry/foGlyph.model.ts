@@ -61,6 +61,8 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
+
+
     public hitTest = (hit: iPoint): boolean => {
         let x = this.x;
         let y = this.y;

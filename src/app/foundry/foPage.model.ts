@@ -21,6 +21,10 @@ import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 //and have all the same properties
 export class foPage extends foGlyph {
 
+    protected _angle: number;
+    get angle(): number { return this._angle || 0.0; }
+    set angle(value: number) { this._angle = value; }
+    
     mouseLoc: any = {};
     sitOnShape: any = {};
 
@@ -224,10 +228,15 @@ export class foPage extends foGlyph {
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        
+        let angle = this.angle * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
 
-        this.draw(ctx);
         ctx.save();
-        //ctx.translate(this.x, this.y);
+        ctx.transform(cos, sin, -sin, cos, this.x, this.y);
+        this.draw(ctx);
+
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });

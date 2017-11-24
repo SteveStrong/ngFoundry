@@ -16,23 +16,27 @@ import { foGlyph } from '../foundry/foGlyph.model'
 //and have all the same properties
 export class foShape2D extends foGlyph {
 
+    protected _angle: number;
+    get angle(): number { return this._angle || 0.0; }
+    set angle(value: number) { this._angle = value; }
 
-    public pinX = (): number => { return this.width / 2; }
-    public pinY = (): number => { return this.height / 2 }
-    public angle = (): number => { return 0; }
+    public pinX = (): number => { return 0 * this.width / 2; }
+    public pinY = (): number => { return 0 * this.height / 2 }
+    public rotation = (): number => { return 0; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
     }
 
-    drop(params: any) {
+    public drop(params: any) {
         this.override(params);
+        return this;
     }
 
     public hitTest = (hit: iPoint): boolean => {
-        let x = this.x;
-        let y = this.y;
+        let x = this.x - this.pinX();
+        let y = this.y - this.pinY();
         let width = this.width;
         let height = this.height;
 
@@ -44,8 +48,8 @@ export class foShape2D extends foGlyph {
     }
 
     public overlapTest = (hit: iShape): boolean => {
-        let x = this.x;
-        let y = this.y;
+        let x = this.x - this.pinX();
+        let y = this.y - this.pinY();
         let width = this.width;
         let height = this.height;
 
@@ -76,26 +80,56 @@ export class foShape2D extends foGlyph {
     }
 
 
+    public drawPin(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.beginPath();
+        ctx.arc(this.pinX(), this.pinY(), 5, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'pink';
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
 
         this.draw(ctx);
+        this.drawPin(ctx);
+
         ctx.save();
-        //ctx.translate(this.x, this.y);
+
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
     }
 
+    public drawOutline(ctx: CanvasRenderingContext2D){
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.beginPath()
+        ctx.rect(x, y, width, height);
+        ctx.stroke();
+
+    }
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => { }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
+        this.drawOutline(ctx);
+        this.drawPin(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        let x = this.x;
-        let y = this.y;
+        let x = this.x - this.pinX();
+        let y = this.y - this.pinY();
         let width = this.width;
         let height = this.height;
 
@@ -120,11 +154,7 @@ export class foShape2D extends foGlyph {
         //  }
 
         if (this.isSelected) {
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 4;
-            ctx.beginPath()
-            ctx.rect(x, y, width, height);
-            ctx.stroke();
+            this.drawSelected(ctx);
         }
 
         ctx.restore();

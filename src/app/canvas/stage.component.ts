@@ -135,7 +135,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'green',
       size: '2:4',
       name: TwoByFour.typeName()
+    }).drop({
+      x:300,
+      y:300
     });
+
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
   }
@@ -166,13 +170,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'gray',
       size: '10:10',
       name: TenByTen.typeName()
-    });
+    })
+    // .drop({
+    //   x: 450,
+    //   y: 350,
+    // });
     this.addToModel(shape);
 
     let subShape = this.doCreateLego(TwoByFour, {
       color: 'red',
       size: '2:4',
-      name: TwoByFour.typeName()
+      typeName: TwoByFour.typeName()
     }).addAsSubcomponent(shape).drop({
       x: 50,
       y: 50,
@@ -184,8 +192,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   public ngAfterViewInit() {
 
-    let canvas = this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
-
+    this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
+    
     this.screen2D.render = (context: CanvasRenderingContext2D) => {
       context.fillStyle = "yellow";
       context.fillRect(0, 0, this.width, this.height);
@@ -216,6 +224,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         console.log(json);
         this.findItem(json.myGuid, () => {
           Pallet.create(foGlyph, json);
+        });
+      });
+
+      this.signalR.subChannel("addShape", json => {
+        console.log(json);
+        this.findItem(json.myGuid, () => {
+          Stencil.create(foShape2D, json);
         });
       });
 
