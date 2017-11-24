@@ -12,6 +12,8 @@ import { Tools } from "../foundry/foTools";
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
 
+import { foPage } from "../foundry/foPage.model";
+
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, brick, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
@@ -28,7 +30,7 @@ import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
   selector: 'foundry-stage',
   templateUrl: './stage.component.html'
 })
-export class StageComponent implements OnInit, AfterViewInit {
+export class StageComponent extends foPage implements OnInit, AfterViewInit {
   // a reference to the canvas element from our template
   @ViewChild('canvas') public canvasRef: ElementRef;
   @Input() public width = 1000;
@@ -36,156 +38,41 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   screen2D: Sceen2D = new Sceen2D();
 
-  shapelist: foCollection<foGlyph> = new foCollection<foGlyph>();
-  dictionary: foDictionary<foGlyph> = new foDictionary<foGlyph>();
-
-  mouseLoc: any = {};
-  sitOnShape: any = {};
 
   constructor(private signalR: SignalRService) {
+    super();
   }
 
 
-  findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
-    for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: foGlyph = this.shapelist.getMember(i);
-      if (shape != exclude && shape.hitTest(loc)) {
-        return shape;
-      }
-    }
-    return null;
-  }
-
-  findShapeUnder(source: foGlyph): foGlyph {
-    for (var i: number = 0; i < this.shapelist.length; i++) {
-      let shape: foGlyph = this.shapelist.getMember(i);
-      if (shape != source && source.overlapTest(shape)) {
-        return shape;
-      }
-    }
-    return null;
-  }
-
-  setupMouseEvents(canvas: HTMLCanvasElement) {
-
-    // Redraw the circle every time the mouse moves
-
-    let shape: foGlyph = null;
-    let overshape: foGlyph = null;
-    //let mySelf = this;
-    let offset: cPoint = null;
-
-    PubSub.Sub('mousedown', (loc: iPoint, e) => {
-      shape = this.findHitShape(loc);
-      this.dictionary.applyTo(item => {
-        item.isSelected = false;
-      });
-
-      if (shape) {
-        this.shapelist.moveToTop(shape);
-        shape.isSelected = true;
-        //this.selections.push(shape);
-        offset = shape.getOffset(loc);
-      }
-      this.mouseLoc = loc;
-      //Toast.success(JSON.stringify(loc), "mousedown");
-    });
-
-    PubSub.Sub('mousemove', (loc: iPoint, e) => {
-
-      if (shape) {
-        shape.doMove(loc, offset);
-
-        if (!overshape) {
-          overshape = this.findShapeUnder(shape);
-          if (overshape) {
-            overshape['hold'] = overshape.getSize(1);
-            let size = overshape.getSize(1.1);
-            let target = overshape.getSize(1.1);
-            size['ease'] = Power0.easeNone;
-            size['onComplete'] = () => {
-              overshape.setColor('orange');
-              overshape.override(target);
-            }
-            TweenMax.to(overshape, 0.3, size);
-          }
-        } else if (!overshape.overlapTest(shape)) {
-          let target = overshape['hold'];
-          let size = overshape['hold'];
-          size['ease'] = Power0.easeNone;
-          size['onComplete'] = () => {
-            overshape.setColor('green');
-            overshape.override(target);
-            delete overshape['hold'];
-            overshape = null;
-          }
-          TweenLite.to(overshape, 0.3, size);
-        }
-
-      }
-      this.sitOnShape = overshape || {};
-      this.mouseLoc = loc;
-
-    });
-
-    PubSub.Sub('mouseup', (loc: iPoint, e) => {
-      if (!shape) return;
-
-      this.shapelist.moveToTop(shape);
-      let drop = shape.getLocation();
-      drop['myGuid'] = shape['myGuid'];
-      shape = null;
-      //Toast.success(JSON.stringify(loc), "mouseup");
-      this.signalR.pubChannel("move", drop);
-    });
-
-  }
-
-
-  private addToModel(shape: foGlyph) {
-    let guid = shape.myGuid;
-    this.dictionary.findItem(guid, () => {
-      this.dictionary.addItem(guid, shape);
-      this.shapelist.addMember(shape);
-    });
-  }
-
-  private removeFromModel(shape: foGlyph) {
-    let guid = shape.myGuid;
-    this.dictionary.found(guid, () => {
-      this.dictionary.removeItem(guid);
-      this.shapelist.removeMember(shape);
-    });
-  }
-
-  doDelete() {   
-    let found = this.shapelist.filter( item => { return item.isSelected; } )[0];
-    if ( found ) {
+  doDelete() {
+    let found = this.shapelist.filter(item => { return item.isSelected; })[0];
+    if (found) {
       this.removeFromModel(found);
     }
   }
 
-  doDuplicate() {   
+  doDuplicate() {
   }
 
   doCreateLego<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
     let compute = {
-      height: function() { 
+      height: function () {
         let size = parseInt(this.size.split(':')[1]);
         return 25 * size;
       },
-      width: function() { 
+      width: function () {
         let size = parseInt(this.size.split(':')[0]);
         return 25 * size;
       }
     };
     let props = Tools.union(properties, compute)
-    
-    let instance = Stencil.create(type,props);
+
+    let instance = Stencil.create(type, props);
     return instance;
   }
 
   ngOnInit() {
+
   }
 
   doAddGlyph() {
@@ -292,7 +179,7 @@ export class StageComponent implements OnInit, AfterViewInit {
     }).addAsSubcomponent(shape).drop({
       x: 50,
       y: 50,
-      angle:30
+      angle: 30
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
@@ -301,16 +188,12 @@ export class StageComponent implements OnInit, AfterViewInit {
   public ngAfterViewInit() {
 
     let canvas = this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
-    // we'll implement this method to start capturing mouse events
-    this.setupMouseEvents(canvas);
 
     this.screen2D.render = (context: CanvasRenderingContext2D) => {
       context.fillStyle = "yellow";
       context.fillRect(0, 0, this.width, this.height);
 
-      this.drawGrid(context);
-
-      this.shapelist.forEach(item => item.render(context));
+      this.render(context);
     }
 
     this.screen2D.go();
@@ -341,34 +224,6 @@ export class StageComponent implements OnInit, AfterViewInit {
 
     });
   }
-
-  drawGrid(ctx: CanvasRenderingContext2D) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.strokeStyle = 'gray';
-    //ctx.lineWidth = 0;
-
-    let size = 50;
-    //draw vertical...
-    for (var i = 0; i < this.width; i += size) {
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, this.height);
-    }
-
-    //draw horizontal...
-    for (var i = 0; i < this.height; i += size) {
-      ctx.moveTo(0, i);
-      ctx.lineTo(this.width, i);
-    }
-
-
-    ctx.stroke();
-    ctx.restore();
-  }
-
-
-
-
 }
 
 
