@@ -14,7 +14,7 @@ import { foGlyph } from '../foundry/foGlyph.model'
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
-export class foShape2D extends foGlyph  {
+export class foShape2D extends foGlyph {
 
 
     public pinX = (): number => { return this.width / 2; }
@@ -26,12 +26,8 @@ export class foShape2D extends foGlyph  {
         this.myGuid;
     }
 
-    get asJson() {
-        return {
-            myGuid: this.myGuid,
-            x: this.x,
-            y: this.y
-        }
+    drop(params: any) {
+        this.override(params);
     }
 
     public hitTest = (hit: iPoint): boolean => {
@@ -62,52 +58,15 @@ export class foShape2D extends foGlyph  {
         return true;
     }
 
-    public getOffset = (loc: iPoint): iPoint => {
-        let x = this.x;
-        let y = this.y;
-        return new cPoint(x - loc.x, y - loc.y);
-    }
 
-    public getLocation = (): iPoint => {
-        let x = this.x;
-        let y = this.y;
-        return new cPoint(x, y);
-    }
-
-    public setLocation = (loc: iPoint): iPoint => {
-        this.x = loc.x;
-        this.y = loc.y;
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
-    }
-
-    public getSize = (scale: number = 1): iSize => {
-        //structual type
-        return {
-            width: this.width * scale,
-            height: this.height * scale
-        }
-    }
-
-    public scaleSize = (scale: number): iSize => {
-        //structual type
-        this.x -= (this.width * (scale - 1)) / 2.0;
-        this.y -= (this.height * (scale - 1)) / 2.0;
-        this.width *= scale;
-        this.height *= scale;
-        return this.getSize(1.0);
-    }
 
     public doMove(loc: iPoint, offset?: iPoint): iPoint {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        // this._subcomponents.forEach(item => {
-        //     item.doMove(loc, offset);
-        // });
+        this._subcomponents.forEach(item => {
+            item.doMove(loc, offset);
+        });
 
         //structual type
         return {
@@ -116,21 +75,13 @@ export class foShape2D extends foGlyph  {
         }
     }
 
-    public setColor(color: string): string {
-        this.color = color;
-        return this.color;
-    };
 
-    public setOpacity(opacity: number): number {
-        this.opacity = opacity;
-        return this.opacity;
-    };
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
 
         this.draw(ctx);
         ctx.save();
-        ctx.translate(this.x, this.y);
+        //ctx.translate(this.x, this.y);
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });

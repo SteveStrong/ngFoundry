@@ -278,6 +278,7 @@ export class StageComponent implements OnInit, AfterViewInit {
 
   doAddStack() {
     let shape = this.doCreateLego(TenByTen, {
+      opacity: .5,
       color: 'gray',
       size: '10:10',
       name: TenByTen.typeName()
@@ -288,6 +289,10 @@ export class StageComponent implements OnInit, AfterViewInit {
       color: 'red',
       size: '2:4',
       name: TwoByFour.typeName()
+    }).addAsSubcomponent(shape).drop({
+      x: 50,
+      y: 50,
+      angle:30
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
