@@ -143,26 +143,49 @@ export class StageComponent implements OnInit, AfterViewInit {
 
 
   private addToModel(shape: foGlyph) {
-    this.dictionary.findItem(shape.myGuid, () => {
-      this.dictionary.addItem(shape.myGuid, shape);
+    let guid = shape.myGuid;
+    this.dictionary.findItem(guid, () => {
+      this.dictionary.addItem(guid, shape);
       this.shapelist.addMember(shape);
     });
   }
 
+  private removeFromModel(shape: foGlyph) {
+    let guid = shape.myGuid;
+    this.dictionary.found(guid, () => {
+      this.dictionary.removeItem(guid);
+      this.shapelist.removeMember(shape);
+    });
+  }
+
+  doDelete() {   
+    let found = this.shapelist.filter( item => { return item.isSelected; } )[0];
+    if ( found ) {
+      this.removeFromModel(found);
+    }
+  }
+
+  doDuplicate() {   
+  }
+
   doCreateLego<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
-    let instance = Stencil.create(type,properties);
+    let compute = {
+      height: function() { 
+        let size = parseInt(this.size.split(':')[1]);
+        return 25 * size;
+      },
+      width: function() { 
+        let size = parseInt(this.size.split(':')[0]);
+        return 25 * size;
+      }
+    };
+    let props = Tools.union(properties, compute)
+    
+    let instance = Stencil.create(type,props);
     return instance;
   }
 
   ngOnInit() {
-    Pallet.afterCreate = (item: foGlyph) => {
-      this.addToModel(item);
-    }
-
-    Stencil.afterCreate = (item: foShape2D) => {
-      this.addToModel(item);
-    }
-
   }
 
   doAddGlyph() {
@@ -171,22 +194,21 @@ export class StageComponent implements OnInit, AfterViewInit {
       y: 100,
       height: 150,
       width: 200,
-    });
+    }, this.addToModel.bind(this));
     this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
   doAddSubGlyph() {
     let shape = Pallet.create(foGlyph, {
-      x: 150,
-      y: 100,
+      color: 'purple',
       height: 150,
       width: 200,
-    });
+    }, this.addToModel.bind(this));
 
     Pallet.create(foGlyph, {
       color: 'blue',
-      x: 450,
-      y: 100,
+      x: 25,
+      y: 25,
       height: 50,
       width: 300,
     }).addAsSubcomponent(shape);
@@ -194,15 +216,80 @@ export class StageComponent implements OnInit, AfterViewInit {
     this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
-  doAddTenByTen() {
-    let name = TenByTen.typeName();
-    let shape = this.doCreateLego(TenByTen, {
-      color: 'green',
-      x: 50,
-      y: 50,
-      height: 150,
-      width: 300,
+  doAddOneByOne() {
+    let shape = this.doCreateLego(OneByOne, {
+      color: 'black',
+      size: '1:1',
+      name: OneByOne.typeName()
     });
+    this.addToModel(shape);
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  doAddTwoByOne() {
+    let shape = this.doCreateLego(TwoByOne, {
+      color: 'orange',
+      size: '2:1',
+      name: TwoByOne.typeName()
+    });
+    this.addToModel(shape);
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  doAddTwoByTwo() {
+    let shape = this.doCreateLego(TwoByTwo, {
+      color: 'pink',
+      size: '2:2',
+      name: TwoByTwo.typeName()
+    });
+    this.addToModel(shape);
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  doAddTwoByFour() {
+    let shape = this.doCreateLego(TwoByFour, {
+      color: 'green',
+      size: '2:4',
+      name: TwoByFour.typeName()
+    });
+    this.addToModel(shape);
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  doAddOneByTen() {
+    let shape = this.doCreateLego(OneByTen, {
+      color: 'white',
+      size: '1:10',
+      name: OneByTen.typeName()
+    });
+    this.addToModel(shape);
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  doAddTenByTen() {
+    let shape = this.doCreateLego(TenByTen, {
+      color: 'gray',
+      size: '10:10',
+      name: TenByTen.typeName()
+    });
+    this.addToModel(shape);
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  doAddStack() {
+    let shape = this.doCreateLego(TenByTen, {
+      color: 'gray',
+      size: '10:10',
+      name: TenByTen.typeName()
+    });
+    this.addToModel(shape);
+
+    let subShape = this.doCreateLego(TwoByFour, {
+      color: 'red',
+      size: '2:4',
+      name: TwoByFour.typeName()
+    });
+
     this.signalR.pubChannel("addShape", shape.asJson);
   }
 

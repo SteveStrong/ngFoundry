@@ -14,6 +14,7 @@ export class legoCore extends foShape2D {
 
   constructor(properties?: any) {
     super(properties);
+    this.description = this.myType
   }
 }
 

@@ -16,6 +16,12 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
         return obj;
     }
 
+    removeItem(key: string): T {
+        let obj = this._lookup[key];
+        delete this._lookup[key];
+        return obj;
+    }
+
     getItem(key: string): T {
         let result: T = this._lookup[key];
         return result;

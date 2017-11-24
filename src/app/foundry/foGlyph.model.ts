@@ -132,9 +132,9 @@ export class foGlyph extends foNode implements iShape {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        this._subcomponents.forEach(item => {
-            item.doMove(loc, offset);
-        });
+        // this._subcomponents.forEach(item => {
+        //     item.doMove(loc, offset);
+        // });
 
         //structual type
         return {
@@ -155,9 +155,12 @@ export class foGlyph extends foNode implements iShape {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this.draw(ctx);
+        ctx.save();
+        ctx.translate(this.x, this.y);
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
+        ctx.restore();
     }
 
 
@@ -209,8 +212,9 @@ export class foGlyph extends foNode implements iShape {
 
 export class Pallet {
     static afterCreate: Action<foGlyph>;
-    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
+    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any, func?: Action<T>): T {
         let instance = new type(properties);
+        func && func(instance);
         this.afterCreate && this.afterCreate(instance);
         return instance;
     }

@@ -34,13 +34,12 @@ export class foNode extends foObject implements iNode {
         }
     }
 
-    addAsSubcomponent(obj: foNode) {
-        if (!obj) return;
-        obj.addSubcomponent(this);
+    addAsSubcomponent(parent: foNode) {
+        parent.addSubcomponent(this);
         return this;
     }
 
-    //todo modify api to take bote item and array
+    //todo modify api to take both item and array
     addSubcomponent(obj: foNode) {
         if (!obj) return;
         let parent = obj.myParent && obj.myParent();
