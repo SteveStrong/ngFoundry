@@ -80,20 +80,7 @@ export class foShape2D extends foGlyph {
     }
 
 
-    public drawOrigin(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50,-50);
-        ctx.lineTo(50,50);
-        ctx.moveTo(50,-50);
-        ctx.lineTo(-50,50);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
+
 
     public drawPin(ctx: CanvasRenderingContext2D) {
         ctx.save();
