@@ -165,10 +165,27 @@ export class foGlyph extends foNode implements iShape {
         ctx.restore();
     }
 
+    public drawOutline(ctx: CanvasRenderingContext2D){
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(x, y, width, height);
+        ctx.stroke();
+
+    }
+
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => { }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
+        this.drawOutline(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         let x = this.x;
@@ -196,13 +213,7 @@ export class foGlyph extends foNode implements iShape {
         //     dy += (fontsize + 4);
         //  }
 
-        if (this.isSelected) {
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 4;
-            ctx.beginPath()
-            ctx.rect(x, y, width, height);
-            ctx.stroke();
-        }
+        this.isSelected && this.drawOutline(ctx);
 
         ctx.restore();
     }

@@ -80,6 +80,21 @@ export class foShape2D extends foGlyph {
     }
 
 
+    public drawOrigin(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(-50,-50);
+        ctx.lineTo(50,50);
+        ctx.moveTo(50,-50);
+        ctx.lineTo(-50,50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+
     public drawPin(ctx: CanvasRenderingContext2D) {
         ctx.save();
         ctx.translate(this.x, this.y);
@@ -87,7 +102,7 @@ export class foShape2D extends foGlyph {
         ctx.arc(this.pinX(), this.pinY(), 5, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'pink';
         ctx.fill();
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 1;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
         ctx.restore();
@@ -97,7 +112,7 @@ export class foShape2D extends foGlyph {
 
         this.draw(ctx);
         this.drawPin(ctx);
-
+        this.drawOrigin(ctx);
         ctx.save();
 
         deep && this._subcomponents.forEach(item => {
@@ -106,19 +121,6 @@ export class foShape2D extends foGlyph {
         ctx.restore();
     }
 
-    public drawOutline(ctx: CanvasRenderingContext2D){
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
-
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
-        ctx.beginPath()
-        ctx.rect(x, y, width, height);
-        ctx.stroke();
-
-    }
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 

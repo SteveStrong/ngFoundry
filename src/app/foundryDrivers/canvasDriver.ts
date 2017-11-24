@@ -32,7 +32,7 @@ export class Sceen2D {
         this.canvas.height = height;
 
         // set some default properties about the line
-        this.context.lineWidth = 3;
+        this.context.lineWidth = 1;
         this.context.lineCap = 'round';
         this.context.strokeStyle = '#000';
 
