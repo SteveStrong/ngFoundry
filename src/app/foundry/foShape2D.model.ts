@@ -20,9 +20,9 @@ export class foShape2D extends foGlyph {
     get angle(): number { return this._angle || 0.0; }
     set angle(value: number) { this._angle = value; }
 
-    public pinX = (): number => { return 0 * this.width / 2; }
-    public pinY = (): number => { return 0 * this.height / 2 }
-    public rotation = (): number => { return 0; }
+    public pinX = (): number => { return this.width / 2; }
+    public pinY = (): number => { return this.height / 2 }
+    public rotation = (): number => { return this.angle; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -35,48 +35,40 @@ export class foShape2D extends foGlyph {
     }
 
     public hitTest = (hit: iPoint): boolean => {
-        let x = this.x - this.pinX();
-        let y = this.y - this.pinY();
-        let width = this.width;
-        let height = this.height;
+        let loc = this.getLocation();
 
-        if (hit.x < x) return false;
-        if (hit.x > x + width) return false;
-        if (hit.y < y) return false;
-        if (hit.y > y + height) return false;
+        let width = this.width;
+        if (hit.x < loc.x) return false;
+        if (hit.x > loc.x + width) return false;
+
+        let height = this.height;
+        if (hit.y < loc.y) return false;
+        if (hit.y > loc.y + height) return false;
+
         return true;
     }
 
-    public overlapTest = (hit: iShape): boolean => {
+
+    public getLocation = (): iPoint => {
         let x = this.x - this.pinX();
         let y = this.y - this.pinY();
-        let width = this.width;
-        let height = this.height;
+        return new cPoint(x, y);
+    }
 
+    public overlapTest = (hit: iShape): boolean => {   
         let loc = hit.getLocation();
         let size = hit.getSize(1.0);
-        if (loc.x > x + width) return false;
-        if (loc.x + size.width < x) return false;
-        if (loc.y > y + height) return false;
-        if (loc.y + size.height < y) return false;
+
+        let pos = this.getLocation();
+        let width = this.width;
+        if (loc.x > pos.x + width) return false;
+        if (loc.x + size.width < pos.x) return false;
+
+        let height = this.height;
+        if (loc.y > pos.y + height) return false;
+        if (loc.y + size.height < pos.y) return false;
+
         return true;
-    }
-
-
-
-    public doMove(loc: iPoint, offset?: iPoint): iPoint {
-        this.x = loc.x + (offset ? offset.x : 0);
-        this.y = loc.y + (offset ? offset.y : 0);
-
-        this._subcomponents.forEach(item => {
-            item.doMove(loc, offset);
-        });
-
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
     }
 
 
@@ -84,9 +76,9 @@ export class foShape2D extends foGlyph {
 
     public drawPin(ctx: CanvasRenderingContext2D) {
         ctx.save();
-        ctx.translate(this.x, this.y);
         ctx.beginPath();
-        ctx.arc(this.pinX(), this.pinY(), 5, 0, 2 * Math.PI, false);
+
+        ctx.arc(this.pinX(), this.pinY(), 6, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'pink';
         ctx.fill();
         ctx.lineWidth = 1;
@@ -95,58 +87,52 @@ export class foShape2D extends foGlyph {
         ctx.restore();
     }
 
+
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+
+        let angle = this.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+
+        ctx.save();
+        let loc = this.getLocation();
+        ctx.translate(loc.x, loc.y);
+        ctx.transform(cos, sin, -sin, cos, 0, 0);
 
         this.draw(ctx);
         this.drawPin(ctx);
-        this.drawOrigin(ctx);
-        ctx.save();
-
+       
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
+        this.drawOrigin(ctx);
     }
 
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
+
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        let x = this.x - this.pinX();
-        let y = this.y - this.pinY();
+
         let width = this.width;
         let height = this.height;
 
-        ctx.save();
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(x, y, width, height);
+        ctx.fillRect(0, 0, width, height);
 
-        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-        let fontsize = 20;
-        ctx.font = `${fontsize}px Calibri`;
-        ctx.fillStyle = 'blue';
+        this.drawText(ctx, this.myType)
 
-        // let text = `x1=${x} y1=${y}|x2=${x+width} y2=${y+height}|`;
-        // let array = text.split('|');
-        // let dx = x + 10;
-        // let dy = y + 20;
-        // for (var i = 0; i < array.length; i++) {
-        //     ctx.fillText(array[i], dx, dy);
-        //     dy += (fontsize + 4);
-        //  }
-
-        if (this.isSelected) {
-            this.drawSelected(ctx);
-        }
-
-        ctx.restore();
+        this.isSelected && this.drawSelected(ctx);
     }
 
 }

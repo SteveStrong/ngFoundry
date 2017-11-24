@@ -134,10 +134,6 @@ export class foGlyph extends foNode implements iShape {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        // this._subcomponents.forEach(item => {
-        //     item.doMove(loc, offset);
-        // });
-
         //structual type
         return {
             x: this.x,
@@ -156,15 +152,30 @@ export class foGlyph extends foNode implements iShape {
     };
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        this.draw(ctx);
         ctx.save();
         ctx.translate(this.x, this.y);
+
+        this.draw(ctx); 
+        
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
+        this.drawOrigin(ctx);
     }
 
+    drawText(ctx: CanvasRenderingContext2D, text: string) {
+        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
+        let fontsize = 20;
+        let array = text.split('|');
+        let dx = 10;
+        let dy = 20;
+        for (var i = 0; i < array.length; i++) {
+            ctx.fillText(array[i], dx, dy);
+            dy += (fontsize + 4);
+        }
+    };
+    
     public drawOrigin(ctx: CanvasRenderingContext2D) {
         ctx.save();
         ctx.translate(this.x, this.y);
@@ -181,8 +192,6 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D){
-        let x = this.x;
-        let y = this.y;
         let width = this.width;
         let height = this.height;
 
@@ -190,7 +199,7 @@ export class foGlyph extends foNode implements iShape {
         ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(x, y, width, height);
+        ctx.rect(0, 0, width, height);
         ctx.stroke();
     }
 
@@ -202,16 +211,14 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        let x = this.x;
-        let y = this.y;
+
         let width = this.width;
         let height = this.height;
 
-        ctx.save();
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(x, y, width, height);
+        ctx.fillRect(0, 0, width, height);
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
         let fontsize = 20;
@@ -228,8 +235,6 @@ export class foGlyph extends foNode implements iShape {
         //  }
 
         this.isSelected && this.drawOutline(ctx);
-
-        ctx.restore();
     }
 
     toggleSelected() {

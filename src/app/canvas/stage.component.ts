@@ -103,7 +103,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddOneByOne() {
     let shape = this.doCreateLego(OneByOne, {
       color: 'black',
-      size: '1:1',
       name: OneByOne.typeName()
     });
     this.addToModel(shape);
@@ -113,7 +112,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByOne() {
     let shape = this.doCreateLego(TwoByOne, {
       color: 'orange',
-      size: '2:1',
       name: TwoByOne.typeName()
     });
     this.addToModel(shape);
@@ -123,7 +121,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByTwo() {
     let shape = this.doCreateLego(TwoByTwo, {
       color: 'pink',
-      size: '2:2',
       name: TwoByTwo.typeName()
     });
     this.addToModel(shape);
@@ -133,7 +130,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByFour() {
     let shape = this.doCreateLego(TwoByFour, {
       color: 'green',
-      size: '2:4',
       name: TwoByFour.typeName()
     }).drop({
       x:300,
@@ -147,7 +143,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddOneByTen() {
     let shape = this.doCreateLego(OneByTen, {
       color: 'white',
-      size: '1:10',
       name: OneByTen.typeName()
     });
     this.addToModel(shape);
@@ -157,8 +152,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTenByTen() {
     let shape = this.doCreateLego(TenByTen, {
       color: 'gray',
-      size: '10:10',
       name: TenByTen.typeName()
+    }).drop({
+      x:600,
+      y:300
     });
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
@@ -168,23 +165,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = this.doCreateLego(TenByTen, {
       opacity: .5,
       color: 'gray',
-      size: '10:10',
+      angle: 30,
       name: TenByTen.typeName()
-    })
-    // .drop({
-    //   x: 450,
-    //   y: 350,
-    // });
+    }).drop({
+      x:600,
+      y:300
+    });
     this.addToModel(shape);
 
     let subShape = this.doCreateLego(TwoByFour, {
       color: 'red',
-      size: '2:4',
       typeName: TwoByFour.typeName()
     }).addAsSubcomponent(shape).drop({
-      x: 50,
-      y: 50,
-      angle: 30
+      x: 75,
+      y: 75,
+      angle: 0
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
@@ -214,7 +209,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           //loc['opacity'] = 0.5;
           loc['ease'] = Back.easeOut;
           //Toast.info(JSON.stringify(loc), "move");
-          TweenLite.to(shape, .8, loc);
+          //TweenLite.to(shape, .8, loc);
         });
 
 

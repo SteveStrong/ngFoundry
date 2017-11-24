@@ -12,7 +12,7 @@ export class legoCore extends foShape2D {
 
   description: string;
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
     super(properties);
     this.description = this.myType
   }
@@ -21,42 +21,48 @@ export class legoCore extends foShape2D {
 
 export class OneByOne extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
+    properties.size ='1:1';
     super(properties);
   }
 }
 
 export class TwoByOne extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
+    properties.size ='2:1';
     super(properties);
   }
 }
 
 export class TwoByTwo extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
+    properties.size ='2:2';
     super(properties);
   }
 }
 
 export class TwoByFour extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
+    properties.size ='2:4';
     super(properties);
   }
 }
 
 export class OneByTen extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
+    properties.size ='1:10';
     super(properties);
   }
 }
 
 export class TenByTen extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
+    properties.size ='10:10';
     super(properties);
   }
 }
@@ -64,7 +70,7 @@ export class TenByTen extends legoCore {
 
 export class wall extends legoCore {
 
-  constructor(properties?: any) {
+  constructor(properties: any={}) {
     super(properties);
   }
 

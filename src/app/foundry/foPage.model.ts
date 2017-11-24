@@ -118,27 +118,27 @@ export class foPage extends foGlyph {
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);
                     if (overshape) {
-                        overshape['hold'] = overshape.getSize(1);
-                        let size = overshape.getSize(1.1);
-                        let target = overshape.getSize(1.1);
-                        size['ease'] = Power0.easeNone;
-                        size['onComplete'] = () => {
+                        //overshape['hold'] = overshape.getSize(1);
+                        //let size = overshape.getSize(1.1);
+                        //let target = overshape.getSize(1.1);
+                        //size['ease'] = Power0.easeNone;
+                        //size['onComplete'] = () => {
                             overshape.setColor('orange');
-                            overshape.override(target);
-                        }
-                        TweenMax.to(overshape, 0.3, size);
+                            //overshape.override(target);
+                        //}
+                        //TweenMax.to(overshape, 0.3, size);
                     }
                 } else if (!overshape.overlapTest(shape)) {
-                    let target = overshape['hold'];
-                    let size = overshape['hold'];
-                    size['ease'] = Power0.easeNone;
-                    size['onComplete'] = () => {
+                    //let target = overshape['hold'];
+                    //let size = overshape['hold'];
+                    //size['ease'] = Power0.easeNone;
+                    //size['onComplete'] = () => {
                         overshape.setColor('green');
-                        overshape.override(target);
-                        delete overshape['hold'];
+                        //overshape.override(target);
+                        //delete overshape['hold'];
                         overshape = null;
-                    }
-                    TweenLite.to(overshape, 0.3, size);
+                    //}
+                    //TweenMax.to(overshape, 0.3, size);
                 }
 
             }
@@ -163,8 +163,8 @@ export class foPage extends foGlyph {
     drawGrid(ctx: CanvasRenderingContext2D) {
         ctx.save();
         ctx.beginPath();
+        ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
-        //ctx.lineWidth = 0;
 
         let size = 50;
         //draw vertical...
