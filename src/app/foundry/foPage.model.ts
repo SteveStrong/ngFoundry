@@ -33,6 +33,14 @@ export class foPage extends foGlyph {
         this.setupMouseEvents();
     }
 
+    findItem(key: string, onMissing?) {
+        return this._dictionary.findItem(key, onMissing);
+    }
+
+    found(key: string, onFound?) {
+        return this._dictionary.found(key, onFound);
+    }
+
     findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
@@ -67,6 +75,13 @@ export class foPage extends foGlyph {
             this._dictionary.removeItem(guid);
             this._subcomponents.removeMember(shape);
         });
+    }
+
+    deleteSelected() {
+        let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
+        if (found) {
+            this.removeFromModel(found);
+        }
     }
 
     setupMouseEvents() {

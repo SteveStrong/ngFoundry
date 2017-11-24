@@ -45,10 +45,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   doDelete() {
-    let found = this.shapelist.filter(item => { return item.isSelected; })[0];
-    if (found) {
-      this.removeFromModel(found);
-    }
+    this.deleteSelected()
   }
 
   doDuplicate() {
@@ -201,7 +198,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.start().then(() => {
 
       this.signalR.subChannel("move", data => {
-        this.dictionary.found(data.myGuid, shape => {
+        this.found(data.myGuid, shape => {
           let loc = <iPoint>data;
           console.log(loc);
 
@@ -217,7 +214,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subChannel("addGlyph", json => {
         console.log(json);
-        this.dictionary.findItem(json.myGuid, () => {
+        this.findItem(json.myGuid, () => {
           Pallet.create(foGlyph, json);
         });
       });
