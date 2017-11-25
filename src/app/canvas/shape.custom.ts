@@ -3,6 +3,8 @@ import { foShape2D } from "../foundry/foShape2D.model";
 
 
 export class brick extends foShape2D {
+  size: string = '0:0';
+
   constructor(properties?: any) {
     super(properties);
   }
@@ -11,8 +13,9 @@ export class brick extends foShape2D {
 export class legoCore extends foShape2D {
 
   description: string;
+  size: string = '0:0';
 
-  constructor(properties: any={}) {
+  constructor(properties: any = {}) {
     super(properties);
     this.description = this.myType
   }
@@ -21,56 +24,104 @@ export class legoCore extends foShape2D {
 
 export class OneByOne extends legoCore {
 
-  constructor(properties: any={}) {
-    properties.size ='1:1';
+  constructor(properties: any = {}) {
     super(properties);
+    this.size = '1:1';
   }
 }
 
 export class TwoByOne extends legoCore {
 
-  constructor(properties: any={}) {
-    properties.size ='2:1';
+  constructor(properties: any = {}) {
     super(properties);
+    this.size = '2:1';
   }
 }
 
 export class TwoByTwo extends legoCore {
 
-  constructor(properties: any={}) {
-    properties.size ='2:2';
+  constructor(properties: any = {}) {
     super(properties);
+    this.size = '2:2';
   }
 }
 
 export class TwoByFour extends legoCore {
 
-  constructor(properties: any={}) {
-    properties.size ='2:4';
+  constructor(properties: any = {}) {
     super(properties);
+    this.size = '2:4';
   }
 }
 
 export class OneByTen extends legoCore {
 
-  constructor(properties: any={}) {
-    properties.size ='1:10';
+  constructor(properties: any = {}) {
     super(properties);
+    this.size = '1:10';
   }
 }
 
 export class TenByTen extends legoCore {
 
-  constructor(properties: any={}) {
-    properties.size ='10:10';
+  constructor(properties: any = {}) {
     super(properties);
+    this.size = '10:10';
+  }
+
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+
+    let angle = this.rotation() * Math.PI / 180
+    let cos = Math.cos(angle);
+    let sin = Math.sin(angle);
+
+    ctx.save();
+    let loc = this.getLocation();
+
+    //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+    ctx.translate(this.x, this.y);
+    //ctx.transform(cos, sin, -sin, cos, 0, 0);
+    //ctx.transform(cos, sin, -sin, cos, -this.pinX(), -this.pinY());
+    ////ctx.translate(0, -this.pinY());
+    //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+
+    this.draw(ctx);
+    this.drawPin(ctx);
+
+    deep && this._subcomponents.forEach(item => {
+      item.render(ctx, deep);
+    });
+    ctx.restore();
+    this.drawOrigin(ctx);
+  }
+}
+
+export class Circle extends legoCore {
+
+  constructor(properties: any = {}) {
+    super(properties);
+    this.size = '1:1';
+  }
+
+  public draw = (ctx: CanvasRenderingContext2D): void => {
+
+    ctx.save();
+    ctx.fillStyle = 'black';
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = .8;
+    ctx.setLineDash([])
+    ctx.beginPath();
+    ctx.arc(this.width / 2, this.width / 2, this.width / 2, 0, 2 * Math.PI);
+    ctx.stroke();
+
+    ctx.restore();
   }
 }
 
 
 export class wall extends legoCore {
 
-  constructor(properties: any={}) {
+  constructor(properties: any = {}) {
     super(properties);
   }
 

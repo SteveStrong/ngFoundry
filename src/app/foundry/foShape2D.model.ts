@@ -97,6 +97,7 @@ export class foShape2D extends foGlyph {
 
         ctx.save();
         let loc = this.getLocation();
+        //ctx.translate(this.pinX(), this.pinY());
         ctx.translate(loc.x, loc.y);
         ctx.transform(cos, sin, -sin, cos, 0, 0);
 

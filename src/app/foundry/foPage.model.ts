@@ -24,7 +24,7 @@ export class foPage extends foGlyph {
     protected _angle: number;
     get angle(): number { return this._angle || 0.0; }
     set angle(value: number) { this._angle = value; }
-    
+
     mouseLoc: any = {};
     sitOnShape: any = {};
 
@@ -36,6 +36,8 @@ export class foPage extends foGlyph {
         this.myGuid;
         this.setupMouseEvents();
     }
+
+
 
     findItem(key: string, onMissing?) {
         return this._dictionary.findItem(key, onMissing);
@@ -81,6 +83,11 @@ export class foPage extends foGlyph {
         });
     }
 
+    clearAll() {
+        this._subcomponents.clearAll();
+        this._dictionary.clearAll();
+    }
+
     deleteSelected() {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
@@ -123,8 +130,8 @@ export class foPage extends foGlyph {
                         //let target = overshape.getSize(1.1);
                         //size['ease'] = Power0.easeNone;
                         //size['onComplete'] = () => {
-                            overshape.setColor('orange');
-                            //overshape.override(target);
+                        overshape.setColor('orange');
+                        //overshape.override(target);
                         //}
                         //TweenMax.to(overshape, 0.3, size);
                     }
@@ -133,10 +140,10 @@ export class foPage extends foGlyph {
                     //let size = overshape['hold'];
                     //size['ease'] = Power0.easeNone;
                     //size['onComplete'] = () => {
-                        overshape.setColor('green');
-                        //overshape.override(target);
-                        //delete overshape['hold'];
-                        overshape = null;
+                    overshape.setColor('green');
+                    //overshape.override(target);
+                    //delete overshape['hold'];
+                    overshape = null;
                     //}
                     //TweenMax.to(overshape, 0.3, size);
                 }
@@ -184,57 +191,15 @@ export class foPage extends foGlyph {
         ctx.restore();
     }
 
-    public hitTest = (hit: iPoint): boolean => {
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
-
-        if (hit.x < x) return false;
-        if (hit.x > x + width) return false;
-        if (hit.y < y) return false;
-        if (hit.y > y + height) return false;
-        return true;
-    }
-
-    public overlapTest = (hit: iShape): boolean => {
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
-
-        let loc = hit.getLocation();
-        let size = hit.getSize(1.0);
-        if (loc.x > x + width) return false;
-        if (loc.x + size.width < x) return false;
-        if (loc.y > y + height) return false;
-        if (loc.y + size.height < y) return false;
-        return true;
-    }
-
-    public doMove(loc: iPoint, offset?: iPoint): iPoint {
-        this.x = loc.x + (offset ? offset.x : 0);
-        this.y = loc.y + (offset ? offset.y : 0);
-
-        this._subcomponents.forEach(item => {
-            item.doMove(loc, offset);
-        });
-
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
-    }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        
+
         let angle = this.angle * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
         ctx.save();
-        ctx.transform(cos, sin, -sin, cos, this.x, this.y);
+        //ctx.transform(cos, sin, -sin, cos, this.x, this.y);
         this.draw(ctx);
 
         deep && this._subcomponents.forEach(item => {
@@ -243,12 +208,87 @@ export class foPage extends foGlyph {
         ctx.restore();
     }
 
-    public drawHover = (ctx: CanvasRenderingContext2D): void => { }
-
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => { }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
+        this.drawRotateTest(ctx);
+    }
+
+    public drawCircle = (ctx: CanvasRenderingContext2D): void => {
+        
+            ctx.save();
+            ctx.fillStyle = 'black';
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = .8;
+            ctx.setLineDash([])
+            ctx.beginPath();
+            ctx.arc(0, 0, 50, 0, 2 * Math.PI);
+            ctx.stroke();
+        
+            ctx.restore();
+          }
+
+    drawRotateTest(ctx: CanvasRenderingContext2D) {
+
+        let angle = 0 * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+
+        ctx.transform(cos, sin, -sin, cos, 100, 300);
+        ctx.save();
+
+        let mySelf = this;
+        mySelf.drawCircle(ctx);
+
+        var startX = 0;
+        var startY = 0;
+
+        // draw an unrotated reference rect
+        ctx.beginPath();
+        ctx.rect(startX, startY, 250, 10);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+
+        // draw a rotated rect
+        drawRotatedRect(startX, startY, 350, 10, 30);
+
+        function drawRotatedRect(x, y, width, height, degrees) {
+
+            let angle = degrees * Math.PI / 180;
+            // first save the untranslated/unrotated context
+            ctx.save();
+
+            let pinX = width / 2;
+            let pinY = height / 2;
+
+            ctx.beginPath();
+            //https://stackoverflow.com/questions/17125632/html5-canvas-rotate-object-without-moving-coordinates
+            // move the rotation point to the center of the rect
+            //ctx.translate(x + pinX, y + pinY);   
+            // rotate the rect
+            //ctx.rotate(angle);
+
+
+            let cos = Math.cos(angle);
+            let sin = Math.sin(angle);
+            ctx.transform(cos, sin, -sin, cos, x + pinX, y + pinY);
+
+            // draw the rect on the transformed context
+            // Note: after transforming [0,0] is visually [x,y]
+            //       so the rect needs to be offset accordingly when drawn
+            ctx.rect(-pinX, -pinY, width, height);
+
+            ctx.fillStyle = "green";
+            ctx.fill();
+
+            mySelf.drawCircle(ctx);
+            // restore the context to its untranslated/unrotated state
+            ctx.restore();
+            mySelf.drawCircle(ctx);
+
+        }
+
+        ctx.restore();
     }
 
 }

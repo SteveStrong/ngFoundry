@@ -22,6 +22,10 @@ export class foCollection<T extends iObject> extends foObject {
         return this._members.length == 0;
     }
 
+    clearAll() {
+        this._members = [];
+    }
+
     get length() {
         return this._members.length;
     }

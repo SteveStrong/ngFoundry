@@ -16,7 +16,7 @@ import { foPage } from "../foundry/foPage.model";
 
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { legoCore, brick, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
+import { legoCore, brick, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
 
 
 import { Toast } from '../common/emitter.service';
@@ -43,6 +43,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     super();
   }
 
+  doClear() {
+    this.clearAll()
+  }
 
   doDelete() {
     this.deleteSelected()
@@ -130,14 +133,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByFour() {
     let shape = this.doCreateLego(TwoByFour, {
       color: 'green',
+      angle: 45,
       name: TwoByFour.typeName()
     }).drop({
-      x:300,
-      y:300
+      x: 300,
+      y: 300
     });
 
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
+
+    // setInterval( () => {
+    //   let angle = shape.angle + 10;
+    //   angle = angle >= 360 ? 0 : angle;
+    //   shape.angle = angle;
+    // }, 200);
   }
 
   doAddOneByTen() {
@@ -154,22 +164,31 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'gray',
       name: TenByTen.typeName()
     }).drop({
-      x:600,
-      y:300
+      x: 600,
+      y: 300
     });
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
   }
 
   doAddStack() {
+    this.addToModel(this.doCreateLego(Circle, {
+      x: 600,
+      y: 300
+    }));
+    this.addToModel(this.doCreateLego(Circle, {
+      x: 475,
+      y: 175
+    }));
+
     let shape = this.doCreateLego(TenByTen, {
       opacity: .5,
       color: 'gray',
       angle: 30,
       name: TenByTen.typeName()
     }).drop({
-      x:600,
-      y:300
+      x: 600,
+      y: 300
     });
     this.addToModel(shape);
 
@@ -188,7 +207,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   public ngAfterViewInit() {
 
     this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
-    
+
     this.screen2D.render = (context: CanvasRenderingContext2D) => {
       context.fillStyle = "yellow";
       context.fillRect(0, 0, this.width, this.height);

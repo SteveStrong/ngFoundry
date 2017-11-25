@@ -45,6 +45,10 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
         return found;
     }
 
+    clearAll() {
+        this._lookup = {};
+    }
+
     get keys() {
         return Object.keys(this._lookup);
     }
