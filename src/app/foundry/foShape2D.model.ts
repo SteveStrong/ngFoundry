@@ -55,7 +55,7 @@ export class foShape2D extends foGlyph {
         return new cPoint(x, y);
     }
 
-    public overlapTest = (hit: iShape): boolean => {   
+    public overlapTest = (hit: iShape): boolean => {
         let loc = hit.getLocation();
         let size = hit.getSize(1.0);
 
@@ -76,7 +76,7 @@ export class foShape2D extends foGlyph {
         ctx.save();
         ctx.beginPath();
 
-        ctx.arc(this.pinX(), this.pinY(), 6, 0, 2 * Math.PI, false);
+        ctx.arc(0, 0, 6, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'pink';
         ctx.fill();
         ctx.lineWidth = 1;
@@ -93,30 +93,25 @@ export class foShape2D extends foGlyph {
 
         ctx.globalAlpha = .5;
 
-        let angle = 0 * this.rotation() * Math.PI / 180
+        let angle =  this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
-
-
         this.drawOriginX(ctx);
 
-        ctx.transform(cos, sin, -sin, cos, this.x-this.pinX(), this.y-this.pinY());
+    
+        ctx.translate(this.x - this.pinX(), this.y - this.pinY());
         
 
+        this.opacity = .9;
 
+        ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
         this.draw(ctx);
         this.drawPin(ctx);
 
-        angle = this.rotation() * Math.PI / 180;
-        cos = Math.cos(angle);
-        sin = Math.sin(angle);
-        ctx.transform(cos, sin, -sin, cos,this.pinX(), this.pinY());
-  
-        //this.draw(ctx);
-        ctx.fillStyle = "red";
-        ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
+        //ctx.fillStyle = "red";
+        //ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
         //ctx.rect(-pinX, -pinY, this.width, this.height);
 
 
@@ -136,17 +131,31 @@ export class foShape2D extends foGlyph {
         this.drawPin(ctx);
     }
 
+    public drawOutline(ctx: CanvasRenderingContext2D){
+        let x = -this.pinX();
+        let y = -this.pinY();
+        let width = this.width;
+        let height = this.height;
 
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(x, y, width, height);
+        ctx.stroke();
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
+        let x = -this.pinX();
+        let y = -this.pinY();
         let width = this.width;
         let height = this.height;
 
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(x, y, width, height);
 
         this.drawText(ctx, this.myType)
 
