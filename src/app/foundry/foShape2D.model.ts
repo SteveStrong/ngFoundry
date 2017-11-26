@@ -99,22 +99,11 @@ export class foShape2D extends foGlyph {
 
         this.drawOriginX(ctx);
 
-    
         ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        
-
-        this.opacity = .9;
-
         ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
         this.draw(ctx);
-        this.drawPin(ctx);
-
-        //ctx.fillStyle = "red";
-        //ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
-        //ctx.rect(-pinX, -pinY, this.width, this.height);
-
-
+        //this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);

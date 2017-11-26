@@ -151,9 +151,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddOneByTen() {
-    let shape = this.doCreateLego(OneByTen, {
+    let shape = Stencil.create(OneByTen,{
       color: 'white',
-      pinXXX: function(): number { return  this.width / 2; }
+      height: 10,
+      width: function (): number { return this.height / 4; }
     }).drop({
       x: 500,
       y: 500
@@ -161,11 +162,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
 
-    // setInterval( () => {
-    //   let angle = shape.angle + 10;
-    //   angle = angle >= 360 ? 0 : angle;
-    //   shape.angle = angle;
-    // }, 20);
+    setInterval( () => {
+      let angle = shape.height + 10;
+      angle = angle >= 360 ? 0 : angle;
+      shape.height = angle;
+      shape.angle = angle;
+
+    }, 20);
   }
 
   doAddTenByTen() {
@@ -193,7 +196,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = this.doCreateLego(TenByTen, {
       opacity: .5,
       color: 'gray',
-      angle: 30,
+      angle: 0,
       name: TenByTen.typeName()
     }).drop({
       x: 600,
@@ -205,25 +208,38 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'red',
       typeName: TwoByFour.typeName()
     }).addAsSubcomponent(shape).drop({
-      x: 75,
-      y: 75,
+      x: function () { return -shape.width / 3; },
+      y: 0,
       angle: 0
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
+
+    // setInterval(() => {
+    //   let width = subShape.width + 10;
+    //   width = width >= 360 ? 0 : width;
+    //   subShape.width = width;
+    // }, 200);
+
+    setInterval(() => {
+      let angle = subShape.angle + 10;
+      angle = angle >= 360 ? 0 : angle;
+      subShape.angle = angle;
+      subShape.width = angle;
+    }, 200);
   }
 
-  add(shape:foShape2D):foShape2D {
+  add(shape: foShape2D): foShape2D {
     return this.addToModel(shape) as foShape2D;
   }
   doAddrotateDemo() {
     let shape = this.add(this.doCreateLego(rotateDemo, {
-        color: 'white',
-      })).drop({
-        x: 500,
-        y: 500
-      });
-    
+      color: 'white',
+    })).drop({
+      x: 500,
+      y: 500
+    });
+
 
 
     this.signalR.pubChannel("addShape", shape.asJson);
