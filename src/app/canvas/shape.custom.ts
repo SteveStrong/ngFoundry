@@ -60,6 +60,95 @@ export class OneByTen extends legoCore {
     super(properties);
     this.size = '1:10';
   }
+
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    super.render(ctx, deep);
+
+    let width = 250;
+    let height = 50;
+    let angle = 0 * Math.PI / 180
+    let cos = Math.cos(angle);
+    let sin = Math.sin(angle);
+
+    let pinX = width / 2;
+    let pinY = height / 2;
+
+    ctx.save();
+    ctx.transform(cos, sin, -sin, cos, this.x-pinX, this.y-pinY);
+
+    var startX = 0;
+    var startY = 0;
+
+    // draw an unrotated reference rect
+    ctx.globalAlpha = .5;
+    ctx.beginPath();
+    ctx.rect(startX, startY, width, height);
+    ctx.fillStyle = "blue";
+    ctx.fill();
+
+    // draw a rotated rect
+    drawRotatedRect(startX, startY, width, height, 30);
+
+
+    ctx.restore();
+
+    function drawRotatedRect(x, y, width, height, degrees) {
+
+      let angle = degrees * Math.PI / 180;
+      // first save the untranslated/unrotated context
+      ctx.save();
+
+      let pinX = width / 2;
+      let pinY = height / 2;
+
+      ctx.beginPath();
+      //https://stackoverflow.com/questions/17125632/html5-canvas-rotate-object-without-moving-coordinates
+      // move the rotation point to the center of the rect
+      //ctx.translate(x + pinX, y + pinY);   
+      // rotate the rect
+      //ctx.rotate(angle);
+
+
+      let cos = Math.cos(angle);
+      let sin = Math.sin(angle);
+      ctx.transform(cos, sin, -sin, cos, x + pinX, y + pinY);
+
+      // draw the rect on the transformed context
+      // Note: after transforming [0,0] is visually [x,y]
+      //       so the rect needs to be offset accordingly when drawn
+      ctx.rect(-pinX, -pinY, width, height);
+      ctx.fillStyle = "green";
+      ctx.fill();
+
+      // restore the context to its untranslated/unrotated state
+      ctx.restore();
+
+
+    }
+
+    // let angle = this.rotation() * Math.PI / 180
+    // let cos = Math.cos(angle);
+    // let sin = Math.sin(angle);
+
+    // ctx.save();
+    // let loc = this.getLocation();
+
+    // //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+    // ctx.translate(this.x, this.y);
+    // //ctx.transform(cos, sin, -sin, cos, 0, 0);
+    // //ctx.transform(cos, sin, -sin, cos, -this.pinX(), -this.pinY());
+    // ////ctx.translate(0, -this.pinY());
+    // //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+
+    // this.draw(ctx);
+    // this.drawPin(ctx);
+
+    // deep && this._subcomponents.forEach(item => {
+    //   item.render(ctx, deep);
+    // });
+    // ctx.restore();
+    // this.drawOrigin(ctx);
+  }
 }
 
 export class TenByTen extends legoCore {
@@ -119,24 +208,24 @@ export class Circle extends legoCore {
 }
 
 export class rotateDemo extends legoCore {
-  
-    constructor(properties: any = {}) {
-      super(properties);
-      this.size = '12:12';
-    }
-  
-    public draw = (ctx: CanvasRenderingContext2D): void => {
-  
-      ctx.save();
-      ctx.fillStyle = 'black';
-      ctx.lineWidth = 1;
 
-      ctx.beginPath();
-      ctx.arc(0, 0, this.width / 2, 0, 2 * Math.PI);
-      ctx.stroke();
-      ctx.restore();
-    }
+  constructor(properties: any = {}) {
+    super(properties);
+    this.size = '12:12';
   }
+
+  public draw = (ctx: CanvasRenderingContext2D): void => {
+
+    ctx.save();
+    ctx.fillStyle = 'black';
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.arc(0, 0, this.width / 2, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
 
 
 export class wall extends legoCore {

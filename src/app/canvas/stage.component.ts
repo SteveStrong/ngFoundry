@@ -143,17 +143,20 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
 
-    // setInterval( () => {
-    //   let angle = shape.angle + 10;
-    //   angle = angle >= 360 ? 0 : angle;
-    //   shape.angle = angle;
-    // }, 200);
+    setInterval( () => {
+      let angle = shape.angle + 10;
+      angle = angle >= 360 ? 0 : angle;
+      shape.angle = angle;
+    }, 200);
   }
 
   doAddOneByTen() {
     let shape = this.doCreateLego(OneByTen, {
       color: 'white',
-      name: OneByTen.typeName()
+      pinXXX: function(): number { return  this.width / 2; }
+    }).drop({
+      x: 500,
+      y: 500
     });
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);

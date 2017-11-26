@@ -20,8 +20,8 @@ export class foShape2D extends foGlyph {
     get angle(): number { return this._angle || 0.0; }
     set angle(value: number) { this._angle = value; }
 
-    public pinX = (): number => { return 0 * this.width / 2; }
-    public pinY = (): number => { return 0 * this.height / 2 }
+    public pinX = (): number => { return 1 * this.width / 2; }
+    public pinY = (): number => { return 1 * this.height / 2 }
     public rotation = (): number => { return this.angle; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -91,23 +91,36 @@ export class foShape2D extends foGlyph {
         ctx.save();
         this.drawOrigin(ctx);
 
-        //let loc = this.getLocation();
-        //ctx.translate(loc.x, loc.y);
-        ctx.translate(this.x, this.y);
+        ctx.globalAlpha = .5;
 
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
 
-        //ctx.translate(this.pinX(), this.pinY());
 
-        //ctx.transform(cos, sin, -sin, cos, 0, 0);
+        this.drawOriginX(ctx);
+
+        ctx.transform(cos, sin, -sin, cos, this.x-this.pinX(), this.y-this.pinY());
+        
+
+
 
         this.draw(ctx);
         this.drawPin(ctx);
-        this.drawOriginX(ctx);
-       
+
+        angle =45 * Math.PI / 180
+        cos = Math.cos(angle);
+        sin = Math.sin(angle);
+        ctx.transform(cos, sin, -sin, cos,this.pinX(), this.pinY());
+  
+        //this.draw(ctx);
+        ctx.fillStyle = "red";
+        ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
+        //ctx.rect(-pinX, -pinY, this.width, this.height);
+
+
+
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
