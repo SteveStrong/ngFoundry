@@ -64,33 +64,33 @@ export class OneByTen extends legoCore {
   public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
     super.render(ctx, deep);
 
-    let width = 250;
-    let height = 50;
-    let angle = 0 * Math.PI / 180
-    let cos = Math.cos(angle);
-    let sin = Math.sin(angle);
+    // let width = 250;
+    // let height = 50;
+    // let angle = 0 * Math.PI / 180
+    // let cos = Math.cos(angle);
+    // let sin = Math.sin(angle);
 
-    let pinX = width / 2;
-    let pinY = height / 2;
+    // let pinX = width / 2;
+    // let pinY = height / 2;
 
-    ctx.save();
-    ctx.transform(cos, sin, -sin, cos, this.x-pinX, this.y-pinY);
+    // ctx.save();
+    // ctx.transform(cos, sin, -sin, cos, this.x-pinX, this.y-pinY);
 
-    var startX = 0;
-    var startY = 0;
+    // var startX = 0;
+    // var startY = 0;
 
-    // draw an unrotated reference rect
-    ctx.globalAlpha = .5;
-    ctx.beginPath();
-    ctx.rect(startX, startY, width, height);
-    ctx.fillStyle = "blue";
-    ctx.fill();
+    // // draw an unrotated reference rect
+    // ctx.globalAlpha = .5;
+    // ctx.beginPath();
+    // ctx.rect(startX, startY, width, height);
+    // ctx.fillStyle = "blue";
+    // ctx.fill();
 
-    // draw a rotated rect
-    drawRotatedRect(startX, startY, width, height, 30);
+    // // draw a rotated rect
+    // drawRotatedRect(startX, startY, width, height, 30);
 
 
-    ctx.restore();
+    // ctx.restore();
 
     function drawRotatedRect(x, y, width, height, degrees) {
 
@@ -125,29 +125,6 @@ export class OneByTen extends legoCore {
 
 
     }
-
-    // let angle = this.rotation() * Math.PI / 180
-    // let cos = Math.cos(angle);
-    // let sin = Math.sin(angle);
-
-    // ctx.save();
-    // let loc = this.getLocation();
-
-    // //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-    // ctx.translate(this.x, this.y);
-    // //ctx.transform(cos, sin, -sin, cos, 0, 0);
-    // //ctx.transform(cos, sin, -sin, cos, -this.pinX(), -this.pinY());
-    // ////ctx.translate(0, -this.pinY());
-    // //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-
-    // this.draw(ctx);
-    // this.drawPin(ctx);
-
-    // deep && this._subcomponents.forEach(item => {
-    //   item.render(ctx, deep);
-    // });
-    // ctx.restore();
-    // this.drawOrigin(ctx);
   }
 }
 
@@ -158,7 +135,7 @@ export class TenByTen extends legoCore {
     this.size = '10:10';
   }
 
-  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+  public renderxxx(ctx: CanvasRenderingContext2D, deep: boolean = true) {
 
     let angle = this.rotation() * Math.PI / 180
     let cos = Math.cos(angle);

@@ -93,7 +93,7 @@ export class foShape2D extends foGlyph {
 
         ctx.globalAlpha = .5;
 
-        let angle = this.rotation() * Math.PI / 180
+        let angle = 0 * this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
@@ -109,7 +109,7 @@ export class foShape2D extends foGlyph {
         this.draw(ctx);
         this.drawPin(ctx);
 
-        angle =45 * Math.PI / 180
+        angle = this.rotation() * Math.PI / 180;
         cos = Math.cos(angle);
         sin = Math.sin(angle);
         ctx.transform(cos, sin, -sin, cos,this.pinX(), this.pinY());
