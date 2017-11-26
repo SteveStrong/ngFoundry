@@ -107,7 +107,7 @@ export class foPage extends foGlyph {
     setupMouseEvents() {
         let shape: foGlyph = null;
         let overshape: foGlyph = null;
-        let offset: cPoint = null;
+        let offset: iPoint = null;
 
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
             loc.add(this.marginX, this.marginY);

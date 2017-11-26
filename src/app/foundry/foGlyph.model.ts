@@ -106,11 +106,7 @@ export class foGlyph extends foNode implements iShape {
     public setLocation = (loc: iPoint): iPoint => {
         this.x = loc.x;
         this.y = loc.y;
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
+        return this.getLocation();
     }
 
     public getSize = (scale: number = 1): iSize => {
@@ -134,11 +130,7 @@ export class foGlyph extends foNode implements iShape {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
+        return new cPoint(this.x, this.y);
     }
 
     public setColor(color: string): string {
