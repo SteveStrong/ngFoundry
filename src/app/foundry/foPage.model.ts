@@ -25,6 +25,14 @@ export class foPage extends foGlyph {
     get angle(): number { return this._angle || 0.0; }
     set angle(value: number) { this._angle = value; }
 
+    protected _marginX: number;
+    get marginX(): number { return this._marginX || 0.0; }
+    set marginX(value: number) { this._marginX = value; }
+
+    protected _marginY: number;
+    get marginY(): number { return this._marginY || 0.0; }
+    set marginY(value: number) { this._marginY = value; }
+
     mouseLoc: any = {};
     sitOnShape: any = {};
 
@@ -99,10 +107,10 @@ export class foPage extends foGlyph {
     setupMouseEvents() {
         let shape: foGlyph = null;
         let overshape: foGlyph = null;
-        //let mySelf = this;
         let offset: cPoint = null;
 
-        PubSub.Sub('mousedown', (loc: iPoint, e) => {
+        PubSub.Sub('mousedown', (loc: cPoint, e) => {
+            loc.add(this.marginX, this.marginY);
             shape = this.findHitShape(loc);
             this._subcomponents.forEach(item => {
                 item.isSelected = false;
@@ -118,7 +126,7 @@ export class foPage extends foGlyph {
             //Toast.success(JSON.stringify(loc), "mousedown");
         });
 
-        PubSub.Sub('mousemove', (loc: iPoint, e) => {
+        PubSub.Sub('mousemove', (loc: cPoint, e) => {
 
             if (shape) {
                 shape.doMove(loc, offset);
@@ -155,7 +163,7 @@ export class foPage extends foGlyph {
 
         });
 
-        PubSub.Sub('mouseup', (loc: iPoint, e) => {
+        PubSub.Sub('mouseup', (loc: cPoint, e) => {
             if (!shape) return;
 
             this._subcomponents.moveToTop(shape);
@@ -199,7 +207,7 @@ export class foPage extends foGlyph {
         let sin = Math.sin(angle);
 
         ctx.save();
-        //ctx.transform(cos, sin, -sin, cos, this.x, this.y);
+        ctx.transform(cos, sin, -sin, cos, this.marginX, this.marginY);
         this.draw(ctx);
 
         deep && this._subcomponents.forEach(item => {

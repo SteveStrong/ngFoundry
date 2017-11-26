@@ -20,8 +20,8 @@ export class foShape2D extends foGlyph {
     get angle(): number { return this._angle || 0.0; }
     set angle(value: number) { this._angle = value; }
 
-    public pinX = (): number => { return this.width / 2; }
-    public pinY = (): number => { return this.height / 2 }
+    public pinX = (): number => { return 0 * this.width / 2; }
+    public pinY = (): number => { return 0 * this.height / 2 }
     public rotation = (): number => { return this.angle; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -88,19 +88,25 @@ export class foShape2D extends foGlyph {
 
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        ctx.save();
+        this.drawOrigin(ctx);
+
+        //let loc = this.getLocation();
+        //ctx.translate(loc.x, loc.y);
+        ctx.translate(this.x, this.y);
 
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
-        ctx.save();
-        let loc = this.getLocation();
+
         //ctx.translate(this.pinX(), this.pinY());
-        //ctx.translate(loc.x, loc.y);
+
         //ctx.transform(cos, sin, -sin, cos, 0, 0);
 
         this.draw(ctx);
         this.drawPin(ctx);
+        this.drawOriginX(ctx);
        
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);

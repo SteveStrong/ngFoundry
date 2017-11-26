@@ -36,6 +36,7 @@ export interface iKnowledge extends iObject {
 export interface iPoint {
     x: number;
     y: number;
+    add(x: number, y: number): iPoint
 }
 
 export interface iSize {
