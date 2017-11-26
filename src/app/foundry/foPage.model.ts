@@ -73,6 +73,7 @@ export class foPage extends foGlyph {
             this._dictionary.addItem(guid, shape);
             this._subcomponents.addMember(shape);
         });
+        return shape;
     }
 
     removeFromModel(shape: foGlyph) {
@@ -170,6 +171,7 @@ export class foPage extends foGlyph {
     drawGrid(ctx: CanvasRenderingContext2D) {
         ctx.save();
         ctx.beginPath();
+        
         ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
 
@@ -185,8 +187,6 @@ export class foPage extends foGlyph {
             ctx.moveTo(0, i);
             ctx.lineTo(this.width, i);
         }
-
-
         ctx.stroke();
         ctx.restore();
     }
@@ -211,46 +211,24 @@ export class foPage extends foGlyph {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
-        this.drawRotateTest(ctx);
+        //this.drawRotateTest(ctx);
     }
 
     public drawCircle = (ctx: CanvasRenderingContext2D): void => {
-        
-            ctx.save();
-            ctx.fillStyle = 'black';
-            ctx.lineWidth = 1;
-            ctx.globalAlpha = .8;
-            ctx.setLineDash([])
-            ctx.beginPath();
-            ctx.arc(0, 0, 50, 0, 2 * Math.PI);
-            ctx.stroke();
-        
-            ctx.restore();
-          }
+
+        ctx.save();
+        ctx.fillStyle = 'black';
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = .8;
+        ctx.setLineDash([])
+        ctx.beginPath();
+        ctx.arc(0, 0, 50, 0, 2 * Math.PI);
+        ctx.stroke();
+
+        ctx.restore();
+    }
 
     drawRotateTest(ctx: CanvasRenderingContext2D) {
-
-        let angle = 0 * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-
-        ctx.transform(cos, sin, -sin, cos, 100, 300);
-        ctx.save();
-
-        let mySelf = this;
-        mySelf.drawCircle(ctx);
-
-        var startX = 0;
-        var startY = 0;
-
-        // draw an unrotated reference rect
-        ctx.beginPath();
-        ctx.rect(startX, startY, 250, 10);
-        ctx.fillStyle = "blue";
-        ctx.fill();
-
-        // draw a rotated rect
-        drawRotatedRect(startX, startY, 350, 10, 30);
 
         function drawRotatedRect(x, y, width, height, degrees) {
 
@@ -288,7 +266,33 @@ export class foPage extends foGlyph {
 
         }
 
+        let angle = 0 * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+
+        ctx.save();
+        ctx.transform(cos, sin, -sin, cos, 100, 300);
+
+
+        let mySelf = this;
+        mySelf.drawCircle(ctx);
+
+        var startX = 0;
+        var startY = 0;
+
+        // draw an unrotated reference rect
+        ctx.beginPath();
+        ctx.rect(startX, startY, 250, 10);
+        ctx.fillStyle = "blue";
+        ctx.fill();
+
+        // draw a rotated rect
+        drawRotatedRect(startX, startY, 350, 10, 30);
+
         ctx.restore();
+
+
+
     }
 
 }

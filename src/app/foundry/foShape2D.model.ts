@@ -72,8 +72,6 @@ export class foShape2D extends foGlyph {
     }
 
 
-
-
     public drawPin(ctx: CanvasRenderingContext2D) {
         ctx.save();
         ctx.beginPath();
@@ -98,8 +96,8 @@ export class foShape2D extends foGlyph {
         ctx.save();
         let loc = this.getLocation();
         //ctx.translate(this.pinX(), this.pinY());
-        ctx.translate(loc.x, loc.y);
-        ctx.transform(cos, sin, -sin, cos, 0, 0);
+        //ctx.translate(loc.x, loc.y);
+        //ctx.transform(cos, sin, -sin, cos, 0, 0);
 
         this.draw(ctx);
         this.drawPin(ctx);

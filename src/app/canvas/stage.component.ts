@@ -16,7 +16,7 @@ import { foPage } from "../foundry/foPage.model";
 
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { legoCore, brick, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
+import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
 
 
 import { Toast } from '../common/emitter.service';
@@ -200,6 +200,22 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 75,
       angle: 0
     });
+
+    this.signalR.pubChannel("addShape", shape.asJson);
+  }
+
+  add(shape:foShape2D):foShape2D {
+    return this.addToModel(shape) as foShape2D;
+  }
+  doAddrotateDemo() {
+    let shape = this.add(this.doCreateLego(rotateDemo, {
+        color: 'white',
+      })).drop({
+        x: 500,
+        y: 500
+      });
+    
+
 
     this.signalR.pubChannel("addShape", shape.asJson);
   }

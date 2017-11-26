@@ -153,7 +153,9 @@ export class foGlyph extends foNode implements iShape {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
+        //this.drawOrigin(ctx);
         ctx.translate(this.x, this.y);
+        this.drawOriginX(ctx);
 
         this.draw(ctx); 
         
@@ -161,7 +163,8 @@ export class foGlyph extends foNode implements iShape {
             item.render(ctx, deep);
         });
         ctx.restore();
-        this.drawOrigin(ctx);
+        //this.drawOriginX(ctx);
+        
     }
 
     drawText(ctx: CanvasRenderingContext2D, text: string) {
@@ -175,10 +178,23 @@ export class foGlyph extends foNode implements iShape {
             dy += (fontsize + 4);
         }
     };
-    
+
     public drawOrigin(ctx: CanvasRenderingContext2D) {
         ctx.save();
-        ctx.translate(this.x, this.y);
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(-50,0);
+        ctx.lineTo(50,0);
+        ctx.moveTo(0,-50);
+        ctx.lineTo(0,50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+    
+    public drawOriginX(ctx: CanvasRenderingContext2D) {
+        ctx.save();
         ctx.beginPath();
         ctx.setLineDash([5, 5]);
         ctx.moveTo(-50,-50);

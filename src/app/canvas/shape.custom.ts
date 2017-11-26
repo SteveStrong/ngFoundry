@@ -118,6 +118,26 @@ export class Circle extends legoCore {
   }
 }
 
+export class rotateDemo extends legoCore {
+  
+    constructor(properties: any = {}) {
+      super(properties);
+      this.size = '12:12';
+    }
+  
+    public draw = (ctx: CanvasRenderingContext2D): void => {
+  
+      ctx.save();
+      ctx.fillStyle = 'black';
+      ctx.lineWidth = 1;
+
+      ctx.beginPath();
+      ctx.arc(0, 0, this.width / 2, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
 
 export class wall extends legoCore {
 
