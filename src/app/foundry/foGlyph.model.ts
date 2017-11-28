@@ -1,31 +1,30 @@
 
-import { Tools } from '../foundry/foTools'
-//import { iObject, iNode } from '../foundry/foInterface'
+import { Tools } from './foTools';
+import { cPoint } from './foGeometry';
 
-import { foObject } from '../foundry/foObject.model'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
-import { foConcept } from '../foundry/foConcept.model'
-import { foComponent } from '../foundry/foComponent.model'
+import { iObject, iNode, iShape, iPoint, iSize, Action } from './foInterface';
 
-import { iShape, iPoint, iSize } from "./shape";
-import { cPoint } from "./point";
+import { foObject } from './foObject.model';
+import { foCollection } from './foCollection.model';
+import { foNode } from './foNode.model';
+import { foConcept } from './foConcept.model';
+import { foComponent } from './foComponent.model';
 
 
-export class foShape extends foNode implements iShape {
-    private _isSelected: boolean = false;
+//a Glyph is a graphic designed to draw on a canvas in absolute coordinates
+export class foGlyph extends foNode implements iShape {
 
-    _subcomponents: foCollection<foShape>;
-
+    protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
 
-    private _x: number;
-    private _y: number;
-    private _width: number;
-    private _height: number;
-    private _opacity: number;
-    private _color: string;
+    protected _subcomponents: foCollection<foGlyph>;
+    protected _x: number;
+    protected _y: number;
+    protected _width: number;
+    protected _height: number;
+    protected _opacity: number;
+    protected _color: string;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) { this._x = value; }
@@ -49,10 +48,6 @@ export class foShape extends foNode implements iShape {
         this._color = value;
     }
 
-    public pinX = (): number => { return this.width / 2; }
-    public pinY = (): number => { return this.height / 2 }
-    public angle = (): number => { return 0; }
-
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
@@ -65,6 +60,8 @@ export class foShape extends foNode implements iShape {
             y: this.y
         }
     }
+
+
 
     public hitTest = (hit: iPoint): boolean => {
         let x = this.x;
@@ -109,11 +106,7 @@ export class foShape extends foNode implements iShape {
     public setLocation = (loc: iPoint): iPoint => {
         this.x = loc.x;
         this.y = loc.y;
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
+        return this.getLocation();
     }
 
     public getSize = (scale: number = 1): iSize => {
@@ -137,15 +130,7 @@ export class foShape extends foNode implements iShape {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        // this._subcomponents.forEach(item => {
-        //     item.doMove(loc, offset);
-        // });
-
-        //structual type
-        return {
-            x: this.x,
-            y: this.y
-        }
+        return new cPoint(this.x, this.y);
     }
 
     public setColor(color: string): string {
@@ -159,32 +144,89 @@ export class foShape extends foNode implements iShape {
     };
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-       
-        this.draw(ctx);
         ctx.save();
+        //this.drawOrigin(ctx);
         ctx.translate(this.x, this.y);
+        this.drawOriginX(ctx);
+
+        this.draw(ctx); 
+        
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
+        //this.drawOriginX(ctx);
+        
+    }
+
+    drawText(ctx: CanvasRenderingContext2D, text: string) {
+        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
+        let fontsize = 20;
+        let array = text.split('|');
+        let dx = 10;
+        let dy = 20;
+        for (var i = 0; i < array.length; i++) {
+            ctx.fillText(array[i], dx, dy);
+            dy += (fontsize + 4);
+        }
+    };
+
+    public drawOrigin(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(-50,0);
+        ctx.lineTo(50,0);
+        ctx.moveTo(0,-50);
+        ctx.lineTo(0,50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+    
+    public drawOriginX(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(-50,-50);
+        ctx.lineTo(50,50);
+        ctx.moveTo(50,-50);
+        ctx.lineTo(-50,50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    public drawOutline(ctx: CanvasRenderingContext2D){
+        let width = this.width;
+        let height = this.height;
+
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(0, 0, width, height);
+        ctx.stroke();
     }
 
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => { }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
+        this.drawOutline(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        let x = this.x;
-        let y = this.y;
+
         let width = this.width;
         let height = this.height;
 
-        ctx.save();
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(x, y, width, height);
+        ctx.fillRect(0, 0, width, height);
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
         let fontsize = 20;
@@ -200,19 +242,21 @@ export class foShape extends foNode implements iShape {
         //     dy += (fontsize + 4);
         //  }
 
-        if (this.isSelected) {
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 4;
-            ctx.beginPath()
-            ctx.rect(x, y, width, height);
-            ctx.stroke();
-        }
-
-        ctx.restore();
+        this.isSelected && this.drawOutline(ctx);
     }
 
     toggleSelected() {
         this._isSelected = !this._isSelected;
+    }
+}
+
+export class Pallet {
+    static afterCreate: Action<foGlyph>;
+    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any, func?: Action<T>): T {
+        let instance = new type(properties);
+        func && func(instance);
+        this.afterCreate && this.afterCreate(instance);
+        return instance;
     }
 }
 

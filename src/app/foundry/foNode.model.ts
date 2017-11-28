@@ -10,12 +10,13 @@ export class foNode extends foObject implements iNode {
     private _index: number = 0;
     private _myGuid: string;
 
-    _subcomponents: foCollection<foNode>;
+    protected _subcomponents: foCollection<foNode>;
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, parent);
 
         this._subcomponents = new foCollection<foNode>();
+        this._subcomponents.myName = 'Subparts';
         subcomponents && subcomponents.forEach(item => this.addSubcomponent(item));
         return this;
     }
@@ -34,8 +35,12 @@ export class foNode extends foObject implements iNode {
         }
     }
 
+    addAsSubcomponent(parent: foNode) {
+        parent.addSubcomponent(this);
+        return this;
+    }
 
-    //todo modify api to take bote item and array
+    //todo modify api to take both item and array
     addSubcomponent(obj: foNode) {
         if (!obj) return;
         let parent = obj.myParent && obj.myParent();
