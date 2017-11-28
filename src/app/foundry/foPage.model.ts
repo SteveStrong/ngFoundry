@@ -219,7 +219,7 @@ export class foPage extends foGlyph {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
-        this.drawRotateTest(ctx);
+        //this.drawRotateTest(ctx);
     }
 
     public drawCircle = (ctx: CanvasRenderingContext2D): void => {

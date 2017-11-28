@@ -16,7 +16,7 @@ import { foPage } from "../foundry/foPage.model";
 
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
+import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 
 import { Toast } from '../common/emitter.service';
