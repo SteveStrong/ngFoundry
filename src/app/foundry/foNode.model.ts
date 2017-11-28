@@ -40,13 +40,21 @@ export class foNode extends foObject implements iNode {
         return this;
     }
 
+    removeFromParent() {
+        let parent:foNode = <foNode>(this.myParent && this.myParent());
+        this.myParent = () => { return null; };
+        parent.removeSubcomponent(this);
+        return this;
+    }
+
     //todo modify api to take both item and array
-    addSubcomponent(obj: foNode) {
+    addSubcomponent(obj: foNode, properties?:any) {
         if (!obj) return;
         let parent = obj.myParent && obj.myParent();
         if (!parent) {
             obj.myParent = () => { return this; };
             obj._index = this._subcomponents.length;
+            properties && obj.override(properties);
         }
         this._subcomponents.addMember(obj);
         return obj;

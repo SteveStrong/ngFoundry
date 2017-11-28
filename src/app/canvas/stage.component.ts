@@ -211,8 +211,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //   this.drawPin(ctx);
       // }
     }).addAsSubcomponent(shape).drop({
-      x: function () { return -shape.width / 3; },
-      y: 0,
+      x: function () { return -shape.width / 4; },
+      y: 150,
       angle: 0,
     });
 
@@ -224,12 +224,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   subShape.width = width;
     // }, 200);
 
-    // setInterval(() => {
-    //   let angle = subShape.angle + 10;
-    //   angle = angle >= 360 ? 0 : angle;
-    //   subShape.angle = angle;
-    //   subShape.width = angle;
-    // }, 200);
+    setInterval(() => {
+      let angle = subShape.angle + 10;
+      angle = angle >= 360 ? 0 : angle;
+      subShape.angle = angle;
+      subShape.width = angle;
+    }, 20);
   }
 
   add(shape: foShape2D): foShape2D {

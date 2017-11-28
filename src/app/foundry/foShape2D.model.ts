@@ -136,8 +136,7 @@ export class foShape2D extends foGlyph {
         ctx.stroke();
     }
 
-    public preDraw = (ctx: CanvasRenderingContext2D): void => { }
-    public postDraw = (ctx: CanvasRenderingContext2D): void => { }
+
     
 
     public draw = (ctx: CanvasRenderingContext2D): void => {

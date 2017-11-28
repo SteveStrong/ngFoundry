@@ -49,7 +49,7 @@ export class TwoByTwo extends legoCore {
 export class TwoByFour extends legoCore {
 
   public pinX = (): number => { return 0 * this.width / 2; }
-  public pinY = (): number => { return 0 * this.height / 2 }
+  public pinY = (): number => { return 1 * this.height / 2 }
   constructor(properties: any = {}) {
     super(properties);
     this.size = '2:4';

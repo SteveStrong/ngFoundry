@@ -149,14 +149,15 @@ export class foGlyph extends foNode implements iShape {
         ctx.translate(this.x, this.y);
         this.drawOriginX(ctx);
 
+        this.preDraw(ctx);
         this.draw(ctx); 
+        this.postDraw(ctx);
         
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
-        //this.drawOriginX(ctx);
-        
+        //this.drawOriginX(ctx); 
     }
 
     drawText(ctx: CanvasRenderingContext2D, text: string) {
@@ -218,6 +219,8 @@ export class foGlyph extends foNode implements iShape {
         this.drawOutline(ctx);
     }
 
+    public preDraw = (ctx: CanvasRenderingContext2D): void => { }
+    public postDraw = (ctx: CanvasRenderingContext2D): void => { }
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
         let width = this.width;
