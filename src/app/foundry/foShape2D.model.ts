@@ -102,7 +102,9 @@ export class foShape2D extends foGlyph {
         ctx.translate(this.x - this.pinX(), this.y - this.pinY());
         ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
+        this.preDraw(ctx);
         this.draw(ctx);
+        this.postDraw(ctx);
         //this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
@@ -133,6 +135,10 @@ export class foShape2D extends foGlyph {
         ctx.rect(x, y, width, height);
         ctx.stroke();
     }
+
+    public preDraw = (ctx: CanvasRenderingContext2D): void => { }
+    public postDraw = (ctx: CanvasRenderingContext2D): void => { }
+    
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 

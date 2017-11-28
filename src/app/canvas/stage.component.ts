@@ -206,11 +206,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let subShape = this.doCreateLego(TwoByFour, {
       color: 'red',
-      typeName: TwoByFour.typeName()
+      // typeName: TwoByFour.typeName(),
+      // postDraw: function(ctx) { 
+      //   this.drawPin(ctx);
+      // }
     }).addAsSubcomponent(shape).drop({
       x: function () { return -shape.width / 3; },
       y: 0,
-      angle: 0
+      angle: 0,
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
