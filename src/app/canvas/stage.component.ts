@@ -184,14 +184,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddStack() {
-    this.addToModel(this.doCreateLego(Circle, {
-      x: 600,
-      y: 300
-    }));
-    this.addToModel(this.doCreateLego(Circle, {
-      x: 475,
-      y: 175
-    }));
+    // this.addToModel(this.doCreateLego(Circle, {
+    //   x: 600,
+    //   y: 300
+    // }));
+    // this.addToModel(this.doCreateLego(Circle, {
+    //   x: 475,
+    //   y: 175
+    // }));
 
     let shape = this.doCreateLego(TenByTen, {
       opacity: .5,
@@ -221,12 +221,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   subShape.width = width;
     // }, 200);
 
-    setInterval(() => {
-      let angle = subShape.angle + 10;
-      angle = angle >= 360 ? 0 : angle;
-      subShape.angle = angle;
-      subShape.width = angle;
-    }, 200);
+    // setInterval(() => {
+    //   let angle = subShape.angle + 10;
+    //   angle = angle >= 360 ? 0 : angle;
+    //   subShape.angle = angle;
+    //   subShape.width = angle;
+    // }, 200);
   }
 
   add(shape: foShape2D): foShape2D {

@@ -10,7 +10,7 @@ describe("Foundry:  Define Type Mixing", function () {
     var namespace = 'ModelTypes';
 
     var blockSpec = {
-        myType: 'block',
+        //myType: 'block',
         height: 1,
         width: 2,
         baseArea: function () { return this.width * this.height },
@@ -22,7 +22,7 @@ describe("Foundry:  Define Type Mixing", function () {
     };
 
     var blockShapeSpec = {
-        myType: 'blockShape',
+        //myType: 'blockShape',
         context: '',
         height: 150,
         width: 250,
