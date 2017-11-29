@@ -66,6 +66,17 @@ export class Matrix2D {
         return this;
     };
 
+    setValues(a: number, b: number, c: number, d: number, tx: number, ty: number) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.tx = tx;
+        this.ty = ty;
+        return this;
+    }
+        
+
     appendMatrix(matrix: Matrix2D) {
         return this.append(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
     };
@@ -244,17 +255,26 @@ export class Matrix2D {
         return target;
     };
 
-    // copy(matrix) {
-    // 	return this.setValues(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
-    // };
+    copy(matrix: Matrix2D) {
+        this.a = matrix.a;
+        this.b = matrix.b;
+        this.c = matrix.c;
+        this.d = matrix.d;
+        this.tx = matrix.tx;
+        this.ty = matrix.ty;
+        return this;
+    };
 
-    // clone() {
-    // 	return new Matrix2D(this.a, this.b, this.c, this.d, this.tx, this.ty);
-    // };
+    clone() {
+        let matrix = new Matrix2D();
+        matrix.setValues(this.a, this.b, this.c, this.d, this.tx, this.ty);
+        return matrix
+       
+    };
 
     toString() {
         return "[Matrix2D (a=" + this.a + " b=" + this.b + " c=" + this.c + " d=" + this.d + " tx=" + this.tx + " ty=" + this.ty + ")]";
     };
 }
 
-export let Identity:Matrix2D = new Matrix2D();
+export let Identity: Matrix2D = new Matrix2D();

@@ -14,6 +14,7 @@ import { foComponent } from './foComponent.model';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foDisplayObject extends foNode {
+    static _snapToPixelEnabled:boolean=false;
 
     protected _x: number;
     protected _y: number;
@@ -29,6 +30,8 @@ export class foDisplayObject extends foNode {
 
     protected _alpha: number = 1.0;
     protected _visible: boolean = true;
+    protected snapToPixel: boolean = false;
+    
 
     protected matrix: Matrix2D = new Matrix2D();
 
@@ -49,25 +52,13 @@ export class foDisplayObject extends foNode {
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
 	 **/
 	updateContext(ctx) {
-        let o=this;
-        let mask=o.mask, 
-        
-        let mtx= o._props.matrix;
+
 		
-		if (mask && mask.graphics && !mask.graphics.isEmpty()) {
-			mask.getMatrix(mtx);
-			ctx.transform(mtx.a,  mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
-			
-			mask.graphics.drawAsPath(ctx);
-			ctx.clip();
-			
-			mtx.invert();
-			ctx.transform(mtx.a,  mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
-		}
+
 		
 		this.getMatrix(mtx);
 		var tx = mtx.tx, ty = mtx.ty;
-		if (DisplayObject._snapToPixelEnabled && o.snapToPixel) {
+		if (foDisplayObject._snapToPixelEnabled && this.snapToPixel) {
 			tx = tx + (tx < 0 ? -0.5 : 0.5) | 0;
 			ty = ty + (ty < 0 ? -0.5 : 0.5) | 0;
 		}
@@ -104,13 +95,13 @@ export class foDisplayObject extends foNode {
 		return this;
     };
     
-    getMatrix(matrix) {
+    getMatrix(matrix:Matrix2D) {
         let o = this;
-        let mtx = matrix && matrix.identity() || new createjs.Matrix2D();
-		return o.transformMatrix ?  mtx.copy(o.transformMatrix) : mtx.appendTransform(o.x, o.y, o.scaleX, o.scaleY, o.rotation, o.skewX, o.skewY, o.regX, o.regY);
+        let mtx = matrix && matrix.identity() || new Matrix2D();
+		return o.transformMatrix ?  mtx.copy(o.transformMatrix) : mtx.appendTransform(o._x, o._y, o._scaleX, o._scaleY, o._rotation, o._skewX, o._skewY, o._regX, o._regY);
 	};
     
-	getConcatenatedMatrix(matrix) {
+	getConcatenatedMatrix(matrix:Matrix2D) {
 		var o = this, mtx = this.getMatrix(matrix);
 		while (o = o.parent) {
 			mtx.prependMatrix(o.getMatrix(o._props.matrix));
@@ -207,19 +198,6 @@ export class foDisplayObject extends foNode {
     public preDraw = (ctx: CanvasRenderingContext2D): void => { }
     public postDraw = (ctx: CanvasRenderingContext2D): void => { }
     public draw = (ctx: CanvasRenderingContext2D): void => {
-
-        let width = this.width;
-        let height = this.height;
-
-        ctx.fillStyle = this.color;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = this.opacity;
-        ctx.fillRect(0, 0, width, height);
-
-        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-        let fontsize = 20;
-        ctx.font = `${fontsize}px Calibri`;
-        ctx.fillStyle = 'blue';
     }
 
 
