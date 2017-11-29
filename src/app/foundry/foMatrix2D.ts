@@ -19,7 +19,7 @@
  * @constructor
  **/
 
-
+import { cPoint } from './foGeometry';
 
 
 export class Matrix2D {
@@ -223,8 +223,8 @@ export class Matrix2D {
  * @param {Point | Object} [pt] An object to copy the result into. If omitted a generic object with x/y properties will be returned.
  * @return {Point} This matrix. Useful for chaining method calls.
  **/
-    transformPoint(x: number, y: number, pt) {
-        pt = pt || {};
+    transformPoint(x: number, y: number, pt:cPoint) {
+        pt = pt || new cPoint();
         pt.x = x * this.a + y * this.c + this.tx;
         pt.y = x * this.b + y * this.d + this.ty;
         return pt;

@@ -14,8 +14,9 @@ import { foComponent } from './foComponent.model';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foDisplayObject extends foNode {
-    static _snapToPixelEnabled:boolean=false;
+    static _snapToPixelEnabled: boolean = false;
 
+    protected _subcomponents: foCollection<foDisplayObject>;
     protected _x: number;
     protected _y: number;
     protected _transformMatrix: number;
@@ -31,7 +32,7 @@ export class foDisplayObject extends foNode {
     protected _alpha: number = 1.0;
     protected _visible: boolean = true;
     protected snapToPixel: boolean = false;
-    
+
 
     protected matrix: Matrix2D = new Matrix2D();
 
@@ -40,101 +41,98 @@ export class foDisplayObject extends foNode {
         this.myGuid;
     }
 
-	isVisible() {
-		return !!(this._visible && this._alpha > 0 && this._scaleX != 0 && this._scaleY != 0);
+    isVisible() {
+        return !!(this._visible && this._alpha > 0 && this._scaleX != 0 && this._scaleY != 0);
     };
-    
+
 
 	/**
 	 * Applies this display object's transformation, alpha, globalCompositeOperation, clipping path (mask), and shadow
-	 * to the specified context. This is typically called prior to {{#crossLink "DisplayObject/draw"}}{{/crossLink}}.
+	 * to the specified context. This is typically called prior to "DisplayObject/draw".
 	 * @method updateContext
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
 	 **/
-	updateContext(ctx) {
+    updateContext(ctx: CanvasRenderingContext2D) {
+        //changed from original
+        let mtx = this.getMatrix(this.matrix);
+        let tx = mtx.tx;
+        let ty = mtx.ty;
+        if (foDisplayObject._snapToPixelEnabled && this.snapToPixel) {
+            tx = tx + (tx < 0 ? -0.5 : 0.5) | 0;
+            ty = ty + (ty < 0 ? -0.5 : 0.5) | 0;
+        }
+        ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, tx, ty);
+        ctx.globalAlpha *= this._alpha;
 
-		
-
-		
-		this.getMatrix(mtx);
-		var tx = mtx.tx, ty = mtx.ty;
-		if (foDisplayObject._snapToPixelEnabled && this.snapToPixel) {
-			tx = tx + (tx < 0 ? -0.5 : 0.5) | 0;
-			ty = ty + (ty < 0 ? -0.5 : 0.5) | 0;
-		}
-		ctx.transform(mtx.a,  mtx.b, mtx.c, mtx.d, tx, ty);
-		ctx.globalAlpha *= o.alpha;
-		if (o.compositeOperation) { ctx.globalCompositeOperation = o.compositeOperation; }
-		if (o.shadow) { this._applyShadow(ctx, o.shadow); }
-	};
-
-
-    localToGlobal(x, y, pt) {
-		return this.getConcatenatedMatrix(this._props.matrix).transformPoint(x,y, pt||new createjs.Point());
+        // if (o.compositeOperation) { ctx.globalCompositeOperation = o.compositeOperation; }
+        // if (o.shadow) { this._applyShadow(ctx, o.shadow); }
     };
 
-    globalToLocal(x, y, pt) {
-		return this.getConcatenatedMatrix(this._props.matrix).invert().transformPoint(x,y, pt||new createjs.Point());
+
+    localToGlobal(x:number, y:number, pt?:cPoint) {
+        return this.getConcatenatedMatrix(this.matrix).transformPoint(x, y, pt || new cPoint());
     };
-    
-    localToLocal(x, y, target, pt) {
-		pt = this.localToGlobal(x, y, pt);
-		return target.globalToLocal(pt.x, pt.y, pt);
+
+    globalToLocal(x:number, y:number, pt?:cPoint) {
+        return this.getConcatenatedMatrix(this.matrix).invert().transformPoint(x, y, pt || new cPoint());
     };
-    
-    setTransform(x, y, scaleX, scaleY, rotation, skewX, skewY, regX, regY) {
-		this._x = x || 0;
-		this._y = y || 0;
-		this._scaleX = scaleX == null ? 1 : scaleX;
-		this._scaleY = scaleY == null ? 1 : scaleY;
-		this._rotation = rotation || 0;
-		this._skewX = skewX || 0;
-		this._skewY = skewY || 0;
-		this._regX = regX || 0;
-		this._regY = regY || 0;
-		return this;
+
+    localToLocal(x:number, y:number, target:foDisplayObject, pt?:cPoint) {
+        pt = this.localToGlobal(x, y, pt);
+        return target.globalToLocal(pt.x, pt.y, pt);
     };
-    
-    getMatrix(matrix:Matrix2D) {
-        let o = this;
+
+    setTransform(x: number, y: number, scaleX: number, scaleY: number, rotation: number, skewX: number, skewY: number, regX: number, regY: number) {
+        this._x = x || 0;
+        this._y = y || 0;
+        this._scaleX = scaleX == null ? 1 : scaleX;
+        this._scaleY = scaleY == null ? 1 : scaleY;
+        this._rotation = rotation || 0;
+        this._skewX = skewX || 0;
+        this._skewY = skewY || 0;
+        this._regX = regX || 0;
+        this._regY = regY || 0;
+        return this;
+    };
+
+    getMatrix(matrix: Matrix2D) {
         let mtx = matrix && matrix.identity() || new Matrix2D();
-		return o.transformMatrix ?  mtx.copy(o.transformMatrix) : mtx.appendTransform(o._x, o._y, o._scaleX, o._scaleY, o._rotation, o._skewX, o._skewY, o._regX, o._regY);
-	};
-    
-	getConcatenatedMatrix(matrix:Matrix2D) {
-		var o = this, mtx = this.getMatrix(matrix);
-		while (o = o.parent) {
-			mtx.prependMatrix(o.getMatrix(o._props.matrix));
-		}
-		return mtx;
+        let transformMatrix = this['transformMatrix'];
+        return transformMatrix ? mtx.copy(transformMatrix) : mtx.appendTransform(this._x, this._y, this._scaleX, this._scaleY, this._rotation, this._skewX, this._skewY, this._regX, this._regY);
     };
 
-    hitTest(x, y) {
-		var ctx = DisplayObject._hitTestContext;
-		ctx.setTransform(1, 0, 0, 1, -x, -y);
-		this.draw(ctx);
- 
-		var hit = this._testHit(ctx);
-		ctx.setTransform(1, 0, 0, 1, 0, 0);
-		ctx.clearRect(0, 0, 2, 2);
-		return hit;
+    getConcatenatedMatrix(matrix: Matrix2D) {
+        let o: foDisplayObject = this;
+        let mtx = this.getMatrix(matrix);
+        while (o = <foDisplayObject>o.myParent()) {
+            mtx.prependMatrix(o.getMatrix(o.matrix));
+        }
+        return mtx;
     };
-    
-    _testHit(ctx) {
-		try {
-			var hit = ctx.getImageData(0, 0, 1, 1).data[3] > 1;
-		} catch (e) {
-			throw "An error has occurred. This is most likely due to security restrictions on reading canvas pixel data with local or cross-domain images.";
-		}
-		return hit;
-	};
-    
+
+    hitTest(x: number, y: number, ctx: CanvasRenderingContext2D) {
+        ///var ctx = DisplayObject._hitTestContext;
+
+        ctx.setTransform(1, 0, 0, 1, -x, -y);
+        this.draw(ctx);
+
+        var hit = this._testHit(ctx);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, 2, 2);
+        return hit;
+    };
+
+    _testHit(ctx: CanvasRenderingContext2D) {
+        try {
+            var hit = ctx.getImageData(0, 0, 1, 1).data[3] > 1;
+        } catch (e) {
+            throw "An error has occurred. This is most likely due to security restrictions on reading canvas pixel data with local or cross-domain images.";
+        }
+        return hit;
+    };
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
-        //this.drawOrigin(ctx);
-        ctx.translate(this.x, this.y);
-        this.drawOriginX(ctx);
-
         this.preDraw(ctx);
         this.draw(ctx);
         this.postDraw(ctx);
@@ -143,7 +141,6 @@ export class foDisplayObject extends foNode {
             item.render(ctx, deep);
         });
         ctx.restore();
-        //this.drawOriginX(ctx); 
     }
 
 
@@ -177,15 +174,6 @@ export class foDisplayObject extends foNode {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        let width = this.width;
-        let height = this.height;
-
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
-        ctx.beginPath()
-        ctx.setLineDash([15, 5]);
-        ctx.rect(0, 0, width, height);
-        ctx.stroke();
     }
 
 
