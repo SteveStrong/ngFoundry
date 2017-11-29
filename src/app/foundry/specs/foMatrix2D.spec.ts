@@ -43,4 +43,19 @@ describe('Matrix2D', () => {
 
   }));
 
+  it(`can rotate a point`, async(() => {
+    const obj = new Matrix2D();
+    obj.rotate(90);
+    let pt1 = new cPoint(10,0);
+
+    expect(pt1.x).toEqual(10);
+    expect(pt1.y).toEqual(0);
+
+    let pt2 = obj.transformPoint(pt1.x, pt1.y);
+
+    expect(pt2.x).toBeCloseTo(0);
+    expect(pt2.y).toBeCloseTo(10);
+
+  }));
+
 });
