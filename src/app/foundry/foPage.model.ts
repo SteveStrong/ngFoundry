@@ -87,6 +87,7 @@ export class foPage extends foGlyph {
     removeFromModel(shape: foGlyph) {
         let guid = shape.myGuid;
         this._dictionary.found(guid, () => {
+            shape.isSelected = false;
             this._dictionary.removeItem(guid);
             this._subcomponents.removeMember(shape);
         });
@@ -169,6 +170,14 @@ export class foPage extends foGlyph {
             this._subcomponents.moveToTop(shape);
             let drop = shape.getLocation();
             drop['myGuid'] = shape['myGuid'];
+
+            if (overshape) {
+                this.removeFromModel(shape);
+                overshape.addSubcomponent(shape, {
+                    x: 0,
+                    y: 0
+                });
+            }
             shape = null;
             //Toast.success(JSON.stringify(loc), "mouseup");
             //this.signalR.pubChannel("move", drop);
@@ -179,7 +188,7 @@ export class foPage extends foGlyph {
     drawGrid(ctx: CanvasRenderingContext2D) {
         ctx.save();
         ctx.beginPath();
-        
+
         ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
 
@@ -208,6 +217,7 @@ export class foPage extends foGlyph {
 
         ctx.save();
         ctx.transform(cos, sin, -sin, cos, this.marginX, this.marginY);
+
         this.draw(ctx);
 
         deep && this._subcomponents.forEach(item => {
@@ -219,7 +229,7 @@ export class foPage extends foGlyph {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
-        this.drawRotateTest(ctx);
+        //this.drawRotateTest(ctx);
     }
 
     public drawCircle = (ctx: CanvasRenderingContext2D): void => {

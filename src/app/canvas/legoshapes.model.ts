@@ -49,11 +49,16 @@ export class TwoByTwo extends legoCore {
 export class TwoByFour extends legoCore {
 
   public pinX = (): number => { return 0 * this.width / 2; }
-  public pinY = (): number => { return 0 * this.height / 2 }
+  public pinY = (): number => { return 1 * this.height / 2 }
   constructor(properties: any = {}) {
     super(properties);
     this.size = '2:4';
   }
+
+  public postDraw = (ctx: CanvasRenderingContext2D): void => { 
+    this.drawPin(ctx);
+  }
+ 
 }
 
 export class OneByTen extends legoCore {
@@ -62,72 +67,6 @@ export class OneByTen extends legoCore {
     super(properties);
     this.size = '1:10';
   }
-
-  // public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-  //   super.render(ctx, deep);
-
-  //   // let width = 250;
-  //   // let height = 50;
-  //   // let angle = 0 * Math.PI / 180
-  //   // let cos = Math.cos(angle);
-  //   // let sin = Math.sin(angle);
-
-  //   // let pinX = width / 2;
-  //   // let pinY = height / 2;
-
-  //   // ctx.save();
-  //   // ctx.transform(cos, sin, -sin, cos, this.x-pinX, this.y-pinY);
-
-  //   // var startX = 0;
-  //   // var startY = 0;
-
-  //   // // draw an unrotated reference rect
-  //   // ctx.globalAlpha = .5;
-  //   // ctx.beginPath();
-  //   // ctx.rect(startX, startY, width, height);
-  //   // ctx.fillStyle = "blue";
-  //   // ctx.fill();
-
-  //   // // draw a rotated rect
-  //   // drawRotatedRect(startX, startY, width, height, 30);
-
-
-  //   // ctx.restore();
-
-  //   function drawRotatedRect(x, y, width, height, degrees) {
-
-  //     let angle = degrees * Math.PI / 180;
-  //     // first save the untranslated/unrotated context
-  //     ctx.save();
-
-  //     let pinX = width / 2;
-  //     let pinY = height / 2;
-
-  //     ctx.beginPath();
-  //     //https://stackoverflow.com/questions/17125632/html5-canvas-rotate-object-without-moving-coordinates
-  //     // move the rotation point to the center of the rect
-  //     //ctx.translate(x + pinX, y + pinY);   
-  //     // rotate the rect
-  //     //ctx.rotate(angle);
-
-
-  //     let cos = Math.cos(angle);
-  //     let sin = Math.sin(angle);
-  //     ctx.transform(cos, sin, -sin, cos, x + pinX, y + pinY);
-
-  //     // draw the rect on the transformed context
-  //     // Note: after transforming [0,0] is visually [x,y]
-  //     //       so the rect needs to be offset accordingly when drawn
-  //     ctx.rect(-pinX, -pinY, width, height);
-  //     ctx.fillStyle = "green";
-  //     ctx.fill();
-
-  //     // restore the context to its untranslated/unrotated state
-  //     ctx.restore();
-
-
-  //   }
-  // }
 }
 
 export class TenByTen extends legoCore {

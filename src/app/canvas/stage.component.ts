@@ -16,7 +16,7 @@ import { foPage } from "../foundry/foPage.model";
 
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./shape.custom";
+import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 
 import { Toast } from '../common/emitter.service';
@@ -184,14 +184,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddStack() {
-    this.addToModel(this.doCreateLego(Circle, {
-      x: 600,
-      y: 300
-    }));
-    this.addToModel(this.doCreateLego(Circle, {
-      x: 475,
-      y: 175
-    }));
+    // this.addToModel(this.doCreateLego(Circle, {
+    //   x: 600,
+    //   y: 300
+    // }));
+    // this.addToModel(this.doCreateLego(Circle, {
+    //   x: 475,
+    //   y: 175
+    // }));
 
     let shape = this.doCreateLego(TenByTen, {
       opacity: .5,
@@ -206,11 +206,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let subShape = this.doCreateLego(TwoByFour, {
       color: 'red',
-      typeName: TwoByFour.typeName()
+      // typeName: TwoByFour.typeName(),
+      // postDraw: function(ctx) { 
+      //   this.drawPin(ctx);
+      // }
     }).addAsSubcomponent(shape).drop({
-      x: function () { return -shape.width / 3; },
-      y: 0,
-      angle: 0
+      x: function () { return -shape.width / 4; },
+      y: 150,
+      angle: 0,
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
@@ -226,7 +229,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       angle = angle >= 360 ? 0 : angle;
       subShape.angle = angle;
       subShape.width = angle;
-    }, 200);
+    }, 20);
   }
 
   add(shape: foShape2D): foShape2D {
