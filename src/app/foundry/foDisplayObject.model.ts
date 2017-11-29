@@ -1,6 +1,7 @@
 
 import { Tools } from './foTools';
 import { cPoint } from './foGeometry';
+import { Matrix2D } from './foMatrix2D';
 
 import { iObject, iNode, iShape, iPoint, iSize, Action } from './foInterface';
 
@@ -28,6 +29,8 @@ export class foDisplayObject extends foNode {
 
     protected _alpha: number = 1.0;
     protected _visible: boolean = true;
+
+    protected matrix: Matrix2D = new Matrix2D();
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
