@@ -10,11 +10,11 @@ import 'rxjs/add/operator/pairwise';
 import 'rxjs/add/operator/switchMap';
 
 @Component({
-  selector: 'app-canvas',
+  selector: 'app-testcanvas',
   template: '<canvas #canvas></canvas>',
   styles: ['canvas { border: 1px solid #000; }']
 })
-export class CanvasComponent implements AfterViewInit {
+export class CanvasTestComponent implements AfterViewInit {
   // a reference to the canvas element from our template
   @ViewChild('canvas') public canvas: ElementRef;
 
