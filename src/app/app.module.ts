@@ -32,6 +32,7 @@ import { TestSvgCircleComponent } from './networkview/test-svg-circle.component'
 
 import { SignalRService } from "./common/signalr.service";
 import { StageComponent } from './canvas/stage.component';
+import { CanvastestComponent } from './canvas/canvastest/canvastest.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,9 @@ import { StageComponent } from './canvas/stage.component';
     TestSvgComponent,
     TestSvgCircleComponent,
 
-    StageComponent
+    StageComponent,
+
+    CanvastestComponent
   ],
   imports: [
     BrowserAnimationsModule,
