@@ -1,9 +1,9 @@
 
 import { Tools } from './foTools';
-import { cPoint } from './foGeometry';
+import { cPoint, cRect } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
 
-import { iObject, iNode, iShape, iPoint, iSize, Action } from './foInterface';
+import { iObject, iNode, iShape, iPoint, iSize, Action, iRect } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
@@ -35,6 +35,8 @@ export class foDisplayObject extends foNode {
 
 
     protected matrix: Matrix2D = new Matrix2D();
+    protected _bounds: iRect;
+
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -69,15 +71,15 @@ export class foDisplayObject extends foNode {
     };
 
 
-    localToGlobal(x:number, y:number, pt?:cPoint) {
+    localToGlobal(x: number, y: number, pt?: cPoint) {
         return this.getConcatenatedMatrix(this.matrix).transformPoint(x, y, pt || new cPoint());
     };
 
-    globalToLocal(x:number, y:number, pt?:cPoint) {
+    globalToLocal(x: number, y: number, pt?: cPoint) {
         return this.getConcatenatedMatrix(this.matrix).invert().transformPoint(x, y, pt || new cPoint());
     };
 
-    localToLocal(x:number, y:number, target:foDisplayObject, pt?:cPoint) {
+    localToLocal(x: number, y: number, target: foDisplayObject, pt?: cPoint) {
         pt = this.localToGlobal(x, y, pt);
         return target.globalToLocal(pt.x, pt.y, pt);
     };
@@ -130,6 +132,64 @@ export class foDisplayObject extends foNode {
         }
         return hit;
     };
+
+    getBounds(): iRect {
+        return this._bounds;
+    };
+
+    clearBounds() {
+        this._bounds = undefined;
+        return this._bounds;
+    };
+
+    setBounds(x:number, y:number, width:number, height:number): iRect {
+        this._bounds = this._bounds || new cRect(x, y, width, height);
+        return this._bounds;
+    };
+
+    getTransformedBounds(): iRect {
+        return this._getBounds();
+    };
+
+    _getBounds(matrix?: Matrix2D, ignoreTransform?): iRect {
+        return this._transformBounds(this.getBounds(), matrix, ignoreTransform);
+    };
+
+    _transformBounds(bounds: iRect, matrix: Matrix2D, ignoreTransform): iRect {
+        if (!bounds) { return bounds; }
+        let x = bounds.x;
+        let y = bounds.y;
+        let width = bounds.width;
+        let height = bounds.height;
+        let mtx = this.matrix;
+
+        mtx = ignoreTransform ? mtx.identity() : this.getMatrix(mtx);
+
+        if (x || y) {  // TODO: simplify this.
+            mtx.appendTransform(0, 0, 1, 1, 0, 0, 0, -x, -y);
+        }
+
+        if (matrix) {
+            mtx.prependMatrix(matrix);
+        }
+
+        let x_a = width * mtx.a, x_b = width * mtx.b;
+        let y_c = height * mtx.c, y_d = height * mtx.d;
+        let tx = mtx.tx, ty = mtx.ty;
+
+        let minX = tx, maxX = tx, minY = ty, maxY = ty;
+
+        if ((x = x_a + tx) < minX) { minX = x; } else if (x > maxX) { maxX = x; }
+        if ((x = x_a + y_c + tx) < minX) { minX = x; } else if (x > maxX) { maxX = x; }
+        if ((x = y_c + tx) < minX) { minX = x; } else if (x > maxX) { maxX = x; }
+
+        if ((y = x_b + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
+        if ((y = x_b + y_d + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
+        if ((y = y_d + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
+
+        return bounds.setValue(minX, minY, maxX - minX, maxY - minY);
+    };
+
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
