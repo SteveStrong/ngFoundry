@@ -1,7 +1,7 @@
-import { iFullShape } from "./shape";
+import { foDisplayObject } from "../../foundry/foDisplayObject.model";
 import { cText } from "./text";
 
-export class cClock implements iFullShape {
+export class cClock extends foDisplayObject {
     public x: number = 0;
     public y: number = 0;
     public radius: number = 10;
@@ -10,13 +10,17 @@ export class cClock implements iFullShape {
         public isSelected: boolean;
     private _text: cText;
 
-    constructor(x: number, y: number, color: string = "red", line_width: number = 2) {
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+    inInit(x: number, y: number, color: string = "red", line_width: number = 2) {
         this.x = x;
         this.y = y;
 
         this.color = color;
         this.lineWidth = line_width;
-        this._text = new cText(x, y, "CLOCK", color, line_width);
+        //this._text = new cText(x, y, "CLOCK", color, line_width);
     }
 
     clockText() {
@@ -42,9 +46,7 @@ export class cClock implements iFullShape {
         return clockText;
 
     }
-    public hitTest = (x: number, y: number): boolean => {
-        return false;
-    }
+
     public drawHover = (ctx: CanvasRenderingContext2D): void => {
     }
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {

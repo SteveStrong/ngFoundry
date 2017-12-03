@@ -1,8 +1,8 @@
-import { iFullShape } from "./shape";
+import { foDisplayObject } from "../../foundry/foDisplayObject.model";
 
 
 
-export class cTriangle implements iFullShape {
+export class cTriangle extends foDisplayObject {
     public x: number = 0;
     public y: number = 0;
     public width: number = 10;
@@ -13,7 +13,12 @@ export class cTriangle implements iFullShape {
     
     private _ctx: CanvasRenderingContext2D;
 
-    constructor(x: number, y: number, width: number, height: number, color: string = "red", line_width: number = 2) {
+
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+    onInit(x: number, y: number, width: number, height: number, color: string = "red", line_width: number = 2) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -48,9 +53,7 @@ export class cTriangle implements iFullShape {
         this._ctx.closePath();
         this._ctx.fill();
     }
-    public hitTest = (x: number, y: number): boolean => {
-        return false;
-    }
+
     public drawHover = (ctx: CanvasRenderingContext2D): void => {
     }
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {

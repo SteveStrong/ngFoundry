@@ -57,7 +57,7 @@ export interface iShape extends iNode {
     render(ctx: CanvasRenderingContext2D, deep:boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
-    hitTest(hit: iPoint): boolean;
+    hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
     overlapTest(hit: iShape): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
@@ -70,3 +70,4 @@ export interface iShape extends iNode {
     setColor(color:string): string;
     setOpacity(opacity:number): number;
 }
+

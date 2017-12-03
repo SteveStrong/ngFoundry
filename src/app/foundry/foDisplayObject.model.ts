@@ -116,25 +116,28 @@ export class foDisplayObject extends foGlyph {
         return mtx;
     };
 
-    HitTest(x: number, y: number, ctx: CanvasRenderingContext2D) {
+    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+        let x = hit.x;
+        let y = hit.y;
         ///var ctx = DisplayObject._hitTestContext;
 
         ctx.setTransform(1, 0, 0, 1, -x, -y);
         this.draw(ctx);
 
-        var hit = this._testHit(ctx);
+        let isHit = this._testHit(ctx);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, 2, 2);
-        return hit;
+        return isHit;
     };
 
-    _testHit(ctx: CanvasRenderingContext2D) {
+    _testHit(ctx: CanvasRenderingContext2D):boolean {
         try {
-            var hit = ctx.getImageData(0, 0, 1, 1).data[3] > 1;
+            let hit = ctx.getImageData(0, 0, 1, 1).data[3] > 1;
+            return hit;
         } catch (e) {
             throw "An error has occurred. This is most likely due to security restrictions on reading canvas pixel data with local or cross-domain images.";
         }
-        return hit;
+        //return false;
     };
 
     getBounds(): iRect {

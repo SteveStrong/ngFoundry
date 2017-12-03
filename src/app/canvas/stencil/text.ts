@@ -1,24 +1,28 @@
-import { iFullShape } from "./shape";
+import { foDisplayObject } from "../../foundry/foDisplayObject.model";
 
-export class cText implements iFullShape {
+export class cText extends foDisplayObject {
     public x: number = 0;
     public y: number = 0;
     public radius: number = 10;
     public lineWidth: number = 2;
     public color: string = "red";
-        public isSelected: boolean;
+    public isSelected: boolean;
     public text: string = "Hello";
 
     private _ctx: CanvasRenderingContext2D;
 
-    constructor(x: number, y: number, text: string, color: string = "red", line_width: number = 2) {
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+    onInit(x: number, y: number, text: string, color: string = "red", line_width: number = 2) {
         this.x = x;
         this.y = y;
         this.text = text;
         this.color = color;
         this.lineWidth = line_width;
     }
-    public hitTest = (x: number, y: number): boolean => {
+    public hitTestxxx = (x: number, y: number): boolean => {
         var textSize: TextMetrics = this._ctx.measureText(this.text);
         var height = 1.5 * parseInt(this._ctx.font);
 
