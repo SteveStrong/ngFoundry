@@ -37,7 +37,7 @@ export class foPage extends foGlyph {
     sitOnShape: any = {};
 
 
-    _dictionary: foDictionary<foGlyph> = new foDictionary<foGlyph>();
+    _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);

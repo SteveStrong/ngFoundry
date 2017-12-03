@@ -6,7 +6,7 @@ import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { PubSub } from "../foundry/foPubSub";
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint, cRect } from "../foundry/foGeometry";
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
@@ -18,6 +18,8 @@ import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
+import { foDisplayObject } from "../foundry/foDisplayObject.model";
+import { dRectangle, Display } from "./displayshapes.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
@@ -52,6 +54,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDuplicate() {
+  }
+
+  doCreateDisplay<T extends foDisplayObject>(type: { new(p?: any): T; }, properties?: any): T {
+
+    let props = Tools.union(properties, {
+      x: 200,
+      y: 150,
+      width: 300,
+      height: 100
+    })
+
+    let instance = Display.create(type, props);
+    return instance;
   }
 
   doCreateLego<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
@@ -103,6 +118,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
+  doAddRectangle() {
+    let shape = this.doCreateDisplay(dRectangle, {
+      color: 'black'
+    });
+    this.addToModel(shape);
+  }
+
+
   doAddOneByOne() {
     let shape = this.doCreateLego(OneByOne, {
       color: 'black',
@@ -151,7 +174,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddOneByTen() {
-    let shape = Stencil.create(OneByTen,{
+    let shape = Stencil.create(OneByTen, {
       color: 'white',
       height: 10,
       width: function (): number { return this.height / 4; }
@@ -162,7 +185,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
 
-    setInterval( () => {
+    setInterval(() => {
       let angle = shape.height + 10;
       angle = angle >= 360 ? 0 : angle;
       shape.height = angle;

@@ -11,12 +11,13 @@ import { foNode } from './foNode.model';
 import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
+import { foGlyph } from '../foundry/foGlyph.model'
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foDisplayObject extends foNode {
+export class foDisplayObject extends foGlyph {
     static _snapToPixelEnabled: boolean = false;
 
-    protected _subcomponents: foCollection<foDisplayObject>;
+    //protected _subcomponents: foCollection<foDisplayObject>;
     protected _x: number;
     protected _y: number;
     protected _transformMatrix: number;
@@ -37,6 +38,9 @@ export class foDisplayObject extends foNode {
     protected matrix: Matrix2D = new Matrix2D();
     protected _bounds: iRect;
 
+    public pinX = (): number => { return 1 * this.getBounds().width / 2; }
+    public pinY = (): number => { return 1 * this.getBounds().height / 2 }
+  
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -112,7 +116,7 @@ export class foDisplayObject extends foNode {
         return mtx;
     };
 
-    hitTest(x: number, y: number, ctx: CanvasRenderingContext2D) {
+    HitTest(x: number, y: number, ctx: CanvasRenderingContext2D) {
         ///var ctx = DisplayObject._hitTestContext;
 
         ctx.setTransform(1, 0, 0, 1, -x, -y);
@@ -246,6 +250,12 @@ export class foDisplayObject extends foNode {
     public preDraw = (ctx: CanvasRenderingContext2D): void => { }
     public postDraw = (ctx: CanvasRenderingContext2D): void => { }
     public draw = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 10;
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();      
     }
 
 
