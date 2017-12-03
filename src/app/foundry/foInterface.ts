@@ -58,7 +58,7 @@ export interface iShape extends iNode {
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
-    overlapTest(hit: iShape): boolean;
+    overlapTest(hit: iShape, ctx: CanvasRenderingContext2D): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
     setLocation(loc: iPoint): iPoint;

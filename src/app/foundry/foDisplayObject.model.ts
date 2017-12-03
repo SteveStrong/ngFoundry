@@ -116,7 +116,7 @@ export class foDisplayObject extends foGlyph {
         return mtx;
     };
 
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+    public hitTestWithDraw = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         let x = hit.x;
         let y = hit.y;
         ///var ctx = DisplayObject._hitTestContext;
@@ -253,12 +253,15 @@ export class foDisplayObject extends foGlyph {
     public preDraw = (ctx: CanvasRenderingContext2D): void => { }
     public postDraw = (ctx: CanvasRenderingContext2D): void => { }
     public draw = (ctx: CanvasRenderingContext2D): void => {
+        ctx.save();
+        
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 10;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
         ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();      
+        ctx.stroke();    
+        ctx.restore();  
     }
 
 

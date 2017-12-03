@@ -38,6 +38,7 @@ export class foPage extends foGlyph {
 
 
     _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
+    _ctx: CanvasRenderingContext2D;
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -58,7 +59,7 @@ export class foPage extends foGlyph {
     findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != exclude && shape.hitTest(loc)) {
+            if (shape != exclude && shape.hitTest(loc,this._ctx)) {
                 return shape;
             }
         }
@@ -68,7 +69,7 @@ export class foPage extends foGlyph {
     findShapeUnder(source: foGlyph): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != source && source.overlapTest(shape)) {
+            if (shape != source && source.overlapTest(shape,this._ctx)) {
                 return shape;
             }
         }
@@ -145,7 +146,7 @@ export class foPage extends foGlyph {
                         //}
                         //TweenMax.to(overshape, 0.3, size);
                     }
-                } else if (!overshape.overlapTest(shape)) {
+                } else if (!overshape.overlapTest(shape,this._ctx)) {
                     //let target = overshape['hold'];
                     //let size = overshape['hold'];
                     //size['ease'] = Power0.easeNone;
@@ -210,6 +211,7 @@ export class foPage extends foGlyph {
 
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        this._ctx = ctx;
 
         let angle = this.angle * Math.PI / 180
         let cos = Math.cos(angle);

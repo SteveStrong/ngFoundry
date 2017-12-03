@@ -76,7 +76,7 @@ export class foGlyph extends foNode implements iShape {
         return true;
     }
 
-    public overlapTest = (hit: iShape): boolean => {
+    public overlapTest = (hit: iShape, ctx: CanvasRenderingContext2D): boolean => {
         let x = this.x;
         let y = this.y;
         let width = this.width;

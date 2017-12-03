@@ -276,9 +276,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
 
     this.screen2D.render = (context: CanvasRenderingContext2D) => {
+      context.save();
       context.fillStyle = "yellow";
       context.fillRect(0, 0, this.width, this.height);
-
+      context.restore();
+      
       this.render(context);
     }
 
