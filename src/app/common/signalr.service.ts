@@ -13,7 +13,7 @@ export class SignalRService {
 
   private _started: boolean = false;
   //private hubURL = environment.signalRServer;
-  private hubURL = environment.signalfoundry;
+  private hubURL = environment.local ? environment.signalRServer : environment.signalfoundry;
   private connection: HubConnection;
 
   constructor() {
