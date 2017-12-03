@@ -48,6 +48,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doClear() {
     this.clearAll()
   }
+  
+  doUndo() {
+  }
 
   doDelete() {
     this.deleteSelected()
@@ -57,15 +60,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doCreateDisplay<T extends foDisplayObject>(type: { new(p?: any): T; }, properties?: any): T {
-
-    let props = Tools.union(properties, {
-      x: 200,
-      y: 150,
-      width: 300,
-      height: 100
-    })
-
-    let instance = Display.create(type, props);
+    let instance = Display.create(type, properties);
     return instance;
   }
 
@@ -119,10 +114,24 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddRectangle() {
+
     let shape = this.doCreateDisplay(dRectangle, {
-      color: 'black'
+      color: 'black',
+      x: 200,
+      y: 150,
+      width: 300,
+      height: 100
     });
     this.addToModel(shape);
+
+    let subShape = this.doCreateDisplay(dRectangle, {
+      color: 'blue',
+      x: 150,
+      y: 150,
+      width: 30,
+      height: 100
+    }).addAsSubcomponent(shape);
+    //this.addToModel(subShape);
   }
 
 
@@ -280,7 +289,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       context.fillStyle = "yellow";
       context.fillRect(0, 0, this.width, this.height);
       context.restore();
-      
+
       this.render(context);
     }
 
