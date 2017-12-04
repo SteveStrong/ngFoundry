@@ -130,8 +130,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 150,
       width: 30,
       height: 100
-    }).addAsSubcomponent(shape);
-    //this.addToModel(subShape);
+    }); //.addAsSubcomponent(shape);
+    this.addToModel(subShape);
+
+    this.signalR.pubChannel("addDisp", shape.asJson);
   }
 
 
@@ -260,7 +262,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let angle = subShape.angle + 10;
       angle = angle >= 360 ? 0 : angle;
       subShape.angle = angle;
-      subShape.width = angle;
+      //subShape.width = angle;
     }, 20);
   }
 

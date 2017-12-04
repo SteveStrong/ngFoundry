@@ -28,19 +28,23 @@ export class SignalRService {
 
   public send(text: string) {
     if (this.hub) {
+      console.log('text: ' + text);
       this.hub.invoke('send', text);
     }
   }
 
   public pubChannel(name: string, payload: any) {
     if (this.hub) {
+      console.log('pubChannel ' + name)
       this.hub.invoke("broadcast", name, payload);
     }
   }
 
   public subChannel(name: string, callback) {
     if (this.hub) {
+      console.log('subChannel ' + name)
       this.hub.on(name, data => {
+        console.log(name + ':  ' + JSON.stringify(data, undefined, 3));
         callback(data);
       });
     } else {
@@ -51,6 +55,7 @@ export class SignalRService {
   public receive(callback) {
     if (this.hub) {
       this.hub.on('send', data => {
+        console.log('receive: ' + JSON.stringify(data, undefined, 3));
         callback(data);
       });
     } else {

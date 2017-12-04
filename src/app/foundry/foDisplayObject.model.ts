@@ -38,9 +38,10 @@ export class foDisplayObject extends foGlyph {
     protected matrix: Matrix2D = new Matrix2D();
     protected _bounds: iRect;
 
-    public pinX = (): number => { return 1 * this.getBounds().width / 2; }
-    public pinY = (): number => { return 1 * this.getBounds().height / 2 }
-  
+    public pinX = (): number => { return 0 * this.width / 2; }
+    public pinY = (): number => { return 0 * this.height / 2 }
+    public rotation = (): number => { return this._rotation; }
+    
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -200,15 +201,31 @@ export class foDisplayObject extends foGlyph {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
+        this.drawOrigin(ctx);
+
+        ctx.globalAlpha = .5;
+
+        let angle =  this.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+
+        this.drawOriginX(ctx);
+
+        ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+        ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
+
         this.preDraw(ctx);
         this.draw(ctx);
         this.postDraw(ctx);
+        //this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
+        this.drawOrigin(ctx);
     }
+
 
 
 
