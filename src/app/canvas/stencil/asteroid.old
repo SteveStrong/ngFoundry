@@ -11,7 +11,7 @@ export class cAsteroid extends foDisplayObject {
     public isSelected: boolean;
 
     public size: number = 20;
-    public rotation: number = 0;
+    //public rotation: number = 0;
     public rotationSpeed: number = 0;
     public pointList: Array<cPoint> = new Array<cPoint>();
 
