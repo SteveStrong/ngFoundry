@@ -32,7 +32,7 @@ import { TestSvgCircleComponent } from './networkview/test-svg-circle.component'
 
 import { SignalRService } from "./common/signalr.service";
 import { StageComponent } from './canvas/stage.component';
-import { CanvasTestComponent } from './canvas/canvastest/canvastest.component';
+import { CanvasTestComponent } from './canvas/canvastest.component';
 
 @NgModule({
   declarations: [

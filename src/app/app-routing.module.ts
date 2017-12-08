@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { StageComponent } from './canvas/stage.component';
-import { CanvasTestComponent } from './canvas/canvastest/canvastest.component';
+import { CanvasTestComponent } from './canvas/canvastest.component';
 import { NetworkviewComponent } from './networkview/networkview.component';
 import { ListviewComponent } from './listview/listview.component';
 import { TreeviewComponent } from './treeview/treeview.component';
