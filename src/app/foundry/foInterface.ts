@@ -44,12 +44,21 @@ export interface iSize {
     height: number;
 }
 
+export interface iRect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+
+    setValue(x: number, y: number, width: number, height: number): iRect
+}
+
 export interface iShape extends iNode {
     render(ctx: CanvasRenderingContext2D, deep:boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
-    hitTest(hit: iPoint): boolean;
-    overlapTest(hit: iShape): boolean;
+    hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
+    overlapTest(hit: iShape, ctx: CanvasRenderingContext2D): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
     setLocation(loc: iPoint): iPoint;
@@ -61,3 +70,4 @@ export interface iShape extends iNode {
     setColor(color:string): string;
     setOpacity(opacity:number): number;
 }
+

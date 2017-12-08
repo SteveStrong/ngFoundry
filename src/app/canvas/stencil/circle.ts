@@ -1,22 +1,26 @@
-import { iFullShape } from "./shape";
+import { foDisplayObject } from "../../foundry/foDisplayObject.model";
 
-export class cCircle implements iFullShape {
+export class cCircle extends foDisplayObject {
     public x: number = 0;
     public y: number = 0;
     public radius: number = 10;
     public lineWidth: number = 2;
     public color: string = "red";
-        public isSelected: boolean;
+    public isSelected: boolean;
 
-        
-    constructor(x: number, y: number, radius: number, color: string = "red", line_width: number = 2) {
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+    onInit(x: number, y: number, radius: number, color: string = "red", line_width: number = 2) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.color = color;
         this.lineWidth = line_width;
     }
-    public hitTest = (x: number, y: number): boolean => {
+
+    public hitTestxx = (x: number, y: number): boolean => {
 
         let dx = this.x - x;
         let dy = this.y - y;

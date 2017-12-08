@@ -1,7 +1,7 @@
-import { iFullShape } from "./shape";
+import { foDisplayObject } from "../../foundry/foDisplayObject.model";
 import { cPoint } from "../../foundry/foGeometry";
 
-export class cAsteroid implements iFullShape {
+export class cAsteroid extends foDisplayObject {
     public x: number = 0;
     public y: number = 0;
     public velocityX: number = 0;
@@ -15,8 +15,8 @@ export class cAsteroid implements iFullShape {
     public rotationSpeed: number = 0;
     public pointList: Array<cPoint> = new Array<cPoint>();
 
-    public hitTest = (x: number, y: number): boolean => {
-        return false;
+    constructor(properties?: any) {
+        super(properties);
     }
 
     public moveShape() {
@@ -65,7 +65,7 @@ export class cAsteroid implements iFullShape {
         ctx.restore();
     }
 
-    constructor(x: number = undefined, y: number = undefined, size: number = undefined,
+    onInit(x: number = undefined, y: number = undefined, size: number = undefined,
         color: string = "white", line_width: number = 2) {
         if (x == undefined) {
             this.x = Math.round(Math.random() * 1280);
