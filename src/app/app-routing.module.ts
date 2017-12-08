@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { StageComponent } from './canvas/stage.component';
+import { CanvasTestComponent } from './canvas/canvastest/canvastest.component';
 import { NetworkviewComponent } from './networkview/networkview.component';
 import { ListviewComponent } from './listview/listview.component';
 import { TreeviewComponent } from './treeview/treeview.component';
-import { WelcomeComponent } from "../app/welcome/welcome.component";
+import { WelcomeComponent } from "./welcome/welcome.component";
 import { WebglviewComponent } from './webglview/webglview.component';
-import { SwimlaneviewComponent } from 'app/swimlaneview/swimlaneview.component';
+import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
 import { TestSvgComponent } from './networkview/test-svg.component';
 import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
 
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent },
   { path: 'webgl', component: WebglviewComponent },
   { path: 'canvas', component: StageComponent },
+  { path: 'test', component: CanvasTestComponent },
   { path: 'svg', component: TestSvgComponent },
   { path: 'circle', component: TestSvgCircleComponent },
   { path: 'tree', component: TreeviewComponent },
