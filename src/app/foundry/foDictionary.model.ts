@@ -30,7 +30,7 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
     findItem(key: string, onMissing?): T {
         let found = this.getItem(key);
         if (!found && onMissing) {
-            onMissing();
+            onMissing(key);
             found = this.getItem(key);
         }
         return found;

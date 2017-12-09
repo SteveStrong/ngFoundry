@@ -57,7 +57,9 @@ export class foGlyph extends foNode implements iShape {
         return {
             myGuid: this.myGuid,
             x: this.x,
-            y: this.y
+            y: this.y,
+            width: this.width,
+            height: this.height,
         }
     }
 

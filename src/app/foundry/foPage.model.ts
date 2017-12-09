@@ -99,10 +99,11 @@ export class foPage extends foGlyph {
         this._dictionary.clearAll();
     }
 
-    deleteSelected() {
+    deleteSelected(onComplete? : Action<foGlyph>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
             this.removeFromModel(found);
+            onComplete && onComplete(found);
         }
     }
 

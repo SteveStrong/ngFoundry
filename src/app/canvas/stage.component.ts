@@ -46,14 +46,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doClear() {
-    this.clearAll()
+    this.clearAll();
+    this.signalR.pubChannel("clearAll" {});
   }
   
   doUndo() {
   }
 
   doDelete() {
-    this.deleteSelected()
+    this.deleteSelected(shape => {
+      this.signalR.pubChannel("deleteShape", shape.asJson);
+    });
+    
   }
 
   doDuplicate() {
@@ -302,7 +306,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.subChannel("move", data => {
         this.found(data.myGuid, shape => {
           let loc = <iPoint>data;
-          console.log(loc);
+          //console.log(loc);
 
           //shape.setLocation(loc);
           //loc['opacity'] = 0.5;
@@ -310,22 +314,32 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           //Toast.info(JSON.stringify(loc), "move");
           //TweenLite.to(shape, .8, loc);
         });
-
-
       });
 
       this.signalR.subChannel("addGlyph", json => {
-        console.log(json);
+        //console.log(json);
         this.findItem(json.myGuid, () => {
-          Pallet.create(foGlyph, json);
+          Pallet.create(foGlyph, json, this.addToModel.bind(this));
         });
       });
 
       this.signalR.subChannel("addShape", json => {
-        console.log(json);
+        //console.log(json);
         this.findItem(json.myGuid, () => {
-          Stencil.create(foShape2D, json);
+          let shape = Stencil.create(foShape2D, json);
+          this.addToModel(shape);
         });
+      });
+
+      this.signalR.subChannel("deleteShape", json => {
+        //console.log(json);
+        this.found(json.myGuid, shape => {
+          this.removeFromModel(shape)
+        });
+      });
+
+      this.signalR.subChannel("clearAll", json => {
+        this.clearAll();
       });
 
     });
