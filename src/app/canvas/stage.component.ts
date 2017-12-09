@@ -313,7 +313,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           TweenLite.to(shape, .8, {
             x: data.x,
             y: data.y,
-            ease: Back.easeOut
+            ease: Back.easeInOut
           }).eventCallback("onComplete", () => { shape.override(data) });
         });
       });
