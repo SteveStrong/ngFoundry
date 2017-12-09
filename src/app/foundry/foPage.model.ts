@@ -48,11 +48,11 @@ export class foPage extends foGlyph {
 
 
 
-    findItem(key: string, onMissing?) {
+    findItem(key: string, onMissing?:Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing);
     }
 
-    found(key: string, onFound?) {
+    found(key: string, onFound?:Action<foGlyph>) {
         return this._dictionary.found(key, onFound);
     }
 
@@ -179,10 +179,13 @@ export class foPage extends foGlyph {
                     x: 0,
                     y: 0
                 });
+                this.onItemChangedParent(shape)
+            } else {
+                this.onItemChangedPosition(shape)
             }
+            
             shape = null;
-            //Toast.success(JSON.stringify(loc), "mouseup");
-        });
+         });
 
     }
 

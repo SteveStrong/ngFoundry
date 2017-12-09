@@ -49,7 +49,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.clearAll();
     this.signalR.pubChannel("clearAll", {});
   }
-  
+
   doUndo() {
   }
 
@@ -57,7 +57,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.deleteSelected(shape => {
       this.signalR.pubChannel("deleteShape", shape.asJson);
     });
-    
+
   }
 
   doDuplicate() {
@@ -87,10 +87,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubChannel("move", shape);
+      this.signalR.pubChannel("parent", shape.asJson);
     }
     this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.signalR.pubChannel("move", shape);
+      this.signalR.pubChannel("moveShape", shape.asJson);
     }
   }
 
@@ -308,16 +308,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.start().then(() => {
 
-      this.signalR.subChannel("move", data => {
+      this.signalR.subChannel("moveShape", data => {
         this.found(data.myGuid, shape => {
-          let loc = <iPoint>data;
-          //console.log(loc);
-
-          //shape.setLocation(loc);
-          //loc['opacity'] = 0.5;
-          loc['ease'] = Back.easeOut;
-          //Toast.info(JSON.stringify(loc), "move");
-          //TweenLite.to(shape, .8, loc);
+          TweenLite.to(shape, .8, {
+            x: data.x,
+            y: data.y,
+            ease: Back.easeOut
+          }).eventCallback("onComplete", () => { shape.override(data) });
         });
       });
 

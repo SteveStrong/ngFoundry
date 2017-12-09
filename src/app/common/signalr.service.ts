@@ -2,6 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { HubConnection } from '@aspnet/signalr-client';
 import { EmitterService, Toast } from "../common/emitter.service";
 
+import { Tools } from "../foundry/foTools";
 import { PubSub } from "../foundry/foPubSub";
 
 import { environment } from '../../environments/environment';
@@ -15,12 +16,14 @@ export class SignalRService {
   //private hubURL = environment.signalRServer;
   private hubURL = environment.local ? environment.signalRServer : environment.signalfoundry;
   private connection: HubConnection;
+  private _guid:string = Tools.generateUUID();
 
   constructor() {
     if (!this.connection) {
       this.connection = new HubConnection(this.hubURL);
     }
   }
+
 
   public get hub(): HubConnection {
     return this._started && this.connection;
@@ -35,7 +38,8 @@ export class SignalRService {
 
   public pubChannel(name: string, payload?: any) {
     if (this.hub) {
-      console.log('pubChannel ' + name)
+      //console.log('pubChannel ' + name)
+      payload._channel = this._guid;
       this.hub.invoke("broadcast", name, payload);
     }
   }
@@ -44,8 +48,12 @@ export class SignalRService {
     if (this.hub) {
       console.log('subChannel ' + name)
       this.hub.on(name, data => {
-        console.log(name + ':  ' + JSON.stringify(data, undefined, 3));
-        callback(data);
+        //console.log(name + ':  ' + JSON.stringify(data, undefined, 3));
+        if ( data._channel != this._guid) {
+          let source = data._channel;
+          delete data._channel;
+          callback(data, source);
+        }
       });
     } else {
       Toast.warning("cannot connect at this moment", this.hubURL);
