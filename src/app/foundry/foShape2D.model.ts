@@ -93,7 +93,7 @@ export class foShape2D extends foGlyph {
 
         ctx.globalAlpha = .5;
 
-        let angle =  this.rotation() * Math.PI / 180
+        let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
@@ -122,7 +122,7 @@ export class foShape2D extends foGlyph {
         this.drawPin(ctx);
     }
 
-    public drawOutline(ctx: CanvasRenderingContext2D){
+    public drawOutline(ctx: CanvasRenderingContext2D) {
         let x = -this.pinX();
         let y = -this.pinY();
         let width = this.width;
@@ -137,7 +137,7 @@ export class foShape2D extends foGlyph {
     }
 
 
-    
+
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
@@ -159,9 +159,28 @@ export class foShape2D extends foGlyph {
 }
 
 export class Stencil {
+    static lookup = {}
     static afterCreate: Action<foShape2D>;
+
     static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
+        let { defaults } = this.lookup[instance.myType];
+
+        defaults && instance.extend(defaults)
+        this.afterCreate && this.afterCreate(instance);
+        return instance;
+    }
+
+    static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
+        let instance = new type();
+        this.lookup[instance.myType] = { create: type, defaults: properties };
+        return type;
+    }
+
+    static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
+        let { create, defaults } = this.lookup[type];
+        let instance = new create(Tools.union(properties, defaults));
+        func && func(instance);
         this.afterCreate && this.afterCreate(instance);
         return instance;
     }

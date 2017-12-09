@@ -19,6 +19,14 @@ export class legoCore extends foShape2D {
     super(properties);
     this.description = this.myType
   }
+
+  Animation:any;
+  
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.Animation;
+    super.render(ctx,deep);
+  }
+  
 }
 
 

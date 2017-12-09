@@ -6,6 +6,7 @@ import { iObject, iNode, iShape, iPoint, iSize, Action } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
+import { foDictionary } from './foDictionary.model';
 import { foNode } from './foNode.model';
 import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
@@ -56,6 +57,7 @@ export class foGlyph extends foNode implements iShape {
     get asJson() {
         return {
             myGuid: this.myGuid,
+            myType: this.myType,
             x: this.x,
             y: this.y,
             width: this.width,
@@ -256,9 +258,25 @@ export class foGlyph extends foNode implements iShape {
 }
 
 export class Pallet {
+    static lookup = {}
     static afterCreate: Action<foGlyph>;
+
     static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any, func?: Action<T>): T {
         let instance = new type(properties);
+        func && func(instance);
+        this.afterCreate && this.afterCreate(instance);
+        return instance;
+    }
+
+    static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
+        let instance = new type();
+        this.lookup[instance.myType] = { create: type, defaults: properties};
+        return type;
+    }
+
+    static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
+        let { create, defaults} = this.lookup[type];
+        let instance = new create(Tools.union(properties, defaults));
         func && func(instance);
         this.afterCreate && this.afterCreate(instance);
         return instance;

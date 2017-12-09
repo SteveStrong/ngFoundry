@@ -22,6 +22,8 @@ export class foObject implements iObject {
         let comp: any = this.constructor;
         return comp.name;
     }
+    set myType(ignore: string) {
+    }
 
     asReference(): string {
         let parent = this.myParent && this.myParent();
@@ -48,6 +50,22 @@ export class foObject implements iObject {
                 Tools.defineCalculatedProperty(self, key, value);
             } else {
                 self[key] = value;
+            }
+        });
+
+        return self;
+    }
+
+    extend(properties?: any) {
+        const self = this;
+
+        properties && Tools.forEachKeyValue(properties, function (key, value) {
+            if (!self[key]) {
+                if (Tools.isFunction(value)) {
+                    Tools.defineCalculatedProperty(self, key, value);
+                } else {
+                    self[key] = value;
+                }
             }
         });
 

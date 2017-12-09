@@ -68,7 +68,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     return instance;
   }
 
-  doCreateLego<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
+
+  ngOnInit() {
+    this.onItemChangedParent = (shape: foGlyph): void => {
+      this.signalR.pubChannel("parent", shape.asJson);
+    }
+    this.onItemChangedPosition = (shape: foGlyph): void => {
+      this.signalR.pubChannel("moveShape", shape.asJson);
+    }
+
+    Pallet.define(foGlyph);
+
     let compute = {
       height: function () {
         let size = parseInt(this.size.split(':')[1]);
@@ -79,19 +89,27 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         return 25 * size;
       }
     };
-    let props = Tools.union(properties, compute)
 
-    let instance = Stencil.create(type, props);
-    return instance;
+    Stencil.define(OneByOne, compute);
+   
+    Stencil.define(OneByOne,compute);
+    Stencil.define(TwoByOne,compute);
+    Stencil.define(TwoByTwo,compute);
+    Stencil.define(TwoByFour,compute);
+    Stencil.define(OneByTen,compute);
+    Stencil.define(TenByTen,compute);
   }
 
-  ngOnInit() {
-    this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubChannel("parent", shape.asJson);
-    }
-    this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.signalR.pubChannel("moveShape", shape.asJson);
-    }
+  doDynamicCreate() {
+
+    let shape = Pallet.create(foGlyph, {
+      x: 150,
+      y: 100,
+      height: 50,
+      width: 20,
+    });
+    this.addToModel(shape);
+    this.signalR.pubChannel("syncGlyph", shape.asJson);
   }
 
   doAddGlyph() {
@@ -147,7 +165,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   doAddOneByOne() {
-    let shape = this.doCreateLego(OneByOne, {
+    let shape = Stencil.create(OneByOne, {
       color: 'black',
       name: OneByOne.typeName()
     });
@@ -156,7 +174,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByOne() {
-    let shape = this.doCreateLego(TwoByOne, {
+    let shape = Stencil.create(TwoByOne, {
       color: 'orange',
       name: TwoByOne.typeName()
     });
@@ -165,7 +183,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByTwo() {
-    let shape = this.doCreateLego(TwoByTwo, {
+    let shape = Stencil.create(TwoByTwo, {
       color: 'pink',
       name: TwoByTwo.typeName()
     });
@@ -174,7 +192,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByFour() {
-    let shape = this.doCreateLego(TwoByFour, {
+    let shape = Stencil.create(TwoByFour, {
       color: 'green',
       angle: 45,
       name: TwoByFour.typeName()
@@ -197,7 +215,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = Stencil.create(OneByTen, {
       color: 'white',
       height: 10,
-      width: function (): number { return this.height / 4; }
+      width: function (): number { return this.height / 4; },
+      Animation: function (): void { 
+        let angle = this.height + 10;
+        angle = angle >= 360 ? 0 : angle;
+        this.height = angle;
+        this.angle = angle;
+      }
     }).drop({
       x: 500,
       y: 500
@@ -205,17 +229,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
     this.signalR.pubChannel("addShape", shape.asJson);
 
-    setInterval(() => {
-      let angle = shape.height + 10;
-      angle = angle >= 360 ? 0 : angle;
-      shape.height = angle;
-      shape.angle = angle;
-
-    }, 20);
   }
 
   doAddTenByTen() {
-    let shape = this.doCreateLego(TenByTen, {
+    let shape = Stencil.create(TenByTen, {
       color: 'gray',
       name: TenByTen.typeName()
     }).drop({
@@ -236,7 +253,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   y: 175
     // }));
 
-    let shape = this.doCreateLego(TenByTen, {
+    let shape =  Stencil.create(TenByTen, {
       opacity: .5,
       color: 'gray',
       angle: 0,
@@ -247,39 +264,33 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     });
     this.addToModel(shape);
 
-    let subShape = this.doCreateLego(TwoByFour, {
+    let subShape =  Stencil.create(TwoByFour, {
       color: 'red',
-      // typeName: TwoByFour.typeName(),
-      // postDraw: function(ctx) { 
-      //   this.drawPin(ctx);
-      // }
     }).addAsSubcomponent(shape).drop({
       x: function () { return -shape.width / 4; },
       y: 150,
       angle: 0,
+      Animation: function () { 
+        let angle = this.angle + 10;
+        angle = angle >= 360 ? 0 : angle;
+        this.angle = angle; 
+      },
     });
 
     this.signalR.pubChannel("addShape", shape.asJson);
 
-    // setInterval(() => {
-    //   let width = subShape.width + 10;
-    //   width = width >= 360 ? 0 : width;
-    //   subShape.width = width;
-    // }, 200);
 
-    setInterval(() => {
-      let angle = subShape.angle + 10;
-      angle = angle >= 360 ? 0 : angle;
-      subShape.angle = angle;
-      //subShape.width = angle;
-    }, 20);
+
+    // setInterval(() => {
+    //   subShape['spin'];
+    // }, 1000);
   }
 
   add(shape: foShape2D): foShape2D {
     return this.addToModel(shape) as foShape2D;
   }
   doAddrotateDemo() {
-    let shape = this.add(this.doCreateLego(rotateDemo, {
+    let shape = this.add( Stencil.create(rotateDemo, {
       color: 'white',
     })).drop({
       x: 500,
@@ -342,6 +353,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subChannel("clearAll", json => {
         this.clearAll();
+      });
+
+      this.signalR.subChannel("syncGlyph", json => {
+        this.findItem(json.myGuid, () => {
+          let type = json.myType;
+          let shape = Pallet.makeInstance(type, json)
+          this.addToModel(shape);
+        });
       });
 
     });
