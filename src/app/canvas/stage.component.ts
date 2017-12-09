@@ -47,7 +47,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doClear() {
     this.clearAll();
-    this.signalR.pubChannel("clearAll" {});
+    this.signalR.pubChannel("clearAll", {});
   }
   
   doUndo() {
@@ -86,7 +86,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-
+    this.onItemChangedParent = (shape: foGlyph): void => {
+      this.signalR.pubChannel("move", shape);
+    }
+    this.onItemChangedPosition = (shape: foGlyph): void => {
+      this.signalR.pubChannel("move", shape);
+    }
   }
 
   doAddGlyph() {

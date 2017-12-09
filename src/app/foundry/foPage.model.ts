@@ -182,9 +182,14 @@ export class foPage extends foGlyph {
             }
             shape = null;
             //Toast.success(JSON.stringify(loc), "mouseup");
-            //this.signalR.pubChannel("move", drop);
         });
 
+    }
+
+    public onItemChangedParent = (shape: foGlyph): void => {
+    }
+
+    public onItemChangedPosition = (shape: foGlyph): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {
