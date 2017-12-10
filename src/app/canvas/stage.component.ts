@@ -71,6 +71,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubChannel("parent", shape.asJson);
     }
     this.onItemChangedPosition = (shape: foGlyph): void => {
+      this.writeMessage();
       this.signalR.pubChannel("moveShape", shape.asJson);
     }
 
@@ -137,6 +138,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
+  public displayObj;
+  writeMessage() {
+    if ( !this.displayObj) return;
+    this.message = ['localToGlobal']
+    this.message.push(this.displayObj.localToGlobal(10, 10));
+  }
+
   doAddRectangle() {
 
     let shape = Display.create(dRectangle, {
@@ -150,7 +158,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("syncDisp", shape.asJson);
 
     shape.updateContext(this.screen2D.context)
-    this.message.push(shape.localToGlobal(10, 10));
+    this.displayObj = shape;
+    this.writeMessage();
 
     // let subShape = Display.create(dRectangle, {
     //   color: 'blue',
