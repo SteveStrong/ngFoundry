@@ -203,8 +203,6 @@ export class foDisplayObject extends foGlyph {
         ctx.save();
         this.drawOrigin(ctx);
 
-        ctx.globalAlpha = .5;
-
         let angle =  this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
@@ -217,45 +215,15 @@ export class foDisplayObject extends foGlyph {
         this.preDraw(ctx);
         this.draw(ctx);
         this.postDraw(ctx);
-        //this.drawPin(ctx);
+        this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
-        this.drawOrigin(ctx);
     }
 
 
-
-
-    public drawOrigin(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50, 0);
-        ctx.lineTo(50, 0);
-        ctx.moveTo(0, -50);
-        ctx.lineTo(0, 50);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    public drawOriginX(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50, -50);
-        ctx.lineTo(50, 50);
-        ctx.moveTo(50, -50);
-        ctx.lineTo(-50, 50);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
     }
@@ -276,7 +244,7 @@ export class foDisplayObject extends foGlyph {
         ctx.lineWidth = 10;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();    
         ctx.restore();  
     }

@@ -48,18 +48,18 @@ export class foPage extends foGlyph {
 
 
 
-    findItem(key: string, onMissing?:Action<foGlyph>) {
+    findItem(key: string, onMissing?: Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing);
     }
 
-    found(key: string, onFound?:Action<foGlyph>) {
+    found(key: string, onFound?: Action<foGlyph>) {
         return this._dictionary.found(key, onFound);
     }
 
     findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != exclude && shape.hitTest(loc,this._ctx)) {
+            if (shape != exclude && shape.hitTest(loc, this._ctx)) {
                 return shape;
             }
         }
@@ -69,7 +69,7 @@ export class foPage extends foGlyph {
     findShapeUnder(source: foGlyph): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != source && source.overlapTest(shape,this._ctx)) {
+            if (shape != source && source.overlapTest(shape, this._ctx)) {
                 return shape;
             }
         }
@@ -99,7 +99,7 @@ export class foPage extends foGlyph {
         this._dictionary.clearAll();
     }
 
-    deleteSelected(onComplete? : Action<foGlyph>) {
+    deleteSelected(onComplete?: Action<foGlyph>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
             this.removeFromModel(found);
@@ -114,6 +114,8 @@ export class foPage extends foGlyph {
 
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
             loc.add(this.marginX, this.marginY);
+            this.onMouseLocationChanged(loc,"down");
+
             shape = this.findHitShape(loc);
             this._subcomponents.forEach(item => {
                 item.isSelected = false;
@@ -125,12 +127,10 @@ export class foPage extends foGlyph {
                 //this.selections.push(shape);
                 offset = shape.getOffset(loc);
             }
-            this.mouseLoc = loc;
-            //Toast.success(JSON.stringify(loc), "mousedown");
         });
 
         PubSub.Sub('mousemove', (loc: cPoint, e) => {
-
+            this.onMouseLocationChanged(loc,"move");
             if (shape) {
                 shape.doMove(loc, offset);
 
@@ -147,7 +147,7 @@ export class foPage extends foGlyph {
                         //}
                         //TweenMax.to(overshape, 0.3, size);
                     }
-                } else if (!overshape.overlapTest(shape,this._ctx)) {
+                } else if (!overshape.overlapTest(shape, this._ctx)) {
                     //let target = overshape['hold'];
                     //let size = overshape['hold'];
                     //size['ease'] = Power0.easeNone;
@@ -162,11 +162,10 @@ export class foPage extends foGlyph {
 
             }
             this.sitOnShape = overshape || {};
-            this.mouseLoc = loc;
-
         });
 
         PubSub.Sub('mouseup', (loc: cPoint, e) => {
+            this.onMouseLocationChanged(loc,"up");
             if (!shape) return;
 
             this._subcomponents.moveToTop(shape);
@@ -183,10 +182,15 @@ export class foPage extends foGlyph {
             } else {
                 this.onItemChangedPosition(shape)
             }
-            
-            shape = null;
-         });
 
+            shape = null;
+        });
+
+    }
+
+    public onMouseLocationChanged = (loc: cPoint, state:string): void => {
+        this.mouseLoc = loc;
+        this.mouseLoc.state = state;
     }
 
     public onItemChangedParent = (shape: foGlyph): void => {

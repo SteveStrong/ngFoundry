@@ -75,6 +75,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubChannel("moveShape", shape.asJson);
     }
 
+
     Pallet.define(foGlyph);
 
     let compute = {
@@ -112,12 +113,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddGlyph() {
     let shape = Pallet.create(foGlyph, {
+      color: 'cyan',
       x: 150,
       y: 100,
       height: 150,
       width: 200,
     }, this.addToModel.bind(this));
-    this.signalR.pubChannel("addGlyph", shape.asJson);
+    this.signalR.pubCommand("Glyph", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddSubGlyph() {
@@ -140,22 +142,29 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   public displayObj;
   writeMessage() {
-    if ( !this.displayObj) return;
-    this.message = ['localToGlobal']
-    this.message.push(this.displayObj.localToGlobal(10, 10));
+    if (!this.displayObj) return;
+    this.message = ['localToGlobal (10,20)']
+    this.message.push(this.displayObj.localToGlobal(10, 20));
+  }
+
+  onMouseLocationChanged = (loc: cPoint, state: string): void => {
+    this.mouseLoc = loc;
+    this.mouseLoc.state = state;
+    this.writeMessage();
   }
 
   doAddRectangle() {
 
     let shape = Display.create(dRectangle, {
       color: 'black',
-      x: 200,
-      y: 150,
       width: 300,
       height: 100
+    }).drop({
+      x: 100,
+      y: 50
     });
     this.addToModel(shape);
-    this.signalR.pubChannel("syncDisp", shape.asJson);
+    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
     shape.updateContext(this.screen2D.context)
     this.displayObj = shape;
@@ -338,6 +347,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         });
       });
 
+      this.signalR.subCommand("Glyph", (cmd, json) => {
+        //console.log(json);
+        this.findItem(cmd.guid, () => {
+          Pallet.create(foGlyph, json, this.addToModel.bind(this));
+        });
+      });
+
 
 
       this.signalR.subChannel("deleteShape", json => {
@@ -402,8 +418,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
 
-      this.signalR.subChannel("syncDisp", json => {
-        this.findItem(json.myGuid, () => {
+      this.signalR.subCommand("syncDisp", (cmd, json) => {
+        this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = json.myType;
           let parent = json.parentGuid;

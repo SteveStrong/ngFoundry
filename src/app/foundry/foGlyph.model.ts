@@ -69,7 +69,10 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
-
+    public drop(params: any) {
+        this.override(params);
+        return this;
+    }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         let x = this.x;
@@ -155,17 +158,20 @@ export class foGlyph extends foNode implements iShape {
         ctx.save();
         //this.drawOrigin(ctx);
         ctx.translate(this.x, this.y);
-        this.drawOriginX(ctx);
+        //this.drawOriginX(ctx);
 
         this.preDraw(ctx);
         this.draw(ctx); 
         this.postDraw(ctx);
+        this.isSelected && this.drawPin(ctx); 
         
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
+
+
+
         ctx.restore();
-        //this.drawOriginX(ctx); 
     }
 
     drawText(ctx: CanvasRenderingContext2D, text: string) {
@@ -179,6 +185,19 @@ export class foGlyph extends foNode implements iShape {
             dy += (fontsize + 4);
         }
     };
+
+    public drawPin(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.arc(0, 0, 6, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'pink';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
 
     public drawOrigin(ctx: CanvasRenderingContext2D) {
         ctx.save();

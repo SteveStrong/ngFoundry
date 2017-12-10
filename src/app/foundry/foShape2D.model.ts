@@ -45,12 +45,7 @@ export class foShape2D extends foGlyph {
         }
     }
 
-    public drop(params: any) {
-        this.override(params);
-        return this;
-    }
-
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         let loc = this.getLocation();
 
         let width = this.width;
@@ -63,6 +58,20 @@ export class foShape2D extends foGlyph {
 
         return true;
     }
+
+    // public hitTest = (hit: iPoint): boolean => {
+    //     let loc = this.getLocation();
+
+    //     let width = this.width;
+    //     if (hit.x < loc.x) return false;
+    //     if (hit.x > loc.x + width) return false;
+
+    //     let height = this.height;
+    //     if (hit.y < loc.y) return false;
+    //     if (hit.y > loc.y + height) return false;
+
+    //     return true;
+    // }
 
 
     public getLocation = (): iPoint => {
@@ -88,18 +97,7 @@ export class foShape2D extends foGlyph {
     }
 
 
-    public drawPin(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.beginPath();
 
-        ctx.arc(0, 0, 6, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'pink';
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
 
 
 
@@ -113,10 +111,10 @@ export class foShape2D extends foGlyph {
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
-        this.drawOriginX(ctx);
-
         ctx.translate(this.x - this.pinX(), this.y - this.pinY());
         ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
+
+        this.drawOriginX(ctx);
 
         this.preDraw(ctx);
         this.draw(ctx);
@@ -127,7 +125,7 @@ export class foShape2D extends foGlyph {
             item.render(ctx, deep);
         });
         ctx.restore();
-        this.drawOrigin(ctx);
+        //this.drawOrigin(ctx);
     }
 
 
