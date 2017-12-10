@@ -179,7 +179,8 @@ export class Stencil {
 
     static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
         let { create, defaults } = this.lookup[type];
-        let instance = new create(Tools.union(properties, defaults));
+        let spec = Tools.union(properties, defaults);
+        let instance = new create(spec);
         func && func(instance);
         this.afterCreate && this.afterCreate(instance);
         return instance;

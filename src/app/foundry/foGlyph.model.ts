@@ -55,13 +55,17 @@ export class foGlyph extends foNode implements iShape {
     }
 
     get asJson() {
+        let parent = <foGlyph>this.myParent();
         return {
+            parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,
             myType: this.myType,
             x: this.x,
             y: this.y,
             width: this.width,
             height: this.height,
+            opacity: this.opacity,
+            color: this.color,
         }
     }
 
