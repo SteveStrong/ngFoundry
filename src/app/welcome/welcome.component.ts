@@ -29,6 +29,10 @@ export class WelcomeComponent implements OnInit {
     Toast.info("info message", "my title")
   }
 
+  doVersion(): void {
+    this.signalR.askforVersion();
+  }
+
   doPost() {
     let text = this.inputRef.innerText || this.typeinText;
     this.signalR.send(text);

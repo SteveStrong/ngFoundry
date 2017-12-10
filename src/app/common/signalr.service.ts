@@ -96,9 +96,6 @@ export class SignalRService {
   public askforVersion() {
     if (this.hub) {
       this.hub.invoke('version');
-      this.hub.on('version', massage => {
-        Toast.success(this.hubURL, massage);
-      });
     }
   }
 
@@ -112,7 +109,10 @@ export class SignalRService {
 
       promise.then(() => {
         this._started = true;
-        Toast.success("Connected..", this.hubURL);
+        Toast.success(this.hubURL, "Connected..");
+        this.hub.on('version', massage => {
+          Toast.success(this.hubURL, massage);
+        });
         this.askforVersion()
       }).catch(error => {
         Toast.error(JSON.stringify(error), this.hubURL);
