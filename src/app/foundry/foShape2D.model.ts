@@ -48,6 +48,11 @@ export class foShape2D extends foGlyph {
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         let loc = this.getLocation();
 
+        ctx.save();
+        ctx.globalAlpha = .5;
+        ctx.fillRect(loc.x, loc.y, this.width, this.height);
+        ctx.restore();
+
         let width = this.width;
         if (hit.x < loc.x) return false;
         if (hit.x > loc.x + width) return false;

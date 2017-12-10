@@ -97,8 +97,8 @@ export class foDisplayObject extends foGlyph {
         this._rotation = rotation || 0;
         this._skewX = skewX || 0;
         this._skewY = skewY || 0;
-        this._regX = regX || 0;
-        this._regY = regY || 0;
+        this._regX = regX || this.pinX(); //is this right?
+        this._regY = regY || this.pinY();
         return this;
     };
 

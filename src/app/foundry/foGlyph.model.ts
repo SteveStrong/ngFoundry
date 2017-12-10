@@ -80,6 +80,11 @@ export class foGlyph extends foNode implements iShape {
         let width = this.width;
         let height = this.height;
 
+        ctx.save();
+        ctx.globalAlpha = .5;
+        ctx.fillRect(x, y, width, height);
+        ctx.restore();
+
         if (hit.x < x) return false;
         if (hit.x > x + width) return false;
         if (hit.y < y) return false;
