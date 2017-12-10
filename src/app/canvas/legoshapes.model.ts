@@ -121,7 +121,7 @@ export class Circle extends legoCore {
   public draw = (ctx: CanvasRenderingContext2D): void => {
 
     ctx.save();
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = this.color;
     ctx.lineWidth = 1;
     ctx.globalAlpha = .8;
     ctx.setLineDash([])
@@ -143,7 +143,7 @@ export class rotateDemo extends legoCore {
   public draw = (ctx: CanvasRenderingContext2D): void => {
 
     ctx.save();
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = this.color;
     ctx.lineWidth = 1;
 
     ctx.beginPath();
@@ -182,7 +182,7 @@ export class wall extends legoCore {
   public drawExtra = (ctx: CanvasRenderingContext2D): void => {
 
     ctx.save();
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = this.color;
     ctx.lineWidth = 1;
     ctx.globalAlpha = .8;
     ctx.fillRect(0, 0, 100, 150);

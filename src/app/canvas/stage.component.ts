@@ -185,7 +185,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddOneByOne() {
     let shape = Stencil.create(OneByOne, {
-      color: 'black',
+      color: 'red',
       name: OneByOne.typeName()
     });
     this.addToModel(shape);
@@ -194,7 +194,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTwoByOne() {
     let shape = Stencil.create(TwoByOne, {
-      color: 'orange',
+      color: 'cyan',
       name: TwoByOne.typeName()
     });
     this.addToModel(shape);

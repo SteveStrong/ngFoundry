@@ -137,6 +137,7 @@ export class foPage extends foGlyph {
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);
                     if (overshape) {
+                        overshape['saveColor'] = overshape.color;
                         //overshape['hold'] = overshape.getSize(1);
                         //let size = overshape.getSize(1.1);
                         //let target = overshape.getSize(1.1);
@@ -152,7 +153,8 @@ export class foPage extends foGlyph {
                     //let size = overshape['hold'];
                     //size['ease'] = Power0.easeNone;
                     //size['onComplete'] = () => {
-                    overshape.setColor('green');
+                    overshape.setColor(overshape['saveColor']);
+                    delete overshape['saveColor'];
                     //overshape.override(target);
                     //delete overshape['hold'];
                     overshape = null;

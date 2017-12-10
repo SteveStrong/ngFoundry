@@ -43,7 +43,7 @@ export class foGlyph extends foNode implements iShape {
     set opacity(value: number) { this._opacity = value; }
 
     get color(): string {
-        return this._color || 'green';
+        return this._color || 'black';
     }
     set color(value: string) {
         this._color = value;
