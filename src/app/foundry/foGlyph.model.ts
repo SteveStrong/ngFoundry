@@ -168,13 +168,11 @@ export class foGlyph extends foNode implements iShape {
         this.preDraw(ctx);
         this.draw(ctx); 
         this.postDraw(ctx);
-        this.isSelected && this.drawPin(ctx); 
+        this.isSelected && this.drawSelected(ctx); 
         
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
-
-
 
         ctx.restore();
     }
@@ -233,14 +231,11 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D){
-        let width = this.width;
-        let height = this.height;
-
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(0, 0, width, height);
+        ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
     }
 
@@ -249,6 +244,7 @@ export class foGlyph extends foNode implements iShape {
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
         this.drawOutline(ctx);
+        this.drawPin(ctx);
     }
 
     public preDraw = (ctx: CanvasRenderingContext2D): void => { }
@@ -264,20 +260,10 @@ export class foGlyph extends foNode implements iShape {
         ctx.fillRect(0, 0, width, height);
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-        let fontsize = 20;
-        ctx.font = `${fontsize}px Calibri`;
-        ctx.fillStyle = 'blue';
 
-        // let text = `x1=${x} y1=${y}|x2=${x+width} y2=${y+height}|`;
-        // let array = text.split('|');
-        // let dx = x + 10;
-        // let dy = y + 20;
-        // for (var i = 0; i < array.length; i++) {
-        //     ctx.fillText(array[i], dx, dy);
-        //     dy += (fontsize + 4);
-        //  }
 
-        this.isSelected && this.drawOutline(ctx);
+        let text = `x1=${this.x} y1=${this.y}|x2=${this.x+width} y2=${this.y+height}|`;
+        this.drawText(ctx, text);
     }
 
     toggleSelected() {

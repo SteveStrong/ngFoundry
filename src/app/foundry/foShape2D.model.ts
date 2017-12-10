@@ -50,7 +50,19 @@ export class foShape2D extends foGlyph {
 
         ctx.save();
         ctx.globalAlpha = .5;
-        ctx.fillRect(loc.x, loc.y, this.width, this.height);
+
+        let angle = this.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+        let x = -this.pinX();
+        let y = -this.pinY();
+
+        ctx.translate(this.x + x, this.y + y);
+        ctx.transform(cos, sin, -sin, cos, -x, -y);
+
+        //ctx.fillRect(loc.x, loc.y, this.width, this.height);
+
+        ctx.fillRect(x, y, this.width, this.height);
         ctx.restore();
 
         let width = this.width;
@@ -64,19 +76,6 @@ export class foShape2D extends foGlyph {
         return true;
     }
 
-    // public hitTest = (hit: iPoint): boolean => {
-    //     let loc = this.getLocation();
-
-    //     let width = this.width;
-    //     if (hit.x < loc.x) return false;
-    //     if (hit.x > loc.x + width) return false;
-
-    //     let height = this.height;
-    //     if (hit.y < loc.y) return false;
-    //     if (hit.y > loc.y + height) return false;
-
-    //     return true;
-    // }
 
 
     public getLocation = (): iPoint => {
@@ -103,9 +102,6 @@ export class foShape2D extends foGlyph {
 
 
 
-
-
-
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
         this.drawOrigin(ctx);
@@ -123,8 +119,9 @@ export class foShape2D extends foGlyph {
 
         this.preDraw(ctx);
         this.draw(ctx);
+        this.isSelected && this.drawSelected(ctx);
+        
         this.postDraw(ctx);
-        //this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
@@ -142,16 +139,11 @@ export class foShape2D extends foGlyph {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        let x = -this.pinX();
-        let y = -this.pinY();
-        let width = this.width;
-        let height = this.height;
-
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(x, y, width, height);
+        ctx.rect(-this.pinX(), -this.pinY(),  this.width, this.height);
         ctx.stroke();
     }
 
@@ -160,20 +152,14 @@ export class foShape2D extends foGlyph {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
-        let x = -this.pinX();
-        let y = -this.pinY();
-        let width = this.width;
-        let height = this.height;
-
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(x, y, width, height);
-
+        ctx.fillRect(-this.pinX(), -this.pinY(),  this.width, this.height);
+        
         this.drawText(ctx, this.myType)
 
-        this.isSelected && this.drawSelected(ctx);
-    }
+      }
 
 }
 
