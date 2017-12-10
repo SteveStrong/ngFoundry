@@ -347,12 +347,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       
       this.signalR.subChannel("parent", json => {
         this.found(json.myGuid, (shape) => {
-          shape.removeFromParent();
           this.message.push(json);
-          let parent = json.parentGuid;
-          if (parent) {
-            this.found(parent, (item) => {
-              item.addSubcomponent(shape);
+          shape.removeFromParent();
+          if (json.parentGuid) {
+            this.found(json.parentGuid, (item) => {
+              item.addSubcomponent(shape,{x: json.x, y: json.y});
             });
           } else {
             this.addToModel(shape);
@@ -371,7 +370,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subChannel("syncShape", json => {
         this.findItem(json.myGuid, () => {
-          this.message.push(json);
+          //this.message.push(json);
           let type = json.myType;
           let parent = json.parentGuid;
           delete json.parentGuid;

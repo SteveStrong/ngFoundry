@@ -29,6 +29,22 @@ export class foShape2D extends foGlyph {
         this.myGuid;
     }
 
+    get asJson() {
+        let parent = <foGlyph>this.myParent();
+        return {
+            parentGuid: parent && parent.myGuid,
+            myGuid: this.myGuid,
+            myType: this.myType,
+            x: this.x,
+            y: this.y,
+            width: this.width,
+            height: this.height,
+            angle: this.angle,
+            opacity: this.opacity,
+            color: this.color,
+        }
+    }
+
     public drop(params: any) {
         this.override(params);
         return this;
