@@ -149,16 +149,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
     this.signalR.pubChannel("syncDisp", shape.asJson);
 
-    let subShape = Display.create(dRectangle, {
-      color: 'blue',
-      x: 150,
-      y: 150,
-      width: 30,
-      height: 100
-    }).addAsSubcomponent(shape);
-    //this.addToModel(subShape);
+    shape.updateContext(this.screen2D.context)
+    this.message.push(shape.localToGlobal(10, 10));
 
-    this.signalR.pubChannel("syncDisp", subShape.asJson);
+    // let subShape = Display.create(dRectangle, {
+    //   color: 'blue',
+    //   x: 150,
+    //   y: 150,
+    //   width: 30,
+    //   height: 100
+    // }).addAsSubcomponent(shape);
+    // //this.addToModel(subShape);
+
+    // this.signalR.pubChannel("syncDisp", subShape.asJson);
   }
 
 
