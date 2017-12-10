@@ -4,6 +4,7 @@ import { cPoint } from "../foundry/foGeometry";
 import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
+import { Matrix2D } from '../foundry/foMatrix2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
@@ -49,7 +50,7 @@ export class foShape2D extends foGlyph {
         let loc = this.getLocation();
 
         ctx.save();
-        ctx.globalAlpha = .5;
+        ctx.fillStyle = 'black';
 
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
@@ -60,10 +61,16 @@ export class foShape2D extends foGlyph {
         ctx.translate(this.x + x, this.y + y);
         ctx.transform(cos, sin, -sin, cos, -x, -y);
 
+        let mtx = new Matrix2D();
+        mtx.append(cos, sin, -sin, cos, -x, -y);
+        let pt = mtx.transformPoint(hit.x, hit.y);
+        this['point'] = pt;
+
         //ctx.fillRect(loc.x, loc.y, this.width, this.height);
 
         ctx.fillRect(x, y, this.width, this.height);
         ctx.restore();
+
 
         let width = this.width;
         if (hit.x < loc.x) return false;
@@ -158,7 +165,6 @@ export class foShape2D extends foGlyph {
         ctx.fillRect(-this.pinX(), -this.pinY(),  this.width, this.height);
         
         this.drawText(ctx, this.myType)
-
       }
 
 }
