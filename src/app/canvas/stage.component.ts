@@ -65,11 +65,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doDuplicate() {
   }
 
-  doCreateDisplay<T extends foDisplayObject>(type: { new(p?: any): T; }, properties?: any): T {
-    let instance = Display.create(type, properties);
-    return instance;
-  }
-
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
@@ -144,7 +139,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddRectangle() {
 
-    let shape = this.doCreateDisplay(dRectangle, {
+    let shape = Display.create(dRectangle, {
       color: 'black',
       x: 200,
       y: 150,
@@ -152,17 +147,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 100
     });
     this.addToModel(shape);
+    this.signalR.pubChannel("syncDisp", shape.asJson);
 
-    let subShape = this.doCreateDisplay(dRectangle, {
+    let subShape = Display.create(dRectangle, {
       color: 'blue',
       x: 150,
       y: 150,
       width: 30,
       height: 100
-    }); //.addAsSubcomponent(shape);
-    this.addToModel(subShape);
+    }).addAsSubcomponent(shape);
+    //this.addToModel(subShape);
 
-    this.signalR.pubChannel("addDisp", shape.asJson);
+    this.signalR.pubChannel("syncDisp", subShape.asJson);
   }
 
 
@@ -313,13 +309,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.start().then(() => {
 
-      this.signalR.subChannel("moveShape", data => {
-        this.found(data.myGuid, shape => {
+      this.signalR.subChannel("moveShape", json => {
+        this.found(json.myGuid, shape => {
           TweenLite.to(shape, .8, {
-            x: data.x,
-            y: data.y,
+            x: json.x,
+            y: json.y,
             ease: Back.easeInOut
-          }).eventCallback("onComplete", () => { shape.override({}) });
+          }).eventCallback("onComplete", () => { shape.override({ x: json.x, y: json.y }) });
         });
       });
 
@@ -348,10 +344,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.subChannel("parent", json => {
         this.found(json.myGuid, (shape) => {
           this.message.push(json);
+          this.removeFromModel(shape);
           shape.removeFromParent();
           if (json.parentGuid) {
             this.found(json.parentGuid, (item) => {
               item.addSubcomponent(shape, { x: json.x, y: json.y });
+              // TweenLite.to(shape, .8, {
+              //   x: json.x,
+              //   y: json.y,
+              //   ease: Back.easeInOut
+              // }).eventCallback("onComplete", () => { shape.override({ x: json.x, y: json.y }) });
+
             });
           } else {
             this.addToModel(shape);
@@ -375,6 +378,25 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           let parent = json.parentGuid;
           delete json.parentGuid;
           let shape = Stencil.makeInstance(type, json);
+          if (parent) {
+            this.found(parent, (item) => {
+              item.addSubcomponent(shape);
+            });
+          } else {
+            this.addToModel(shape);
+          }
+
+        });
+      });
+
+
+      this.signalR.subChannel("syncDisp", json => {
+        this.findItem(json.myGuid, () => {
+          //this.message.push(json);
+          let type = json.myType;
+          let parent = json.parentGuid;
+          delete json.parentGuid;
+          let shape = Display.makeInstance(type, json);
           if (parent) {
             this.found(parent, (item) => {
               item.addSubcomponent(shape);

@@ -180,7 +180,7 @@ export class Stencil {
 
     static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
-        let { defaults } = this.lookup[instance.myType];
+        let { defaults = undefined } = this.lookup[instance.myType] || {};
 
         defaults && instance.extend(defaults)
         this.afterCreate && this.afterCreate(instance);
