@@ -46,13 +46,12 @@ export class SignalRService {
 
   public subChannel(name: string, callback) {
     if (this.hub) {
-      console.log('subChannel ' + name)
+      //console.log('subChannel ' + name)
       this.hub.on(name, data => {
         //console.log(name + ':  ' + JSON.stringify(data, undefined, 3));
         if ( data._channel != this._guid) {
-          let source = data._channel;
           delete data._channel;
-          callback(data, source);
+          callback(data);
         }
       });
     } else {
@@ -60,6 +59,29 @@ export class SignalRService {
     }
   }
 
+
+  public pubCommand(name: string, command: any, payload?: any) {
+    if (this.hub) {
+      //console.log('pubChannel ' + name)
+      command._channel = this._guid;
+      this.hub.invoke("command", name, command, payload);
+    }
+  }
+
+  public subCommand(name: string, callback) {
+    if (this.hub) {
+      //console.log('subChannel ' + name)
+      this.hub.on(name, (command, payload) => {
+        //console.log(name + ':  command: ' + JSON.stringify(command, undefined, 3));
+        //console.log(name + ':  payload: ' + JSON.stringify(payload, undefined, 3));
+        if ( command._channel != this._guid) {
+          callback(command, payload);
+        }
+      });
+    } else {
+      Toast.warning("cannot connect at this moment", this.hubURL);
+    }
+  }
   public receive(callback) {
     if (this.hub) {
       this.hub.on('send', data => {
@@ -68,6 +90,15 @@ export class SignalRService {
       });
     } else {
       Toast.warning("cannot connect at this moment", this.hubURL);
+    }
+  }
+
+  public askforVersion() {
+    if (this.hub) {
+      this.hub.invoke('version');
+      this.hub.on('version', massage => {
+        Toast.success(this.hubURL, massage);
+      });
     }
   }
 
@@ -82,6 +113,7 @@ export class SignalRService {
       promise.then(() => {
         this._started = true;
         Toast.success("Connected..", this.hubURL);
+        this.askforVersion()
       }).catch(error => {
         Toast.error(JSON.stringify(error), this.hubURL);
       });
