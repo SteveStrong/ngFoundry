@@ -344,19 +344,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         this.message = [];
       });
 
-      
+
       this.signalR.subChannel("parent", json => {
         this.found(json.myGuid, (shape) => {
           this.message.push(json);
           shape.removeFromParent();
           if (json.parentGuid) {
             this.found(json.parentGuid, (item) => {
-              item.addSubcomponent(shape,{x: json.x, y: json.y});
+              item.addSubcomponent(shape, { x: json.x, y: json.y });
             });
           } else {
             this.addToModel(shape);
-          } 
-             
+          }
+
         });
       });
 
@@ -381,7 +381,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             });
           } else {
             this.addToModel(shape);
-          } 
+          }
 
         });
       });
