@@ -35,6 +35,8 @@ export class foNode extends foObject implements iNode {
         }
     }
 
+
+
     addAsSubcomponent(parent: foNode) {
         parent.addSubcomponent(this);
         return this;
@@ -43,7 +45,7 @@ export class foNode extends foObject implements iNode {
     removeFromParent() {
         let parent:foNode = <foNode>(this.myParent && this.myParent());
         this.myParent = () => { return null; };
-        parent.removeSubcomponent(this);
+        parent && parent.removeSubcomponent(this);
         return this;
     }
 

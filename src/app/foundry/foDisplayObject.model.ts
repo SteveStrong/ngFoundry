@@ -18,17 +18,17 @@ export class foDisplayObject extends foGlyph {
     static _snapToPixelEnabled: boolean = false;
 
     //protected _subcomponents: foCollection<foDisplayObject>;
-    protected _x: number;
-    protected _y: number;
+    protected _x: number = 0;
+    protected _y: number = 0;
     protected _transformMatrix: number;
 
-    protected _regX: number;
-    protected _regY: number;
-    protected _rotation: number;
-    protected _scaleX: number;
-    protected _scaleY: number;
-    protected _skewX: number;
-    protected _skewY: number;
+    protected _regX: number = 0;
+    protected _regY: number = 0;
+    protected _rotation: number = 0;
+    protected _scaleX: number = 1;
+    protected _scaleY: number = 1;
+    protected _skewX: number = 0;
+    protected _skewY: number = 0;
 
     protected _alpha: number = 1.0;
     protected _visible: boolean = true;
@@ -92,8 +92,8 @@ export class foDisplayObject extends foGlyph {
     setTransform(x: number, y: number, scaleX: number, scaleY: number, rotation: number, skewX: number, skewY: number, regX: number, regY: number) {
         this._x = x || 0;
         this._y = y || 0;
-        this._scaleX = scaleX == null ? 1 : scaleX;
-        this._scaleY = scaleY == null ? 1 : scaleY;
+        this._scaleX = scaleX == undefined ? 1 : scaleX;
+        this._scaleY = scaleY == undefined ? 1 : scaleY;
         this._rotation = rotation || 0;
         this._skewX = skewX || 0;
         this._skewY = skewY || 0;

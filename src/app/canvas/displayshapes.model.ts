@@ -1,3 +1,7 @@
+import { Tools } from '../foundry/foTools';
+import { cPoint } from '../foundry/foGeometry';
+
+import { iObject, iNode, iShape, iPoint, iSize, Action } from '../foundry/foInterface';
 
 import { foDisplayObject } from "../foundry/foDisplayObject.model";
 
@@ -5,7 +9,7 @@ import { foDisplayObject } from "../foundry/foDisplayObject.model";
 
 
 export class dRectangle extends foDisplayObject {
- 
+
   constructor(properties?: any) {
     super(properties);
   }
@@ -13,9 +17,31 @@ export class dRectangle extends foDisplayObject {
 }
 
 export class Display {
+  static lookup = {}
+  static afterCreate: Action<foDisplayObject>;
+  
   static create<T extends foDisplayObject>(type: { new(p?: any): T; }, properties?: any): T {
-      let instance = new type(properties);
-      return instance;
+    let instance = new type(properties);
+    let { defaults = undefined } = this.lookup[instance.myType] || {};
+
+    defaults && instance.extend(defaults)
+    this.afterCreate && this.afterCreate(instance);
+    return instance;
+  }
+
+  static define<T extends foDisplayObject>(type: { new(p?: any): T; }, properties?: any) {
+    let instance = new type();
+    this.lookup[instance.myType] = { create: type, defaults: properties };
+    return type;
+  }
+
+  static makeInstance<T extends foDisplayObject>(type: string, properties?: any, func?: Action<T>) {
+    let { create, defaults } = this.lookup[type];
+    let spec = Tools.union(properties, defaults);
+    let instance = new create(spec);
+    func && func(instance);
+    this.afterCreate && this.afterCreate(instance);
+    return instance;
   }
 }
 

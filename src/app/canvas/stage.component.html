@@ -35,6 +35,7 @@
 
     <div class="btn-group" role="group" aria-label="Creating Display">
       <button (click)="doAddRectangle()" type="button" class="btn btn-success">Add dRectangle</button>
+      <button (click)="doDynamicCreate()" type="button" class="btn btn-success">Dynamic Create</button>
     </div>
   </div>
 </div>
@@ -45,6 +46,9 @@
 
   <div class="col-md-4">
     <pre class="well">{{mouseLoc | json}}</pre>
+    <!-- <pre class="well">{{this.asJson | json}}</pre> -->
+    <pre class="well">{{message | json}}</pre>
+
     <!-- <pre class="well">{{sitOnShape | json}}</pre> -->
 
     <!-- <pre class="well">{{_dictionary | json}}</pre> -->

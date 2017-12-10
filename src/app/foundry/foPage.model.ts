@@ -48,11 +48,11 @@ export class foPage extends foGlyph {
 
 
 
-    findItem(key: string, onMissing?) {
+    findItem(key: string, onMissing?:Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing);
     }
 
-    found(key: string, onFound?) {
+    found(key: string, onFound?:Action<foGlyph>) {
         return this._dictionary.found(key, onFound);
     }
 
@@ -99,10 +99,11 @@ export class foPage extends foGlyph {
         this._dictionary.clearAll();
     }
 
-    deleteSelected() {
+    deleteSelected(onComplete? : Action<foGlyph>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
             this.removeFromModel(found);
+            onComplete && onComplete(found);
         }
     }
 
@@ -178,12 +179,20 @@ export class foPage extends foGlyph {
                     x: 0,
                     y: 0
                 });
+                this.onItemChangedParent(shape)
+            } else {
+                this.onItemChangedPosition(shape)
             }
+            
             shape = null;
-            //Toast.success(JSON.stringify(loc), "mouseup");
-            //this.signalR.pubChannel("move", drop);
-        });
+         });
 
+    }
+
+    public onItemChangedParent = (shape: foGlyph): void => {
+    }
+
+    public onItemChangedPosition = (shape: foGlyph): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {
