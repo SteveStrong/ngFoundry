@@ -69,8 +69,9 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
-    public drop(params: any) {
-        this.override(params);
+    public drop(x:number=0, y:number=0, angle:number=0) {
+        this.x = x;
+        this.y = y;
         return this;
     }
 

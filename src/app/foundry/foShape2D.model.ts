@@ -30,6 +30,13 @@ export class foShape2D extends foGlyph {
         this.myGuid;
     }
 
+    public drop(x:number=0, y:number=0, angle:number=0) {
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+        return this;
+    }
+
     get asJson() {
         let parent = <foGlyph>this.myParent();
         return {
