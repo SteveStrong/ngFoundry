@@ -1,6 +1,6 @@
 
 import { foShape2D } from "../foundry/foShape2D.model";
-
+import { cPoint, cRect } from "../foundry/foGeometry";
 
 export class brick extends foShape2D {
   size: string = '0:0';
@@ -20,13 +20,13 @@ export class legoCore extends foShape2D {
     this.description = this.myType
   }
 
-  Animation:any;
-  
+  Animation: any;
+
   public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
     this.Animation;
-    super.render(ctx,deep);
+    super.render(ctx, deep);
   }
-  
+
 }
 
 
@@ -63,10 +63,16 @@ export class TwoByFour extends legoCore {
     this.size = '2:4';
   }
 
-  public postDraw = (ctx: CanvasRenderingContext2D): void => { 
+  public postDraw = (ctx: CanvasRenderingContext2D): void => {
     this.drawPin(ctx);
   }
- 
+
+  public afterRender = (ctx: CanvasRenderingContext2D): void => {
+    if (this.isSelected) {
+      this.hitTest(new cPoint(0, 0), ctx);
+    }
+  }
+
 }
 
 export class OneByTen extends legoCore {
@@ -84,31 +90,6 @@ export class TenByTen extends legoCore {
     this.size = '10:10';
   }
 
-  public renderxxx(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-
-    let angle = this.rotation() * Math.PI / 180
-    let cos = Math.cos(angle);
-    let sin = Math.sin(angle);
-
-    ctx.save();
-    let loc = this.getLocation();
-
-    //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-    ctx.translate(this.x, this.y);
-    //ctx.transform(cos, sin, -sin, cos, 0, 0);
-    //ctx.transform(cos, sin, -sin, cos, -this.pinX(), -this.pinY());
-    ////ctx.translate(0, -this.pinY());
-    //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-
-    this.draw(ctx);
-    this.drawPin(ctx);
-
-    deep && this._subcomponents.forEach(item => {
-      item.render(ctx, deep);
-    });
-    ctx.restore();
-    this.drawOrigin(ctx);
-  }
 }
 
 export class Circle extends legoCore {
