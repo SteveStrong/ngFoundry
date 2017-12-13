@@ -6,11 +6,13 @@ import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { PubSub } from "../foundry/foPubSub";
+import { Matrix2D } from "../foundry/foMatrix2D";
 import { cPoint, cRect } from "../foundry/foGeometry";
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
+
 
 import { foPage } from "../foundry/foPage.model";
 
@@ -65,6 +67,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doDuplicate() {
   }
 
+  private computeSpec: any = {
+    height: function () {
+      let size = parseInt(this.size.split(':')[1]);
+      return 25 * size;
+    },
+    width: function () {
+      let size = parseInt(this.size.split(':')[0]);
+      return 25 * size;
+    }
+  };
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
@@ -74,19 +86,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubChannel("moveShape", shape.asJson);
     }
 
+
     Pallet.define(foGlyph);
 
-    let compute = {
-      height: function () {
-        let size = parseInt(this.size.split(':')[1]);
-        return 25 * size;
-      },
-      width: function () {
-        let size = parseInt(this.size.split(':')[0]);
-        return 25 * size;
-      }
-    };
-
+    let compute = this.computeSpec;
     Stencil.define(OneByOne, compute);
 
     Stencil.define(OneByOne, compute);
@@ -95,6 +98,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     Stencil.define(TwoByFour, compute);
     Stencil.define(OneByTen, compute);
     Stencil.define(TenByTen, compute);
+  }
+
+  onMouseLocationChanged = (loc: cPoint, state: string): void => {
+    this.mouseLoc = loc;
+    this.mouseLoc.state = state;
+    this.writeDisplayMessage(loc);
+    this.writeShapeMessage(loc)
   }
 
   doDynamicCreate() {
@@ -111,12 +121,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddGlyph() {
     let shape = Pallet.create(foGlyph, {
+      color: 'cyan',
       x: 150,
       y: 100,
       height: 150,
       width: 200,
     }, this.addToModel.bind(this));
-    this.signalR.pubChannel("addGlyph", shape.asJson);
+    this.signalR.pubCommand("Glyph", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddSubGlyph() {
@@ -137,20 +148,28 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
+  public displayObj;
+  writeDisplayMessage(loc: cPoint) {
+    if (!this.displayObj) return;
+    this.message = ['localToGlobal (10,20)']
+    this.message.push(this.displayObj.localToGlobal(10, 20));
+  }
+
+
+
   doAddRectangle() {
 
     let shape = Display.create(dRectangle, {
       color: 'black',
-      x: 200,
-      y: 150,
       width: 300,
       height: 100
-    });
+    }).drop(100, 50);
+
     this.addToModel(shape);
-    this.signalR.pubChannel("syncDisp", shape.asJson);
+    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
     shape.updateContext(this.screen2D.context)
-    this.message.push(shape.localToGlobal(10, 10));
+    this.displayObj = shape;
 
     // let subShape = Display.create(dRectangle, {
     //   color: 'blue',
@@ -167,8 +186,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddOneByOne() {
     let shape = Stencil.create(OneByOne, {
-      color: 'black',
-      name: OneByOne.typeName()
+      color: 'red'
     });
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
@@ -176,8 +194,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTwoByOne() {
     let shape = Stencil.create(TwoByOne, {
-      color: 'orange',
-      name: TwoByOne.typeName()
+      color: 'cyan'
     });
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
@@ -185,26 +202,61 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTwoByTwo() {
     let shape = Stencil.create(TwoByTwo, {
-      color: 'pink',
-      name: TwoByTwo.typeName()
+      color: 'pink'
     });
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
+  public displayShape;
+  writeShapeMessage(loc: cPoint) {
+    if (!this.displayShape) return;
+
+    let shape = this.displayShape;
+    let angle = shape.rotation() * Math.PI / 180
+    let cos = Math.cos(angle);
+    let sin = Math.sin(angle);
+    let x = -shape.pinX();
+    let y = -shape.pinY();
+
+    //ctx.translate(this.x + x, this.y + y);
+    //ctx.transform(cos, sin, -sin, cos, -x, -y);
+
+    let mtx = new Matrix2D();
+    //mtx.append(cos, sin, -sin, cos, -x, -y);
+    mtx.append(cos, sin, -sin, cos,  shape.x+x,  shape.y+y);
+
+    this.message = ['pt (0,0)'];
+    this.message.push( mtx.transformPoint(0, 0));
+    //this.message.push('pt (0,0) inv');
+    //this.message.push( mtx.invertPoint(0, 0));
+
+    this.message.push(`pt (${loc.x},${loc.y}) `);
+    this.message.push(mtx.transformPoint(loc.x, loc.y));
+    this.message.push(`pt (${loc.x},${loc.y}) inv`);
+    this.message.push(mtx.invertPoint(loc.x, loc.y));
+
+    let isHit = shape.localHitTest(loc);
+    this.message.push(`isHit ${isHit}`);
+  }
+
   doAddTwoByFour() {
-    let shape = Stencil.create(TwoByFour, {
+
+    class localTwoByFour extends TwoByFour {
+      public pinX = (): number => { return 0 * this.width / 2; }
+      public pinY = (): number => { return 1 * this.height / 2; }
+    }
+
+    Stencil.define(localTwoByFour, this.computeSpec);
+
+    let shape = Stencil.create(localTwoByFour, {
       color: 'green',
-      angle: 45,
-      name: TwoByFour.typeName()
-    }).drop({
-      x: 300,
-      y: 300
-    });
+      angle: 90,
+    }).drop(100, 100);
 
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
-
+    this.displayShape = shape;
   }
 
   doAddOneByTen() {
@@ -218,10 +270,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         this.height = angle;
         this.angle = angle;
       }
-    }).drop({
-      x: 500,
-      y: 500
-    });
+    }).drop(500, 500);
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
 
@@ -231,10 +280,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = Stencil.create(TenByTen, {
       color: 'gray',
       name: TenByTen.typeName()
-    }).drop({
-      x: 600,
-      y: 300
-    });
+    }).drop(600, 300);
+
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
@@ -254,17 +301,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'gray',
       angle: 0,
       name: TenByTen.typeName()
-    }).drop({
-      x: 600,
-      y: 300
-    });
+    }).drop(600, 300);
+
     this.addToModel(shape);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
 
     let subShape = Stencil.create(TwoByFour, {
       color: 'red',
-    }).addAsSubcomponent(shape).drop({
+    }).addAsSubcomponent(shape).override({
       x: function () { return -shape.width / 4; },
       y: 150,
       angle: 0,
@@ -285,10 +330,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddrotateDemo() {
     let shape = this.add(Stencil.create(rotateDemo, {
       color: 'white',
-    })).drop({
-      x: 500,
-      y: 500
-    });
+    })).drop(500, 500);
 
 
 
@@ -325,6 +367,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.subChannel("addGlyph", json => {
         //console.log(json);
         this.findItem(json.myGuid, () => {
+          Pallet.create(foGlyph, json, this.addToModel.bind(this));
+        });
+      });
+
+      this.signalR.subCommand("Glyph", (cmd, json) => {
+        //console.log(json);
+        this.findItem(cmd.guid, () => {
           Pallet.create(foGlyph, json, this.addToModel.bind(this));
         });
       });
@@ -393,8 +442,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
 
-      this.signalR.subChannel("syncDisp", json => {
-        this.findItem(json.myGuid, () => {
+      this.signalR.subCommand("syncDisp", (cmd, json) => {
+        this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = json.myType;
           let parent = json.parentGuid;

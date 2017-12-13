@@ -4,6 +4,7 @@ import { cPoint } from "../foundry/foGeometry";
 import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
+import { Matrix2D } from '../foundry/foMatrix2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
@@ -29,6 +30,13 @@ export class foShape2D extends foGlyph {
         this.myGuid;
     }
 
+    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this.x = x;
+        if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(angle)) this.angle = angle;
+        return this;
+    }
+
     get asJson() {
         let parent = <foGlyph>this.myParent();
         return {
@@ -45,24 +53,91 @@ export class foShape2D extends foGlyph {
         }
     }
 
-    public drop(params: any) {
-        this.override(params);
-        return this;
-    }
+    public localHitTest = (hit: iPoint): boolean => {
 
-    public hitTest = (hit: iPoint): boolean => {
-        let loc = this.getLocation();
+        let shape = this;
+        let angle = shape.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+        let x = -shape.pinX();
+        let y = -shape.pinY();
 
+        let mtx = new Matrix2D();
+        mtx.identity();
+        //mtx.translate(shape.x + x, shape.y + y);
+        //mtx.rotate(angle);
+        mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
+
+        //let loc = mtx.invertPoint(hit.x, hit.y);
+        let loc = mtx.transformPoint(hit.x, hit.y);
+        
         let width = this.width;
-        if (hit.x < loc.x) return false;
-        if (hit.x > loc.x + width) return false;
-
         let height = this.height;
-        if (hit.y < loc.y) return false;
-        if (hit.y > loc.y + height) return false;
+
+        if (loc.x < x) return false;
+        if (loc.x > x + width) return false;
+
+
+        if (loc.y < y) return false;
+        if (loc.y > y + height) return false;
 
         return true;
     }
+
+    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+        //let loc = this.getLocation();
+
+        ctx.save();
+        ctx.globalAlpha = .5;
+        ctx.fillStyle = 'black';
+
+        let angle = this.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+        let x = -this.pinX();
+        let y = -this.pinY();
+
+        //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+        //ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
+        ctx.translate(this.x + x, this.y + y);
+        ctx.transform(cos, sin, -sin, cos, -x, -y);
+        ctx.fillRect(x, y, this.width, this.height);
+
+        let mtx = new Matrix2D();
+        mtx.append(cos, sin, -sin, cos, this.x + x, this.y + y);
+         //let loc = mtx.invertPoint(hit.x, hit.y);
+         let loc = mtx.transformPoint(hit.x, hit.y);
+         
+        //ctx.fillRect(loc.x, loc.y, this.width, this.height);
+
+
+
+        let width = this.width;
+        let height = this.height;
+
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 6;
+        ctx.beginPath()
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + width, y);
+        ctx.lineTo(x + width, y + height);
+        ctx.lineTo(x, y + height);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        ctx.restore();
+
+
+        if (loc.x < x) return false;
+        if (loc.x > x + width) return false;
+
+
+        if (loc.y < y) return false;
+        if (loc.y > y + height) return false;
+
+        return true;
+    }
+
 
 
     public getLocation = (): iPoint => {
@@ -88,48 +163,40 @@ export class foShape2D extends foGlyph {
     }
 
 
-    public drawPin(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.beginPath();
-
-        ctx.arc(0, 0, 6, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'pink';
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
-
-
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
         this.drawOrigin(ctx);
 
-        ctx.globalAlpha = .5;
+        //ctx.globalAlpha = .5;
 
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
-        this.drawOriginX(ctx);
-
         ctx.translate(this.x - this.pinX(), this.y - this.pinY());
         ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
+        this.drawOriginX(ctx);
+
         this.preDraw(ctx);
         this.draw(ctx);
+        this.isSelected && this.drawSelected(ctx);
+
         this.postDraw(ctx);
-        //this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
-        this.drawOrigin(ctx);
+
+        this.afterRender(ctx);
+        //this.drawOrigin(ctx);
     }
 
+    public afterRender = (ctx: CanvasRenderingContext2D): void => { }
+
+    public postDraw = (ctx: CanvasRenderingContext2D): void => { }
 
     public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
@@ -139,16 +206,11 @@ export class foShape2D extends foGlyph {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        let x = -this.pinX();
-        let y = -this.pinY();
-        let width = this.width;
-        let height = this.height;
-
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(x, y, width, height);
+        ctx.rect(-this.pinX(), -this.pinY(), this.width, this.height);
         ctx.stroke();
     }
 
@@ -156,20 +218,12 @@ export class foShape2D extends foGlyph {
 
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-
-        let x = -this.pinX();
-        let y = -this.pinY();
-        let width = this.width;
-        let height = this.height;
-
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(x, y, width, height);
+        ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
 
-        this.drawText(ctx, this.myType)
-
-        this.isSelected && this.drawSelected(ctx);
+        //this.drawText(ctx, this.myType)
     }
 
 }
@@ -194,6 +248,8 @@ export class Stencil {
     }
 
     static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
+        if (!this.lookup[type]) return;
+
         let { create, defaults } = this.lookup[type];
         let spec = Tools.union(properties, defaults);
         let instance = new create(spec);

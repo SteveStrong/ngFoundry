@@ -43,7 +43,7 @@ export class foGlyph extends foNode implements iShape {
     set opacity(value: number) { this._opacity = value; }
 
     get color(): string {
-        return this._color || 'green';
+        return this._color || 'black';
     }
     set color(value: string) {
         this._color = value;
@@ -69,13 +69,22 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
-
+    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this.x = x;
+        if (!Number.isNaN(y)) this.y = y;
+        return this;
+    }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         let x = this.x;
         let y = this.y;
         let width = this.width;
         let height = this.height;
+
+        ctx.save();
+        ctx.globalAlpha = .5;
+        ctx.fillRect(x, y, width, height);
+        ctx.restore();
 
         if (hit.x < x) return false;
         if (hit.x > x + width) return false;
@@ -155,17 +164,18 @@ export class foGlyph extends foNode implements iShape {
         ctx.save();
         //this.drawOrigin(ctx);
         ctx.translate(this.x, this.y);
-        this.drawOriginX(ctx);
+        //this.drawOriginX(ctx);
 
         this.preDraw(ctx);
         this.draw(ctx); 
         this.postDraw(ctx);
+        this.isSelected && this.drawSelected(ctx); 
         
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
+
         ctx.restore();
-        //this.drawOriginX(ctx); 
     }
 
     drawText(ctx: CanvasRenderingContext2D, text: string) {
@@ -179,6 +189,19 @@ export class foGlyph extends foNode implements iShape {
             dy += (fontsize + 4);
         }
     };
+
+    public drawPin(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.arc(0, 0, 6, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'pink';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
 
     public drawOrigin(ctx: CanvasRenderingContext2D) {
         ctx.save();
@@ -209,14 +232,11 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D){
-        let width = this.width;
-        let height = this.height;
-
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(0, 0, width, height);
+        ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
     }
 
@@ -225,6 +245,7 @@ export class foGlyph extends foNode implements iShape {
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
         this.drawOutline(ctx);
+        this.drawPin(ctx);
     }
 
     public preDraw = (ctx: CanvasRenderingContext2D): void => { }
@@ -240,20 +261,10 @@ export class foGlyph extends foNode implements iShape {
         ctx.fillRect(0, 0, width, height);
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-        let fontsize = 20;
-        ctx.font = `${fontsize}px Calibri`;
-        ctx.fillStyle = 'blue';
 
-        // let text = `x1=${x} y1=${y}|x2=${x+width} y2=${y+height}|`;
-        // let array = text.split('|');
-        // let dx = x + 10;
-        // let dy = y + 20;
-        // for (var i = 0; i < array.length; i++) {
-        //     ctx.fillText(array[i], dx, dy);
-        //     dy += (fontsize + 4);
-        //  }
 
-        this.isSelected && this.drawOutline(ctx);
+        let text = `x1=${this.x} y1=${this.y}|x2=${this.x+width} y2=${this.y+height}|`;
+        this.drawText(ctx, text);
     }
 
     toggleSelected() {

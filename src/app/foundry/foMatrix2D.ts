@@ -230,6 +230,11 @@ export class Matrix2D {
         return pt;
     };
 
+    invertPoint(x: number, y: number, pt?:cPoint):cPoint{
+        let inv = this.invert();
+        return inv.transformPoint(x,y,pt);
+    };
+
     decompose(target) {
         // TODO: it would be nice to be able to solve for whether the matrix can be decomposed into only scale/rotation even when scale is negative
         if (target == null) { target = {}; }
