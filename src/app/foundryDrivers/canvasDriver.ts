@@ -50,16 +50,19 @@ export class Sceen2D {
 
 
         canvas.addEventListener('mousedown',  (e) => {
+            e.preventDefault()
             let loc = getMousePos(e);
             PubSub.Pub('mousedown', loc, e);
         });
 
         canvas.addEventListener('mousemove', (e) => {
+            e.preventDefault()
             let loc = getMousePos(e);
             PubSub.Pub('mousemove', loc, e);
         });
 
         canvas.addEventListener('mouseup', (e) => {
+            e.preventDefault()
             let loc = getMousePos(e);
             PubSub.Pub('mouseup', loc, e);
         });

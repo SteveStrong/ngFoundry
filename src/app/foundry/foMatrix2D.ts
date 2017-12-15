@@ -75,7 +75,7 @@ export class Matrix2D {
         this.ty = ty;
         return this;
     }
-        
+
 
     appendMatrix(matrix: Matrix2D) {
         return this.append(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);
@@ -196,6 +196,7 @@ export class Matrix2D {
         let c1 = this.c;
         let d1 = this.d;
         let tx1 = this.tx;
+        let ty1 = this.tx;
         let n = a1 * d1 - b1 * c1;
 
         this.a = d1 / n;
@@ -203,7 +204,7 @@ export class Matrix2D {
         this.c = -c1 / n;
         this.d = a1 / n;
         this.tx = (c1 * this.ty - d1 * tx1) / n;
-        this.ty = -(a1 * this.ty - b1 * tx1) / n;
+        this.ty = -(a1 * this.ty - b1 * ty1) / n;
         return this;
     };
 
@@ -223,16 +224,16 @@ export class Matrix2D {
  * @param {Point | Object} [pt] An object to copy the result into. If omitted a generic object with x/y properties will be returned.
  * @return {Point} This matrix. Useful for chaining method calls.
  **/
-    transformPoint(x: number, y: number, pt?:cPoint):cPoint{
+    transformPoint(x: number, y: number, pt?: cPoint): cPoint {
         pt = pt || new cPoint();
         pt.x = x * this.a + y * this.c + this.tx;
         pt.y = x * this.b + y * this.d + this.ty;
         return pt;
     };
 
-    invertPoint(x: number, y: number, pt?:cPoint):cPoint{
+    invertPoint(x: number, y: number, pt?: cPoint): cPoint {
         let inv = this.invert();
-        return inv.transformPoint(x,y,pt);
+        return inv.transformPoint(x, y, pt);
     };
 
     decompose(target) {
@@ -274,7 +275,7 @@ export class Matrix2D {
         let matrix = new Matrix2D();
         matrix.setValues(this.a, this.b, this.c, this.d, this.tx, this.ty);
         return matrix
-       
+
     };
 
     toString() {

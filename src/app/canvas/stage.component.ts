@@ -219,32 +219,41 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let x = -shape.pinX();
     let y = -shape.pinY();
 
+    let width = shape.width;
+    let height = shape.height;
     //ctx.translate(this.x + x, this.y + y);
     //ctx.transform(cos, sin, -sin, cos, -x, -y);
 
     let mtx = new Matrix2D();
     //mtx.append(cos, sin, -sin, cos, -x, -y);
-    mtx.append(cos, sin, -sin, cos,  shape.x+x,  shape.y+y);
+    mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
 
-    this.message = ['pt (0,0)'];
-    this.message.push( mtx.transformPoint(0, 0));
+    this.message = ['pt (10,0)'];
+    this.message.push(mtx.transformPoint(10, 0));
     //this.message.push('pt (0,0) inv');
     //this.message.push( mtx.invertPoint(0, 0));
 
-    this.message.push(`pt (${loc.x},${loc.y}) `);
-    this.message.push(mtx.transformPoint(loc.x, loc.y));
+    //this.message.push(`pt (${loc.x},${loc.y}) `);
+    //this.message.push(mtx.transformPoint(loc.x, loc.y));
     this.message.push(`pt (${loc.x},${loc.y}) inv`);
-    this.message.push(mtx.invertPoint(loc.x, loc.y));
+    let pt = mtx.invertPoint(loc.x, loc.y)
+    this.message.push(pt);
+    let xtrue = x < pt.x && pt.x < x + width;
+    let ytrue = y < pt.y && pt.y < y + height;
+    this.message.push(`x ${x} < ${pt.x} < ${x + width}  ${xtrue}`);
+    this.message.push(`y ${y} < ${pt.y} < ${y + height}  ${ytrue}`);
 
     let isHit = shape.localHitTest(loc);
+    shape.isSelected = isHit;
     this.message.push(`isHit ${isHit}`);
+    this.message.push(mtx.invert());
   }
 
   doAddTwoByFour() {
 
     class localTwoByFour extends TwoByFour {
-      public pinX = (): number => { return 0 * this.width / 2; }
-      public pinY = (): number => { return 1 * this.height / 2; }
+      public pinX = (): number => { return 0.6 * this.width; }
+      public pinY = (): number => { return 0.0 * this.height; }
     }
 
     Stencil.define(localTwoByFour, this.computeSpec);
@@ -252,7 +261,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',
       angle: 90,
-    }).drop(100, 100);
+    }).drop(200, 200);
 
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);

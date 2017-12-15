@@ -62,15 +62,16 @@ export class foShape2D extends foGlyph {
         let x = -shape.pinX();
         let y = -shape.pinY();
 
+
         let mtx = new Matrix2D();
-        mtx.identity();
+        //mtx.identity();
         //mtx.translate(shape.x + x, shape.y + y);
         //mtx.rotate(angle);
         mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
 
         //let loc = mtx.invertPoint(hit.x, hit.y);
-        let loc = mtx.transformPoint(hit.x, hit.y);
-        
+        let loc = mtx.invertPoint(hit.x, hit.y);
+
         let width = this.width;
         let height = this.height;
 
@@ -88,7 +89,7 @@ export class foShape2D extends foGlyph {
         //let loc = this.getLocation();
 
         ctx.save();
-        ctx.globalAlpha = .5;
+        ctx.globalAlpha = .3;
         ctx.fillStyle = 'black';
 
         let angle = this.rotation() * Math.PI / 180
@@ -101,22 +102,19 @@ export class foShape2D extends foGlyph {
         //ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
         ctx.translate(this.x + x, this.y + y);
         ctx.transform(cos, sin, -sin, cos, -x, -y);
-        ctx.fillRect(x, y, this.width, this.height);
+        //ctx.fillRect(x, y, this.width, this.height);
 
         let mtx = new Matrix2D();
         mtx.append(cos, sin, -sin, cos, this.x + x, this.y + y);
-         //let loc = mtx.invertPoint(hit.x, hit.y);
-         let loc = mtx.transformPoint(hit.x, hit.y);
-         
-        //ctx.fillRect(loc.x, loc.y, this.width, this.height);
-
+        //let loc = mtx.invertPoint(hit.x, hit.y);
+        let loc = mtx.invertPoint(hit.x, hit.y);
 
 
         let width = this.width;
         let height = this.height;
 
         ctx.strokeStyle = "blue";
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 16;
         ctx.beginPath()
         ctx.moveTo(x, y);
         ctx.lineTo(x + width, y);
