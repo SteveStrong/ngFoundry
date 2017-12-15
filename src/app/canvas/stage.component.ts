@@ -252,7 +252,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByFour() {
 
     class localTwoByFour extends TwoByFour {
-      public pinX = (): number => { return 0.6 * this.width; }
+      public pinX = (): number => { return 0.5 * this.width; }
       public pinY = (): number => { return 0.0 * this.height; }
     }
 
@@ -260,7 +260,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',
-      angle: 90,
+      angle: 0,
     }).drop(200, 200);
 
     this.addToModel(shape);
