@@ -204,7 +204,7 @@ export class Matrix2D {
         this.c = -c1 / n;
         this.d = a1 / n;
         this.tx = (c1 * this.ty - d1 * tx1) / n;
-        this.ty = -(a1 * this.ty - b1 * tx1) / n;
+        this.ty = -(a1 * this.ty - b1 * ty1) / n;
         return this;
     };
 

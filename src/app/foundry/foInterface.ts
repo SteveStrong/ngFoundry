@@ -53,6 +53,18 @@ export interface iRect {
     setValue(x: number, y: number, width: number, height: number): iRect
 }
 
+export interface iBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+
+    pinX(): number;
+    pinY(): number;
+
+    setValue(x: number, y: number, width: number, height: number): iRect
+}
+
 export interface iShape extends iNode {
     render(ctx: CanvasRenderingContext2D, deep:boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
