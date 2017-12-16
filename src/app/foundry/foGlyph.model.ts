@@ -2,7 +2,7 @@
 import { Tools } from './foTools';
 import { cPoint } from './foGeometry';
 
-import { iObject, iNode, iShape, iPoint, iSize, Action } from './foInterface';
+import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
@@ -75,38 +75,7 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
 
-        ctx.save();
-        ctx.globalAlpha = .5;
-        ctx.fillRect(x, y, width, height);
-        ctx.restore();
-
-        if (hit.x < x) return false;
-        if (hit.x > x + width) return false;
-        if (hit.y < y) return false;
-        if (hit.y > y + height) return false;
-        return true;
-    }
-
-    public overlapTest = (hit: iShape, ctx: CanvasRenderingContext2D): boolean => {
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
-
-        let loc = hit.getLocation();
-        let size = hit.getSize(1.0);
-        if (loc.x > x + width) return false;
-        if (loc.x + size.width < x) return false;
-        if (loc.y > y + height) return false;
-        if (loc.y + size.height < y) return false;
-        return true;
-    }
 
     public getOffset = (loc: iPoint): iPoint => {
         let x = this.x;
@@ -159,6 +128,61 @@ export class foGlyph extends foNode implements iShape {
         this.opacity = opacity;
         return this.opacity;
     };
+
+    findObjectUnderPoint(hit: iPoint, deep:boolean, ctx: CanvasRenderingContext2D): iShape {
+        let found = undefined;
+        if ( this.hitTest(hit, ctx) ) {
+            found = this;
+            if ( deep ) {
+
+            }
+        }
+        return found;
+    }
+
+    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+
+        ctx.save();
+        ctx.globalAlpha = .5;
+        ctx.fillRect(x, y, width, height);
+        ctx.restore();
+
+        if (hit.x < x) return false;
+        if (hit.x > x + width) return false;
+        if (hit.y < y) return false;
+        if (hit.y > y + height) return false;
+        return true;
+    }
+
+    findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): iShape {
+        let found = undefined;
+        if ( this.overlapTest(hit, ctx) ) {
+            found = this;
+            if ( deep ) {
+                
+            }
+        }
+        return found;
+    }
+
+    public overlapTest = (hit: iShape, ctx: CanvasRenderingContext2D): boolean => {
+        let x = this.x;
+        let y = this.y;
+        let width = this.width;
+        let height = this.height;
+
+        let loc = hit.getLocation();
+        let size = hit.getSize(1.0);
+        if (loc.x > x + width) return false;
+        if (loc.x + size.width < x) return false;
+        if (loc.y > y + height) return false;
+        if (loc.y + size.height < y) return false;
+        return true;
+    }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
@@ -261,7 +285,6 @@ export class foGlyph extends foNode implements iShape {
         ctx.fillRect(0, 0, width, height);
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-
 
         let text = `x1=${this.x} y1=${this.y}|x2=${this.x+width} y2=${this.y+height}|`;
         this.drawText(ctx, text);

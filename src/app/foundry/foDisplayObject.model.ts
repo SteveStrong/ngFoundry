@@ -20,22 +20,16 @@ export class foDisplayObject extends foGlyph {
     //protected _subcomponents: foCollection<foDisplayObject>;
     protected _x: number = 0;
     protected _y: number = 0;
-    protected _transformMatrix: number;
 
-    protected _regX: number = 0;
-    protected _regY: number = 0;
     protected _rotation: number = 0;
     protected _scaleX: number = 1;
     protected _scaleY: number = 1;
-    protected _skewX: number = 0;
-    protected _skewY: number = 0;
 
-    protected _alpha: number = 1.0;
     protected _visible: boolean = true;
     protected snapToPixel: boolean = false;
 
 
-    protected matrix: Matrix2D = new Matrix2D();
+    protected _matrix: Matrix2D = new Matrix2D();
     protected _bounds: iRect;
 
     public pinX = (): number => { return 0 * this.width / 2; }
@@ -49,19 +43,24 @@ export class foDisplayObject extends foGlyph {
     }
 
     isVisible() {
-        return !!(this._visible && this._alpha > 0 && this._scaleX != 0 && this._scaleY != 0);
+        return !!(this._visible && this._opacity > 0 && this._scaleX != 0 && this._scaleY != 0);
     };
 
-
+    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this._x = x;
+        if (!Number.isNaN(y)) this._y = y;
+        if (!Number.isNaN(angle)) this._rotation = angle;
+        return this;
+    }
 	/**
 	 * Applies this display object's transformation, alpha, globalCompositeOperation, clipping path (mask), and shadow
 	 * to the specified context. This is typically called prior to "DisplayObject/draw".
 	 * @method updateContext
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
 	 **/
-    updateContext(ctx: CanvasRenderingContext2D) {
+    updateContextxx(ctx: CanvasRenderingContext2D) {
         //changed from original
-        let mtx = this.getMatrix(this.matrix);
+        let mtx = this.getMatrix(this._matrix);
         let tx = mtx.tx;
         let ty = mtx.ty;
         if (foDisplayObject._snapToPixelEnabled && this.snapToPixel) {
@@ -69,7 +68,7 @@ export class foDisplayObject extends foGlyph {
             ty = ty + (ty < 0 ? -0.5 : 0.5) | 0;
         }
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, tx, ty);
-        ctx.globalAlpha *= this._alpha;
+        ctx.globalAlpha *= this._opacity;
 
         // if (o.compositeOperation) { ctx.globalCompositeOperation = o.compositeOperation; }
         // if (o.shadow) { this._applyShadow(ctx, o.shadow); }
@@ -77,11 +76,11 @@ export class foDisplayObject extends foGlyph {
 
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
-        return this.getConcatenatedMatrix(this.matrix).transformPoint(x, y, pt || new cPoint());
+        return this.getConcatenatedMatrix(this._matrix).transformPoint(x, y, pt || new cPoint());
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
-        return this.getConcatenatedMatrix(this.matrix).invert().transformPoint(x, y, pt || new cPoint());
+        return this.getConcatenatedMatrix(this._matrix).invert().transformPoint(x, y, pt || new cPoint());
     };
 
     localToLocal(x: number, y: number, target: foDisplayObject, pt?: cPoint) {
@@ -89,33 +88,80 @@ export class foDisplayObject extends foGlyph {
         return target.globalToLocal(pt.x, pt.y, pt);
     };
 
-    setTransform(x: number, y: number, scaleX: number, scaleY: number, rotation: number, skewX: number, skewY: number, regX: number, regY: number) {
+    setTransform(x: number, y: number, scaleX: number, scaleY: number, rotation: number) {
         this._x = x || 0;
         this._y = y || 0;
         this._scaleX = scaleX == undefined ? 1 : scaleX;
         this._scaleY = scaleY == undefined ? 1 : scaleY;
         this._rotation = rotation || 0;
-        this._skewX = skewX || 0;
-        this._skewY = skewY || 0;
-        this._regX = regX || this.pinX(); //is this right?
-        this._regY = regY || this.pinY();
         return this;
     };
 
     getMatrix(matrix: Matrix2D) {
         let mtx = matrix && matrix.identity() || new Matrix2D();
         let transformMatrix = this['transformMatrix'];
-        return transformMatrix ? mtx.copy(transformMatrix) : mtx.appendTransform(this._x, this._y, this._scaleX, this._scaleY, this._rotation, this._skewX, this._skewY, this._regX, this._regY);
+        return transformMatrix ? mtx.copy(transformMatrix) : mtx.appendTransform(this._x, this._y, this._scaleX, this._scaleY, this._rotation, 0, 0, this.pinX(), this.pinY());
     };
 
     getConcatenatedMatrix(matrix: Matrix2D) {
         let o: foDisplayObject = this;
         let mtx = this.getMatrix(matrix);
         while (o = <foDisplayObject>o.myParent()) {
-            mtx.prependMatrix(o.getMatrix(o.matrix));
+            mtx.prependMatrix(o.getMatrix(o._matrix));
         }
         return mtx;
     };
+
+    private localHitTest = (hit: iPoint): boolean => {
+
+        let shape = this;
+
+        let mtx = new Matrix2D();
+        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
+
+        let loc = mtx.invertPoint(hit.x, hit.y);
+
+        if (loc.x < 0) return false;
+        if (loc.x > this.width) return false;
+
+        if (loc.y < 0) return false;
+        if (loc.y > this.height) return false;
+
+        return true;
+    }
+
+    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+
+        let angle = this.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+        let x = -this.pinX();
+        let y = -this.pinY();
+
+
+        let width = this.width;
+        let height = this.height;
+
+        ctx.save();
+        ctx.globalAlpha = .3;
+        ctx.fillStyle = 'black';
+        ctx.translate(this.x + x, this.y + y);
+        ctx.transform(cos, sin, -sin, cos, -x, -y);
+
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 16;
+        ctx.beginPath()
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + width, y);
+        ctx.lineTo(x + width, y + height);
+        ctx.lineTo(x, y + height);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        ctx.restore();
+
+        return this.localHitTest(hit);
+    }
 
     public hitTestWithDraw = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         let x = hit.x;
@@ -169,7 +215,7 @@ export class foDisplayObject extends foGlyph {
         let y = bounds.y;
         let width = bounds.width;
         let height = bounds.height;
-        let mtx = this.matrix;
+        let mtx = this._matrix;
 
         mtx = ignoreTransform ? mtx.identity() : this.getMatrix(mtx);
 
@@ -207,25 +253,33 @@ export class foDisplayObject extends foGlyph {
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
-        this.drawOriginX(ctx);
-
         ctx.translate(this.x - this.pinX(), this.y - this.pinY());
         ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
+        this.drawOriginX(ctx);
+
         this.preDraw(ctx);
         this.draw(ctx);
+        this.isSelected && this.drawSelected(ctx);
         this.postDraw(ctx);
-        this.drawPin(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
+        this.afterRender(ctx);
     }
 
 
+    public afterRender = (ctx: CanvasRenderingContext2D): void => { }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(-this.pinX(), -this.pinY(), this.width, this.height);
+        ctx.stroke();
     }
 
 
@@ -233,18 +287,19 @@ export class foDisplayObject extends foGlyph {
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         this.drawOutline(ctx);
+        this.drawPin(ctx);
     }
 
     public preDraw = (ctx: CanvasRenderingContext2D): void => { }
     public postDraw = (ctx: CanvasRenderingContext2D): void => { }
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
-        
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = 10;
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.lineWidth = 1;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(0, 0, this.width, this.height);
+        ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
         ctx.stroke();    
         ctx.restore();  
     }

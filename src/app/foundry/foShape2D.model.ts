@@ -53,7 +53,7 @@ export class foShape2D extends foGlyph {
         }
     }
 
-    public localHitTest = (hit: iPoint): boolean => {
+    private localHitTest = (hit: iPoint): boolean => {
 
         let shape = this;
 
@@ -72,7 +72,6 @@ export class foShape2D extends foGlyph {
     }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        let shape = this;
 
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
@@ -80,11 +79,6 @@ export class foShape2D extends foGlyph {
         let x = -this.pinX();
         let y = -this.pinY();
 
-
-        let mtx = new Matrix2D();
-        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, -x, -y);
-        
-        let loc = mtx.invertPoint(hit.x, hit.y);
 
         let width = this.width;
         let height = this.height;
@@ -107,14 +101,7 @@ export class foShape2D extends foGlyph {
 
         ctx.restore();
 
-        if (loc.x < 0) return false;
-        if (loc.x > width) return false;
-
-
-        if (loc.y < 0) return false;
-        if (loc.y > height) return false;
-
-        return true;
+        return this.localHitTest(hit);
     }
 
 

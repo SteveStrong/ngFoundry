@@ -115,23 +115,22 @@ export class foPage extends foGlyph {
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
             loc.add(this.marginX, this.marginY);
             this.onMouseLocationChanged(loc,"down");
-
-            shape = this.findHitShape(loc);
+ 
             this._subcomponents.forEach(item => {
                 item.isSelected = false;
             });
 
+            shape = this.findHitShape(loc);
             if (shape) {
                 this._subcomponents.moveToTop(shape);
                 shape.isSelected = true;
-                //this.selections.push(shape);
                 offset = shape.getOffset(loc);
             }
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e) => {
-            this.onMouseLocationChanged(loc,"move");
+        PubSub.Sub('mousemove', (loc: cPoint, e) => {          
             if (shape) {
+                this.onMouseLocationChanged(loc,"move");
                 shape.doMove(loc, offset);
 
                 if (!overshape) {
@@ -162,6 +161,11 @@ export class foPage extends foGlyph {
                     //TweenMax.to(overshape, 0.3, size);
                 }
 
+            } else {
+                this.onMouseLocationChanged(loc,"hover");
+                loc.add(this.marginX, this.marginY);
+                let hoverShape = this.findHitShape(loc);
+                hoverShape && this.onItemHoverPosition(loc, hoverShape);
             }
             this.sitOnShape = overshape || {};
         });
@@ -199,6 +203,9 @@ export class foPage extends foGlyph {
     }
 
     public onItemChangedPosition = (shape: foGlyph): void => {
+    }
+
+    public onItemHoverPosition = (loc: cPoint, shape: foGlyph): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {
