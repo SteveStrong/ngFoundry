@@ -56,45 +56,23 @@ export class foShape2D extends foGlyph {
     public localHitTest = (hit: iPoint): boolean => {
 
         let shape = this;
-        let angle = shape.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-        let x = -shape.pinX();
-        let y = -shape.pinY();
-
 
         let mtx = new Matrix2D();
-        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, -x, -y);
-
-        // let mtx = new Matrix2D();
-        // //mtx.identity();
-        // //mtx.translate(shape.x + x, shape.y + y);
-        // //mtx.rotate(angle);
-        // mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
+        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
 
         let loc = mtx.invertPoint(hit.x, hit.y);
 
-        let width = this.width;
-        let height = this.height;
+        if (loc.x < 0) return false;
+        if (loc.x > this.width) return false;
 
-        x = y = 0;
-
-        if (loc.x < x) return false;
-        if (loc.x > x + width) return false;
-
-
-        if (loc.y < y) return false;
-        if (loc.y > y + height) return false;
+        if (loc.y < 0) return false;
+        if (loc.y > this.height) return false;
 
         return true;
     }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        //let loc = this.getLocation();
-
-        ctx.save();
-        ctx.globalAlpha = .3;
-        ctx.fillStyle = 'black';
+        let shape = this;
 
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
@@ -102,23 +80,20 @@ export class foShape2D extends foGlyph {
         let x = -this.pinX();
         let y = -this.pinY();
 
-        //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        //ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
-        ctx.translate(this.x + x, this.y + y);
-        ctx.transform(cos, sin, -sin, cos, -x, -y);
-        //ctx.fillRect(x, y, this.width, this.height);
 
         let mtx = new Matrix2D();
-        let shape = this;
         mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, -x, -y);
         
-        //old mtx.append(cos, sin, -sin, cos, this.x + x, this.y + y);
-        //let loc = mtx.invertPoint(hit.x, hit.y);
         let loc = mtx.invertPoint(hit.x, hit.y);
-
 
         let width = this.width;
         let height = this.height;
+
+        ctx.save();
+        ctx.globalAlpha = .3;
+        ctx.fillStyle = 'black';
+        ctx.translate(this.x + x, this.y + y);
+        ctx.transform(cos, sin, -sin, cos, -x, -y);
 
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 16;
@@ -132,14 +107,12 @@ export class foShape2D extends foGlyph {
 
         ctx.restore();
 
-        x = y = 0;
-
-        if (loc.x < x) return false;
-        if (loc.x > x + width) return false;
+        if (loc.x < 0) return false;
+        if (loc.x > width) return false;
 
 
-        if (loc.y < y) return false;
-        if (loc.y > y + height) return false;
+        if (loc.y < 0) return false;
+        if (loc.y > height) return false;
 
         return true;
     }
