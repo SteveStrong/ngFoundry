@@ -1,0 +1,32 @@
+I used to have working sample code, which I used in my scene graph system (Node class). But based on input from others, it does not seem to work in all cases. So I will give you a brief explanation instead.
+
+The basic trick is to create a transformation matrix for the rectangle, combining all translations, rotations and scaling you want to apply to it. Then you take the inverse of that matrix. 
+
+Next, you translate the mouse coordinates to world coordinates. See this post.
+
+Finally, you transform the world coordinates using the inverse transformation matrix. Easy if you know how.
+
+// your rectangle
+Rectf rect(0, 0, 300, 200);
+
+// create a combined transformation matrix for your rect
+Matrix44f transform;
+transform.rotate( Vec3f(0.0f, 0.0f, toRadians(65.0f)) );
+transform.translate( Vec3f(50.0f, 90.0f, 0.0f) );
+
+// use it when you draw the rect
+gl::pushModelView();
+gl::multModelView( transform );
+gl::drawStrokedRect( rect );
+gl::popModelView();
+
+// when interacting, retrieve world coordinates of the mouse
+//  note: you will have to supply Z-coordinate yourself (usually 0.0)
+Vec2i mouseScreenPos = event.getPos();
+Vec3f mouseWorldPos = screenToWorld( mouseScreenPos.x, mouseScreenPos.y, 0.0f );
+
+// apply inverse transformation to convert to object space
+Vec3f mouseObjectPos = transform.inverted().transformPoint( mouseWorldPos );
+
+// now you can use Rect.contains() like this:
+rect.contains( Vec2f(mouseObjectPos.x, mouseObjectPos.y) );

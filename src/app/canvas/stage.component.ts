@@ -37,8 +37,8 @@ import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 export class StageComponent extends foPage implements OnInit, AfterViewInit {
   // a reference to the canvas element from our template
   @ViewChild('canvas') public canvasRef: ElementRef;
-  @Input() public width = 1000;
-  @Input() public height = 800;
+  @Input() public pageWidth = 1000;
+  @Input() public pageHeight = 800;
 
   message: Array<any> = [];
   screen2D: Sceen2D = new Sceen2D();
@@ -82,8 +82,27 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.onItemChangedParent = (shape: foGlyph): void => {
       this.signalR.pubChannel("parent", shape.asJson);
     }
+
     this.onItemChangedPosition = (shape: foGlyph): void => {
       this.signalR.pubChannel("moveShape", shape.asJson);
+    }
+
+    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
+      //this.signalR.pubChannel("moveShape", shape.asJson);
+      this.message = [];
+      this.message.push(`Hover (${loc.x},${loc.y}) `);
+      this.message.push(shape);
+
+      shape.drawHover = shape.renderHitTest.bind(shape);
+    }
+
+    this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
+      //this.signalR.pubChannel("moveShape", shape.asJson);
+      this.message = [];
+      this.message.push(`Hover (${loc.x},${loc.y}) `);
+      this.message.push(shape);
+
+      shape.drawHover = undefined; // shape.renderHitTest.bind(shape);
     }
 
 
@@ -104,7 +123,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.mouseLoc = loc;
     this.mouseLoc.state = state;
     this.writeDisplayMessage(loc);
-    this.writeShapeMessage(loc)
+    //this.writeShapeMessage(loc)
   }
 
   doDynamicCreate() {
@@ -148,36 +167,31 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("addGlyph", shape.asJson);
   }
 
-  public displayObj;
-  writeDisplayMessage(loc: cPoint) {
-    if (!this.displayObj) return;
-    this.message = ['localToGlobal (10,20)']
-    this.message.push(this.displayObj.localToGlobal(10, 20));
-  }
+
 
 
 
   doAddRectangle() {
 
     let shape = Display.create(dRectangle, {
-      color: 'black',
+      color: 'purple',
       width: 300,
       height: 100
-    }).drop(100, 50);
+    }).drop(100, 50, 45);
 
     this.addToModel(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
-    shape.updateContext(this.screen2D.context)
+    //shape.updateContext(this.screen2D.context)
     this.displayObj = shape;
 
-    // let subShape = Display.create(dRectangle, {
-    //   color: 'blue',
-    //   x: 150,
-    //   y: 150,
-    //   width: 30,
-    //   height: 100
-    // }).addAsSubcomponent(shape);
+    let subShape = Display.create(dRectangle, {
+      color: 'blue',
+      x: 150,
+      y: 150,
+      width: 30,
+      height: 100
+    }).addAsSubcomponent(shape).drop(100, 50, 45);;
     // //this.addToModel(subShape);
 
     // this.signalR.pubChannel("syncDisp", subShape.asJson);
@@ -208,55 +222,62 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
-  public displayShape;
-  writeShapeMessage(loc: cPoint) {
-    if (!this.displayShape) return;
-
-    let shape = this.displayShape;
-    let angle = shape.rotation() * Math.PI / 180
-    let cos = Math.cos(angle);
-    let sin = Math.sin(angle);
-    let x = -shape.pinX();
-    let y = -shape.pinY();
-
-    //ctx.translate(this.x + x, this.y + y);
-    //ctx.transform(cos, sin, -sin, cos, -x, -y);
-
-    let mtx = new Matrix2D();
-    //mtx.append(cos, sin, -sin, cos, -x, -y);
-    mtx.append(cos, sin, -sin, cos,  shape.x+x,  shape.y+y);
-
-    this.message = ['pt (0,0)'];
-    this.message.push( mtx.transformPoint(0, 0));
-    //this.message.push('pt (0,0) inv');
-    //this.message.push( mtx.invertPoint(0, 0));
-
-    this.message.push(`pt (${loc.x},${loc.y}) `);
-    this.message.push(mtx.transformPoint(loc.x, loc.y));
-    this.message.push(`pt (${loc.x},${loc.y}) inv`);
-    this.message.push(mtx.invertPoint(loc.x, loc.y));
-
-    let isHit = shape.localHitTest(loc);
-    this.message.push(`isHit ${isHit}`);
+  public displayObj;
+  writeDisplayMessage(loc: cPoint) {
+    if (!this.displayObj) return;
+    this.message = [];
+    this.message.push(`localToGlobal (${loc.x},${loc.y}) `);
+    this.message.push(this.displayObj.localToGlobal(loc.x, loc.y));
   }
+
+  // public displayShape;
+  // writeShapeMessage(loc: cPoint) {
+  //   if (!this.displayShape) return;
+
+  //   let shape = this.displayShape;
+
+  //   let x = -shape.pinX();
+  //   let y = -shape.pinY();
+  //   let width = shape.width;
+  //   let height = shape.height;
+
+
+  //   let mtx = new Matrix2D();
+  //   mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
+
+  //   this.message = [];
+  //   this.message.push(`pt (${loc.x},${loc.y}) inv`);
+  //   let pt = mtx.invertPoint(loc.x, loc.y)
+  //   this.message.push(pt);
+  //   x = y = 0;
+  //   let xtrue = x < pt.x && pt.x < x + width;
+  //   let ytrue = y < pt.y && pt.y < y + height;
+  //   this.message.push(`x ${x} < ${pt.x} < ${x + width}  ${xtrue}`);
+  //   this.message.push(`y ${y} < ${pt.y} < ${y + height}  ${ytrue}`);
+
+  //   let isHit = shape.localHitTest(loc);
+  //   shape.isSelected = isHit;
+  //   this.message.push(`isHit ${isHit}`);
+  //   this.message.push(mtx.invert());
+  // }
 
   doAddTwoByFour() {
 
     class localTwoByFour extends TwoByFour {
-      public pinX = (): number => { return 0 * this.width / 2; }
-      public pinY = (): number => { return 1 * this.height / 2; }
+      public pinX = (): number => { return 0.5 * this.width; }
+      public pinY = (): number => { return 0.5 * this.height; }
     }
 
     Stencil.define(localTwoByFour, this.computeSpec);
 
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',
-      angle: 90,
-    }).drop(100, 100);
+      angle: 45,
+    }).drop(200, 200);
 
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
-    this.displayShape = shape;
+    //this.displayShape = shape;
   }
 
   doAddOneByTen() {
@@ -338,17 +359,23 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit() {
+    this.color = 'yellow';
+    this.width = this.pageWidth;
+    this.height = this.pageHeight;
 
-    this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
+    this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
 
-    this.screen2D.render = (context: CanvasRenderingContext2D) => {
-      context.save();
-      context.fillStyle = "yellow";
-      context.fillRect(0, 0, this.width, this.height);
-      context.restore();
-
-      this.render(context);
+    this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
+      ctx.save();
+      this.render(ctx);
+      ctx.restore();
     }
+
+    this.preDraw = (ctx: CanvasRenderingContext2D): void => { 
+      ctx.fillStyle = this.color;
+      ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
+    }
+
 
     this.screen2D.go();
 

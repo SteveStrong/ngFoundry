@@ -72,6 +72,26 @@ export class foObject implements iObject {
         return self;
     }
 
+    getMethodList() {
+
+        //consider moveing this code to baseobject
+        function getAllMethods(object) {
+            return Object.getOwnPropertyNames(object).filter(function (property) {
+                return typeof object[property] == 'function';
+            });
+        }
+
+        let names = getAllMethods(this);
+
+        let self = this;
+        let obj1 = {};
+        names.forEach(item => {
+            obj1[item] = self[item](); //evaluate all methods
+        })
+
+        return names;
+    }
+
     get debug() {
         return Tools.stringify(this);
         //return JSON.stringify(this,undefined,3);

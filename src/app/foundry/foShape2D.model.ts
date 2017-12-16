@@ -53,70 +53,43 @@ export class foShape2D extends foGlyph {
         }
     }
 
-    public localHitTest = (hit: iPoint): boolean => {
+    private localHitTest = (hit: iPoint): boolean => {
 
         let shape = this;
-        let angle = shape.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-        let x = -shape.pinX();
-        let y = -shape.pinY();
 
         let mtx = new Matrix2D();
-        mtx.identity();
-        //mtx.translate(shape.x + x, shape.y + y);
-        //mtx.rotate(angle);
-        mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
+        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
 
-        //let loc = mtx.invertPoint(hit.x, hit.y);
-        let loc = mtx.transformPoint(hit.x, hit.y);
-        
-        let width = this.width;
-        let height = this.height;
+        let loc = mtx.invertPoint(hit.x, hit.y);
 
-        if (loc.x < x) return false;
-        if (loc.x > x + width) return false;
+        if (loc.x < 0) return false;
+        if (loc.x > this.width) return false;
 
-
-        if (loc.y < y) return false;
-        if (loc.y > y + height) return false;
+        if (loc.y < 0) return false;
+        if (loc.y > this.height) return false;
 
         return true;
     }
 
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        //let loc = this.getLocation();
-
-        ctx.save();
-        ctx.globalAlpha = .5;
-        ctx.fillStyle = 'black';
-
+    public renderHitTest(ctx: CanvasRenderingContext2D) {
         let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
         let x = -this.pinX();
         let y = -this.pinY();
 
-        //ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        //ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
-        ctx.translate(this.x + x, this.y + y);
-        ctx.transform(cos, sin, -sin, cos, -x, -y);
-        ctx.fillRect(x, y, this.width, this.height);
-
-        let mtx = new Matrix2D();
-        mtx.append(cos, sin, -sin, cos, this.x + x, this.y + y);
-         //let loc = mtx.invertPoint(hit.x, hit.y);
-         let loc = mtx.transformPoint(hit.x, hit.y);
-         
-        //ctx.fillRect(loc.x, loc.y, this.width, this.height);
-
-
-
         let width = this.width;
         let height = this.height;
 
+        ctx.save();
+        ctx.globalAlpha = .3;
+        ctx.fillStyle = 'gray';
+        ctx.translate(this.x + x, this.y + y);
+        ctx.transform(cos, sin, -sin, cos, -x, -y);
+        ctx.fillRect(-x, -y, width, height);
+
         ctx.strokeStyle = "blue";
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 16;
         ctx.beginPath()
         ctx.moveTo(x, y);
         ctx.lineTo(x + width, y);
@@ -126,18 +99,12 @@ export class foShape2D extends foGlyph {
         ctx.stroke();
 
         ctx.restore();
-
-
-        if (loc.x < x) return false;
-        if (loc.x > x + width) return false;
-
-
-        if (loc.y < y) return false;
-        if (loc.y > y + height) return false;
-
-        return true;
     }
 
+    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+        ctx && this.renderHitTest(ctx);
+        return this.localHitTest(hit);
+    }
 
 
     public getLocation = (): iPoint => {
@@ -179,31 +146,24 @@ export class foShape2D extends foGlyph {
 
         this.drawOriginX(ctx);
 
-        this.preDraw(ctx);
+        this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
-        this.isSelected && this.drawSelected(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
 
-        this.postDraw(ctx);
+        this.isSelected && this.drawSelected(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
 
-        this.afterRender(ctx);
+        this.afterRender && this.afterRender(ctx);
         //this.drawOrigin(ctx);
     }
 
-    public afterRender = (ctx: CanvasRenderingContext2D): void => { }
 
-    public postDraw = (ctx: CanvasRenderingContext2D): void => { }
 
-    public drawHover = (ctx: CanvasRenderingContext2D): void => { }
-
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-        this.drawOutline(ctx);
-        this.drawPin(ctx);
-    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.strokeStyle = "red";
@@ -214,8 +174,10 @@ export class foShape2D extends foGlyph {
         ctx.stroke();
     }
 
-
-
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        this.drawOutline(ctx);
+        this.drawPin(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;
