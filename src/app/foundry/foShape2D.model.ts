@@ -64,18 +64,20 @@ export class foShape2D extends foGlyph {
 
 
         let mtx = new Matrix2D();
-        //mtx.identity();
-        //mtx.translate(shape.x + x, shape.y + y);
-        //mtx.rotate(angle);
-        mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
+        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, -x, -y);
 
-        //let loc = mtx.invertPoint(hit.x, hit.y);
+        // let mtx = new Matrix2D();
+        // //mtx.identity();
+        // //mtx.translate(shape.x + x, shape.y + y);
+        // //mtx.rotate(angle);
+        // mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
+
         let loc = mtx.invertPoint(hit.x, hit.y);
 
         let width = this.width;
         let height = this.height;
 
-        // x = y = 0;
+        x = y = 0;
 
         if (loc.x < x) return false;
         if (loc.x > x + width) return false;
@@ -107,7 +109,10 @@ export class foShape2D extends foGlyph {
         //ctx.fillRect(x, y, this.width, this.height);
 
         let mtx = new Matrix2D();
-        mtx.append(cos, sin, -sin, cos, this.x + x, this.y + y);
+        let shape = this;
+        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, -x, -y);
+        
+        //old mtx.append(cos, sin, -sin, cos, this.x + x, this.y + y);
         //let loc = mtx.invertPoint(hit.x, hit.y);
         let loc = mtx.invertPoint(hit.x, hit.y);
 
@@ -127,7 +132,7 @@ export class foShape2D extends foGlyph {
 
         ctx.restore();
 
-        // x = y = 0;
+        x = y = 0;
 
         if (loc.x < x) return false;
         if (loc.x > x + width) return false;

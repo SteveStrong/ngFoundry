@@ -225,8 +225,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //ctx.transform(cos, sin, -sin, cos, -x, -y);
 
     let mtx = new Matrix2D();
-    //mtx.append(cos, sin, -sin, cos, -x, -y);
-    mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
+    //mtx.translate(this.x + x, this.y + y);
+    //mtx.translate(x, y);
+    mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, -x, -y);
+
+    //no mtx.append(cos, sin, -sin, cos, -x, -y);
+    //maybe mtx.append(cos, sin, -sin, cos, shape.x + x, shape.y + y);
 
     this.message = ['pt (10,0)'];
     this.message.push(mtx.transformPoint(10, 0));
@@ -238,7 +242,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.message.push(`pt (${loc.x},${loc.y}) inv`);
     let pt = mtx.invertPoint(loc.x, loc.y)
     this.message.push(pt);
-    // x = y = 0;
+    x = y = 0;
     let xtrue = x < pt.x && pt.x < x + width;
     let ytrue = y < pt.y && pt.y < y + height;
     this.message.push(`x ${x} < ${pt.x} < ${x + width}  ${xtrue}`);
@@ -254,14 +258,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     class localTwoByFour extends TwoByFour {
       public pinX = (): number => { return 0.5 * this.width; }
-      public pinY = (): number => { return 0.0 * this.height; }
+      public pinY = (): number => { return 0.5 * this.height; }
     }
 
     Stencil.define(localTwoByFour, this.computeSpec);
 
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',
-      angle: 180,
+      angle: 45,
     }).drop(200, 200);
 
     this.addToModel(shape);
