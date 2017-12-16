@@ -35,7 +35,7 @@ export class foDisplayObject extends foGlyph {
     public pinX = (): number => { return 0 * this.width / 2; }
     public pinY = (): number => { return 0 * this.height / 2 }
     public rotation = (): number => { return this._rotation; }
-    
+
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -132,33 +132,35 @@ export class foDisplayObject extends foGlyph {
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
 
-        let angle = this.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-        let x = -this.pinX();
-        let y = -this.pinY();
+        if (ctx) {
+            let angle = this.rotation() * Math.PI / 180
+            let cos = Math.cos(angle);
+            let sin = Math.sin(angle);
+            let x = -this.pinX();
+            let y = -this.pinY();
 
+            let width = this.width;
+            let height = this.height;
 
-        let width = this.width;
-        let height = this.height;
+            ctx.save();
+            ctx.globalAlpha = .3;
+            ctx.fillStyle = 'gray';
+            ctx.translate(this.x + x, this.y + y);
+            ctx.transform(cos, sin, -sin, cos, -x, -y);
+            ctx.fillRect(-x, -y, width, height);
 
-        ctx.save();
-        ctx.globalAlpha = .3;
-        ctx.fillStyle = 'black';
-        ctx.translate(this.x + x, this.y + y);
-        ctx.transform(cos, sin, -sin, cos, -x, -y);
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 16;
+            ctx.beginPath()
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + width, y);
+            ctx.lineTo(x + width, y + height);
+            ctx.lineTo(x, y + height);
+            ctx.lineTo(x, y);
+            ctx.stroke();
 
-        ctx.strokeStyle = "blue";
-        ctx.lineWidth = 16;
-        ctx.beginPath()
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + width, y);
-        ctx.lineTo(x + width, y + height);
-        ctx.lineTo(x, y + height);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-
-        ctx.restore();
+            ctx.restore();
+        }
 
         return this.localHitTest(hit);
     }
@@ -177,7 +179,7 @@ export class foDisplayObject extends foGlyph {
         return isHit;
     };
 
-    _testHit(ctx: CanvasRenderingContext2D):boolean {
+    _testHit(ctx: CanvasRenderingContext2D): boolean {
         try {
             let hit = ctx.getImageData(0, 0, 1, 1).data[3] > 1;
             return hit;
@@ -196,7 +198,7 @@ export class foDisplayObject extends foGlyph {
         return this._bounds;
     };
 
-    setBounds(x:number, y:number, width:number, height:number): iRect {
+    setBounds(x: number, y: number, width: number, height: number): iRect {
         this._bounds = this._bounds || new cRect(x, y, width, height);
         return this._bounds;
     };
@@ -249,7 +251,7 @@ export class foDisplayObject extends foGlyph {
         ctx.save();
         this.drawOrigin(ctx);
 
-        let angle =  this.rotation() * Math.PI / 180
+        let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
@@ -258,16 +260,19 @@ export class foDisplayObject extends foGlyph {
 
         this.drawOriginX(ctx);
 
-        this.preDraw(ctx);
+        this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
+
         this.isSelected && this.drawSelected(ctx);
-        this.postDraw(ctx);
+
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
-        this.afterRender(ctx);
+        this.afterRender && this.afterRender(ctx);
     }
 
 
@@ -300,8 +305,8 @@ export class foDisplayObject extends foGlyph {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
         ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
-        ctx.stroke();    
-        ctx.restore();  
+        ctx.stroke();
+        ctx.restore();
     }
 
 

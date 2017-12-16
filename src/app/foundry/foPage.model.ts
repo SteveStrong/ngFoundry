@@ -13,17 +13,17 @@ import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph } from '../foundry/foGlyph.model'
+import { foShape2D } from '../foundry/foShape2D.model'
 //https://greensock.com/docs/TweenMax
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
-export class foPage extends foGlyph {
+export class foPage extends foShape2D {
 
-    protected _angle: number;
-    get angle(): number { return this._angle || 0.0; }
-    set angle(value: number) { this._angle = value; }
+    gridSizeX:number = 50;
+    gridSizeY:number = 50;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -32,6 +32,14 @@ export class foPage extends foGlyph {
     protected _marginY: number;
     get marginY(): number { return this._marginY || 0.0; }
     set marginY(value: number) { this._marginY = value; }
+
+    protected _scaleX: number;
+    get scaleX(): number { return this._scaleX || 1.0; }
+    set scaleX(value: number) { this._scaleX = value; }
+
+    protected _scaleY: number;
+    get scaleY(): number { return this._scaleY || 1.0; }
+    set scaleY(value: number) { this._scaleY = value; }
 
     mouseLoc: any = {};
     sitOnShape: any = {};
@@ -56,20 +64,20 @@ export class foPage extends foGlyph {
         return this._dictionary.found(key, onFound);
     }
 
-    findHitShape(loc: iPoint, exclude: foGlyph = null): foGlyph {
+    findHitShape(loc: iPoint, deep:boolean=true, exclude: foGlyph = null): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != exclude && shape.hitTest(loc, this._ctx)) {
+            if (shape != exclude && shape.findObjectUnderPoint(loc, deep, this._ctx)) {
                 return shape;
             }
         }
         return null;
     }
 
-    findShapeUnder(source: foGlyph): foGlyph {
+    findShapeUnder(source: foGlyph, deep:boolean=true, exclude: foGlyph = null): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != source && source.overlapTest(shape, this._ctx)) {
+            if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
                 return shape;
             }
         }
@@ -206,6 +214,7 @@ export class foPage extends foGlyph {
     }
 
     public onItemHoverPosition = (loc: cPoint, shape: foGlyph): void => {
+        shape.hitTest(loc, this._ctx);
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {
@@ -215,15 +224,14 @@ export class foPage extends foGlyph {
         ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
 
-        let size = 50;
         //draw vertical...
-        for (var i = 0; i < this.width; i += size) {
+        for (var i = 0; i < this.width; i += this.gridSizeX) {
             ctx.moveTo(i, 0);
             ctx.lineTo(i, this.height);
         }
 
         //draw horizontal...
-        for (var i = 0; i < this.height; i += size) {
+        for (var i = 0; i < this.height; i += this.gridSizeY) {
             ctx.moveTo(0, i);
             ctx.lineTo(this.width, i);
         }
@@ -235,105 +243,30 @@ export class foPage extends foGlyph {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this._ctx = ctx;
 
-        let angle = this.angle * Math.PI / 180
+        let angle = this.rotation() * Math.PI / 180
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 
         ctx.save();
         ctx.transform(cos, sin, -sin, cos, this.marginX, this.marginY);
 
+        this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
         ctx.restore();
+        
+        this.afterRender && this.afterRender(ctx);
     }
 
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        this.drawGrid(ctx);
-        //this.drawRotateTest(ctx);
+         this.drawGrid(ctx);
     }
-
-    public drawCircle = (ctx: CanvasRenderingContext2D): void => {
-
-        ctx.save();
-        ctx.fillStyle = 'black';
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = .8;
-        ctx.setLineDash([])
-        ctx.beginPath();
-        ctx.arc(0, 0, 50, 0, 2 * Math.PI);
-        ctx.stroke();
-
-        ctx.restore();
-    }
-
-    drawRotateTest(ctx: CanvasRenderingContext2D) {
-
-        function drawRotatedRect(x, y, width, height, degrees) {
-
-            let angle = degrees * Math.PI / 180;
-            // first save the untranslated/unrotated context
-            ctx.save();
-
-            let pinX = width / 2;
-            let pinY = height / 2;
-
-            ctx.beginPath();
-            //https://stackoverflow.com/questions/17125632/html5-canvas-rotate-object-without-moving-coordinates
-            // move the rotation point to the center of the rect
-            //ctx.translate(x + pinX, y + pinY);   
-            // rotate the rect
-            //ctx.rotate(angle);
-
-
-            let cos = Math.cos(angle);
-            let sin = Math.sin(angle);
-            ctx.transform(cos, sin, -sin, cos, x + pinX, y + pinY);
-
-            // draw the rect on the transformed context
-            // Note: after transforming [0,0] is visually [x,y]
-            //       so the rect needs to be offset accordingly when drawn
-            ctx.rect(-pinX, -pinY, width, height);
-
-            ctx.fillStyle = "green";
-            ctx.fill();
-
-            mySelf.drawCircle(ctx);
-            // restore the context to its untranslated/unrotated state
-            ctx.restore();
-            mySelf.drawCircle(ctx);
-
-        }
-
-        let angle = 0 * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-
-        ctx.save();
-        ctx.transform(cos, sin, -sin, cos, 100, 300);
-
-
-        let mySelf = this;
-        mySelf.drawCircle(ctx);
-
-        var startX = 0;
-        var startY = 0;
-
-        // draw an unrotated reference rect
-        ctx.beginPath();
-        ctx.rect(startX, startY, 250, 10);
-        ctx.fillStyle = "blue";
-        ctx.fill();
-
-        // draw a rotated rect
-        drawRotatedRect(startX, startY, 350, 10, 30);
-
-        ctx.restore();
-    }
-
 }
 
 

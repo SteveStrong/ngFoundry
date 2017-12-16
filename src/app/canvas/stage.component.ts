@@ -37,8 +37,8 @@ import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 export class StageComponent extends foPage implements OnInit, AfterViewInit {
   // a reference to the canvas element from our template
   @ViewChild('canvas') public canvasRef: ElementRef;
-  @Input() public width = 1000;
-  @Input() public height = 800;
+  @Input() public pageWidth = 1000;
+  @Input() public pageHeight = 800;
 
   message: Array<any> = [];
   screen2D: Sceen2D = new Sceen2D();
@@ -82,8 +82,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.onItemChangedParent = (shape: foGlyph): void => {
       this.signalR.pubChannel("parent", shape.asJson);
     }
+
     this.onItemChangedPosition = (shape: foGlyph): void => {
       this.signalR.pubChannel("moveShape", shape.asJson);
+    }
+
+    this.onItemHoverPosition = (loc: cPoint, shape: foGlyph): void => {
+      //this.signalR.pubChannel("moveShape", shape.asJson);
+      this.message = [];
+      this.message.push(`Hover (${loc.x},${loc.y}) `);
+      this.message.push(shape);
+
+      shape.renderHitTest(this._ctx);
     }
 
 
@@ -155,7 +165,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddRectangle() {
 
     let shape = Display.create(dRectangle, {
-      color: 'black',
+      color: 'purple',
       width: 300,
       height: 100
     }).drop(100, 50, 45);
@@ -340,17 +350,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit() {
+    this.color = 'yellow';
+    this.width = this.pageWidth;
+    this.height = this.pageHeight;
 
-    this.screen2D.setRoot(this.canvasRef.nativeElement, this.width, this.height);
+    this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
 
-    this.screen2D.render = (context: CanvasRenderingContext2D) => {
-      context.save();
-      context.fillStyle = "yellow";
-      context.fillRect(0, 0, this.width, this.height);
-      context.restore();
-
-      this.render(context);
+    this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
+      ctx.save();
+      this.render(ctx);
+      ctx.restore();
     }
+
+    this.preDraw = (ctx: CanvasRenderingContext2D): void => { 
+      ctx.fillStyle = this.color;
+      ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
+    }
+
+    // this.draw = (ctx: CanvasRenderingContext2D): void => {
+    //   this.drawGrid(ctx);
+    // }
 
     this.screen2D.go();
 

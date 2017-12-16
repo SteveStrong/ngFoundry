@@ -49,6 +49,12 @@ export class foGlyph extends foNode implements iShape {
         this._color = value;
     }
 
+    public drawHover: (ctx: CanvasRenderingContext2D) => void;
+    public preDraw: (ctx: CanvasRenderingContext2D) => void;
+    public postDraw: (ctx: CanvasRenderingContext2D) => void;
+    public afterRender: (ctx: CanvasRenderingContext2D) => void;
+
+
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
@@ -129,27 +135,39 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
-    findObjectUnderPoint(hit: iPoint, deep:boolean, ctx: CanvasRenderingContext2D): iShape {
+    findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): iShape {
         let found = undefined;
-        if ( this.hitTest(hit, ctx) ) {
+        if (this.hitTest(hit, ctx)) {
             found = this;
-            if ( deep ) {
-
+            if (deep && this.hasSubcomponents) {
+                for (let i: number = 0; i < this._subcomponents.length; i++) {
+                    let child: foGlyph = this._subcomponents.getMember(i);
+                    let result = child.findObjectUnderPoint(hit, deep, ctx);
+                    if (result) {
+                        found = result;
+                        break;
+                    }
+                }
             }
         }
         return found;
     }
 
+    public renderHitTest(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.globalAlpha = .5;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.restore();
+    }
+
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+
+        ctx && this.renderHitTest(ctx);
+
         let x = this.x;
         let y = this.y;
         let width = this.width;
         let height = this.height;
-
-        ctx.save();
-        ctx.globalAlpha = .5;
-        ctx.fillRect(x, y, width, height);
-        ctx.restore();
 
         if (hit.x < x) return false;
         if (hit.x > x + width) return false;
@@ -158,12 +176,12 @@ export class foGlyph extends foNode implements iShape {
         return true;
     }
 
-    findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): iShape {
+    findObjectUnderShape(hit: iShape, deep: boolean, ctx: CanvasRenderingContext2D): iShape {
         let found = undefined;
-        if ( this.overlapTest(hit, ctx) ) {
+        if (this.overlapTest(hit, ctx)) {
             found = this;
-            if ( deep ) {
-                
+            if (deep) {
+
             }
         }
         return found;
@@ -186,20 +204,24 @@ export class foGlyph extends foNode implements iShape {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
+
         //this.drawOrigin(ctx);
         ctx.translate(this.x, this.y);
         //this.drawOriginX(ctx);
 
-        this.preDraw(ctx);
-        this.draw(ctx); 
-        this.postDraw(ctx);
-        this.isSelected && this.drawSelected(ctx); 
-        
+        this.preDraw && this.preDraw(ctx);
+        this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
+
+        this.isSelected && this.drawSelected(ctx);
+
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
         });
 
         ctx.restore();
+        this.afterRender && this.afterRender(ctx);
     }
 
     drawText(ctx: CanvasRenderingContext2D, text: string) {
@@ -231,31 +253,31 @@ export class foGlyph extends foNode implements iShape {
         ctx.save();
         ctx.beginPath();
         ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50,0);
-        ctx.lineTo(50,0);
-        ctx.moveTo(0,-50);
-        ctx.lineTo(0,50);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
-    
-    public drawOriginX(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50,-50);
-        ctx.lineTo(50,50);
-        ctx.moveTo(50,-50);
-        ctx.lineTo(-50,50);
+        ctx.moveTo(-50, 0);
+        ctx.lineTo(50, 0);
+        ctx.moveTo(0, -50);
+        ctx.lineTo(0, 50);
         ctx.lineWidth = 1;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
         ctx.restore();
     }
 
-    public drawOutline(ctx: CanvasRenderingContext2D){
+    public drawOriginX(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(-50, -50);
+        ctx.lineTo(50, 50);
+        ctx.moveTo(50, -50);
+        ctx.lineTo(-50, 50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         ctx.beginPath()
@@ -265,15 +287,13 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    public drawHover = (ctx: CanvasRenderingContext2D): void => { }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => { 
+
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
-    public preDraw = (ctx: CanvasRenderingContext2D): void => { }
-    public postDraw = (ctx: CanvasRenderingContext2D): void => { }
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
         let width = this.width;
@@ -286,7 +306,7 @@ export class foGlyph extends foNode implements iShape {
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
 
-        let text = `x1=${this.x} y1=${this.y}|x2=${this.x+width} y2=${this.y+height}|`;
+        let text = `x1=${this.x} y1=${this.y}|x2=${this.x + width} y2=${this.y + height}|`;
         this.drawText(ctx, text);
     }
 
@@ -308,12 +328,12 @@ export class Pallet {
 
     static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type();
-        this.lookup[instance.myType] = { create: type, defaults: properties};
+        this.lookup[instance.myType] = { create: type, defaults: properties };
         return type;
     }
 
     static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
-        let { create, defaults} = this.lookup[type];
+        let { create, defaults } = this.lookup[type];
         let instance = new create(Tools.union(properties, defaults));
         func && func(instance);
         this.afterCreate && this.afterCreate(instance);
