@@ -238,6 +238,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.message.push(`pt (${loc.x},${loc.y}) inv`);
     let pt = mtx.invertPoint(loc.x, loc.y)
     this.message.push(pt);
+    // x = y = 0;
     let xtrue = x < pt.x && pt.x < x + width;
     let ytrue = y < pt.y && pt.y < y + height;
     this.message.push(`x ${x} < ${pt.x} < ${x + width}  ${xtrue}`);
@@ -260,7 +261,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',
-      angle: 0,
+      angle: 180,
     }).drop(200, 200);
 
     this.addToModel(shape);

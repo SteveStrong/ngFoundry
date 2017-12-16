@@ -75,6 +75,8 @@ export class foShape2D extends foGlyph {
         let width = this.width;
         let height = this.height;
 
+        // x = y = 0;
+
         if (loc.x < x) return false;
         if (loc.x > x + width) return false;
 
@@ -125,6 +127,7 @@ export class foShape2D extends foGlyph {
 
         ctx.restore();
 
+        // x = y = 0;
 
         if (loc.x < x) return false;
         if (loc.x > x + width) return false;
