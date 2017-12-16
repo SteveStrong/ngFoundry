@@ -118,6 +118,7 @@ export class foPage extends foShape2D {
     setupMouseEvents() {
         let shape: foGlyph = null;
         let overshape: foGlyph = null;
+        let hovershape: foGlyph = null;
         let offset: iPoint = null;
 
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
@@ -172,8 +173,15 @@ export class foPage extends foShape2D {
             } else {
                 this.onMouseLocationChanged(loc,"hover");
                 loc.add(this.marginX, this.marginY);
-                let hoverShape = this.findHitShape(loc);
-                hoverShape && this.onItemHoverPosition(loc, hoverShape);
+                let found = this.findHitShape(loc);
+                if ( found ) {
+                    hovershape = found;
+                    this.onItemHoverEnter(loc, hovershape);
+                } else {
+                    this.onItemHoverExit(loc, hovershape);
+                    hovershape = found;
+                }
+                
             }
             this.sitOnShape = overshape || {};
         });
@@ -213,8 +221,10 @@ export class foPage extends foShape2D {
     public onItemChangedPosition = (shape: foGlyph): void => {
     }
 
-    public onItemHoverPosition = (loc: cPoint, shape: foGlyph): void => {
-        shape.hitTest(loc, this._ctx);
+    public onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
+    }
+
+    public onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {

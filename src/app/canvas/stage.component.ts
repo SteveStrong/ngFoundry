@@ -87,13 +87,22 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubChannel("moveShape", shape.asJson);
     }
 
-    this.onItemHoverPosition = (loc: cPoint, shape: foGlyph): void => {
+    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
       //this.signalR.pubChannel("moveShape", shape.asJson);
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) `);
       this.message.push(shape);
 
-      shape.renderHitTest(this._ctx);
+      shape.drawHover = shape.renderHitTest.bind(shape);
+    }
+
+    this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
+      //this.signalR.pubChannel("moveShape", shape.asJson);
+      this.message = [];
+      this.message.push(`Hover (${loc.x},${loc.y}) `);
+      this.message.push(shape);
+
+      shape.drawHover = undefined; // shape.renderHitTest.bind(shape);
     }
 
 
@@ -367,9 +376,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
     }
 
-    // this.draw = (ctx: CanvasRenderingContext2D): void => {
-    //   this.drawGrid(ctx);
-    // }
 
     this.screen2D.go();
 

@@ -19,8 +19,9 @@ export class Sceen2D {
 
     render: (context: CanvasRenderingContext2D) => void;
 
-    go() {
+    go(next?: () => {}) {
         doAnimate(this);
+        next && next();
     }
 
     setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {
@@ -44,12 +45,12 @@ export class Sceen2D {
     pubMouseEvents(canvas: HTMLCanvasElement) {
         var rect = canvas.getBoundingClientRect();
 
-        function getMousePos(evt):cPoint {   
+        function getMousePos(evt): cPoint {
             return new cPoint(evt.clientX - rect.left, evt.clientY - rect.top);
         }
 
 
-        canvas.addEventListener('mousedown',  (e) => {
+        canvas.addEventListener('mousedown', (e) => {
             e.preventDefault()
             let loc = getMousePos(e);
             PubSub.Pub('mousedown', loc, e);
