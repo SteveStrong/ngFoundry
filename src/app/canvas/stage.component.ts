@@ -185,7 +185,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddRectangle() {
 
     class myRect extends dRectangle {
-      //public pinX = (): number => { return 50; }
+      public pinX = (): number => { return 50; }
     }
 
     let shape = Display.create(myRect, {
@@ -193,7 +193,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       myName: 'root  dRectangle',
       width: 300,
       height: 100
-    }).drop(100, 50);
+    }).drop(100, 50, 30);
 
     this.addToModel(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
@@ -201,9 +201,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let subShape = Display.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
-      x: 150,
+      x: 250,
       y: 150,
-      width: 30,
+      width: 80,
       height: 100
     }).addAsSubcomponent(shape).drop(100, 50);
     // //this.addToModel(subShape);
