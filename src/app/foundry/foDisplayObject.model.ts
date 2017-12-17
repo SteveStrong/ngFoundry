@@ -67,10 +67,10 @@ export class foDisplayObject extends foGlyph {
 
     protected _matrix: Matrix2D;
     protected _invMatrix: Matrix2D;
-    smash() { 
+    smash() {
         //console.log('smash matrix')
-        this._matrix = undefined; 
-        this._invMatrix = undefined; 
+        this._matrix = undefined;
+        this._invMatrix = undefined;
     }
 
     protected _bounds: iRect;
@@ -116,12 +116,13 @@ export class foDisplayObject extends foGlyph {
 
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
-        return this.getMatrix().transformPoint(x, y, pt || new cPoint());
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y, pt || new cPoint());
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
-
-        return this.getInvMatrix().transformPoint(x, y, pt || new cPoint());
+        let inv = this.getGlobalMatrix().invertCopy();
+        return inv.transformPoint(x, y, pt || new cPoint());
     };
 
     localToLocal(x: number, y: number, target: foDisplayObject, pt?: cPoint) {
@@ -139,14 +140,14 @@ export class foDisplayObject extends foGlyph {
         return this;
     };
 
-    // getConcatenatedMatrix() {
-    //     let o: foDisplayObject = this;
-    //     let mtx = this.getMatrix();
-    //     while (o = <foDisplayObject>o.myParent()) {
-    //          mtx.prependMatrix(o.getMatrix());
-    //     }
-    //     return mtx;
-    // };
+    getGlobalMatrix() {
+        let mtx = this.getMatrix();
+        let parent = <foDisplayObject>this.myParent()
+        if (parent) {
+            mtx.prependMatrix(parent.getGlobalMatrix());
+        }
+        return mtx;
+    };
 
     getMatrix() {
         if (this._matrix === undefined) {
