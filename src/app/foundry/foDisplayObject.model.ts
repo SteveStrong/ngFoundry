@@ -65,11 +65,10 @@ export class foDisplayObject extends foGlyph {
     set visible(value: boolean) { this._visible = value; }
 
 
-
     protected _matrix: Matrix2D;
     protected _invMatrix: Matrix2D;
     smash() { 
-        console.log('smash matrix')
+        //console.log('smash matrix')
         this._matrix = undefined; 
         this._invMatrix = undefined; 
     }
@@ -121,7 +120,8 @@ export class foDisplayObject extends foGlyph {
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
-        return this.getMatrix().invert().transformPoint(x, y, pt || new cPoint());
+
+        return this.getInvMatrix().transformPoint(x, y, pt || new cPoint());
     };
 
     localToLocal(x: number, y: number, target: foDisplayObject, pt?: cPoint) {
@@ -159,8 +159,7 @@ export class foDisplayObject extends foGlyph {
 
     getInvMatrix() {
         if (this._invMatrix === undefined) {
-            this._invMatrix = new Matrix2D(this.getMatrix());
-            this._invMatrix.invert();
+            this._invMatrix = this.getMatrix().invertCopy();
         }
         return this._invMatrix;
     };
@@ -168,9 +167,7 @@ export class foDisplayObject extends foGlyph {
 
     private localHitTest = (hit: iPoint): boolean => {
 
-        let mtx = this.getInvMatrix();
-
-        let loc = mtx.transformPoint(hit.x, hit.y);
+        let loc = this.globalToLocal(hit.x, hit.y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;

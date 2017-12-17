@@ -178,7 +178,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddRectangle() {
 
-    let shape = Display.create(dRectangle, {
+    class myRect extends dRectangle {
+      public pinX = (): number => { return 50; }
+    }
+
+    let shape = Display.create(myRect, {
       color: 'purple',
       width: 300,
       height: 100

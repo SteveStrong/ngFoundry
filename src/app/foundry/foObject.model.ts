@@ -47,7 +47,12 @@ export class foObject implements iObject {
 
         properties && Tools.forEachKeyValue(properties, function (key, value) {
             if (Tools.isFunction(value)) {
-                Tools.defineCalculatedProperty(self, key, value);
+                console.log('try override')
+                if (Tools.isFunction(self[key])) {
+                    self[key] = value;
+                } else {
+                    Tools.defineCalculatedProperty(self, key, value);
+                }
             } else {
                 self[key] = value;
             }

@@ -209,6 +209,11 @@ export class Matrix2D {
         return this;
     };
 
+    invertCopy(){
+        let result = new Matrix2D(this);
+        return result.invert();
+    }
+
     isIdentity() {
         return this.tx === 0 && this.ty === 0 && this.a === 1 && this.b === 0 && this.c === 0 && this.d === 1;
     };
