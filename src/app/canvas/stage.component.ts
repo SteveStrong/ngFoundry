@@ -90,7 +90,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
       //this.signalR.pubChannel("moveShape", shape.asJson);
       this.message = [];
-      this.message.push(`Hover (${loc.x},${loc.y}) `);
+      this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
       this.message.push(shape);
 
       if (shape && !shape.drawHover) {
@@ -101,8 +101,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
       //this.signalR.pubChannel("moveShape", shape.asJson);
       this.message = [];
-      this.message.push(`Hover (${loc.x},${loc.y}) `);
-      this.message.push(shape);
+      this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
+      //this.message.push(shape);
 
       if (shape) {
         shape.drawHover = undefined;
@@ -231,8 +231,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   writeDisplayMessage(loc: cPoint) {
     if (!this.displayObj) return;
     this.message = [];
-    this.message.push(`localToGlobal (${loc.x},${loc.y}) `);
-    this.message.push(this.displayObj.localToGlobal(loc.x, loc.y));
+    //this.message.push(`localToGlobal (${loc.x},${loc.y}) `);
+    //this.message.push(this.displayObj.localToGlobal(loc.x, loc.y));
   }
 
   // public displayShape;

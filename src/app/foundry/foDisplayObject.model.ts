@@ -20,45 +20,45 @@ export class foDisplayObject extends foGlyph {
     //protected _subcomponents: foCollection<foDisplayObject>;
 
     get x(): number { return this._x || 0.0; }
-    set x(value: number) { 
-        this.smash(); 
-        this._x = value; 
+    set x(value: number) {
+        this.smash();
+        this._x = value;
     }
     get y(): number { return this._y || 0.0 }
-    set y(value: number) { 
-        this.smash(); 
-        this._y = value; 
+    set y(value: number) {
+        this.smash();
+        this._y = value;
     }
     get width(): number { return this._width || 0.0; }
-    set width(value: number) { 
-        this.smash(); 
-        this._width = value; 
+    set width(value: number) {
+        this.smash();
+        this._width = value;
     }
     get height(): number { return this._height || 0.0; }
-    set height(value: number) { 
-        this.smash(); 
-        this._height = value; 
+    set height(value: number) {
+        this.smash();
+        this._height = value;
     }
 
     protected _angle: number = 0;
     get angle(): number { return this._angle || 0.0; }
-    set angle(value: number) { 
-        this.smash(); 
-        this._angle = value; 
+    set angle(value: number) {
+        this.smash();
+        this._angle = value;
     }
 
     protected _scaleX: number = 1;
     get scaleX(): number { return this._scaleX || 1.0; }
-    set scaleX(value: number) { 
-        this.smash(); 
-        this._scaleX = value; 
+    set scaleX(value: number) {
+        this.smash();
+        this._scaleX = value;
     }
 
     protected _scaleY: number = 1;
     get scaleY(): number { return this._scaleY || 1.0; }
-    set scaleY(value: number) { 
-        this.smash(); 
-        this._scaleY = value; 
+    set scaleY(value: number) {
+        this.smash();
+        this._scaleY = value;
     }
 
     protected _visible: boolean = true;
@@ -68,11 +68,16 @@ export class foDisplayObject extends foGlyph {
     protected snapToPixel: boolean = false;
 
     protected _matrix: Matrix2D;
-    smash() { this._matrix = undefined; }
+    protected _invMatrix: Matrix2D;
+    smash() { 
+        console.log('smash matrix')
+        this._matrix = undefined; 
+        this._invMatrix = undefined; 
+    }
 
     protected _bounds: iRect;
 
-    public pinX = (): number => { return 0 * this.width; }
+    public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0 * this.height; }
     public rotation = (): number => { return this._angle; }
 
@@ -98,8 +103,8 @@ export class foDisplayObject extends foGlyph {
 	 * @method updateContext
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
 	 **/
-    updateContextxx(ctx: CanvasRenderingContext2D) {
-        //changed from original
+    updateContextbbbbbb(ctx: CanvasRenderingContext2D) {
+
         let mtx = this.getMatrix();
         let tx = mtx.tx;
         let ty = mtx.ty;
@@ -109,18 +114,15 @@ export class foDisplayObject extends foGlyph {
         }
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, tx, ty);
         ctx.globalAlpha *= this._opacity;
-
-        // if (o.compositeOperation) { ctx.globalCompositeOperation = o.compositeOperation; }
-        // if (o.shadow) { this._applyShadow(ctx, o.shadow); }
     };
 
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
-        return this.getConcatenatedMatrix().transformPoint(x, y, pt || new cPoint());
+        return this.getMatrix().transformPoint(x, y, pt || new cPoint());
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
-        return this.getConcatenatedMatrix().invert().transformPoint(x, y, pt || new cPoint());
+        return this.getMatrix().invert().transformPoint(x, y, pt || new cPoint());
     };
 
     localToLocal(x: number, y: number, target: foDisplayObject, pt?: cPoint) {
@@ -138,28 +140,38 @@ export class foDisplayObject extends foGlyph {
         return this;
     };
 
+    // getConcatenatedMatrix() {
+    //     let o: foDisplayObject = this;
+    //     let mtx = this.getMatrix();
+    //     while (o = <foDisplayObject>o.myParent()) {
+    //          mtx.prependMatrix(o.getMatrix());
+    //     }
+    //     return mtx;
+    // };
+
     getMatrix() {
-        if (!this._matrix) {
+        if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this._x, this._y, this._scaleX, this._scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            //console.log('getMatrix');
         }
         return this._matrix;
     };
 
-    getConcatenatedMatrix() {
-        let o: foDisplayObject = this;
-        let mtx = this.getMatrix();
-        while (o = <foDisplayObject>o.myParent()) {
-            mtx.prependMatrix(o.getMatrix());
+    getInvMatrix() {
+        if (this._invMatrix === undefined) {
+            this._invMatrix = new Matrix2D(this.getMatrix());
+            this._invMatrix.invert();
         }
-        return mtx;
+        return this._invMatrix;
     };
+
 
     private localHitTest = (hit: iPoint): boolean => {
 
-        let mtx = this.getConcatenatedMatrix();
+        let mtx = this.getInvMatrix();
 
-        let loc = mtx.invertPoint(hit.x, hit.y);
+        let loc = mtx.transformPoint(hit.x, hit.y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -169,6 +181,7 @@ export class foDisplayObject extends foGlyph {
 
         return true;
     }
+
 
     private renderHitTest = (ctx: CanvasRenderingContext2D) => {
 
@@ -334,9 +347,9 @@ export class foDisplayObject extends foGlyph {
         ctx.save();
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 6;
         ctx.beginPath()
-        ctx.setLineDash([15, 5]);
+        ctx.setLineDash([5, 5]);
         ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
         ctx.stroke();
         ctx.restore();

@@ -139,16 +139,16 @@ export class foGlyph extends foNode implements iShape {
         let found = undefined;
         if (this.hitTest(hit, ctx)) {
             found = this;
-            if (deep && this.hasSubcomponents) {
-                for (let i: number = 0; i < this._subcomponents.length; i++) {
-                    let child: foGlyph = this._subcomponents.getMember(i);
-                    let result = child.findObjectUnderPoint(hit, deep, ctx);
-                    if (result) {
-                        found = result;
-                        break;
-                    }
-                }
-            }
+            // if (deep && this.hasSubcomponents) {
+            //     for (let i: number = 0; i < this._subcomponents.length; i++) {
+            //         let child: foGlyph = this._subcomponents.getMember(i);
+            //         let result = child.findObjectUnderPoint(hit, deep, ctx);
+            //         if (result) {
+            //             found = result;
+            //             break;
+            //         }
+            //     }
+            // }
         }
         return found;
     }
