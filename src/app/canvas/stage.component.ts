@@ -90,10 +90,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
       //this.signalR.pubChannel("moveShape", shape.asJson);
       this.message = [];
+
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
+      shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
       this.message.push(shape);
 
-      if (shape && !shape.drawHover) {
+      if (shape ) {
         shape.drawHover = shape.drawSelected.bind(shape);
       }
     }
@@ -102,7 +104,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.signalR.pubChannel("moveShape", shape.asJson);
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
-      //this.message.push(shape);
+      shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
+      this.message.push(shape);
 
       if (shape) {
         shape.drawHover = undefined;
@@ -179,11 +182,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddRectangle() {
 
     class myRect extends dRectangle {
-      public pinX = (): number => { return 50; }
+      //public pinX = (): number => { return 50; }
     }
 
     let shape = Display.create(myRect, {
       color: 'purple',
+      myName: 'root  dRectangle',
       width: 300,
       height: 100
     }).drop(100, 50);
@@ -196,6 +200,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let subShape = Display.create(dRectangle, {
       color: 'blue',
+      myName: 'blue  child',
       x: 150,
       y: 150,
       width: 30,
@@ -231,12 +236,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
-  public displayObj;
+  public displayObj: foDisplayObject;
   writeDisplayMessage(loc: cPoint) {
     if (!this.displayObj) return;
     this.message = [];
-    //this.message.push(`localToGlobal (${loc.x},${loc.y}) `);
-    //this.message.push(this.displayObj.localToGlobal(loc.x, loc.y));
+    this.message.push(`globalToLocal (${loc.x},${loc.y}) `);
+    this.message.push(this.displayObj.globalToLocal(loc.x, loc.y));
   }
 
   // public displayShape;

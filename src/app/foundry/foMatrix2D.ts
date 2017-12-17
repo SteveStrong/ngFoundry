@@ -238,8 +238,7 @@ export class Matrix2D {
     };
 
     invertPoint(x: number, y: number, pt?: cPoint): cPoint {
-        let inv = new Matrix2D(this);
-        inv.invert();
+        let inv = this.invertCopy();
         return inv.transformPoint(x, y, pt);
     };
 
@@ -279,8 +278,7 @@ export class Matrix2D {
     };
 
     clone() {
-        let matrix = new Matrix2D();
-        matrix.setValues(this.a, this.b, this.c, this.d, this.tx, this.ty);
+        let matrix = new Matrix2D(this);
         return matrix
 
     };

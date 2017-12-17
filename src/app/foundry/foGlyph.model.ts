@@ -110,7 +110,6 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public scaleSize = (scale: number): iSize => {
-        //structual type
         this.x -= (this.width * (scale - 1)) / 2.0;
         this.y -= (this.height * (scale - 1)) / 2.0;
         this.width *= scale;
@@ -135,34 +134,34 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
-    findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): iShape {
-        let found = undefined;
-        if (this.hitTest(hit, ctx)) {
-            found = this;
-            // if (deep && this.hasSubcomponents) {
-            //     for (let i: number = 0; i < this._subcomponents.length; i++) {
-            //         let child: foGlyph = this._subcomponents.getMember(i);
-            //         let result = child.findObjectUnderPoint(hit, deep, ctx);
-            //         if (result) {
-            //             found = result;
-            //             break;
-            //         }
-            //     }
-            // }
+
+    childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): iShape {
+        let children = this.Subcomponents;
+        let total = children.length;
+        for (let i: number = 0; i < total; i++) {
+            let child: foGlyph = <foGlyph>children[i];
+            if (child.hitTest(hit, ctx)) {
+                console.log('found child ', child.myName)
+                return child;
+            }
         }
+        return undefined;
+    }
+
+    findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): iShape {
+        let found:iShape = this.hitTest(hit, ctx) && this;
+
+        if (deep) {
+            let child = this.childObjectUnderPoint(hit, ctx);
+            found = child ? child : found;
+            console.log('found  ', found['myName'])
+        }
+
         return found;
     }
 
-    // public renderHitTest(ctx: CanvasRenderingContext2D) {
-    //     ctx.save();
-    //     ctx.globalAlpha = .5;
-    //     ctx.fillRect(this.x, this.y, this.width, this.height);
-    //     ctx.restore();
-    // }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-
-        //ctx && this.renderHitTest(ctx);
 
         let x = this.x;
         let y = this.y;

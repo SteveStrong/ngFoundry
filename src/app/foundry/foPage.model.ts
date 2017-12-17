@@ -65,13 +65,14 @@ export class foPage extends foShape2D {
     }
 
     findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+        let found:foGlyph = undefined;
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != exclude && shape.findObjectUnderPoint(loc, deep, this._ctx)) {
-                return shape;
-            }
+            if ( shape == exclude ) continue;
+            found = <foGlyph>shape.findObjectUnderPoint(loc, deep, this._ctx);
+            if ( found ) break
         }
-        return null;
+        return found;
     }
 
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
@@ -173,18 +174,18 @@ export class foPage extends foShape2D {
             } else {
                 this.onMouseLocationChanged(loc, "hover");
                 loc.add(this.marginX, this.marginY);
-                // if (hovershape) {
-                //     hovershape = this.findHitShape(loc);
-                // }
                 let found = this.findHitShape(loc);
-                if (found) {
+                //console.log('found=', found);
+                //console.log('hovershape=', hovershape);
+                if (found && found == hovershape) {
+                    this.onItemHoverEnter(loc, hovershape);
+                } else if (found) {
+                    hovershape && this.onItemHoverExit(loc, hovershape);
                     hovershape = found;
                     this.onItemHoverEnter(loc, hovershape);
                 } else if (hovershape) {
                     this.onItemHoverExit(loc, hovershape);
                     hovershape = undefined;
-                } else {
-                    this.onItemHoverExit(loc, hovershape);                 
                 }
 
             }

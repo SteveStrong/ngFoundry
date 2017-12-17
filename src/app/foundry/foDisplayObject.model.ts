@@ -141,7 +141,7 @@ export class foDisplayObject extends foGlyph {
     };
 
     getGlobalMatrix() {
-        let mtx = this.getMatrix();
+        let mtx = new Matrix2D(this.getMatrix());
         let parent = <foDisplayObject>this.myParent()
         if (parent) {
             mtx.prependMatrix(parent.getGlobalMatrix());
