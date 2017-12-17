@@ -153,16 +153,16 @@ export class foGlyph extends foNode implements iShape {
         return found;
     }
 
-    public renderHitTest(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.globalAlpha = .5;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.restore();
-    }
+    // public renderHitTest(ctx: CanvasRenderingContext2D) {
+    //     ctx.save();
+    //     ctx.globalAlpha = .5;
+    //     ctx.fillRect(this.x, this.y, this.width, this.height);
+    //     ctx.restore();
+    // }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
 
-        ctx && this.renderHitTest(ctx);
+        //ctx && this.renderHitTest(ctx);
 
         let x = this.x;
         let y = this.y;

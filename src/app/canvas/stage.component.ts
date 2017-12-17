@@ -93,7 +93,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.message.push(`Hover (${loc.x},${loc.y}) `);
       this.message.push(shape);
 
-      shape.drawHover = shape.renderHitTest.bind(shape);
+      shape.drawHover = shape.drawSelected.bind(shape);
     }
 
     this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
