@@ -15,9 +15,8 @@ import { foGlyph } from '../foundry/foGlyph.model'
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foDisplayObject extends foGlyph {
-    static _snapToPixelEnabled: boolean = false;
-
-    //protected _subcomponents: foCollection<foDisplayObject>;
+    static snapToPixelEnabled: boolean = false;
+    protected snapToPixel: boolean = false;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -65,7 +64,7 @@ export class foDisplayObject extends foGlyph {
     get visible(): boolean { return this._visible; }
     set visible(value: boolean) { this._visible = value; }
 
-    protected snapToPixel: boolean = false;
+
 
     protected _matrix: Matrix2D;
     protected _invMatrix: Matrix2D;
@@ -77,7 +76,7 @@ export class foDisplayObject extends foGlyph {
 
     protected _bounds: iRect;
 
-    public pinX = (): number => { return 0.5 * this.width; }
+    public pinX = (): number => { return 0 * this.width; }
     public pinY = (): number => { return 0 * this.height; }
     public rotation = (): number => { return this._angle; }
 
@@ -103,17 +102,17 @@ export class foDisplayObject extends foGlyph {
 	 * @method updateContext
 	 * @param {CanvasRenderingContext2D} ctx The canvas 2D to update.
 	 **/
-    updateContextbbbbbb(ctx: CanvasRenderingContext2D) {
+    updateContext(ctx: CanvasRenderingContext2D) {
 
         let mtx = this.getMatrix();
         let tx = mtx.tx;
         let ty = mtx.ty;
-        if (foDisplayObject._snapToPixelEnabled && this.snapToPixel) {
+        if (foDisplayObject.snapToPixelEnabled && this.snapToPixel) {
             tx = tx + (tx < 0 ? -0.5 : 0.5) | 0;
             ty = ty + (ty < 0 ? -0.5 : 0.5) | 0;
         }
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, tx, ty);
-        ctx.globalAlpha *= this._opacity;
+        ctx.globalAlpha *= this.opacity;
     };
 
 
@@ -183,37 +182,8 @@ export class foDisplayObject extends foGlyph {
     }
 
 
-    private renderHitTest = (ctx: CanvasRenderingContext2D) => {
-
-        let angle = this.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-        let x = -this.pinX();
-        let y = -this.pinY();
-
-        let width = this.width;
-        let height = this.height;
-
-        ctx.save();
-        ctx.globalAlpha = .3;
-        ctx.fillStyle = 'gray';
-        ctx.translate(this.x + x, this.y + y);
-        ctx.transform(cos, sin, -sin, cos, -x, -y);
-        ctx.fillRect(-x, -y, width, height);
-
-        ctx.strokeStyle = "blue";
-        ctx.lineWidth = 16;
-        ctx.beginPath()
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + width, y);
-        ctx.lineTo(x + width, y + height);
-        ctx.lineTo(x, y + height);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-    }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        //ctx && this.renderHitTest(ctx);
         return this.localHitTest(hit);
     }
 
@@ -303,15 +273,9 @@ export class foDisplayObject extends foGlyph {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
 
         ctx.save();
+
         this.drawOrigin(ctx);
-
-        let angle = this.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-
-        ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
-
+        this.updateContext(ctx);
         this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
