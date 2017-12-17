@@ -51,6 +51,7 @@ export class foPage extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
+        this.color = 'Linen';
         this.setupMouseEvents();
     }
 
@@ -70,7 +71,7 @@ export class foPage extends foShape2D {
             let shape: foGlyph = this._subcomponents.getMember(i);
             if ( shape == exclude ) continue;
             found = <foGlyph>shape.findObjectUnderPoint(loc, deep, this._ctx);
-            if ( found ) break
+            if ( found ) break;
         }
         return found;
     }
@@ -127,7 +128,7 @@ export class foPage extends foShape2D {
             this.onMouseLocationChanged(loc, "down");
 
             this._subcomponents.forEach(item => {
-                item.isSelected = false;
+                item.unSelect();
             });
 
             shape = this.findHitShape(loc);
@@ -145,7 +146,7 @@ export class foPage extends foShape2D {
 
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);
-                    if (overshape) {
+                    if (overshape && shape.myParent() != overshape) {
                         overshape['saveColor'] = overshape.color;
                         //overshape['hold'] = overshape.getSize(1);
                         //let size = overshape.getSize(1.1);

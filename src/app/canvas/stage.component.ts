@@ -95,8 +95,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
       this.message.push(shape);
 
-      if (shape ) {
-        shape.drawHover = shape.drawSelected.bind(shape);
+      if (shape) {
+        shape.drawHover = function(ctx: CanvasRenderingContext2D){
+          ctx.strokeStyle = "yellow";
+          ctx.lineWidth = 4;
+          shape.drawOutline(ctx);
+        }
+         //.drawSelected.bind(shape);
       }
     }
 
@@ -130,8 +135,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   onMouseLocationChanged = (loc: cPoint, state: string): void => {
     this.mouseLoc = loc;
     this.mouseLoc.state = state;
-    this.writeDisplayMessage(loc);
-    //this.writeShapeMessage(loc)
   }
 
   doDynamicCreate() {
@@ -195,9 +198,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
-    //shape.updateContext(this.screen2D.context)
-    this.displayObj = shape;
-
     let subShape = Display.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
@@ -236,13 +236,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
-  public displayObj: foDisplayObject;
-  writeDisplayMessage(loc: cPoint) {
-    if (!this.displayObj) return;
-    this.message = [];
-    this.message.push(`globalToLocal (${loc.x},${loc.y}) `);
-    this.message.push(this.displayObj.globalToLocal(loc.x, loc.y));
-  }
+  // public displayObj: foDisplayObject;
+  // writeDisplayMessage(loc: cPoint) {
+  //   if (!this.displayObj) return;
+  //   this.message = [];
+  //   this.message.push(`globalToLocal (${loc.x},${loc.y}) `);
+  //   this.message.push(this.displayObj.globalToLocal(loc.x, loc.y));
+  // }
 
   // public displayShape;
   // writeShapeMessage(loc: cPoint) {
@@ -291,7 +291,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
-    //this.displayShape = shape;
   }
 
   doAddOneByTen() {
@@ -322,15 +321,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddStack() {
-    // this.addToModel(this.doCreateLego(Circle, {
-    //   x: 600,
-    //   y: 300
-    // }));
-    // this.addToModel(this.doCreateLego(Circle, {
-    //   x: 475,
-    //   y: 175
-    // }));
-
     let shape = Stencil.create(TenByTen, {
       opacity: .5,
       color: 'gray',
@@ -359,21 +349,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //this.signalR.pubChannel("parent", subShape.asJson);
   }
 
-  add(shape: foShape2D): foShape2D {
-    return this.addToModel(shape) as foShape2D;
-  }
-  doAddrotateDemo() {
-    let shape = this.add(Stencil.create(rotateDemo, {
-      color: 'white',
-    })).drop(500, 500);
-
-
-
-    this.signalR.pubChannel("syncShape", shape.asJson);
-  }
 
   public ngAfterViewInit() {
-    this.color = 'yellow';
     this.width = this.pageWidth;
     this.height = this.pageHeight;
 
