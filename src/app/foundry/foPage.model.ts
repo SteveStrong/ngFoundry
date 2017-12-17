@@ -22,8 +22,8 @@ import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 //and have all the same properties
 export class foPage extends foShape2D {
 
-    gridSizeX:number = 50;
-    gridSizeY:number = 50;
+    gridSizeX: number = 50;
+    gridSizeY: number = 50;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -64,17 +64,18 @@ export class foPage extends foShape2D {
         return this._dictionary.found(key, onFound);
     }
 
-    findHitShape(loc: iPoint, deep:boolean=true, exclude: foGlyph = null): foGlyph {
+    findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+        let found:foGlyph = undefined;
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != exclude && shape.findObjectUnderPoint(loc, deep, this._ctx)) {
-                return shape;
-            }
+            if ( shape == exclude ) continue;
+            found = <foGlyph>shape.findObjectUnderPoint(loc, deep, this._ctx);
+            if ( found ) break
         }
-        return null;
+        return found;
     }
 
-    findShapeUnder(source: foGlyph, deep:boolean=true, exclude: foGlyph = null): foGlyph {
+    findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
             if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
@@ -123,8 +124,8 @@ export class foPage extends foShape2D {
 
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
             loc.add(this.marginX, this.marginY);
-            this.onMouseLocationChanged(loc,"down");
- 
+            this.onMouseLocationChanged(loc, "down");
+
             this._subcomponents.forEach(item => {
                 item.isSelected = false;
             });
@@ -137,9 +138,9 @@ export class foPage extends foShape2D {
             }
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e) => {          
+        PubSub.Sub('mousemove', (loc: cPoint, e) => {
             if (shape) {
-                this.onMouseLocationChanged(loc,"move");
+                this.onMouseLocationChanged(loc, "move");
                 shape.doMove(loc, offset);
 
                 if (!overshape) {
@@ -171,23 +172,28 @@ export class foPage extends foShape2D {
                 }
 
             } else {
-                this.onMouseLocationChanged(loc,"hover");
+                this.onMouseLocationChanged(loc, "hover");
                 loc.add(this.marginX, this.marginY);
                 let found = this.findHitShape(loc);
-                if ( found ) {
+                //console.log('found=', found);
+                //console.log('hovershape=', hovershape);
+                if (found && found == hovershape) {
+                    this.onItemHoverEnter(loc, hovershape);
+                } else if (found) {
+                    hovershape && this.onItemHoverExit(loc, hovershape);
                     hovershape = found;
                     this.onItemHoverEnter(loc, hovershape);
-                } else {
+                } else if (hovershape) {
                     this.onItemHoverExit(loc, hovershape);
-                    hovershape = found;
+                    hovershape = undefined;
                 }
-                
+
             }
             this.sitOnShape = overshape || {};
         });
 
         PubSub.Sub('mouseup', (loc: cPoint, e) => {
-            this.onMouseLocationChanged(loc,"up");
+            this.onMouseLocationChanged(loc, "up");
             if (!shape) return;
 
             this._subcomponents.moveToTop(shape);
@@ -210,7 +216,7 @@ export class foPage extends foShape2D {
 
     }
 
-    public onMouseLocationChanged = (loc: cPoint, state:string): void => {
+    public onMouseLocationChanged = (loc: cPoint, state: string): void => {
         this.mouseLoc = loc;
         this.mouseLoc.state = state;
     }
@@ -269,13 +275,13 @@ export class foPage extends foShape2D {
             item.render(ctx, deep);
         });
         ctx.restore();
-        
+
         this.afterRender && this.afterRender(ctx);
     }
 
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-         this.drawGrid(ctx);
+        this.drawGrid(ctx);
     }
 }
 

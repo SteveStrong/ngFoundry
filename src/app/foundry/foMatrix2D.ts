@@ -32,7 +32,10 @@ export class Matrix2D {
     public tx: number = 0; //Position (2, 0) in a 3x3 affine transformation matrix.
     public ty: number = 0; //Position (2, 1) in a 3x3 affine transformation matrix.
 
-    constructor() {
+    constructor(matrix?: Matrix2D) {
+        if ( matrix) {
+            this.copy(matrix)
+        }
     }
 
     append(a: number, b: number, c: number, d: number, tx: number, ty: number) {
@@ -173,8 +176,6 @@ export class Matrix2D {
         this.b *= x;
         this.c *= y;
         this.d *= y;
-        //this.tx *= x;
-        //this.ty *= y;
         return this;
     };
 
@@ -208,6 +209,11 @@ export class Matrix2D {
         return this;
     };
 
+    invertCopy(){
+        let result = new Matrix2D(this);
+        return result.invert();
+    }
+
     isIdentity() {
         return this.tx === 0 && this.ty === 0 && this.a === 1 && this.b === 0 && this.c === 0 && this.d === 1;
     };
@@ -232,7 +238,7 @@ export class Matrix2D {
     };
 
     invertPoint(x: number, y: number, pt?: cPoint): cPoint {
-        let inv = this.invert();
+        let inv = this.invertCopy();
         return inv.transformPoint(x, y, pt);
     };
 
@@ -272,8 +278,7 @@ export class Matrix2D {
     };
 
     clone() {
-        let matrix = new Matrix2D();
-        matrix.setValues(this.a, this.b, this.c, this.d, this.tx, this.ty);
+        let matrix = new Matrix2D(this);
         return matrix
 
     };

@@ -67,9 +67,10 @@ export interface iBox {
 
 export interface iShape extends iNode {
     render(ctx: CanvasRenderingContext2D, deep:boolean): void;
-    renderHitTest(ctx: CanvasRenderingContext2D): void;
     findObjectUnderPoint(hit: iPoint, deep:boolean, ctx: CanvasRenderingContext2D): iShape;
+    childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): iShape;
     findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): iShape;
+    
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
