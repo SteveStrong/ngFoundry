@@ -93,7 +93,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.message.push(`Hover (${loc.x},${loc.y}) `);
       this.message.push(shape);
 
-      shape.drawHover = shape.drawSelected.bind(shape);
+      if (shape && !shape.drawHover) {
+        shape.drawHover = shape.drawSelected.bind(shape);
+      }
     }
 
     this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
@@ -102,7 +104,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.message.push(`Hover (${loc.x},${loc.y}) `);
       this.message.push(shape);
 
-      shape.drawHover = undefined; // shape.renderHitTest.bind(shape);
+      if (shape) {
+        shape.drawHover = undefined;
+      }
+
     }
 
 
@@ -177,7 +182,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'purple',
       width: 300,
       height: 100
-    }).drop(100, 50, 45);
+    }).drop(100, 50);
 
     this.addToModel(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
@@ -191,7 +196,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 150,
       width: 30,
       height: 100
-    }).addAsSubcomponent(shape).drop(100, 50, 45);;
+    }).addAsSubcomponent(shape).drop(100, 50);
     // //this.addToModel(subShape);
 
     // this.signalR.pubChannel("syncDisp", subShape.asJson);
@@ -371,7 +376,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       ctx.restore();
     }
 
-    this.preDraw = (ctx: CanvasRenderingContext2D): void => { 
+    this.preDraw = (ctx: CanvasRenderingContext2D): void => {
       ctx.fillStyle = this.color;
       ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
     }
