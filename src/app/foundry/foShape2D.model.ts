@@ -37,6 +37,15 @@ export class foShape2D extends foGlyph {
         return this;
     }
 
+    getMatrix() {
+        if (this._matrix === undefined) {
+            this._matrix = new Matrix2D();
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            //console.log('getMatrix');
+        }
+        return this._matrix;
+    };
+
     get asJson() {
         let parent = <foGlyph>this.myParent();
         return {
@@ -55,12 +64,7 @@ export class foShape2D extends foGlyph {
 
     protected localHitTest = (hit: iPoint): boolean => {
 
-        let shape = this;
-
-        let mtx = new Matrix2D();
-        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
-
-        let loc = mtx.invertPoint(hit.x, hit.y);
+        let loc = this.globalToLocal(hit.x, hit.y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -133,16 +137,16 @@ export class foShape2D extends foGlyph {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
+
         this.drawOrigin(ctx);
+        this.updateContext(ctx);
 
-        //ctx.globalAlpha = .5;
+        // let angle = this.rotation() * Math.PI / 180
+        // let cos = Math.cos(angle);
+        // let sin = Math.sin(angle);
 
-        let angle = this.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-
-        ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
+        // ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+        // ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
         this.drawOriginX(ctx);
 
@@ -159,15 +163,12 @@ export class foShape2D extends foGlyph {
         ctx.restore();
 
         this.afterRender && this.afterRender(ctx);
-        //this.drawOrigin(ctx);
     }
 
 
 
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
         ctx.rect(-this.pinX(), -this.pinY(), this.width, this.height);
@@ -175,17 +176,21 @@ export class foShape2D extends foGlyph {
     }
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        ctx.fillStyle = this.color;
+        ctx.save();
+            ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
 
         //this.drawText(ctx, this.myType)
+        ctx.restore();
     }
 
 }
