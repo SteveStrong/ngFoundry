@@ -134,6 +134,12 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
+    unSelect(deep:boolean = true){
+        this.isSelected = false;
+        deep && this.Subcomponents.forEach(item => {
+            (<foGlyph>item).unSelect(deep);
+        })
+    }
 
     childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): iShape {
         let children = this.Subcomponents;
@@ -141,7 +147,6 @@ export class foGlyph extends foNode implements iShape {
         for (let i: number = 0; i < total; i++) {
             let child: foGlyph = <foGlyph>children[i];
             if (child.hitTest(hit, ctx)) {
-                console.log('found child ', child.myName)
                 return child;
             }
         }
@@ -154,7 +159,6 @@ export class foGlyph extends foNode implements iShape {
         if (deep) {
             let child = this.childObjectUnderPoint(hit, ctx);
             found = child ? child : found;
-            console.log('found  ', found['myName'])
         }
 
         return found;

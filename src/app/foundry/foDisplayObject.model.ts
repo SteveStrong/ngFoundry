@@ -291,9 +291,8 @@ export class foDisplayObject extends foGlyph {
         this.afterRender && this.afterRender(ctx);
     }
 
+
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
         ctx.rect(-this.pinX(), -this.pinY(), this.width, this.height);
@@ -301,6 +300,8 @@ export class foDisplayObject extends foGlyph {
     }
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
