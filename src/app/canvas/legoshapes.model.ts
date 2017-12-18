@@ -1,5 +1,6 @@
 
 import { foShape2D } from "../foundry/foShape2D.model";
+import { foShape1D } from "../foundry/foShape1D.model";
 import { cPoint, cRect } from "../foundry/foGeometry";
 
 export class brick extends foShape2D {
@@ -8,6 +9,9 @@ export class brick extends foShape2D {
   constructor(properties?: any) {
     super(properties);
   }
+}
+
+export class Line extends foShape1D {
 }
 
 export class legoCore extends foShape2D {
@@ -30,7 +34,7 @@ export class legoCore extends foShape2D {
   public postDraw = (ctx: CanvasRenderingContext2D): void => {
     this.drawPin(ctx);
   }
-  
+
 }
 
 

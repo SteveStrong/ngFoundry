@@ -17,61 +17,119 @@ import { foGlyph } from '../foundry/foGlyph.model'
 //and have all the same properties
 export class foShape1D extends foShape2D {
 
+    public pinX = (): number => { return 0.5 * this.width; }
+    public pinY = (): number => { return 0.5 * this.height; }
+    public rotation = (): number => { return this.angle; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
     }
 
+    public drawStart(ctx: CanvasRenderingContext2D) {
+        let x = -this.pinX();
+        let y = -this.pinY();
 
-    protected localHitTest = (hit: iPoint): boolean => {
-
-        let shape = this;
-
-        let mtx = new Matrix2D();
-        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
-
-        let loc = mtx.invertPoint(hit.x, hit.y);
-
-        if (loc.x < 0) return false;
-        if (loc.x > this.width) return false;
-
-        if (loc.y < 0) return false;
-        if (loc.y > this.height) return false;
-
-        return true;
+        ctx.save();
+        ctx.beginPath();
+        //ctx.setLineDash([5, 5]);
+        ctx.moveTo(x - 10, y);
+        ctx.lineTo(x + 10, y);
+        ctx.moveTo(x, y - 10);
+        ctx.lineTo(x, y + 10);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
     }
 
+    public drawEnd(ctx: CanvasRenderingContext2D) {
+        let x = this.width - this.pinX();
+        let y = this.height - this.pinY();
 
-
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        //ctx && this.renderHitTest(ctx);
-        return this.localHitTest(hit);
+        ctx.save();
+        ctx.beginPath();
+        //ctx.setLineDash([5, 5]);
+        ctx.moveTo(x - 10, y - 10);
+        ctx.lineTo(x + 10, y + 10);
+        ctx.moveTo(x + 10, y - 10);
+        ctx.lineTo(x - 10, y + 10);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
     }
 
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        ctx.save();
 
+        this.updateContext(ctx);
+
+        this.preDraw && this.preDraw(ctx);
+        this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
+
+        this.isSelected && this.drawSelected(ctx);
+
+        this.drawStart(ctx);
+        this.drawEnd(ctx);
+
+        deep && this._subcomponents.forEach(item => {
+            item.render(ctx, deep);
+        });
+        ctx.restore();
+
+        this.afterRender && this.afterRender(ctx);
+    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
+
+        let x1 = -this.pinX();
+        let y1 = -this.pinY();
+        let x2 = this.width - this.pinX();
+        let y2 = this.height - this.pinY();
+
+        let width = this.width;
+        let height = this.height;
+
+        ctx.globalAlpha = .5;
+        ctx.fillRect(x1, y1, width, height);
+
+
+        ctx.beginPath()
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
         ctx.stroke();
     }
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
+        ctx.save();
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
-        ctx.globalAlpha = this.opacity;
 
+        let x1 = -this.pinX();
+        let y1 = -this.pinY();
+        let x2 = this.width - this.pinX();
+        let y2 = this.height - this.pinY();
+
+        ctx.beginPath()
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        
         //this.drawText(ctx, this.myType)
+        ctx.restore();
     }
-
 }
 
 

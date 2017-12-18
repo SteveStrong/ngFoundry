@@ -57,7 +57,6 @@ export class foShape2D extends foGlyph {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            //this._matrix.appendTransform(this.x - this.pinX(), this.y - this.pinY(), 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
             this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
             //console.log('getMatrix');
         }
@@ -93,35 +92,6 @@ export class foShape2D extends foGlyph {
         return true;
     }
 
-    // public renderHitTest(ctx: CanvasRenderingContext2D) {
-    //     let angle = this.rotation() * Math.PI / 180
-    //     let cos = Math.cos(angle);
-    //     let sin = Math.sin(angle);
-    //     let x = -this.pinX();
-    //     let y = -this.pinY();
-
-    //     let width = this.width;
-    //     let height = this.height;
-
-    //     ctx.save();
-    //     ctx.globalAlpha = .3;
-    //     ctx.fillStyle = 'gray';
-    //     ctx.translate(this.x + x, this.y + y);
-    //     ctx.transform(cos, sin, -sin, cos, -x, -y);
-    //     ctx.fillRect(-x, -y, width, height);
-
-    //     ctx.strokeStyle = "blue";
-    //     ctx.lineWidth = 16;
-    //     ctx.beginPath()
-    //     ctx.moveTo(x, y);
-    //     ctx.lineTo(x + width, y);
-    //     ctx.lineTo(x + width, y + height);
-    //     ctx.lineTo(x, y + height);
-    //     ctx.lineTo(x, y);
-    //     ctx.stroke();
-
-    //     ctx.restore();
-    // }
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
         //ctx && this.renderHitTest(ctx);
@@ -159,8 +129,6 @@ export class foShape2D extends foGlyph {
         this.drawOrigin(ctx);
         this.updateContext(ctx);
 
-
-
         this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
@@ -177,8 +145,6 @@ export class foShape2D extends foGlyph {
 
         this.afterRender && this.afterRender(ctx);
     }
-
-
 
 
     public drawOutline(ctx: CanvasRenderingContext2D) {

@@ -18,7 +18,7 @@ import { foPage } from "../foundry/foPage.model";
 
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
+import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplayObject } from "../foundry/foDisplayObject.model";
 import { dRectangle, Display } from "./displayshapes.model";
@@ -311,6 +311,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.pubChannel("syncShape", subShape.asJson);
     //this.signalR.pubChannel("parent", subShape.asJson);
+  }
+
+  doShape1D(){
+    let shape = Stencil.create(Line, {
+      opacity: .5,
+      color: 'gray',
+      width: 400,
+      height: 100,
+    }).drop(400, 400);
+
+    this.addToModel(shape);
+
+    this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
 
