@@ -328,13 +328,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doShapeGlue() {
     let shape1 = Stencil.create(TwoByOne, {
-      color: 'cyan'
-    }).drop(100, 100, 30)
+      color: 'cyan',
+      opacity: .3,
+    }).drop(100, 100, 0)
     this.addToModel(shape1);
 
     let shape2 = Stencil.create(TwoByOne, {
-      color: 'cyan'
-    }).drop(400, 150, 60)
+      color: 'cyan',
+      opacity: .3,
+    }).drop(400, 150, 0)
     this.addToModel(shape2);
 
     let wire = Stencil.create(Line, {
@@ -345,14 +347,27 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(400, 400);
 
     wire.begin = (): cPoint => {
-      let pt = new cPoint(shape1.pinX(), shape1.pinY());
-      return wire.localToLocal(shape1.pinX(), shape1.pinY(), shape1);
+      let loc = shape1.getLocation();
+      let pt = shape1.localToGlobal(0, 0);
+      return wire.globalToLocal(pt.x, pt.y, pt);
+
+      //let pt = new cPoint(shape1.pinX(), shape1.pinY());
+      //return wire.localToLocal(0, 0, shape1);
     }
 
     wire.end = (): cPoint => {
-      let pt = new cPoint(shape2.pinX(), shape2.pinY());
-      return wire.localToLocal(0, 0, shape2);
+      let pt = shape2.localToGlobal(0, 0);
+      return wire.globalToLocal(pt.x, pt.y, pt);
     }
+
+    wire.override({
+      width: function() { 
+        return 0;
+      },
+      height: function() { 
+        return 0;
+      },
+    })
 
     this.addToModel(wire);
 
