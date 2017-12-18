@@ -66,11 +66,13 @@ export interface iBox {
 }
 
 export interface iShape extends iNode {
+
+    // findObjectUnderPoint(hit: iPoint, deep:boolean, ctx: CanvasRenderingContext2D): foGlyph;
+    // childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph;
+    // findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): foGlyph;
+    // childObjectUnderShape(hit: iShape, ctx: CanvasRenderingContext2D): foGlyph;
+   
     render(ctx: CanvasRenderingContext2D, deep:boolean): void;
-    findObjectUnderPoint(hit: iPoint, deep:boolean, ctx: CanvasRenderingContext2D): iShape;
-    childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): iShape;
-    findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): iShape;
-    
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;

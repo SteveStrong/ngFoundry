@@ -1,5 +1,6 @@
 
 import { foShape2D } from "../foundry/foShape2D.model";
+import { foShape1D } from "../foundry/foShape1D.model";
 import { cPoint, cRect } from "../foundry/foGeometry";
 
 export class brick extends foShape2D {
@@ -8,6 +9,9 @@ export class brick extends foShape2D {
   constructor(properties?: any) {
     super(properties);
   }
+}
+
+export class Line extends foShape1D {
 }
 
 export class legoCore extends foShape2D {
@@ -25,6 +29,10 @@ export class legoCore extends foShape2D {
   public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
     this.Animation;
     super.render(ctx, deep);
+  }
+
+  public postDraw = (ctx: CanvasRenderingContext2D): void => {
+    this.drawPin(ctx);
   }
 
 }
@@ -63,15 +71,7 @@ export class TwoByFour extends legoCore {
     this.size = '2:4';
   }
 
-  public postDraw = (ctx: CanvasRenderingContext2D): void => {
-    this.drawPin(ctx);
-  }
 
-  public afterRender = (ctx: CanvasRenderingContext2D): void => {
-    if (this.isSelected) {
-      this.hitTest(new cPoint(0, 0), ctx);
-    }
-  }
 
 }
 

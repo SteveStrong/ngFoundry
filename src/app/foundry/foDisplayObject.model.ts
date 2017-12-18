@@ -18,16 +18,16 @@ export class foDisplayObject extends foGlyph {
     static snapToPixelEnabled: boolean = false;
     protected snapToPixel: boolean = false;
 
-    get x(): number { return this._x || 0.0; }
-    set x(value: number) {
-        this.smash();
-        this._x = value;
-    }
-    get y(): number { return this._y || 0.0 }
-    set y(value: number) {
-        this.smash();
-        this._y = value;
-    }
+    // get x(): number { return this._x || 0.0; }
+    // set x(value: number) {
+    //     this.smash();
+    //     this._x = value;
+    // }
+    // get y(): number { return this._y || 0.0 }
+    // set y(value: number) {
+    //     this.smash();
+    //     this._y = value;
+    // }
     get width(): number { return this._width || 0.0; }
     set width(value: number) {
         this.smash();
@@ -65,13 +65,7 @@ export class foDisplayObject extends foGlyph {
     set visible(value: boolean) { this._visible = value; }
 
 
-    protected _matrix: Matrix2D;
-    protected _invMatrix: Matrix2D;
-    smash() {
-        //console.log('smash matrix')
-        this._matrix = undefined;
-        this._invMatrix = undefined;
-    }
+
 
     protected _bounds: iRect;
 
@@ -114,59 +108,17 @@ export class foDisplayObject extends foGlyph {
         ctx.globalAlpha *= this.opacity;
     };
 
-
-    localToGlobal(x: number, y: number, pt?: cPoint) {
-        let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt || new cPoint());
-    };
-
-    globalToLocal(x: number, y: number, pt?: cPoint) {
-        let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt || new cPoint());
-    };
-
-    localToLocal(x: number, y: number, target: foDisplayObject, pt?: cPoint) {
-        pt = this.localToGlobal(x, y, pt);
-        return target.globalToLocal(pt.x, pt.y, pt);
-    };
-
-    setTransform(x: number, y: number, scaleX: number, scaleY: number, angle: number) {
-        this._x = x || 0;
-        this._y = y || 0;
-        this._scaleX = scaleX == undefined ? 1 : scaleX;
-        this._scaleY = scaleY == undefined ? 1 : scaleY;
-        this._angle = angle || 0;
-        this.smash();
-        return this;
-    };
-
-    getGlobalMatrix() {
-        let mtx = new Matrix2D(this.getMatrix());
-        let parent = <foDisplayObject>this.myParent()
-        if (parent) {
-            mtx.prependMatrix(parent.getGlobalMatrix());
-        }
-        return mtx;
-    };
-
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            //this._matrix.appendTransform(this.x - this.pinX(), this.y - this.pinY(), 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
             //console.log('getMatrix');
         }
         return this._matrix;
     };
 
-    getInvMatrix() {
-        if (this._invMatrix === undefined) {
-            this._invMatrix = this.getMatrix().invertCopy();
-        }
-        return this._invMatrix;
-    };
-
-
-    private localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -311,10 +263,7 @@ export class foDisplayObject extends foGlyph {
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;
         ctx.lineWidth = 6;
-        ctx.beginPath()
-        ctx.setLineDash([5, 5]);
         ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
-        ctx.stroke();
         ctx.restore();
     }
 

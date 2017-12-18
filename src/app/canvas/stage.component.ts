@@ -18,7 +18,7 @@ import { foPage } from "../foundry/foPage.model";
 
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
-import { legoCore, brick, rotateDemo, Circle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
+import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplayObject } from "../foundry/foDisplayObject.model";
 import { dRectangle, Display } from "./displayshapes.model";
@@ -88,28 +88,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
-      //this.signalR.pubChannel("moveShape", shape.asJson);
-      this.message = [];
 
+      this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
-      shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       this.message.push(shape);
 
       if (shape) {
-        shape.drawHover = function(ctx: CanvasRenderingContext2D){
+        shape.drawHover = function (ctx: CanvasRenderingContext2D) {
           ctx.strokeStyle = "yellow";
           ctx.lineWidth = 4;
           shape.drawOutline(ctx);
         }
-         //.drawSelected.bind(shape);
       }
     }
 
     this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
-      //this.signalR.pubChannel("moveShape", shape.asJson);
+
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
-      shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       this.message.push(shape);
 
       if (shape) {
@@ -214,7 +212,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddOneByOne() {
     let shape = Stencil.create(OneByOne, {
-      color: 'red'
+      color: 'red',
+      x: 200,
+      y: 200,
     });
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
@@ -236,44 +236,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
-  // public displayObj: foDisplayObject;
-  // writeDisplayMessage(loc: cPoint) {
-  //   if (!this.displayObj) return;
-  //   this.message = [];
-  //   this.message.push(`globalToLocal (${loc.x},${loc.y}) `);
-  //   this.message.push(this.displayObj.globalToLocal(loc.x, loc.y));
-  // }
-
-  // public displayShape;
-  // writeShapeMessage(loc: cPoint) {
-  //   if (!this.displayShape) return;
-
-  //   let shape = this.displayShape;
-
-  //   let x = -shape.pinX();
-  //   let y = -shape.pinY();
-  //   let width = shape.width;
-  //   let height = shape.height;
 
 
-  //   let mtx = new Matrix2D();
-  //   mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
-
-  //   this.message = [];
-  //   this.message.push(`pt (${loc.x},${loc.y}) inv`);
-  //   let pt = mtx.invertPoint(loc.x, loc.y)
-  //   this.message.push(pt);
-  //   x = y = 0;
-  //   let xtrue = x < pt.x && pt.x < x + width;
-  //   let ytrue = y < pt.y && pt.y < y + height;
-  //   this.message.push(`x ${x} < ${pt.x} < ${x + width}  ${xtrue}`);
-  //   this.message.push(`y ${y} < ${pt.y} < ${y + height}  ${ytrue}`);
-
-  //   let isHit = shape.localHitTest(loc);
-  //   shape.isSelected = isHit;
-  //   this.message.push(`isHit ${isHit}`);
-  //   this.message.push(mtx.invert());
-  // }
 
   doAddTwoByFour() {
 
@@ -295,13 +259,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddOneByTen() {
     let shape = Stencil.create(OneByTen, {
-      color: 'white',
-      height: 10,
-      width: function (): number { return this.height / 4; },
+      color: 'yellow',
+      // height: 10,
+      // width: function (): number { return this.height / 4; },
       Animation: function (): void {
-        let angle = this.height + 10;
+        let angle = this.angle + 10;
         angle = angle >= 360 ? 0 : angle;
-        this.height = angle;
+        //this.height = angle;
         this.angle = angle;
       }
     }).drop(500, 500);
@@ -347,6 +311,66 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.pubChannel("syncShape", subShape.asJson);
     //this.signalR.pubChannel("parent", subShape.asJson);
+  }
+
+  doShape1D() {
+    let shape = Stencil.create(Line, {
+      opacity: .5,
+      color: 'gray',
+      width: 400,
+      height: 100,
+    }).drop(400, 400);
+
+    this.addToModel(shape);
+
+    this.signalR.pubChannel("syncShape", shape.asJson);
+  }
+
+  doShapeGlue() {
+    let shape1 = Stencil.create(TwoByOne, {
+      color: 'cyan',
+      opacity: .3,
+    }).drop(100, 100, 0)
+    this.addToModel(shape1);
+
+    let shape2 = Stencil.create(TwoByOne, {
+      color: 'cyan',
+      opacity: .3,
+    }).drop(400, 150, 0)
+    this.addToModel(shape2);
+
+    let wire = Stencil.create(Line, {
+      opacity: .5,
+      color: 'black',
+      width: 400,
+      height: 100,
+    }).drop(400, 400);
+
+    wire.begin = (): cPoint => {
+      let loc = shape1.getLocation();
+      let pt = shape1.localToGlobal(0, 0);
+      return wire.globalToLocal(pt.x, pt.y, pt);
+
+      //let pt = new cPoint(shape1.pinX(), shape1.pinY());
+      //return wire.localToLocal(0, 0, shape1);
+    }
+
+    wire.end = (): cPoint => {
+      let pt = shape2.localToGlobal(0, 0);
+      return wire.globalToLocal(pt.x, pt.y, pt);
+    }
+
+    wire.override({
+      width: function() { 
+        return 0;
+      },
+      height: function() { 
+        return 0;
+      },
+    })
+
+    this.addToModel(wire);
+
   }
 
 
