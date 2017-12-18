@@ -21,22 +21,30 @@ export class foShape1D extends foShape2D {
     public pinY = (): number => { return 0.5 * this.height; }
     public rotation = (): number => { return this.angle; }
 
+    public begin = (): cPoint => {
+        return new cPoint(-this.pinX(), -this.pinY())
+    }
+
+    public end = (): cPoint => {
+        return new cPoint(this.width - this.pinX(), this.height - this.pinY())
+    }
+
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
     }
 
     public drawStart(ctx: CanvasRenderingContext2D) {
-        let x = -this.pinX();
-        let y = -this.pinY();
+        let { x, y } = this.begin()
+        let size = 10;
 
         ctx.save();
         ctx.beginPath();
         //ctx.setLineDash([5, 5]);
-        ctx.moveTo(x - 10, y);
-        ctx.lineTo(x + 10, y);
-        ctx.moveTo(x, y - 10);
-        ctx.lineTo(x, y + 10);
+        ctx.moveTo(x - size, y);
+        ctx.lineTo(x + size, y);
+        ctx.moveTo(x, y - size);
+        ctx.lineTo(x, y + size);
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
@@ -44,16 +52,16 @@ export class foShape1D extends foShape2D {
     }
 
     public drawEnd(ctx: CanvasRenderingContext2D) {
-        let x = this.width - this.pinX();
-        let y = this.height - this.pinY();
+        let { x, y } = this.end()
+        let size = 10;
 
         ctx.save();
         ctx.beginPath();
         //ctx.setLineDash([5, 5]);
-        ctx.moveTo(x - 10, y - 10);
-        ctx.lineTo(x + 10, y + 10);
-        ctx.moveTo(x + 10, y - 10);
-        ctx.lineTo(x - 10, y + 10);
+        ctx.moveTo(x - size, y - size);
+        ctx.lineTo(x + size, y + size);
+        ctx.moveTo(x + size, y - size);
+        ctx.lineTo(x - size, y + size);
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
@@ -87,16 +95,11 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        let x1 = -this.pinX();
-        let y1 = -this.pinY();
-        let x2 = this.width - this.pinX();
-        let y2 = this.height - this.pinY();
-
-        let width = this.width;
-        let height = this.height;
+        let { x:x1, y:y1 } = this.begin();
+        let { x:x2, y:y2 } = this.end();
 
         ctx.globalAlpha = .5;
-        ctx.fillRect(x1, y1, width, height);
+        ctx.fillRect(x1, y1, this.width, this.height);
 
 
         ctx.beginPath()
@@ -126,7 +129,7 @@ export class foShape1D extends foShape2D {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        
+
         //this.drawText(ctx, this.myType)
         ctx.restore();
     }
