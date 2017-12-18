@@ -21,7 +21,7 @@ import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplayObject } from "../foundry/foDisplayObject.model";
-import { dRectangle, Display } from "./displayshapes.model";
+import { dRectangle, dGlue, Display } from "./displayshapes.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
@@ -329,30 +329,28 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doShapeGlue() {
     let shape1 = Stencil.create(TwoByOne, {
       color: 'cyan',
-      opacity: .3,
-    }).drop(100, 100, 0)
+      opacity: .8,
+    }).drop(100, 100, 45)
     this.addToModel(shape1);
+   
 
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
-      opacity: .3,
+      opacity: .8,
     }).drop(400, 150, 0)
     this.addToModel(shape2);
+    shape2.pinX = (): number => { return 0.0; }
 
     let wire = Stencil.create(Line, {
       opacity: .5,
       color: 'black',
-      width: 400,
-      height: 100,
+      width: 0,
+      height: 0,
     }).drop(400, 400);
 
     wire.begin = (): cPoint => {
-      let loc = shape1.getLocation();
       let pt = shape1.localToGlobal(0, 0);
       return wire.globalToLocal(pt.x, pt.y, pt);
-
-      //let pt = new cPoint(shape1.pinX(), shape1.pinY());
-      //return wire.localToLocal(0, 0, shape1);
     }
 
     wire.end = (): cPoint => {
@@ -373,7 +371,36 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
+  doObjGlue() {
+    let shape1 = Display.create(dGlue, {
+    }).drop(100, 200, 45)
+    this.addToModel(shape1);
 
+    let shape2 = Display.create(dGlue, {
+    }).drop(400, 250, 0)
+    this.addToModel(shape2);
+    shape2.pinX = (): number => { return 0.0; }
+
+
+    let wire = Stencil.create(Line, {
+      opacity: .5,
+      color: 'black',
+    }).drop(400, 400);
+
+    wire.begin = (): cPoint => {
+      let pt = shape1.localToGlobal(0, 0);
+      return wire.globalToLocal(pt.x, pt.y, pt);
+    }
+
+    wire.end = (): cPoint => {
+      let pt = shape2.localToGlobal(0, 0);
+      return wire.globalToLocal(pt.x, pt.y, pt);
+    }
+
+
+    this.addToModel(wire);
+
+  }
   public ngAfterViewInit() {
     this.width = this.pageWidth;
     this.height = this.pageHeight;
