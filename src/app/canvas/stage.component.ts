@@ -95,7 +95,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.message.push(shape);
 
       if (shape) {
-        shape.drawHover = function(ctx: CanvasRenderingContext2D){
+        shape.drawHover = function (ctx: CanvasRenderingContext2D) {
           ctx.strokeStyle = "yellow";
           ctx.lineWidth = 4;
           shape.drawOutline(ctx);
@@ -313,7 +313,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //this.signalR.pubChannel("parent", subShape.asJson);
   }
 
-  doShape1D(){
+  doShape1D() {
     let shape = Stencil.create(Line, {
       opacity: .5,
       color: 'gray',
@@ -324,6 +324,38 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addToModel(shape);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
+  }
+
+  doShapeGlue() {
+    let shape1 = Stencil.create(TwoByOne, {
+      color: 'cyan'
+    }).drop(100, 100, 30)
+    this.addToModel(shape1);
+
+    let shape2 = Stencil.create(TwoByOne, {
+      color: 'cyan'
+    }).drop(400, 150, 60)
+    this.addToModel(shape2);
+
+    let wire = Stencil.create(Line, {
+      opacity: .5,
+      color: 'black',
+      width: 400,
+      height: 100,
+    }).drop(400, 400);
+
+    wire.begin = (): cPoint => {
+      let pt = new cPoint(shape1.pinX(), shape1.pinY());
+      return wire.localToLocal(shape1.pinX(), shape1.pinY(), shape1);
+    }
+
+    wire.end = (): cPoint => {
+      let pt = new cPoint(shape2.pinX(), shape2.pinY());
+      return wire.localToLocal(0, 0, shape2);
+    }
+
+    this.addToModel(wire);
+
   }
 
 

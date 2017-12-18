@@ -101,6 +101,8 @@ export class foShape1D extends foShape2D {
         ctx.globalAlpha = .5;
         ctx.fillRect(x1, y1, this.width, this.height);
 
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#003300';
 
         ctx.beginPath()
         ctx.moveTo(x1, y1);
@@ -118,12 +120,15 @@ export class foShape1D extends foShape2D {
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
         ctx.fillStyle = this.color;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 4;
 
-        let x1 = -this.pinX();
-        let y1 = -this.pinY();
-        let x2 = this.width - this.pinX();
-        let y2 = this.height - this.pinY();
+
+
+        let { x:x1, y:y1 } = this.begin();
+        let { x:x2, y:y2 } = this.end();
+
+        ctx.globalAlpha = .5;
+        ctx.fillRect(x1, y1, this.width, this.height);
 
         ctx.beginPath()
         ctx.moveTo(x1, y1);
