@@ -19,10 +19,14 @@ export class foShape2D extends foGlyph {
 
     protected _angle: number;
     get angle(): number { return this._angle || 0.0; }
-    set angle(value: number) { this._angle = value; }
+    set angle(value: number) { 
+        this.smash();
+        this._angle = value; 
+    }
 
-    public pinX = (): number => { return 1 * this.width / 2; }
-    public pinY = (): number => { return 1 * this.height / 2 }
+
+    public pinX = (): number => { return 0.5 * this.width; }
+    public pinY = (): number => { return 0.5 * this.height; }
     public rotation = (): number => { return this.angle; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -37,9 +41,23 @@ export class foShape2D extends foGlyph {
         return this;
     }
 
+    updateContext(ctx: CanvasRenderingContext2D) {
+        //let mtx = this.getMatrix();
+        //ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
+        ctx.globalAlpha *= this.opacity;
+
+        let angle = this.rotation() * Math.PI / 180
+        let cos = Math.cos(angle);
+        let sin = Math.sin(angle);
+
+        ctx.translate(this.x - this.pinX(), this.y - this.pinY());
+        ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
+    };
+
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
+            //this._matrix.appendTransform(this.x - this.pinX(), this.y - this.pinY(), 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
             this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
             //console.log('getMatrix');
         }
@@ -141,12 +159,7 @@ export class foShape2D extends foGlyph {
         this.drawOrigin(ctx);
         this.updateContext(ctx);
 
-        // let angle = this.rotation() * Math.PI / 180
-        // let cos = Math.cos(angle);
-        // let sin = Math.sin(angle);
 
-        // ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        // ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
 
         this.drawOriginX(ctx);
 
@@ -184,7 +197,7 @@ export class foShape2D extends foGlyph {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.save();
-            ctx.fillStyle = this.color;
+        ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);

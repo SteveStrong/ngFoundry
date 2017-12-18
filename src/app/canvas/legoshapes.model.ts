@@ -27,6 +27,10 @@ export class legoCore extends foShape2D {
     super.render(ctx, deep);
   }
 
+  public postDraw = (ctx: CanvasRenderingContext2D): void => {
+    this.drawPin(ctx);
+  }
+  
 }
 
 
@@ -63,15 +67,7 @@ export class TwoByFour extends legoCore {
     this.size = '2:4';
   }
 
-  public postDraw = (ctx: CanvasRenderingContext2D): void => {
-    this.drawPin(ctx);
-  }
 
-  public afterRender = (ctx: CanvasRenderingContext2D): void => {
-    if (this.isSelected) {
-      this.hitTest(new cPoint(0, 0), ctx);
-    }
-  }
 
 }
 

@@ -279,7 +279,8 @@ export class foGlyph extends foNode implements iShape {
         ctx.save();
 
         //this.drawOrigin(ctx);
-        ctx.translate(this.x, this.y);
+        //ctx.translate(this.x, this.y);
+        this.updateContext(ctx);
         //this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
@@ -351,8 +352,6 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
         ctx.rect(0, 0, this.width, this.height);
@@ -363,23 +362,21 @@ export class foGlyph extends foNode implements iShape {
 
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-
-        let width = this.width;
-        let height = this.height;
-
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0, 0, this.width, this.height);
 
         //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
 
-        let text = `x1=${this.x} y1=${this.y}|x2=${this.x + width} y2=${this.y + height}|`;
+        let text = `x1=${this.x} y1=${this.y}|x2=${this.x + this.width} y2=${this.y + this.height}|`;
         this.drawText(ctx, text);
     }
 

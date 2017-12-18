@@ -88,11 +88,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
-      //this.signalR.pubChannel("moveShape", shape.asJson);
-      this.message = [];
 
+      this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
-      shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       this.message.push(shape);
 
       if (shape) {
@@ -101,15 +100,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           ctx.lineWidth = 4;
           shape.drawOutline(ctx);
         }
-         //.drawSelected.bind(shape);
       }
     }
 
     this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
-      //this.signalR.pubChannel("moveShape", shape.asJson);
+
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
-      shape && this.message.push(shape['globalToLocal'](loc.x, loc.y));
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       this.message.push(shape);
 
       if (shape) {
@@ -214,7 +212,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddOneByOne() {
     let shape = Stencil.create(OneByOne, {
-      color: 'red'
+      color: 'red',
+      x: 200,
+      y: 200,
     });
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
@@ -236,44 +236,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
-  // public displayObj: foDisplayObject;
-  // writeDisplayMessage(loc: cPoint) {
-  //   if (!this.displayObj) return;
-  //   this.message = [];
-  //   this.message.push(`globalToLocal (${loc.x},${loc.y}) `);
-  //   this.message.push(this.displayObj.globalToLocal(loc.x, loc.y));
-  // }
-
-  // public displayShape;
-  // writeShapeMessage(loc: cPoint) {
-  //   if (!this.displayShape) return;
-
-  //   let shape = this.displayShape;
-
-  //   let x = -shape.pinX();
-  //   let y = -shape.pinY();
-  //   let width = shape.width;
-  //   let height = shape.height;
 
 
-  //   let mtx = new Matrix2D();
-  //   mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
-
-  //   this.message = [];
-  //   this.message.push(`pt (${loc.x},${loc.y}) inv`);
-  //   let pt = mtx.invertPoint(loc.x, loc.y)
-  //   this.message.push(pt);
-  //   x = y = 0;
-  //   let xtrue = x < pt.x && pt.x < x + width;
-  //   let ytrue = y < pt.y && pt.y < y + height;
-  //   this.message.push(`x ${x} < ${pt.x} < ${x + width}  ${xtrue}`);
-  //   this.message.push(`y ${y} < ${pt.y} < ${y + height}  ${ytrue}`);
-
-  //   let isHit = shape.localHitTest(loc);
-  //   shape.isSelected = isHit;
-  //   this.message.push(`isHit ${isHit}`);
-  //   this.message.push(mtx.invert());
-  // }
 
   doAddTwoByFour() {
 
@@ -295,13 +259,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddOneByTen() {
     let shape = Stencil.create(OneByTen, {
-      color: 'white',
-      height: 10,
-      width: function (): number { return this.height / 4; },
+      color: 'yellow',
+      // height: 10,
+      // width: function (): number { return this.height / 4; },
       Animation: function (): void {
-        let angle = this.height + 10;
+        let angle = this.angle + 10;
         angle = angle >= 360 ? 0 : angle;
-        this.height = angle;
+        //this.height = angle;
         this.angle = angle;
       }
     }).drop(500, 500);
