@@ -53,7 +53,7 @@ export class foShape2D extends foGlyph {
         }
     }
 
-    private localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint): boolean => {
 
         let shape = this;
 

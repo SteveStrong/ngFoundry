@@ -15,7 +15,7 @@ import { foGlyph } from '../foundry/foGlyph.model'
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
-export class foShape1D extends foGlyph {
+export class foShape1D extends foShape2D {
 
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -24,13 +24,12 @@ export class foShape1D extends foGlyph {
     }
 
 
-
-    private localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint): boolean => {
 
         let shape = this;
 
         let mtx = new Matrix2D();
-        mtx.appendTransform(shape.x, shape.y, 1, 1, 0, 0, 0, 0, 0);
+        mtx.appendTransform(shape.x, shape.y, 1, 1, shape.rotation(), 0, 0, shape.pinX(), shape.pinY());
 
         let loc = mtx.invertPoint(hit.x, hit.y);
 
@@ -42,6 +41,7 @@ export class foShape1D extends foGlyph {
 
         return true;
     }
+
 
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
