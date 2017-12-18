@@ -34,8 +34,8 @@ export class foShape1D extends foShape2D {
         this.myGuid;
     }
 
-    public drawStart(ctx: CanvasRenderingContext2D) {
-        let { x, y } = this.begin()
+    public drawEnd(ctx: CanvasRenderingContext2D) {
+        let { x, y } = this.end()
         let size = 10;
 
         ctx.save();
@@ -51,8 +51,8 @@ export class foShape1D extends foShape2D {
         ctx.restore();
     }
 
-    public drawEnd(ctx: CanvasRenderingContext2D) {
-        let { x, y } = this.end()
+    public drawStart(ctx: CanvasRenderingContext2D) {
+        let { x, y } = this.begin()
         let size = 10;
 
         ctx.save();

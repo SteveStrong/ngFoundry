@@ -112,7 +112,8 @@ export class foDisplayObject extends foGlyph {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
             //this._matrix.appendTransform(this.x - this.pinX(), this.y - this.pinY(), 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
-            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            //this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x + this.pinX(), this.y + this.pinY(), 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
             //console.log('getMatrix');
         }
         return this._matrix;
