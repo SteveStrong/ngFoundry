@@ -5,6 +5,7 @@ import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
+import { foHandle } from '../foundry/foHandle'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
@@ -68,6 +69,20 @@ export class foShape1D extends foShape2D {
         ctx.restore();
     }
 
+    public createHandles() {
+        if (this._handles.length == 0) {
+
+            let handles = [
+                { x: 0, y: 0 },
+                { x: 0.5 * this.width, y: 0.5 * this.height },
+                { x: this.width, y: this.height },
+            ]
+            handles.forEach(item => {
+                this._handles.push(new foHandle(item));
+            });
+        }
+    }
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
@@ -99,7 +114,7 @@ export class foShape1D extends foShape2D {
         let { x:x2, y:y2 } = this.end();
 
         ctx.globalAlpha = .5;
-        ctx.fillRect(x1, y1, Math.abs(x1-x2)/2, Math.abs(y1-y2)/2);
+        ctx.fillRect(x1, y1, Math.abs(x1-x2), Math.abs(y1-y2));
 
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#003300';
@@ -114,6 +129,7 @@ export class foShape1D extends foShape2D {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
+        this.drawHandles(ctx);
         this.drawPin(ctx);
     }
 
@@ -129,7 +145,7 @@ export class foShape1D extends foShape2D {
 
         ctx.globalAlpha = .5;
         //ctx.fillRect(x1, y1, this.width, this.height);
-        ctx.fillRect(x1, y1, Math.abs(x1-x2)/2, Math.abs(y1-y2)/2);
+        ctx.fillRect(x1, y1, Math.abs(x1-x2), Math.abs(y1-y2));
 
         ctx.beginPath()
         ctx.moveTo(x1, y1);
