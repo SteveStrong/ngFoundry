@@ -347,7 +347,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doObjGlue() {
     let shape1 = Display.create(dGlue, {
-    }).drop(100, 200)
+    }).drop(100, 200, 30)
     this.addToModel(shape1);
 
     let shape2 = Display.create(dGlue, {
@@ -368,7 +368,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     wire.end = (): cPoint => {
-      let pt = shape2.localToGlobal(0, 0);
+      let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 
