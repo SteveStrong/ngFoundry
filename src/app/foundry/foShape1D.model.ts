@@ -99,7 +99,7 @@ export class foShape1D extends foShape2D {
         let { x:x2, y:y2 } = this.end();
 
         ctx.globalAlpha = .5;
-        ctx.fillRect(x1, y1, this.width, this.height);
+        ctx.fillRect(x1, y1, Math.abs(x1-x2)/2, Math.abs(y1-y2)/2);
 
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#003300';
