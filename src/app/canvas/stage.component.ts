@@ -295,7 +295,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .5,
       color: 'gray',
       width: 400,
-      height: 100,
+      height: 1,
     }).drop(400, 400);
 
     this.addToModel(shape);

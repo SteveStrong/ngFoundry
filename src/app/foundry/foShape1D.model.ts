@@ -22,11 +22,11 @@ export class foShape1D extends foShape2D {
     public rotation = (): number => { return this.angle; }
 
     public begin = (): cPoint => {
-        return new cPoint(-this.pinX(), -this.pinY())
+        return new cPoint(0, 0)
     }
 
     public end = (): cPoint => {
-        return new cPoint(this.width - this.pinX(), this.height - this.pinY())
+        return new cPoint(this.width, this.height)
     }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -128,7 +128,8 @@ export class foShape1D extends foShape2D {
         let { x:x2, y:y2 } = this.end();
 
         ctx.globalAlpha = .5;
-        ctx.fillRect(x1, y1, this.width, this.height);
+        //ctx.fillRect(x1, y1, this.width, this.height);
+        ctx.fillRect(x1, y1, Math.abs(x1-x2)/2, Math.abs(y1-y2)/2);
 
         ctx.beginPath()
         ctx.moveTo(x1, y1);
