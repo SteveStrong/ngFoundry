@@ -117,15 +117,7 @@ export class foDisplayObject extends foGlyph {
         return this._matrix;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint) {
-        let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt || new cPoint());
-    };
 
-    globalToLocal(x: number, y: number, pt?: cPoint) {
-        let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt || new cPoint());
-    };
 
     protected localHitTest = (hit: iPoint): boolean => {
 
