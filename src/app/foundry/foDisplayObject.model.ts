@@ -18,27 +18,6 @@ export class foDisplayObject extends foGlyph {
     static snapToPixelEnabled: boolean = false;
     protected snapToPixel: boolean = false;
 
-    // get x(): number { return this._x || 0.0; }
-    // set x(value: number) {
-    //     this.smash();
-    //     this._x = value;
-    // }
-    // get y(): number { return this._y || 0.0 }
-    // set y(value: number) {
-    //     this.smash();
-    //     this._y = value;
-    // }
-    get width(): number { return this._width || 0.0; }
-    set width(value: number) {
-        this.smash();
-        this._width = value;
-    }
-    get height(): number { return this._height || 0.0; }
-    set height(value: number) {
-        this.smash();
-        this._height = value;
-    }
-
     protected _angle: number = 0;
     get angle(): number { return this._angle || 0.0; }
     set angle(value: number) {
@@ -63,8 +42,6 @@ export class foDisplayObject extends foGlyph {
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
     set visible(value: boolean) { this._visible = value; }
-
-
 
 
     protected _bounds: iRect;
@@ -111,7 +88,7 @@ export class foDisplayObject extends foGlyph {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
              //console.log('getMatrix');
         }
         return this._matrix;
@@ -222,7 +199,6 @@ export class foDisplayObject extends foGlyph {
 
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-
         ctx.save();
 
         this.drawOrigin(ctx);

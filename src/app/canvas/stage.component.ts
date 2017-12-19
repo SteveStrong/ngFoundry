@@ -268,15 +268,23 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let subShape = Stencil.create(TwoByFour, {
       color: 'red',
     }).addAsSubcomponent(shape).override({
-      x: function () { return -shape.width / 4; },
+      x: function () { return shape.width / 4; },
       y: 150,
       angle: 0,
-      Animation: function () {
-        let angle = this.angle + 10;
-        angle = angle >= 360 ? 0 : angle;
-        this.angle = angle;
-      },
     });
+
+    // => does a scope that moves the page
+    subShape.doAnimation = (): void => {
+      let angle = this.angle + .5;
+      angle = angle >= 360 ? 0 : angle;
+      this.angle = angle;
+    } 
+
+    subShape.doAnimation = function(): void {
+      let angle = this.angle + .5;
+      angle = angle >= 360 ? 0 : angle;
+      this.angle = angle;
+    } 
 
     this.signalR.pubChannel("syncShape", subShape.asJson);
     //this.signalR.pubChannel("parent", subShape.asJson);
@@ -287,7 +295,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .5,
       color: 'gray',
       width: 400,
-      height: 100,
+      height: 200,
     }).drop(400, 400);
 
     this.addToModel(shape);
@@ -299,11 +307,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape1 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-      Animation: function () {
-        let angle = this.angle + 10;
-        angle = angle >= 360 ? 0 : angle;
-        this.angle = angle;
-      }
 
     }).drop(100, 100, 45)
     this.addToModel(shape1);
@@ -319,17 +322,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let wire = Stencil.create(Line, {
       opacity: .5,
       color: 'black',
-      width: 0,
-      height: 0,
     }).drop(400, 400);
 
     wire.begin = (): cPoint => {
-      let pt = shape1.localToGlobal(0, 0);
+      let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 
     wire.end = (): cPoint => {
-      let pt = shape2.localToGlobal(0, 0);
+      let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 

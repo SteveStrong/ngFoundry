@@ -42,16 +42,9 @@ export class foShape2D extends foGlyph {
     }
 
     updateContext(ctx: CanvasRenderingContext2D) {
-        //let mtx = this.getMatrix();
-        //ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
-        ctx.globalAlpha *= this.opacity;
-
-        let angle = this.rotation() * Math.PI / 180
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-
-        ctx.translate(this.x - this.pinX(), this.y - this.pinY());
-        ctx.transform(cos, sin, -sin, cos, this.pinX(), this.pinY());
+        let mtx = this.getMatrix();
+        ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
+        ctx.globalAlpha *= this.opacity;    
     };
 
     getMatrix() {
@@ -94,16 +87,9 @@ export class foShape2D extends foGlyph {
 
 
     public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
-        //ctx && this.renderHitTest(ctx);
         return this.localHitTest(hit);
     }
 
-
-    public getLocation = (): iPoint => {
-        let x = this.x - this.pinX();
-        let y = this.y - this.pinY();
-        return new cPoint(x, y);
-    }
 
     public overlapTest = (hit: iShape): boolean => {
         let loc = hit.getLocation();
@@ -128,7 +114,6 @@ export class foShape2D extends foGlyph {
 
         this.drawOrigin(ctx);
         this.updateContext(ctx);
-
         this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
@@ -146,11 +131,57 @@ export class foShape2D extends foGlyph {
         this.afterRender && this.afterRender(ctx);
     }
 
+    public drawPin(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.arc(this.pinX(), this.pinY(), 6, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'pink';
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    public drawOrigin(ctx: CanvasRenderingContext2D) {
+        let x = this.pinX();
+        let y = this.pinY();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(x - 50, y);
+        ctx.lineTo(x + 50, y);
+        ctx.moveTo(x, y - 50);
+        ctx.lineTo(x, y + 50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    public drawOriginX(ctx: CanvasRenderingContext2D) {
+        let x = this.pinX();
+        let y = this.pinY();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(x - 50, y - 50);
+        ctx.lineTo(x + 50, y + 50);
+        ctx.moveTo(x + 50, y - 50);
+        ctx.lineTo(x - 50, y + 50);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#003300';
+        ctx.stroke();
+        ctx.restore();
+    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(-this.pinX(), -this.pinY(), this.width, this.height);
+        ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
     }
 
@@ -158,6 +189,7 @@ export class foShape2D extends foGlyph {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
+        this.drawHandles(ctx);
         this.drawPin(ctx);
     }
 
@@ -166,7 +198,7 @@ export class foShape2D extends foGlyph {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(-this.pinX(), -this.pinY(), this.width, this.height);
+        ctx.fillRect(0, 0, this.width, this.height);
 
         //this.drawText(ctx, this.myType)
         ctx.restore();
