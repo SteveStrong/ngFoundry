@@ -189,6 +189,7 @@ export class foShape2D extends foGlyph {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
+        this.drawHandles(ctx);
         this.drawPin(ctx);
     }
 

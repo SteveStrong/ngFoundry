@@ -33,7 +33,7 @@ export class foHandle extends foNode {
         this._y = value;
     }
 
-    get size(): number { return this._size || 10.0; }
+    get size(): number { return this._size || 20.0; }
     set size(value: number) { this._size = value; }
 
     get opacity(): number { return this._opacity || 1; }
@@ -93,7 +93,8 @@ export class foHandle extends foNode {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, 0, 0);
+            let delta = this.size / 2;
+            this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
         }
         return this._matrix;
     };
@@ -112,18 +113,6 @@ export class foHandle extends foNode {
         return new cPoint(x - loc.x, y - loc.y);
     }
 
-    public getLocation = (): iPoint => {
-        let x = this.x;
-        let y = this.y;
-        return new cPoint(x, y);
-    }
-
-    public setLocation = (loc: iPoint): iPoint => {
-        this.x = loc.x;
-        this.y = loc.y;
-        return this.getLocation();
-    }
-
 
     public doMove(loc: iPoint, offset?: iPoint): iPoint {
         this.x = loc.x + (offset ? offset.x : 0);
@@ -133,29 +122,39 @@ export class foHandle extends foNode {
     }
 
 
-    unSelect(deep:boolean = true){
-        this.isSelected = false;
-    }
-
 
     protected localHit = (hit: iPoint): boolean => {
 
         let loc = this.getMatrix().transformPoint(hit.x, hit.y);
 
-        if (loc.x < 0) return false;
-        if (loc.x > this.size) return false;
+        let delta = this.size / 2;
+        if (loc.x < -delta) return false;
+        if (loc.x > delta) return false;
 
-        if (loc.y < 0) return false;
-        if (loc.y > this.size) return false;
+        if (loc.y < -delta) return false;
+        if (loc.y > delta) return false;
         return true;
     }
 
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        ctx.save();
 
+        this.updateContext(ctx);
+
+        this.preDraw && this.preDraw(ctx);
+        this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
+
+        ctx.restore();
+        this.afterRender && this.afterRender(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
+        
         ctx.fillRect(0, 0, this.size, this.size);
     }
 

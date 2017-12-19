@@ -5,6 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 
 import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
 
+import { foHandle } from './foHandle';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
 import { foDictionary } from './foDictionary.model';
@@ -27,6 +28,8 @@ export class foGlyph extends foNode implements iShape {
     protected _height: number;
     protected _opacity: number;
     protected _color: string;
+
+    protected _handles: Array<foHandle> = new Array<foHandle>()
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -191,7 +194,7 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
-    unSelect(deep:boolean = true){
+    unSelect(deep: boolean = true) {
         this.isSelected = false;
         deep && this.Subcomponents.forEach(item => {
             (<foGlyph>item).unSelect(deep);
@@ -211,7 +214,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
     findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
-        let found:foGlyph = this.hitTest(hit, ctx) && this;
+        let found: foGlyph = this.hitTest(hit, ctx) && this;
 
         if (deep) {
             let child = this.childObjectUnderPoint(hit, ctx);
@@ -233,8 +236,8 @@ export class foGlyph extends foNode implements iShape {
     }
 
     findObjectUnderShape(hit: iShape, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
-        let found:foGlyph = this.overlapTest(hit, ctx) && this;
-        
+        let found: foGlyph = this.overlapTest(hit, ctx) && this;
+
         if (deep) {
             let child = this.childObjectUnderShape(hit, ctx);
             found = child ? child : found;
@@ -358,13 +361,42 @@ export class foGlyph extends foNode implements iShape {
         ctx.stroke();
     }
 
+    public createHandles() {
+        if (this._handles.length == 0) {
 
+            let handles = [
+                { x: 0, y: 0 },
+                { x: this.width, y: 0 },
+                { x: this.width, y: this.height },
+                { x: 0, y: this.height },
+            ]
+            handles.forEach(item => {
+                this._handles.push(new foHandle(item));
+            });
+        }
+    }
+
+
+    public drawHandles(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(0, 0, this.width, this.height);
+        ctx.stroke();
+
+        this.createHandles();
+
+        this._handles.forEach(item => {
+            item.render(ctx);
+        })
+
+    }
 
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
+        this.drawHandles(ctx)
         this.drawPin(ctx);
     }
 
