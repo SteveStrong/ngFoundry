@@ -179,37 +179,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
 
-
-  doAddRectangle() {
-
-    class myRect extends dRectangle {
-      public pinX = (): number => { return 50; }
-    }
-
-    let shape = Display.create(myRect, {
-      color: 'purple',
-      myName: 'root  dRectangle',
-      width: 300,
-      height: 100
-    }).drop(100, 50, 30);
-
-    this.addToModel(shape);
-    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
-
-    let subShape = Display.create(dRectangle, {
-      color: 'blue',
-      myName: 'blue  child',
-      x: 250,
-      y: 150,
-      width: 80,
-      height: 100
-    }).addAsSubcomponent(shape).drop(100, 50);
-    // //this.addToModel(subShape);
-
-    // this.signalR.pubChannel("syncDisp", subShape.asJson);
-  }
-
-
   doAddOneByOne() {
     let shape = Stencil.create(OneByOne, {
       color: 'red',
@@ -330,9 +299,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape1 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
+      Animation: function () {
+        let angle = this.angle + 10;
+        angle = angle >= 360 ? 0 : angle;
+        this.angle = angle;
+      }
+
     }).drop(100, 100, 45)
     this.addToModel(shape1);
-   
+
 
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
@@ -359,26 +334,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     wire.override({
-      width: function() { 
+      width: function () {
         return 0;
       },
-      height: function() { 
+      height: function () {
         return 0;
       },
     })
 
     this.addToModel(wire);
-
   }
 
   doObjGlue() {
     let shape1 = Display.create(dGlue, {
-    }).drop(100, 200, 45)
+    }).drop(100, 200)
     this.addToModel(shape1);
 
     let shape2 = Display.create(dGlue, {
-    }).drop(400, 250, 0)
+    }).drop(400, 250)
     this.addToModel(shape2);
+
     shape2.pinX = (): number => { return 0.0; }
 
 
@@ -388,7 +363,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(400, 400);
 
     wire.begin = (): cPoint => {
-      let pt = shape1.localToGlobal(0, 0);
+      let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 
@@ -397,10 +372,79 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 
-
     this.addToModel(wire);
-
   }
+
+  doDropGlue() {
+    let subShape = Display.create(dGlue, {
+    }).drop(500, 300, 30);
+    this.addToModel(subShape);
+
+    // this.signalR.pubChannel("syncDisp", subShape.asJson);
+  }
+
+  doObjRect() {
+    class objRect extends dRectangle {
+      pinX = (): number => { return 0.0 * this.width; }
+      pinY = (): number => { return 0.5 * this.height; }
+
+      Animation = (): void => {
+        let angle = this.angle + .5;
+        angle = angle >= 360 ? 0 : angle;
+        this.angle = angle;
+      } 
+    }
+
+    let subShape = Display.create(objRect, {
+      color: 'blue',
+      width: 150,
+      height: 100,
+    }).drop(300, 300, 0);
+    subShape.doAnimation = subShape.Animation;
+    
+    subShape.isSelected = true;
+      
+    this.addToModel(subShape);
+
+    // this.signalR.pubChannel("syncDisp", subShape.asJson);
+  }
+
+  doObjGroup() {
+
+    class myRect extends dRectangle {
+      public pinX = (): number => { return 50; }
+    }
+
+    let shape = Display.create(myRect, {
+      color: 'purple',
+      myName: 'root  dRectangle',
+      width: 300,
+      height: 100
+    }).drop(150, 150, 0);
+
+    this.addToModel(shape);
+    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
+
+    let subShape = Display.create(dRectangle, {
+      color: 'blue',
+      myName: 'blue  child',
+      width: 50,
+      height: 100
+    }).addAsSubcomponent(shape).drop(100, 50);
+    // //this.addToModel(subShape);
+
+    subShape.doAnimation = function() {
+      let angle = this.angle + .5;
+      angle = angle >= 360 ? 0 : angle;
+      this.angle = angle;
+    } 
+
+    shape.doAnimation = subShape.doAnimation;
+
+    // this.signalR.pubChannel("syncDisp", subShape.asJson);
+  }
+
+
   public ngAfterViewInit() {
     this.width = this.pageWidth;
     this.height = this.pageHeight;

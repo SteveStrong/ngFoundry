@@ -14,6 +14,13 @@ export class dRectangle extends foDisplayObject {
     super(properties);
   }
 
+  doAnimation = () => {};
+
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.doAnimation();
+    super.render(ctx, deep);
+  }
+
 }
 
 export class dGlue extends dRectangle {
@@ -28,6 +35,8 @@ export class dGlue extends dRectangle {
     this.color = 'green';
     this.opacity = .8;
   }
+
+
 
   public postDraw = (ctx: CanvasRenderingContext2D): void => {
     this.drawPin(ctx);
