@@ -384,13 +384,24 @@ export class foGlyph extends foNode implements iShape {
                 { x: 0, y: this.height },
             ]
             handles.forEach(item => {
-                this._handles.push(new foHandle(item));
+                this._handles.push(new foHandle(item, undefined, this));
             });
         }
     }
 
     public getHandles(): Array<foHandle> {
         return this._handles;
+    }
+
+    public findHandle(loc: cPoint, e): foHandle {
+        if ( !this._handles) return;
+
+        for (var i: number = 0; i < this._handles.length; i++) {
+            let handle: foHandle = this._handles[i];
+            if (handle.hitTest(loc)) {
+                return handle;
+            }
+        }
     }
 
 

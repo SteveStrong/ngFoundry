@@ -67,12 +67,12 @@ export class foPage extends foShape2D {
     }
 
     findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
-        let found:foGlyph = undefined;
+        let found: foGlyph = undefined;
         for (var i: number = 0; i < this._subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
-            if ( shape == exclude ) continue;
+            if (shape == exclude) continue;
             found = <foGlyph>shape.findObjectUnderPoint(loc, deep, this._ctx);
-            if ( found ) break;
+            if (found) break;
         }
         return found;
     }
@@ -123,18 +123,9 @@ export class foPage extends foShape2D {
         let overshape: foGlyph = null;
         let hovershape: foGlyph = null;
         let offset: iPoint = null;
-        let handles: Array<foHandle> = null;
+        let grab: foHandle = null;
 
-        function findHandle(loc: cPoint, e): foHandle {
-            if ( !handles) return;
 
-            for (var i: number = 0; i < handles.length; i++) {
-                let shape: foHandle = handles[i];
-                if (shape.hitTest(loc)) {
-                    return shape;
-                }
-            }
-        }
 
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
             loc.add(this.marginX, this.marginY);
@@ -142,7 +133,7 @@ export class foPage extends foShape2D {
 
             this._subcomponents.forEach(item => {
                 item.unSelect();
-                handles = null;
+                grab = null;
             });
 
             shape = this.findHitShape(loc);
@@ -150,7 +141,7 @@ export class foPage extends foShape2D {
                 this._subcomponents.moveToTop(shape);
                 shape.isSelected = true;
                 offset = shape.getOffset(loc);
-                handles = shape.getHandles()
+
             }
         });
 
@@ -204,8 +195,20 @@ export class foPage extends foShape2D {
                     hovershape = undefined;
                 }
 
-                if ( hovershape && hovershape.isSelected) {
-                    
+                if (hovershape && hovershape.isSelected) {
+
+                    let found = hovershape.findHandle(loc, e);
+                    if (found) {
+                        console.log('found = ', grab)
+                        found.color = 'yellow';
+                        grab = found;
+                    } else if (grab) {
+                        grab.color = 'black';
+                        grab = null;
+                    }
+                } else if (grab) {
+                    grab.color = 'black';
+                    grab = null;
                 }
 
             }

@@ -12,6 +12,8 @@ import { foNode } from './foNode.model';
 import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
+import { foGlyph } from './foGlyph.model';
+
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foHandle extends foNode {
@@ -89,6 +91,14 @@ export class foHandle extends foNode {
         ctx.globalAlpha *= this.opacity;
     };
 
+    getGlobalMatrix() {
+        let mtx = new Matrix2D(this.getMatrix());
+        let parent = <foGlyph>this.myParent()
+        if (parent) {
+            mtx.prependMatrix(parent.getGlobalMatrix());
+        }
+        return mtx;
+    };
 
     getMatrix() {
         if (this._matrix === undefined) {
@@ -106,6 +116,15 @@ export class foHandle extends foNode {
         return this._invMatrix;
     };
 
+    localToGlobal(x: number, y: number, pt?: cPoint) {
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y, pt || new cPoint());
+    };
+
+    globalToLocal(x: number, y: number, pt?: cPoint) {
+        let inv = this.getGlobalMatrix().invertCopy();
+        return inv.transformPoint(x, y, pt || new cPoint());
+    };
 
     public getOffset = (loc: iPoint): iPoint => {
         let x = this.x;
@@ -125,7 +144,9 @@ export class foHandle extends foNode {
 
     protected localHitTest = (hit: iPoint): boolean => {
 
-        let loc = this.getMatrix().transformPoint(hit.x, hit.y);
+        let loc = this.globalToLocal(hit.x, hit.y);
+
+        console.log('localHitTest = ', loc.x, loc.y)
 
         let delta = this.size / 2;
         if (loc.x < -delta) return false;
@@ -158,7 +179,7 @@ export class foHandle extends foNode {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        
+
         ctx.fillRect(0, 0, this.size, this.size);
     }
 
