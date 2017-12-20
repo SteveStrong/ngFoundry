@@ -257,7 +257,7 @@ export class foGlyph extends foNode implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -278,11 +278,17 @@ export class foGlyph extends foNode implements iShape {
         return true;
     }
 
+    protected pinLocation() {
+        return {
+            x: 0,
+            y: 0,
+        }
+    }
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
         //this.drawOrigin(ctx);
-        //ctx.translate(this.x, this.y);
         this.updateContext(ctx);
         //this.drawOriginX(ctx);
 
@@ -313,11 +319,15 @@ export class foGlyph extends foNode implements iShape {
         }
     };
 
+
+
     public drawPin(ctx: CanvasRenderingContext2D) {
+        let { x, y } = this.pinLocation();
+
         ctx.save();
         ctx.beginPath();
 
-        ctx.arc(0, 0, 6, 0, 2 * Math.PI, false);
+        ctx.arc(x, y, 6, 0, 2 * Math.PI, false);
         ctx.fillStyle = 'pink';
         ctx.fill();
         ctx.lineWidth = 1;
@@ -327,13 +337,15 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drawOrigin(ctx: CanvasRenderingContext2D) {
+        let { x, y } = this.pinLocation();
+
         ctx.save();
         ctx.beginPath();
         ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50, 0);
-        ctx.lineTo(50, 0);
-        ctx.moveTo(0, -50);
-        ctx.lineTo(0, 50);
+        ctx.moveTo(x - 50, y);
+        ctx.lineTo(x + 50, y);
+        ctx.moveTo(x, y - 50);
+        ctx.lineTo(x, y + 50);
         ctx.lineWidth = 1;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
@@ -341,13 +353,15 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drawOriginX(ctx: CanvasRenderingContext2D) {
+        let { x, y } = this.pinLocation();
+
         ctx.save();
         ctx.beginPath();
         ctx.setLineDash([5, 5]);
-        ctx.moveTo(-50, -50);
-        ctx.lineTo(50, 50);
-        ctx.moveTo(50, -50);
-        ctx.lineTo(-50, 50);
+        ctx.moveTo(x - 50, y - 50);
+        ctx.lineTo(x + 50, y + 50);
+        ctx.moveTo(x + 50, y - 50);
+        ctx.lineTo(x - 50, y + 50);
         ctx.lineWidth = 1;
         ctx.strokeStyle = '#003300';
         ctx.stroke();
@@ -363,7 +377,6 @@ export class foGlyph extends foNode implements iShape {
 
     public createHandles() {
         if (this._handles.length == 0) {
-
             let handles = [
                 { x: 0, y: 0 },
                 { x: this.width, y: 0 },
@@ -374,6 +387,10 @@ export class foGlyph extends foNode implements iShape {
                 this._handles.push(new foHandle(item));
             });
         }
+    }
+
+    public getHandles(): Array<foHandle> {
+        return this._handles;
     }
 
 

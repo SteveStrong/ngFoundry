@@ -16,6 +16,7 @@ import { foGlyph } from '../foundry/foGlyph.model'
 import { foShape2D } from '../foundry/foShape2D.model'
 //https://greensock.com/docs/TweenMax
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+import { foHandle } from 'app/foundry/foHandle';
 
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -122,6 +123,18 @@ export class foPage extends foShape2D {
         let overshape: foGlyph = null;
         let hovershape: foGlyph = null;
         let offset: iPoint = null;
+        let handles: Array<foHandle> = null;
+
+        function findHandle(loc: cPoint, e): foHandle {
+            if ( !handles) return;
+
+            for (var i: number = 0; i < handles.length; i++) {
+                let shape: foHandle = handles[i];
+                if (shape.hitTest(loc)) {
+                    return shape;
+                }
+            }
+        }
 
         PubSub.Sub('mousedown', (loc: cPoint, e) => {
             loc.add(this.marginX, this.marginY);
@@ -129,6 +142,7 @@ export class foPage extends foShape2D {
 
             this._subcomponents.forEach(item => {
                 item.unSelect();
+                handles = null;
             });
 
             shape = this.findHitShape(loc);
@@ -136,6 +150,7 @@ export class foPage extends foShape2D {
                 this._subcomponents.moveToTop(shape);
                 shape.isSelected = true;
                 offset = shape.getOffset(loc);
+                handles = shape.getHandles()
             }
         });
 
@@ -187,6 +202,10 @@ export class foPage extends foShape2D {
                 } else if (hovershape) {
                     this.onItemHoverExit(loc, hovershape);
                     hovershape = undefined;
+                }
+
+                if ( hovershape && hovershape.isSelected) {
+                    
                 }
 
             }

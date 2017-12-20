@@ -123,7 +123,7 @@ export class foHandle extends foNode {
 
 
 
-    protected localHit = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint): boolean => {
 
         let loc = this.getMatrix().transformPoint(hit.x, hit.y);
 
@@ -134,6 +134,10 @@ export class foHandle extends foNode {
         if (loc.y < -delta) return false;
         if (loc.y > delta) return false;
         return true;
+    }
+
+    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+        return this.localHitTest(hit);
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {

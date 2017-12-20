@@ -10,6 +10,12 @@ export class cPoint implements iPoint {
         this.y = y;
     }
 
+    set(x: number = 0, y: number = 0) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
     add(x: number = 0, y: number = 0) {
         this.x += x;
         this.y += y;
