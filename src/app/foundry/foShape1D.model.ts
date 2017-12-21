@@ -35,6 +35,8 @@ export class foShape1D extends foShape2D {
         this.myGuid;
     }
 
+
+
     public drawEnd(ctx: CanvasRenderingContext2D) {
         let { x, y } = this.end()
         let size = 10;
@@ -106,15 +108,32 @@ export class foShape1D extends foShape2D {
         this.afterRender && this.afterRender(ctx);
     }
 
+    private angleDistance(): any {
+        let { x: x1, y: y1 } = this.begin();
+        let { x: x2, y: y2 } = this.end();
+
+        let dX = x2 - x1;
+        let dY = y2 - y1;
+        return {
+            angle: Math.atan2(dY, dX),
+            length: Math.sqrt(dX * dX + dY * dY)
+        };
+    }
+
     public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        let { x:x1, y:y1 } = this.begin();
-        let { x:x2, y:y2 } = this.end();
+        let { angle, length } = this.angleDistance();
+
+        let { x: x1, y: y1 } = this.begin();
+        let { x: x2, y: y2 } = this.end();
 
         ctx.globalAlpha = .5;
-        ctx.fillRect(x1, y1, Math.abs(x1-x2), Math.abs(y1-y2));
+        ctx.save();
+        ctx.rotate(angle);
+        ctx.fillRect(x1, y1-10, length, 20);
+        ctx.restore();
 
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#003300';
@@ -133,19 +152,24 @@ export class foShape1D extends foShape2D {
         this.drawPin(ctx);
     }
 
+
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
+        let { x: x1, y: y1 } = this.begin();
+        let { x: x2, y: y2 } = this.end();
+
+        let { angle, length } = this.angleDistance();
+
         ctx.save();
         ctx.fillStyle = this.color;
+        ctx.globalAlpha = .5;
+
         ctx.lineWidth = 4;
 
-
-
-        let { x:x1, y:y1 } = this.begin();
-        let { x:x2, y:y2 } = this.end();
-
-        ctx.globalAlpha = .5;
-        //ctx.fillRect(x1, y1, this.width, this.height);
-        ctx.fillRect(x1, y1, Math.abs(x1-x2), Math.abs(y1-y2));
+        ctx.save();
+        ctx.rotate(angle);
+        ctx.fillRect(x1, y1-10, length, 20);
+        ctx.restore();
 
         ctx.beginPath()
         ctx.moveTo(x1, y1);
