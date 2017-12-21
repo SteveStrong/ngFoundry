@@ -55,8 +55,8 @@ export class foShape1D extends foShape2D {
     get height(): number { return this._height || 0.0; }
     set height(value: number) { this._height = value; }
 
-    public pinX = (): number => { return 0.5 * this.width; }
-    public pinY = (): number => { return 0.5 * this.height; }
+    public pinX = (): number => { return 0.0 * this.width; }
+    public pinY = (): number => { return 0.0 * this.height; }
     public rotation = (): number => { return this.angle; }
 
     public begin = (): cPoint => {
@@ -85,6 +85,28 @@ export class foShape1D extends foShape2D {
             cY: (y2 + y1)/2,
         };
     }
+
+    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this.x = x;
+        if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(angle)) this.angle = angle;
+        return this;
+    }
+
+    updateContext(ctx: CanvasRenderingContext2D) {
+        let mtx = this.getMatrix();
+        ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
+        ctx.globalAlpha *= this.opacity;    
+    };
+
+    getMatrix() {
+        if (this._matrix === undefined) {
+            this._matrix = new Matrix2D();
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            //console.log('getMatrix');
+        }
+        return this._matrix;
+    };
 
     public drawEnd(ctx: CanvasRenderingContext2D) {
         let { x, y } = this.end()
@@ -218,6 +240,9 @@ export class foShape1D extends foShape2D {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
+
+        this.drawHandles(ctx);
+        this.drawPin(ctx);
 
         //this.drawText(ctx, this.myType)
         ctx.restore();
