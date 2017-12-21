@@ -86,7 +86,7 @@ export class foShape2D extends foGlyph {
     }
 
 
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -107,7 +107,12 @@ export class foShape2D extends foGlyph {
         return true;
     }
 
-
+    protected pinLocation() {
+        return {
+            x: this.pinX(),
+            y: this.pinY()
+        }
+    }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
@@ -131,52 +136,6 @@ export class foShape2D extends foGlyph {
         this.afterRender && this.afterRender(ctx);
     }
 
-    public drawPin(ctx: CanvasRenderingContext2D) {
-        ctx.save();
-        ctx.beginPath();
-
-        ctx.arc(this.pinX(), this.pinY(), 6, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'pink';
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    public drawOrigin(ctx: CanvasRenderingContext2D) {
-        let x = this.pinX();
-        let y = this.pinY();
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(x - 50, y);
-        ctx.lineTo(x + 50, y);
-        ctx.moveTo(x, y - 50);
-        ctx.lineTo(x, y + 50);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
-
-    public drawOriginX(ctx: CanvasRenderingContext2D) {
-        let x = this.pinX();
-        let y = this.pinY();
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.setLineDash([5, 5]);
-        ctx.moveTo(x - 50, y - 50);
-        ctx.lineTo(x + 50, y + 50);
-        ctx.moveTo(x + 50, y - 50);
-        ctx.lineTo(x - 50, y + 50);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-        ctx.restore();
-    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()

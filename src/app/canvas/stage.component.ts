@@ -294,8 +294,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = Stencil.create(Line, {
       opacity: .5,
       color: 'gray',
-      width: 400,
-      height: 200,
+      startX: 100,
+      startY: 100,
+      finishX: 600,
+      finishY: 200,
+      height: 40,
     }).drop(400, 400);
 
     this.addToModel(shape);
@@ -321,6 +324,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let wire = Stencil.create(Line, {
       opacity: .5,
+      height: 30,
       color: 'black',
     }).drop(400, 400);
 
@@ -333,15 +337,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
-
-    wire.override({
-      width: function () {
-        return 0;
-      },
-      height: function () {
-        return 0;
-      },
-    })
 
     this.addToModel(wire);
   }
@@ -360,6 +355,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let wire = Stencil.create(Line, {
       opacity: .5,
+      height: 20,
       color: 'black',
     }).drop(400, 400);
 

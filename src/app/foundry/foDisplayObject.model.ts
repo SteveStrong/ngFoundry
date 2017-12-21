@@ -111,7 +111,7 @@ export class foDisplayObject extends foGlyph {
 
 
 
-    public hitTest = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 

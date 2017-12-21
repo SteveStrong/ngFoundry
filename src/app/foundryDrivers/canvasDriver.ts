@@ -44,28 +44,71 @@ export class Sceen2D {
 
     pubMouseEvents(canvas: HTMLCanvasElement) {
         var rect = canvas.getBoundingClientRect();
+        var body = canvas.ownerDocument.body;
+        var pt = new cPoint();
 
-        function getMousePos(evt): cPoint {
-            return new cPoint(evt.clientX - rect.left, evt.clientY - rect.top);
+        function getMousePos(evt: MouseEvent): cPoint {
+            let x = rect.left;
+            let y = rect.top;
+            return pt.set(evt.clientX - x, evt.clientY - y);
+
+            //let left = doc.scrollingElement.scrollLeft;
+            //let top = doc.scrollingElement.scrollTop;
+
+            //return new cPoint(evt.pageX - canvas.offsetLeft, evt.pageY - canvas.offsetHeight);
+            //return new cPoint(evt.pageX - left - rect.left, evt.pageY - top - rect.top);
         }
 
+        //http://jsfiddle.net/jy5yQ/1/
+        function getMousePosition(event: MouseEvent): cPoint {
+            let x:number;
+            let y:number;
+           
+            if (event.pageX != undefined && event.pageY != undefined) {
+               x = event.pageX;
+               y = event.pageY;
+            } else 
+            {
+               x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+               y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
+           
+            x -= canvas.offsetLeft;
+            y -= canvas.offsetTop;
 
-        canvas.addEventListener('mousedown', (e) => {
+           
+            return pt.set(x,y);
+           }
+
+
+        canvas.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mousedown', loc, e);
+            PubSub.Pub('mousedown', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
         });
 
-        canvas.addEventListener('mousemove', (e) => {
+        canvas.addEventListener('mousemove', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mousemove', loc, e);
+            PubSub.Pub('mousemove', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
         });
 
-        canvas.addEventListener('mouseup', (e) => {
+        canvas.addEventListener('mouseup', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mouseup', loc, e);
+            PubSub.Pub('mouseup', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+        });
+
+        canvas.addEventListener('mouseover', (e: MouseEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            PubSub.Pub('mouseover', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+        });
+
+        canvas.addEventListener('mouseout', (e: MouseEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            PubSub.Pub('mouseout', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
         });
 
     }
