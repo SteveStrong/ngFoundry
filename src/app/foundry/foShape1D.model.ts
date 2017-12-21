@@ -18,16 +18,53 @@ import { foGlyph } from '../foundry/foGlyph.model'
 //and have all the same properties
 export class foShape1D extends foShape2D {
 
+    protected _x1: number;
+    protected _y1: number;
+    protected _x2: number;
+    protected _y2: number;
+
+    get startX(): number { return this._x1 || 0.0; }
+    set startX(value: number) {
+        this.smash();
+        this._x1 = value;
+    }
+    get startY(): number { return this._y1 || 0.0; }
+    set startY(value: number) {
+        this.smash();
+        this._y1 = value;
+    }
+
+    get finishX(): number { return this._x2 || 0.0; }
+    set finishX(value: number) {
+        this.smash();
+        this._x2 = value;
+    }
+    get finishY(): number { return this._y2 || 0.0; }
+    set finishY(value: number) {
+        this.smash();
+        this._y2 = value;
+    }
+
+
+    get width(): number { 
+        let { angle, length } = this.angleDistance();
+        return this._width || length; 
+    }
+    set width(value: number) { this._width = value; }
+
+    get height(): number { return this._height || 0.0; }
+    set height(value: number) { this._height = value; }
+
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
     public rotation = (): number => { return this.angle; }
 
     public begin = (): cPoint => {
-        return new cPoint(0, 0)
+        return new cPoint(this.startX, this.startY)
     }
 
     public end = (): cPoint => {
-        return new cPoint(this.width, this.height)
+        return new cPoint(this.finishX, this.finishY)
     }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -35,7 +72,19 @@ export class foShape1D extends foShape2D {
         this.myGuid;
     }
 
+    private angleDistance(): any {
+        let { x: x1, y: y1 } = this.begin();
+        let { x: x2, y: y2 } = this.end();
 
+        let dX = x2 - x1;
+        let dY = y2 - y1;
+        return {
+            angle: Math.atan2(dY, dX),
+            length: Math.sqrt(dX * dX + dY * dY),
+            cX: (x2 + x1)/2,
+            cY: (y2 + y1)/2,
+        };
+    }
 
     public drawEnd(ctx: CanvasRenderingContext2D) {
         let { x, y } = this.end()
@@ -108,31 +157,24 @@ export class foShape1D extends foShape2D {
         this.afterRender && this.afterRender(ctx);
     }
 
-    private angleDistance(): any {
-        let { x: x1, y: y1 } = this.begin();
-        let { x: x2, y: y2 } = this.end();
 
-        let dX = x2 - x1;
-        let dY = y2 - y1;
-        return {
-            angle: Math.atan2(dY, dX),
-            length: Math.sqrt(dX * dX + dY * dY)
-        };
-    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        let { angle, length } = this.angleDistance();
+        let { angle, length, cX, cY } = this.angleDistance();
 
         let { x: x1, y: y1 } = this.begin();
         let { x: x2, y: y2 } = this.end();
 
-        ctx.globalAlpha = .5;
         ctx.save();
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+
+        ctx.translate(cX,cY);
         ctx.rotate(angle);
-        ctx.fillRect(x1, y1-10, length, 20);
+        ctx.fillRect(-length/2, -this.height/2, length, this.height);
         ctx.restore();
 
         ctx.lineWidth = 2;
@@ -158,19 +200,20 @@ export class foShape1D extends foShape2D {
         let { x: x1, y: y1 } = this.begin();
         let { x: x2, y: y2 } = this.end();
 
-        let { angle, length } = this.angleDistance();
+        let { angle, length, cX, cY } = this.angleDistance();
 
         ctx.save();
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = .5;
+        ctx.globalAlpha = this.opacity;
 
-        ctx.lineWidth = 4;
 
         ctx.save();
+        ctx.translate(cX,cY);
         ctx.rotate(angle);
-        ctx.fillRect(x1, y1-10, length, 20);
+        ctx.fillRect(-length/2, -this.height/2, length, this.height);
         ctx.restore();
 
+        ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
