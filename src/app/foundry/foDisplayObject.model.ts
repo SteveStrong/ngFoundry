@@ -201,7 +201,7 @@ export class foDisplayObject extends foGlyph {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        this.drawOrigin(ctx);
+        //this.drawOrigin(ctx);
         this.updateContext(ctx);
         this.drawOriginX(ctx);
 

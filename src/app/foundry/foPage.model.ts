@@ -127,11 +127,11 @@ export class foPage extends foShape2D {
 
 
 
-        PubSub.Sub('mousedown', (loc: cPoint, e) => {
+        PubSub.Sub('mousedown', (loc: cPoint, e, keys) => {
             loc.add(this.marginX, this.marginY);
-            this.onMouseLocationChanged(loc, "down");
+            this.onMouseLocationChanged(loc, "down", keys);
 
-            this._subcomponents.forEach(item => {
+            !keys.shift && this._subcomponents.forEach(item => {
                 item.unSelect();
                 grab = null;
             });
@@ -145,9 +145,9 @@ export class foPage extends foShape2D {
             }
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e) => {
+        PubSub.Sub('mousemove', (loc: cPoint, e, keys) => {
             if (shape) {
-                this.onMouseLocationChanged(loc, "move");
+                this.onMouseLocationChanged(loc, "move", keys);
                 shape.doMove(loc, offset);
 
                 if (!overshape) {
@@ -179,11 +179,9 @@ export class foPage extends foShape2D {
                 }
 
             } else {
-                this.onMouseLocationChanged(loc, "hover");
+                this.onMouseLocationChanged(loc, "hover", keys);
                 loc.add(this.marginX, this.marginY);
                 let found = this.findHitShape(loc);
-                //console.log('found=', found);
-                //console.log('hovershape=', hovershape);
                 if (found && found == hovershape) {
                     this.onItemHoverEnter(loc, hovershape);
                 } else if (found) {
@@ -215,8 +213,8 @@ export class foPage extends foShape2D {
             this.sitOnShape = overshape || {};
         });
 
-        PubSub.Sub('mouseup', (loc: cPoint, e) => {
-            this.onMouseLocationChanged(loc, "up");
+        PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
+            this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
 
             this._subcomponents.moveToTop(shape);
@@ -239,9 +237,10 @@ export class foPage extends foShape2D {
 
     }
 
-    public onMouseLocationChanged = (loc: cPoint, state: string): void => {
+    public onMouseLocationChanged = (loc: cPoint, state: string, keys?:any): void => {
         this.mouseLoc = loc;
         this.mouseLoc.state = state;
+        this.mouseLoc.keys = keys;
     }
 
     public onItemChangedParent = (shape: foGlyph): void => {

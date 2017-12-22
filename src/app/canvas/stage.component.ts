@@ -130,9 +130,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     Stencil.define(TenByTen, compute);
   }
 
-  onMouseLocationChanged = (loc: cPoint, state: string): void => {
+  onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
     this.mouseLoc = loc;
     this.mouseLoc.state = state;
+    this.mouseLoc.keys = keys;
   }
 
   doDynamicCreate() {
@@ -200,7 +201,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByTwo() {
     let shape = Stencil.create(TwoByTwo, {
       color: 'pink'
-    });
+    }).drop(200, 200);
     this.addToModel(shape);
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
@@ -278,13 +279,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let angle = this.angle + .5;
       angle = angle >= 360 ? 0 : angle;
       this.angle = angle;
-    } 
+    }
 
-    subShape.doAnimation = function(): void {
+    subShape.doAnimation = function (): void {
       let angle = this.angle + .5;
       angle = angle >= 360 ? 0 : angle;
       this.angle = angle;
-    } 
+    }
 
     this.signalR.pubChannel("syncShape", subShape.asJson);
     //this.signalR.pubChannel("parent", subShape.asJson);
@@ -389,7 +390,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         let angle = this.angle + .5;
         angle = angle >= 360 ? 0 : angle;
         this.angle = angle;
-      } 
+      }
     }
 
     let subShape = Display.create(objRect, {
@@ -398,9 +399,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 100,
     }).drop(300, 300, 0);
     subShape.doAnimation = subShape.Animation;
-    
+
     subShape.isSelected = true;
-      
+
     this.addToModel(subShape);
 
     // this.signalR.pubChannel("syncDisp", subShape.asJson);
@@ -430,11 +431,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addAsSubcomponent(shape).drop(100, 50);
     // //this.addToModel(subShape);
 
-    subShape.doAnimation = function() {
+    subShape.doAnimation = function () {
       let angle = this.angle + .5;
       angle = angle >= 360 ? 0 : angle;
       this.angle = angle;
-    } 
+    }
 
     shape.doAnimation = subShape.doAnimation;
 
