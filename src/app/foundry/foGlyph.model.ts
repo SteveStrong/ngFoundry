@@ -29,7 +29,7 @@ export class foGlyph extends foNode implements iShape {
     protected _opacity: number;
     protected _color: string;
 
-    
+
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -199,7 +199,7 @@ export class foGlyph extends foNode implements iShape {
 
     unSelect(deep: boolean = true) {
         this.isSelected = false;
-        this._handles && this._handles.forEach( item => item.color = 'black')
+        this._handles && this._handles.forEach(item => item.color = 'black')
         deep && this.Subcomponents.forEach(item => {
             (<foGlyph>item).unSelect(deep);
         })
@@ -397,7 +397,7 @@ export class foGlyph extends foNode implements iShape {
 
 
     public findHandle(loc: cPoint, e): foHandle {
-        if ( !this._handles) return;
+        if (!this._handles) return;
 
         for (var i: number = 0; i < this.handles.length; i++) {
             let handle: foHandle = this.handles.getChildAt(i);
@@ -409,17 +409,9 @@ export class foGlyph extends foNode implements iShape {
 
 
     public drawHandles(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath()
-        ctx.setLineDash([15, 5]);
-        ctx.rect(0, 0, this.width, this.height);
-        ctx.stroke();
-
-        this.createHandles();
-
-        this._handles.forEach(item => {
+        this.handles.forEach(item => {
             item.render(ctx);
         })
-
     }
 
 
