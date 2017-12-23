@@ -86,20 +86,28 @@ export class foPage extends foShape2D {
     }
 
     addToModel(shape: foGlyph) {
-        let guid = shape.myGuid;
+        return this.addSubcomponent(shape);
+    }
+
+    addSubcomponent(obj: foNode, properties?:any) {
+        let guid = obj.myGuid;
         this._dictionary.findItem(guid, () => {
-            this._dictionary.addItem(guid, shape);
-            this._subcomponents.addMember(shape);
+            this._dictionary.addItem(guid, obj);
+            super.addSubcomponent(obj, properties);
         });
-        return shape;
+        return obj;
     }
 
     removeFromModel(shape: foGlyph) {
-        let guid = shape.myGuid;
+        this.removeSubcomponent(shape);
+    }
+
+    removeSubcomponent(obj: foNode) {
+        let guid = obj.myGuid;
         this._dictionary.found(guid, () => {
-            shape.isSelected = false;
+            (<foGlyph>obj).isSelected = false;
             this._dictionary.removeItem(guid);
-            this._subcomponents.removeMember(shape);
+            super.removeSubcomponent(obj);
         });
     }
 

@@ -343,17 +343,34 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doShape1D() {
+
+    let height = 20;
+    let x1 = 150;
+    let y1 = 100;
+    let x2 = 350;
+    let y2 = 200;
+
+    let dX = x2 - x1;
+    let dY = y2 - y1;
+
+    let spec = {
+      angle: Math.atan2(dY, dX),
+      length: Math.sqrt(dX * dX + dY * dY),
+      cX: (x2 + x1) / 2,
+      cY: (y2 + y1) / 2,
+  }
+
+
+
     let shape = Stencil.create(Line, {
       opacity: .5,
       color: 'gray',
-      startX: 100,
-      startY: 100,
-      finishX: 300,
-      finishY: 300,
-      height: 40,
-    }).drop(300, 300);
-
-    this.addToModel(shape);
+      startX: x1,
+      startY: y1,
+      finishX: x2,
+      finishY: y2,
+      height: height,
+    }).drop(400, 300).addAsSubcomponent(this);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
@@ -382,11 +399,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     wire.begin = (): cPoint => {
       let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
+      //wire.startX = pt.x;
+      //wire.startY = pt.y;
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 
     wire.end = (): cPoint => {
       let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+      //wire.finishX = pt.x;
+      //wire.finishY = pt.y;
       return wire.globalToLocal(pt.x, pt.y, pt);
     }
 
