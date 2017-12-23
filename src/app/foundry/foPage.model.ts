@@ -56,8 +56,6 @@ export class foPage extends foShape2D {
         this.setupMouseEvents();
     }
 
-
-
     findItem(key: string, onMissing?: Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing);
     }
@@ -139,6 +137,7 @@ export class foPage extends foShape2D {
             loc.add(this.marginX, this.marginY);
             this.onMouseLocationChanged(loc, "down", keys);
 
+
             if (!keys.shift) {
                 grab = null;
                 handles.clearAll();
@@ -163,9 +162,14 @@ export class foPage extends foShape2D {
         });
 
         PubSub.Sub('mousemove', (loc: cPoint, e, keys) => {
+            if ( handles.length) {
+                //this.onHandleMoving(loc, handles.first(), keys);
+                this.onTrackHandles(loc, handles, keys);
+            }
+            
             if (grab) {
-                this.onHandleMoving(loc, grab, keys)
-                grab.doMove(loc, offset);
+                //this.onHandleMoving(loc, grab, keys)
+                //grab.doMove(loc, offset);
             } else if (shape) {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.doMove(loc, offset);
@@ -250,6 +254,7 @@ export class foPage extends foShape2D {
             }
 
             shape = null;
+            grab = null;
         });
 
     }
@@ -279,6 +284,9 @@ export class foPage extends foShape2D {
     }
 
     public onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    }
+
+    public onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {

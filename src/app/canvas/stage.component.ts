@@ -29,6 +29,7 @@ import { SignalRService } from "../common/signalr.service";
 
 //https://greensock.com/docs/TweenMax
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+import { foObject } from 'app/foundry/foObject.model';
 
 
 @Component({
@@ -126,10 +127,32 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(shape);
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
-      this.message.push(handle);
+      //this.message.push(handle);
+    }
+
+    this.onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
+      this.message = [];
+      handles.forEach( handle => {
+        if (handle.hitTest(loc)) {
+          foObject.beep();
+        }
+        this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle.myName}`);
+        handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
+      })
+
     }
 
     this.onHandleMoving = (loc: cPoint, handle: foHandle, keys?: any): void => {
+      handle.color = 'yellow';
+      let shape = handle.myParentGlyph();
+
+      this.message = [];
+      this.message.push(`Hover (${loc.x},${loc.y}) Move  ${shape.myName}`);
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
+      //this.message.push(shape);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle.myName}`);
+      handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
+      //this.message.push(handle);
     }
 
     this.onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
@@ -141,7 +164,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(shape);
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Exit ${handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
-      this.message.push(handle);
+      //this.message.push(handle);
 
       if (handle) {
         handle.color = 'green';

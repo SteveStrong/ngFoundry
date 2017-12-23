@@ -199,6 +199,7 @@ export class foGlyph extends foNode implements iShape {
 
     unSelect(deep: boolean = true) {
         this.isSelected = false;
+        this._handles && this._handles.forEach( item => item.color = 'black')
         deep && this.Subcomponents.forEach(item => {
             (<foGlyph>item).unSelect(deep);
         })

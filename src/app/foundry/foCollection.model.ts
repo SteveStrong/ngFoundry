@@ -42,6 +42,14 @@ export class foCollection<T extends iObject> extends foObject {
         this._members.forEach(funct);
     }
 
+    first() {
+        return this._members[0];
+    }
+
+    last() {
+        return this._members[this._members.length-1];
+    }
+
     filter(funct: Func<T, boolean>) {
         return this._members.filter(funct);
     }
