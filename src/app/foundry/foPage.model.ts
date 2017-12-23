@@ -76,7 +76,7 @@ export class foPage extends foShape2D {
     }
 
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
-        for (var i: number = 0; i < this._subcomponents.length; i++) {
+        for (var i: number = 0; i < this.Subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
             if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
                 return shape;
@@ -85,9 +85,6 @@ export class foPage extends foShape2D {
         return null;
     }
 
-    // addToModel(shape: foGlyph) {
-    //     return this.addSubcomponent(shape);
-    // }
 
     addSubcomponent(obj: foNode, properties?:any) {
         let guid = obj.myGuid;
@@ -98,9 +95,6 @@ export class foPage extends foShape2D {
         return obj;
     }
 
-    // removeFromModel(shape: foGlyph) {
-    //     this.removeSubcomponent(shape);
-    // }
 
     removeSubcomponent(obj: foNode) {
         let guid = obj.myGuid;

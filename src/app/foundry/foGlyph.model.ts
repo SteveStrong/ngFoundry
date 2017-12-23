@@ -442,12 +442,10 @@ export class foGlyph extends foNode implements iShape {
 
 export class Pallet {
     static lookup = {}
-    static afterCreate: Action<foGlyph>;
 
     static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any, func?: Action<T>): T {
         let instance = new type(properties);
         func && func(instance);
-        this.afterCreate && this.afterCreate(instance);
         return instance;
     }
 
@@ -461,7 +459,6 @@ export class Pallet {
         let { create, defaults } = this.lookup[type];
         let instance = new create(Tools.union(properties, defaults));
         func && func(instance);
-        this.afterCreate && this.afterCreate(instance);
         return instance;
     }
 }

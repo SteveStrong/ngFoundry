@@ -205,7 +205,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 100,
       height: 150,
       width: 200,
-    }, this.addSubcomponent.bind(this));
+    }).addAsSubcomponent(this);
     this.signalR.pubCommand("Glyph", { guid: shape.myGuid }, shape.asJson);
   }
 
@@ -214,7 +214,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'purple',
       height: 150,
       width: 200,
-    }, this.addSubcomponent.bind(this));
+    }).addAsSubcomponent(this);
 
     Pallet.create(foGlyph, {
       color: 'blue',
@@ -252,8 +252,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = Stencil.create(TwoByTwo, {
       color: 'pink',
       myName : "main shape"
-    }).drop(200, 200);
-    this.addSubcomponent(shape);
+    }).drop(200, 200).addAsSubcomponent(this);
+
     this.signalR.pubChannel("syncShape", shape.asJson);
   }
 
@@ -360,6 +360,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       cY: (y2 + y1) / 2,
   }
 
+  let fake = Stencil.create(TenByTen, {
+    opacity: .5,
+    color: 'gray',
+    angle: spec.angle,
+    width: spec.length,
+    height: height,
+  }).drop(400, 400).addAsSubcomponent(this);
 
 
     let shape = Stencil.create(Line, {
