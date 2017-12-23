@@ -140,20 +140,20 @@ export class foHandle extends foNode {
         return new cPoint(this.x, this.y);
     }
 
-
+    public myParentGlyph():foGlyph {
+        return this.myParent && <foGlyph>this.myParent()
+    }
 
     protected localHitTest = (hit: iPoint): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
-        console.log('localHitTest = ', loc.x, loc.y)
+        if (loc.x < 0) return false;
+        if (loc.x > this.size) return false;
 
-        let delta = this.size / 2;
-        if (loc.x < -delta) return false;
-        if (loc.x > delta) return false;
-
-        if (loc.y < -delta) return false;
-        if (loc.y > delta) return false;
+        if (loc.y < 0) return false;
+        if (loc.y > this.size) return false;
+        //foObject.beep();
         return true;
     }
 

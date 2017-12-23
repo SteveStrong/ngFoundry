@@ -38,33 +38,55 @@ export class foCollection<T extends iObject> extends foObject {
         return this._members.map(funct);
     }
 
-    forEach(funct:Action<T>) {
+    forEach(funct: Action<T>) {
         this._members.forEach(funct);
     }
 
-    filter(funct:Func<T, boolean>) {
-        return this._members.filter(funct);
-    }
-
-    findMember(name: string):T {
+    first() {
         return this._members[0];
     }
 
-    getMember(id):T {
+    last() {
+        return this._members[this._members.length-1];
+    }
+
+    filter(funct: Func<T, boolean>) {
+        return this._members.filter(funct);
+    }
+
+    findMember(name: string): T {
+        return this._members[0];
+    }
+
+    getMember(id): T {
         return this._members[id]
     }
 
-    addMember(obj: T):T {
+    copyMembers(list: foCollection<T>): foCollection<T> {
+        list.members.forEach(item => {
+            this.addMember(item);
+        });
+        return this;
+    }
+
+    addMember(obj: T): T {
         this._members.push(obj);
         return obj;
     }
 
-    removeMember(obj: T):T {
+    removeMembers(list: foCollection<T>): foCollection<T> {
+        list.members.forEach(item => {
+            this.removeMember(item);
+        });
+        return this;
+    }
+
+    removeMember(obj: T): T {
         var index = this._members.indexOf(obj);
-        if ( index > -1 ){
+        if (index > -1) {
             this._members.splice(index, 1);
         }
-        return obj;   
+        return obj;
     }
 
     get members() {

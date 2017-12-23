@@ -57,7 +57,7 @@ export class foShape2D extends foGlyph {
     };
 
     get asJson() {
-        let parent = <foGlyph>this.myParent();
+        let parent = this.myParent && <foGlyph>this.myParent();
         return {
             parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,
@@ -117,7 +117,7 @@ export class foShape2D extends foGlyph {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        this.drawOrigin(ctx);
+        //this.drawOrigin(ctx);
         this.updateContext(ctx);
         this.drawOriginX(ctx);
 
@@ -167,14 +167,12 @@ export class foShape2D extends foGlyph {
 
 export class Stencil {
     static lookup = {}
-    static afterCreate: Action<foShape2D>;
 
     static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
         let { defaults = undefined } = this.lookup[instance.myType] || {};
 
         defaults && instance.extend(defaults)
-        this.afterCreate && this.afterCreate(instance);
         return instance;
     }
 
@@ -191,7 +189,6 @@ export class Stencil {
         let spec = Tools.union(properties, defaults);
         let instance = new create(spec);
         func && func(instance);
-        this.afterCreate && this.afterCreate(instance);
         return instance;
     }
 }

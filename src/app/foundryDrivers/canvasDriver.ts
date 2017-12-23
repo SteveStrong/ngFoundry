@@ -84,31 +84,36 @@ export class Sceen2D {
         canvas.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mousedown', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('mousedown', loc, e, keys);
         });
 
         canvas.addEventListener('mousemove', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mousemove', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('mousemove', loc, e, keys);
         });
 
         canvas.addEventListener('mouseup', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mouseup', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('mouseup', loc, e, keys);
         });
 
         canvas.addEventListener('mouseover', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mouseover', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('mouseover', loc, e, keys);
         });
 
         canvas.addEventListener('mouseout', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            PubSub.Pub('mouseout', loc, e, e.shiftKey, e.ctrlKey, e.altKey);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('mouseout', loc, e, keys);
         });
 
     }

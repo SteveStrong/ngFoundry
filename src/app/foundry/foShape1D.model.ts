@@ -45,18 +45,26 @@ export class foShape1D extends foShape2D {
         this._y2 = value;
     }
 
+    // get angle(): number { 
+    //     let { angle, length } = this.angleDistance();
+    //     return angle; 
+    // }
+    // set angle(value: number) { 
+    //     //this.smash();
+    //     this._angle = value; 
+    // }
 
-    get width(): number { 
+    get width(): number {
         let { angle, length } = this.angleDistance();
-        return this._width || length; 
+        return this._width || length;
     }
     set width(value: number) { this._width = value; }
 
     get height(): number { return this._height || 0.0; }
     set height(value: number) { this._height = value; }
 
-    public pinX = (): number => { return 0.5 * this.width; }
-    public pinY = (): number => { return 0.5 * this.height; }
+    public pinX = (): number => { return 0.0 * this.width; }
+    public pinY = (): number => { return 0.0 * this.height; }
     public rotation = (): number => { return this.angle; }
 
     public begin = (): cPoint => {
@@ -81,9 +89,67 @@ export class foShape1D extends foShape2D {
         return {
             angle: Math.atan2(dY, dX),
             length: Math.sqrt(dX * dX + dY * dY),
-            cX: (x2 + x1)/2,
-            cY: (y2 + y1)/2,
+            cX: (x2 + x1) / 2,
+            cY: (y2 + y1) / 2,
         };
+    }
+
+    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this.x = x;
+        if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(angle)) this.angle = angle;
+        return this;
+    }
+
+    updateContext(ctx: CanvasRenderingContext2D) {
+        let mtx = this.getMatrix();
+        ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
+        ctx.globalAlpha *= this.opacity;
+    };
+
+    getMatrix() {
+        if (this._matrix === undefined) {
+            this._matrix = new Matrix2D();
+            //this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            //console.log('getMatrix');
+
+            let { angle, length, cX, cY } = this.angleDistance();
+
+            let { x: x1, y: y1 } = this.begin();
+            let { x: x2, y: y2 } = this.end();
+
+            //this._matrix.appendTransform(x1, y1, 1, 1, angle, 0, 0, this.pinX(), this.pinY());
+   
+        }
+        return this._matrix;
+    };
+
+    protected pinLocation() {
+        return {
+            x: this.startX,
+            y: this.startY,
+        }
+    }
+
+    protected localHitTest = (hit: iPoint): boolean => {
+
+        let { angle, length, cX, cY } = this.angleDistance();
+        this._angle = angle;
+
+        let loc = this.globalToLocal(hit.x, hit.y);
+
+        if (loc.x < 0) return false;
+        if (loc.x > this.width) return false;
+
+        if (loc.y < -this.height/2) return false;
+        if (loc.y > this.height/2) return false;
+
+        return true;
+    }
+
+
+    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+        return this.localHitTest(hit);
     }
 
     public drawEnd(ctx: CanvasRenderingContext2D) {
@@ -121,23 +187,37 @@ export class foShape1D extends foShape2D {
     }
 
     public createHandles() {
-        if (this._handles.length == 0) {
+        let { angle, length, cX, cY } = this.angleDistance();
 
-            let handles = [
-                { x: 0, y: 0 },
-                { x: 0.5 * this.width, y: 0.5 * this.height },
-                { x: this.width, y: this.height },
-            ]
+        let { x: x1, y: y1 } = this.begin();
+        let { x: x2, y: y2 } = this.end();
+
+        let handles = [
+            { x: x1, y: y1 },
+            { x: cX, y: cY },
+            { x: x2, y: y2 },
+        ];
+
+        if (!this._handles) {
+            this._handles = new foCollection<foHandle>()
             handles.forEach(item => {
-                this._handles.push(new foHandle(item));
+                let handle = new foHandle(item, undefined, this);
+                this._handles.addMember(handle);
+            });
+        } else {
+            let i = 0;
+            handles.forEach(item => {
+                let handle = this._handles.getChildAt(i++)
+                handle.override(item);
             });
         }
+        return this._handles;
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        this.updateContext(ctx);
+        //this.updateContext(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
@@ -168,13 +248,11 @@ export class foShape1D extends foShape2D {
         let { x: x1, y: y1 } = this.begin();
         let { x: x2, y: y2 } = this.end();
 
-        ctx.save();
-        ctx.fillStyle = this.color;
-        ctx.globalAlpha = this.opacity;
 
-        ctx.translate(cX,cY);
+        ctx.save();
+        ctx.translate(x1, y1);
         ctx.rotate(angle);
-        ctx.fillRect(-length/2, -this.height/2, length, this.height);
+        ctx.fillRect(0, -this.height / 2, length, this.height);
         ctx.restore();
 
         ctx.lineWidth = 2;
@@ -188,13 +266,17 @@ export class foShape1D extends foShape2D {
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         ctx.strokeStyle = "red";
+        ctx.fillStyle = 'red';
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
-        this.drawHandles(ctx);
+        //this.drawHandles(ctx);
         this.drawPin(ctx);
     }
 
-
+    public drawHandles(ctx: CanvasRenderingContext2D) {
+        this.createHandles();
+        super.drawHandles(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         let { x: x1, y: y1 } = this.begin();
@@ -208,9 +290,10 @@ export class foShape1D extends foShape2D {
 
 
         ctx.save();
-        ctx.translate(cX,cY);
+        ctx.fillStyle = 'green';
+        ctx.translate(x1, y1);
         ctx.rotate(angle);
-        ctx.fillRect(-length/2, -this.height/2, length, this.height);
+        ctx.fillRect(0, -this.height / 2, length, this.height);
         ctx.restore();
 
         ctx.lineWidth = 4;
@@ -218,6 +301,9 @@ export class foShape1D extends foShape2D {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
+
+        this.drawHandles(ctx);
+        this.drawPin(ctx);
 
         //this.drawText(ctx, this.myType)
         ctx.restore();

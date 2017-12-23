@@ -44,7 +44,7 @@ export class foNode extends foObject implements iNode {
 
     removeFromParent() {
         let parent:foNode = <foNode>(this.myParent && this.myParent());
-        this.myParent = () => { return null; };
+        this.myParent = undefined;
         parent && parent.removeSubcomponent(this);
         return this;
     }
@@ -54,10 +54,10 @@ export class foNode extends foObject implements iNode {
         if (!obj) return;
         let parent = obj.myParent && obj.myParent();
         if (!parent) {
-            obj.myParent = () => { return this; };
-            obj._index = this._subcomponents.length;
+            obj.myParent = () => { return this; };   
             properties && obj.override(properties);
         }
+        obj._index = this._subcomponents.length;
         this._subcomponents.addMember(obj);
         return obj;
     }
@@ -66,9 +66,9 @@ export class foNode extends foObject implements iNode {
         if (!obj) return;
         let parent = this.myParent && this.myParent();
         if (parent == this) {
-            obj.myParent = undefined;
-            obj._index = 0;
+            obj.myParent = undefined;    
         }
+        obj._index = -1;
         this._subcomponents.removeMember(obj);
     }
 

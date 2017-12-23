@@ -9,6 +9,7 @@ import { foCollection } from '../foundry/foCollection.model'
 import { foDictionary } from "../foundry/foDictionary.model";
 
 import { foNode } from '../foundry/foNode.model'
+import { Matrix2D } from '../foundry/foMatrix2D'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
@@ -56,8 +57,6 @@ export class foPage extends foShape2D {
         this.setupMouseEvents();
     }
 
-
-
     findItem(key: string, onMissing?: Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing);
     }
@@ -65,6 +64,14 @@ export class foPage extends foShape2D {
     found(key: string, onFound?: Action<foGlyph>) {
         return this._dictionary.found(key, onFound);
     }
+
+    getMatrix() {
+        if (this._matrix === undefined) {
+            this._matrix = new Matrix2D();
+            this._matrix.appendTransform(this.marginX, this.marginY, this.scaleX, this.scaleY, this.rotation(), 0, 0, 0, 0);
+        }
+        return this._matrix;
+    };
 
     findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
         let found: foGlyph = undefined;
@@ -78,7 +85,7 @@ export class foPage extends foShape2D {
     }
 
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
-        for (var i: number = 0; i < this._subcomponents.length; i++) {
+        for (var i: number = 0; i < this.Subcomponents.length; i++) {
             let shape: foGlyph = this._subcomponents.getMember(i);
             if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
                 return shape;
@@ -87,21 +94,23 @@ export class foPage extends foShape2D {
         return null;
     }
 
-    addToModel(shape: foGlyph) {
-        let guid = shape.myGuid;
+
+    addSubcomponent(obj: foNode, properties?:any) {
+        let guid = obj.myGuid;
         this._dictionary.findItem(guid, () => {
-            this._dictionary.addItem(guid, shape);
-            this._subcomponents.addMember(shape);
+            this._dictionary.addItem(guid, obj);
+            super.addSubcomponent(obj, properties); 
         });
-        return shape;
+        return obj;
     }
 
-    removeFromModel(shape: foGlyph) {
-        let guid = shape.myGuid;
+
+    removeSubcomponent(obj: foNode) {
+        let guid = obj.myGuid;
         this._dictionary.found(guid, () => {
-            shape.isSelected = false;
+            (<foGlyph>obj).isSelected = false;
             this._dictionary.removeItem(guid);
-            this._subcomponents.removeMember(shape);
+            super.removeSubcomponent(obj);
         });
     }
 
@@ -113,7 +122,7 @@ export class foPage extends foShape2D {
     deleteSelected(onComplete?: Action<foGlyph>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
-            this.removeFromModel(found);
+            this.removeSubcomponent(found);
             onComplete && onComplete(found);
         }
     }
@@ -123,36 +132,68 @@ export class foPage extends foShape2D {
         let overshape: foGlyph = null;
         let hovershape: foGlyph = null;
         let offset: iPoint = null;
+        let handles: foCollection<foHandle> = new foCollection<foHandle>()
         let grab: foHandle = null;
 
+        function findHandle(loc: cPoint): foHandle {
+            for (var i: number = 0; i < handles.length; i++) {
+                let handle: foHandle = handles.getChildAt(i);
+                if (handle.hitTest(loc)) {
+                    return handle;
+                }
+            }
+        }
 
-
-        PubSub.Sub('mousedown', (loc: cPoint, e) => {
+        PubSub.Sub('mousedown', (loc: cPoint, e, keys) => {
             loc.add(this.marginX, this.marginY);
-            this.onMouseLocationChanged(loc, "down");
+            this.onMouseLocationChanged(loc, "down", keys);
 
-            this._subcomponents.forEach(item => {
-                item.unSelect();
+            grab = findHandle(loc);
+            if (grab) {
+                offset = grab.getOffset(loc);
+                return;
+            }
+
+            if (!keys.shift) {
                 grab = null;
-            });
+                handles.clearAll();
+                this._subcomponents.forEach(item => {
+                    item.unSelect();
+                });
+            }
 
             shape = this.findHitShape(loc);
             if (shape) {
                 this._subcomponents.moveToTop(shape);
                 shape.isSelected = true;
                 offset = shape.getOffset(loc);
-
+                handles.copyMembers(shape.handles);
             }
+
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e) => {
-            if (shape) {
-                this.onMouseLocationChanged(loc, "move");
+        PubSub.Sub('mousemove', (loc: cPoint, e, keys) => {
+            if (findHandle(loc) && handles.length) {
+                //this.onHandleMoving(loc, handles.first(), keys);
+                this.onTrackHandles(loc, handles, keys);
+            }
+
+            handles.forEach(handle => {
+                handle.color = handle.hitTest(loc) ? 'yellow' : 'black'
+            })
+
+
+            if (grab) {
+                //this.onHandleMoving(loc, grab, keys)
+                //let pos = grab.globalToLocal(loc.x, loc.y)
+                //grab.doMove(pos, offset);
+            } else if (shape) {
+                this.onMouseLocationChanged(loc, "move", keys);
                 shape.doMove(loc, offset);
 
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);
-                    if (overshape && shape.myParent() != overshape) {
+                    if (overshape && shape.myParent && shape.myParent() != overshape) {
                         overshape['saveColor'] = overshape.color;
                         //overshape['hold'] = overshape.getSize(1);
                         //let size = overshape.getSize(1.1);
@@ -179,11 +220,10 @@ export class foPage extends foShape2D {
                 }
 
             } else {
-                this.onMouseLocationChanged(loc, "hover");
+                this.onMouseLocationChanged(loc, "hover", keys);
                 loc.add(this.marginX, this.marginY);
+
                 let found = this.findHitShape(loc);
-                //console.log('found=', found);
-                //console.log('hovershape=', hovershape);
                 if (found && found == hovershape) {
                     this.onItemHoverEnter(loc, hovershape);
                 } else if (found) {
@@ -192,39 +232,35 @@ export class foPage extends foShape2D {
                     this.onItemHoverEnter(loc, hovershape);
                 } else if (hovershape) {
                     this.onItemHoverExit(loc, hovershape);
+                    grab && this.onHandleHoverExit(loc, grab, keys)
                     hovershape = undefined;
+                    grab = undefined;
                 }
 
-                if (hovershape && hovershape.isSelected) {
 
-                    let found = hovershape.findHandle(loc, e);
-                    if (found) {
-                        console.log('found = ', grab)
-                        found.color = 'yellow';
-                        grab = found;
-                    } else if (grab) {
-                        grab.color = 'black';
-                        grab = null;
-                    }
+                let handle = findHandle(loc);
+                if (handle && handle == grab) {
+                    this.onHandleHoverEnter(loc, handle, keys)
+                } else if (handle) {
+                    grab && this.onHandleHoverExit(loc, grab, keys)
+                    grab = handle;
+                    this.onHandleHoverEnter(loc, grab, keys)
                 } else if (grab) {
-                    grab.color = 'black';
+                    this.onHandleHoverExit(loc, handle, keys)
                     grab = null;
                 }
-
             }
             this.sitOnShape = overshape || {};
         });
 
-        PubSub.Sub('mouseup', (loc: cPoint, e) => {
-            this.onMouseLocationChanged(loc, "up");
+        PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
+            this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
 
             this._subcomponents.moveToTop(shape);
-            let drop = shape.getLocation();
-            drop['myGuid'] = shape['myGuid'];
 
             if (overshape) {
-                this.removeFromModel(shape);
+                this.removeSubcomponent(shape);
                 overshape.addSubcomponent(shape, {
                     x: 0,
                     y: 0
@@ -235,13 +271,15 @@ export class foPage extends foShape2D {
             }
 
             shape = null;
+            grab = null;
         });
 
     }
 
-    public onMouseLocationChanged = (loc: cPoint, state: string): void => {
+    public onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
         this.mouseLoc = loc;
         this.mouseLoc.state = state;
+        this.mouseLoc.keys = keys;
     }
 
     public onItemChangedParent = (shape: foGlyph): void => {
@@ -250,10 +288,22 @@ export class foPage extends foShape2D {
     public onItemChangedPosition = (shape: foGlyph): void => {
     }
 
-    public onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
+    public onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
     }
 
-    public onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
+    public onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    }
+
+    public onHandleHoverEnter = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    }
+
+    public onHandleMoving = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    }
+
+    public onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    }
+
+    public onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {
