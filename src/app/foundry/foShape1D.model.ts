@@ -134,8 +134,8 @@ export class foShape1D extends foShape2D {
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
 
-        if (loc.y < 0) return false;
-        if (loc.y > this.height) return false;
+        if (loc.y < -this.height/2) return false;
+        if (loc.y > this.height/2) return false;
 
         return true;
     }
