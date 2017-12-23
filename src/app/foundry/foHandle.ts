@@ -141,7 +141,7 @@ export class foHandle extends foNode {
     }
 
     public myParentGlyph():foGlyph {
-        return <foGlyph>this.myParent()
+        return this.myParent && <foGlyph>this.myParent()
     }
 
     protected localHitTest = (hit: iPoint): boolean => {

@@ -81,7 +81,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
     get asJson() {
-        let parent = <foGlyph>this.myParent();
+        let parent = this.myParent && <foGlyph>this.myParent();
         return {
             parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,
@@ -109,7 +109,7 @@ export class foGlyph extends foNode implements iShape {
 
     getGlobalMatrix() {
         let mtx = new Matrix2D(this.getMatrix());
-        let parent = <foGlyph>this.myParent()
+        let parent = this.myParent && <foGlyph>this.myParent()
         if (parent) {
             mtx.prependMatrix(parent.getGlobalMatrix());
         }

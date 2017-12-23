@@ -57,7 +57,7 @@ export class foShape2D extends foGlyph {
     };
 
     get asJson() {
-        let parent = <foGlyph>this.myParent();
+        let parent = this.myParent && <foGlyph>this.myParent();
         return {
             parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,

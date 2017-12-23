@@ -9,6 +9,7 @@ import { foCollection } from '../foundry/foCollection.model'
 import { foDictionary } from "../foundry/foDictionary.model";
 
 import { foNode } from '../foundry/foNode.model'
+import { Matrix2D } from '../foundry/foMatrix2D'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
@@ -64,6 +65,14 @@ export class foPage extends foShape2D {
         return this._dictionary.found(key, onFound);
     }
 
+    getMatrix() {
+        if (this._matrix === undefined) {
+            this._matrix = new Matrix2D();
+            this._matrix.appendTransform(this.marginX, this.marginY, this.scaleX, this.scaleY, this.rotation(), 0, 0, 0, 0);
+        }
+        return this._matrix;
+    };
+
     findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
         let found: foGlyph = undefined;
         for (var i: number = 0; i < this._subcomponents.length; i++) {
@@ -90,7 +99,7 @@ export class foPage extends foShape2D {
         let guid = obj.myGuid;
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
-            super.addSubcomponent(obj, properties);
+            super.addSubcomponent(obj, properties); 
         });
         return obj;
     }
@@ -184,7 +193,7 @@ export class foPage extends foShape2D {
 
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);
-                    if (overshape && shape.myParent() != overshape) {
+                    if (overshape && shape.myParent && shape.myParent() != overshape) {
                         overshape['saveColor'] = overshape.color;
                         //overshape['hold'] = overshape.getSize(1);
                         //let size = overshape.getSize(1.1);
