@@ -85,9 +85,9 @@ export class foPage extends foShape2D {
         return null;
     }
 
-    addToModel(shape: foGlyph) {
-        return this.addSubcomponent(shape);
-    }
+    // addToModel(shape: foGlyph) {
+    //     return this.addSubcomponent(shape);
+    // }
 
     addSubcomponent(obj: foNode, properties?:any) {
         let guid = obj.myGuid;
@@ -98,9 +98,9 @@ export class foPage extends foShape2D {
         return obj;
     }
 
-    removeFromModel(shape: foGlyph) {
-        this.removeSubcomponent(shape);
-    }
+    // removeFromModel(shape: foGlyph) {
+    //     this.removeSubcomponent(shape);
+    // }
 
     removeSubcomponent(obj: foNode) {
         let guid = obj.myGuid;
@@ -119,7 +119,7 @@ export class foPage extends foShape2D {
     deleteSelected(onComplete?: Action<foGlyph>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
-            this.removeFromModel(found);
+            this.removeSubcomponent(found);
             onComplete && onComplete(found);
         }
     }
@@ -257,7 +257,7 @@ export class foPage extends foShape2D {
             this._subcomponents.moveToTop(shape);
 
             if (overshape) {
-                this.removeFromModel(shape);
+                this.removeSubcomponent(shape);
                 overshape.addSubcomponent(shape, {
                     x: 0,
                     y: 0
