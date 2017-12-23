@@ -118,12 +118,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     this.onHandleHoverEnter = (loc: cPoint, handle: foHandle, keys?: any): void => {
-      handle.color = 'yellow';
-      let shape = handle.myParentGlyph();
+      //let shape = handle.myParentGlyph();
 
       this.message = [];
-      this.message.push(`Hover (${loc.x},${loc.y}) Enter  ${shape.myName}`);
-      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
+      //this.message.push(`Hover (${loc.x},${loc.y}) Enter  ${shape.myName}`);
+      //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
@@ -133,9 +132,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
       this.message = [];
       handles.forEach( handle => {
-        if (handle.hitTest(loc)) {
-          foObject.beep();
-        }
+        //if (handle.hitTest(loc)) {
+          //foObject.beep();
+        //}
         this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle.myName}`);
         handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       })
@@ -143,12 +142,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     this.onHandleMoving = (loc: cPoint, handle: foHandle, keys?: any): void => {
-      handle.color = 'yellow';
-      let shape = handle.myParentGlyph();
+      //let shape = handle.myParentGlyph();
 
       this.message = [];
-      this.message.push(`Hover (${loc.x},${loc.y}) Move  ${shape.myName}`);
-      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
+      //this.message.push(`Hover (${loc.x},${loc.y}) Move  ${shape.myName}`);
+      //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
@@ -156,19 +154,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     this.onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
-      let shape = handle.myParentGlyph();
+      //let shape = handle.myParentGlyph();
 
       this.message = [];
-      this.message.push(`Hover (${loc.x},${loc.y}) Exit ${shape.myName}`);
-      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
+      //this.message.push(`Hover (${loc.x},${loc.y}) Exit ${shape.myName}`);
+      //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Exit ${handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
 
-      if (handle) {
-        handle.color = 'green';
-      }
     }
 
 

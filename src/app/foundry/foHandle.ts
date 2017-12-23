@@ -153,7 +153,7 @@ export class foHandle extends foNode {
 
         if (loc.y < 0) return false;
         if (loc.y > this.size) return false;
-        foObject.beep();
+        //foObject.beep();
         return true;
     }
 

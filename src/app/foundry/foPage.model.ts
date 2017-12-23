@@ -137,6 +137,11 @@ export class foPage extends foShape2D {
             loc.add(this.marginX, this.marginY);
             this.onMouseLocationChanged(loc, "down", keys);
 
+            grab = findHandle(loc);
+            if (grab) {
+                offset = grab.getOffset(loc);
+                return;
+            }
 
             if (!keys.shift) {
                 grab = null;
@@ -146,30 +151,31 @@ export class foPage extends foShape2D {
                 });
             }
 
-            grab = findHandle(loc);
-            if (grab) {
-                offset = grab.getOffset(loc);
-            } else {
-                shape = this.findHitShape(loc);
-                if (shape) {
-                    this._subcomponents.moveToTop(shape);
-                    shape.isSelected = true;
-                    offset = shape.getOffset(loc);
-                    handles.copyMembers(shape.handles);
-                }
+            shape = this.findHitShape(loc);
+            if (shape) {
+                this._subcomponents.moveToTop(shape);
+                shape.isSelected = true;
+                offset = shape.getOffset(loc);
+                handles.copyMembers(shape.handles);
             }
 
         });
 
         PubSub.Sub('mousemove', (loc: cPoint, e, keys) => {
-            if ( handles.length) {
+            if (findHandle(loc) && handles.length) {
                 //this.onHandleMoving(loc, handles.first(), keys);
                 this.onTrackHandles(loc, handles, keys);
             }
-            
+
+            handles.forEach(handle => {
+                handle.color = handle.hitTest(loc) ? 'yellow' : 'black'
+            })
+
+
             if (grab) {
                 //this.onHandleMoving(loc, grab, keys)
-                //grab.doMove(loc, offset);
+                //let pos = grab.globalToLocal(loc.x, loc.y)
+                //grab.doMove(pos, offset);
             } else if (shape) {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.doMove(loc, offset);
