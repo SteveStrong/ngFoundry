@@ -140,7 +140,9 @@ export class foHandle extends foNode {
         return new cPoint(this.x, this.y);
     }
 
-
+    public myParentGlyph():foGlyph {
+        return <foGlyph>this.myParent()
+    }
 
     protected localHitTest = (hit: iPoint): boolean => {
 

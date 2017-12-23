@@ -29,7 +29,7 @@ export class foGlyph extends foNode implements iShape {
     protected _opacity: number;
     protected _color: string;
 
-    protected _handles: Array<foHandle> = new Array<foHandle>()
+    
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -57,6 +57,9 @@ export class foGlyph extends foNode implements iShape {
     set color(value: string) {
         this._color = value;
     }
+
+    get handles(): foCollection<foHandle> { return this._handles || this.createHandles(); }
+    protected _handles: foCollection<foHandle>;
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -375,29 +378,28 @@ export class foGlyph extends foNode implements iShape {
         ctx.stroke();
     }
 
-    public createHandles() {
-        if (this._handles.length == 0) {
+    public createHandles(): foCollection<foHandle> {
+        if (!this._handles) {
             let handles = [
-                { x: 0, y: 0 },
-                { x: this.width, y: 0 },
-                { x: this.width, y: this.height },
-                { x: 0, y: this.height },
-            ]
+                { x: 0, y: 0, myName: "0:0" },
+                { x: this.width, y: 0, myName: "W:0" },
+                { x: this.width, y: this.height, myName: "W:H" },
+                { x: 0, y: this.height, myName: "0:H" },
+            ];
+            this._handles = new foCollection<foHandle>()
             handles.forEach(item => {
-                this._handles.push(new foHandle(item, undefined, this));
+                this._handles.addMember(new foHandle(item, undefined, this));
             });
         }
-    }
-
-    public getHandles(): Array<foHandle> {
         return this._handles;
     }
+
 
     public findHandle(loc: cPoint, e): foHandle {
         if ( !this._handles) return;
 
-        for (var i: number = 0; i < this._handles.length; i++) {
-            let handle: foHandle = this._handles[i];
+        for (var i: number = 0; i < this.handles.length; i++) {
+            let handle: foHandle = this.handles.getChildAt(i);
             if (handle.hitTest(loc)) {
                 return handle;
             }
