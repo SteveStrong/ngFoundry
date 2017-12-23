@@ -70,6 +70,7 @@ export class foNode extends foObject implements iNode {
         }
         obj._index = -1;
         this._subcomponents.removeMember(obj);
+        return obj;
     }
 
     get index(): number {

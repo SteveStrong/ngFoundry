@@ -112,6 +112,7 @@ export class foPage extends foShape2D {
             this._dictionary.removeItem(guid);
             super.removeSubcomponent(obj);
         });
+        return obj;
     }
 
     clearAll() {
