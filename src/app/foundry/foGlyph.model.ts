@@ -136,12 +136,12 @@ export class foGlyph extends foNode implements iShape {
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
         let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt || new cPoint());
+        return mtx.transformPoint(x, y, pt);
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
         let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt || new cPoint());
+        return inv.transformPoint(x, y, pt);
     };
 
     globalToLocalPoint(pt: cPoint) {

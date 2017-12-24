@@ -185,9 +185,9 @@ export class foPage extends foShape2D {
 
 
             if (grab) {
-                //this.onHandleMoving(loc, grab, keys)
+                this.onHandleMoving(loc, grab, keys)
                 //let pos = grab.globalToLocal(loc.x, loc.y)
-                //grab.doMove(pos, offset);
+                grab.doMove(loc, offset);
             } else if (shape) {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.doMove(loc, offset);

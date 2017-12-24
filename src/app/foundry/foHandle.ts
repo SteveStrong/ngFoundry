@@ -118,12 +118,12 @@ export class foHandle extends foNode {
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
         let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt || new cPoint());
+        return mtx.transformPoint(x, y, pt);
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
         let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt || new cPoint());
+        return inv.transformPoint(x, y, pt);
     };
 
     public getOffset = (loc: iPoint): iPoint => {
