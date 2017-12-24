@@ -131,9 +131,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
       this.message = [];
-      handles.forEach( handle => {
+      handles.forEach(handle => {
         //if (handle.hitTest(loc)) {
-          //foObject.beep();
+        //foObject.beep();
         //}
         this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle.myName}`);
         handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
@@ -251,7 +251,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByTwo() {
     let shape = Stencil.create(TwoByTwo, {
       color: 'pink',
-      myName : "main shape"
+      myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
@@ -354,19 +354,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let dY = y2 - y1;
 
     let spec = {
-      angle: Math.atan2(dY, dX),
+      angle: foGlyph.RAD_TO_DEG * Math.atan2(dY, dX),
       length: Math.sqrt(dX * dX + dY * dY),
       cX: (x2 + x1) / 2,
       cY: (y2 + y1) / 2,
-  }
+    }
 
-  let fake = Stencil.create(TenByTen, {
-    opacity: .5,
-    color: 'gray',
-    angle: spec.angle,
-    width: spec.length,
-    height: height,
-  }).drop(400, 400).addAsSubcomponent(this);
+    let fake = Stencil.create(foShape2D, {
+      opacity: .5,
+      color: 'gray',
+      angle: spec.angle,
+      width: spec.length,
+      height: height,
+    }).drop(400, 400).addAsSubcomponent(this);
 
 
     let shape = Stencil.create(Line, {
@@ -377,7 +377,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: x2,
       finishY: y2,
       height: height,
-    }).drop(400, 300).addAsSubcomponent(this);
+    }).drop(250, 150).addAsSubcomponent(this);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
   }

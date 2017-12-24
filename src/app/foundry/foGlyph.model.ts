@@ -17,6 +17,9 @@ import { foComponent } from './foComponent.model';
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
 
+    static DEG_TO_RAD = Math.PI / 180;
+    static RAD_TO_DEG = 180 / Math.PI;
+
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
@@ -139,6 +142,11 @@ export class foGlyph extends foNode implements iShape {
     globalToLocal(x: number, y: number, pt?: cPoint) {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt || new cPoint());
+    };
+
+    globalToLocalPoint(pt: cPoint) {
+        let inv = this.getGlobalMatrix().invertCopy();
+        return inv.transformPoint(pt.x, pt.y);
     };
 
     localToLocal(x: number, y: number, target: foGlyph, pt?: cPoint) {
@@ -379,20 +387,34 @@ export class foGlyph extends foNode implements iShape {
         ctx.stroke();
     }
 
-    public createHandles(): foCollection<foHandle> {
+    protected generateHandles(spec: any): foCollection<foHandle> {
+
         if (!this._handles) {
-            let handles = [
-                { x: 0, y: 0, myName: "0:0" },
-                { x: this.width, y: 0, myName: "W:0" },
-                { x: this.width, y: this.height, myName: "W:H" },
-                { x: 0, y: this.height, myName: "0:H" },
-            ];
             this._handles = new foCollection<foHandle>()
-            handles.forEach(item => {
-                this._handles.addMember(new foHandle(item, undefined, this));
+            spec.forEach(item => {
+                let handle = new foHandle(item, undefined, this);
+                this._handles.addMember(handle);
+            });
+        } else {
+            let i = 0;
+            spec.forEach(item => {
+                let handle = this._handles.getChildAt(i++)
+                handle.override(item);
             });
         }
         return this._handles;
+    }
+
+    public createHandles(): foCollection<foHandle> {
+
+        let spec = [
+            { x: 0, y: 0, myName: "0:0" },
+            { x: this.width, y: 0, myName: "W:0" },
+            { x: this.width, y: this.height, myName: "W:H" },
+            { x: 0, y: this.height, myName: "0:H" },
+        ];
+
+        return this.generateHandles(spec);
     }
 
 
