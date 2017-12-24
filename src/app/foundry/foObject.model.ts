@@ -53,7 +53,7 @@ export class foObject implements iObject {
         return this.hasParent;
     }
 
-    public notify (name: string, ...args: any[]) {
+    public notifyOnChange(source:any, channel: string, ...args: any[]) {
     }
 
     getChildAt(i: number): iObject {

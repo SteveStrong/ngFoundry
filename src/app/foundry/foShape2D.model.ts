@@ -26,7 +26,7 @@ export class foShape2D extends foGlyph {
         this._angle = value;
     }
 
-    get glue(): foCollection<foGlue> { return this._glue; }
+    //get glue(): foCollection<foGlue> { return this._glue; }
     protected _glue: foCollection<foGlue>;
 
     public pinX = (): number => { return 0.5 * this.width; }
@@ -38,13 +38,26 @@ export class foShape2D extends foGlyph {
         this.myGuid;
     }
 
-    public notify (name: string, ...args: any[]) {
+    public notifyOnChange(source:any, channel: string, ...args: any[]) {
     }
-    
+
+    notifySource(channel: string, ...args: any[]) {
+        this._glue && this._glue.forEach(item => {
+            item.mySource().notifyOnChange(item,channel, ...args);
+        })
+    }
+
+    notifyTarget(channel: string, ...args: any[]) {
+        this._glue && this._glue.forEach(item => {
+            item.myTarget().notifyOnChange(item,channel, ...args);
+        })
+    }
+
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
         if (!Number.isNaN(angle)) this.angle = angle;
+        this.notifySource('drop', this.getLocation());
         return this;
     }
 

@@ -64,7 +64,7 @@ export class foShape1D extends foShape2D {
     }
 
     public end = (name?: string): cPoint => {
-        return new cPoint(this.finishX, this.finishY,name)
+        return new cPoint(this.finishX, this.finishY, name)
     }
 
     public center = (name?: string): cPoint => {
@@ -74,6 +74,32 @@ export class foShape1D extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.myGuid;
+    }
+
+    private setStart(point: cPoint){
+        this.startX = point.x;
+        this.startY = point.y;
+    }
+
+    private setFinish(point: cPoint){
+        this.finishX = point.x;
+        this.finishY = point.y;
+    }
+
+    public notifyOnChange(source:any, channel: string, ...args: any[]) {
+        switch (channel) {
+            case 'drop':
+                let name = source.myName;
+                let pt = <cPoint>args[0];
+                if ( name == 'begin'){
+                    this.setStart(pt);
+                }
+                if ( name == 'end'){
+                    this.setFinish(pt);
+                }
+
+                break;
+        }
     }
 
     private angleDistance(): any {
@@ -241,7 +267,7 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-       // ctx.fillRect(0, 0, this.width, this.height);
+        // ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = 4;
         //ctx.strokeStyle = '#003300';

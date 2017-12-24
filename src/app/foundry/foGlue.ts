@@ -1,5 +1,6 @@
 
 import { Tools } from './foTools';
+import { iObject, Action, ModelRef } from './foInterface'
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
@@ -11,21 +12,13 @@ import { foShape2D } from './foShape2D.model';
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlue extends foNode {
 
-    protected _target: foShape2D;
-    get target(): foShape2D { return this._target; }
-    set target(value: foShape2D) {
-        this._target = value;
-    }
+    myTarget: ModelRef<foShape2D>;
+    mySource: ModelRef<foShape2D>;
 
     protected _handleTo: string;
     get handleTo(): string { return this.handleTo; }
     set handleTo(value: string) {
         this._handleTo = value;
-    }
-
-    get source(): foShape2D { return <foShape2D>(this.myParent()); }
-    set source(value: foShape2D) {
-        this.myParent = () => { return value };
     }
 
     get handleFrom(): string { return this.myName; }
@@ -39,20 +32,23 @@ export class foGlue extends foNode {
     }
 
     glueTo(target: foShape2D, handleTo: string) {
-        this.target = target;
+        this.myTarget = () => { return target };
+        this.mySource = () => { return <foShape2D>this.myParent() };
         this.handleTo = handleTo;
         return this;
     }
 
-    notifyTarget(name: string, ...args: any[]) {
-        this.target.notify(name, args);
-        return this;
-    }
+    // notifyTarget(name: string, item:foGlue, ...args: any[]) {
+    //     let target = this.myTarget();
+    //     target.notify(name, args);
+    //     return this;
+    // }
 
-    notifySource(name: string, ...args: any[]) {
-        this.source.notify(name, args);
-        return this;
-    }
+    // notifySource(name: string, item:foGlue, ...args: any[]) {
+    //     let source = this.mySource()
+    //     source.notify(name, args);
+    //     return this;
+    // }
 
 }
 
