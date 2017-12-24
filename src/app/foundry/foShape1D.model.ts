@@ -181,6 +181,11 @@ export class foShape1D extends foShape2D {
         return this.generateHandles(spec);
     }
 
+    public moveHandle(handle:foHandle, loc: cPoint) {
+        this.finishX = loc.x;
+        this.finishY = loc.y;
+    }
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 

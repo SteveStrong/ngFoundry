@@ -25,6 +25,12 @@ class foPubSub {
             this.registry[name].push(fn);
         }
     }
+
+    Unsub = function (name: string, fn: ISubscription) {
+        if (this.registry[name]) {
+            delete this.registry[name];
+        }
+    }
 }
 
 export let PubSub: foPubSub = new foPubSub();

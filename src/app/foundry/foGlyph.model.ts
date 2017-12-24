@@ -429,6 +429,9 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
+    public moveHandle(handle:foHandle, loc: cPoint) {
+    }
+
 
     public drawHandles(ctx: CanvasRenderingContext2D) {
         this.handles.forEach(item => {

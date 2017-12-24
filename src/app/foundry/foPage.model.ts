@@ -255,6 +255,7 @@ export class foPage extends foShape2D {
         });
 
         PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
+            grab = null;
             this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
 
@@ -272,7 +273,7 @@ export class foPage extends foShape2D {
             }
 
             shape = null;
-            grab = null;
+            
         });
 
     }

@@ -137,7 +137,9 @@ export class foHandle extends foNode {
         this.x = loc.x + (offset ? offset.x : 0);
         this.y = loc.y + (offset ? offset.y : 0);
 
-        return new cPoint(this.x, this.y);
+        let point = new cPoint(this.x, this.y);
+        this.myParentGlyph().moveHandle(this,point);
+        return point;
     }
 
     public myParentGlyph():foGlyph {
