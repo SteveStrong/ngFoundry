@@ -69,16 +69,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doDuplicate() {
   }
 
-  private computeSpec: any = {
-    height: function () {
-      let size = parseInt(this.size.split(':')[1]);
-      return 25 * size;
-    },
-    width: function () {
-      let size = parseInt(this.size.split(':')[0]);
-      return 25 * size;
-    }
-  };
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
@@ -169,15 +159,24 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Pallet.define(foGlyph);
 
-    let compute = this.computeSpec;
+    let compute = {
+      height: function () {
+        let size = parseInt(this.size.split(':')[1]);
+        return 25 * size;
+      },
+      width: function () {
+        let size = parseInt(this.size.split(':')[0]);
+        return 25 * size;
+      }
+    }
     Stencil.define(OneByOne, compute);
 
     Stencil.define(OneByOne, compute);
     Stencil.define(TwoByOne, compute);
-    Stencil.define(TwoByTwo, compute);
+    Stencil.define(TwoByTwo, { width: 50, height: 50 });
     Stencil.define(TwoByFour, compute);
     Stencil.define(OneByTen, compute);
-    Stencil.define(TenByTen, compute);
+    Stencil.define(TenByTen, { width: 250, height: 250 });
   }
 
   onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
@@ -249,6 +248,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByTwo() {
+
     let shape = Stencil.create(TwoByTwo, {
       color: 'pink',
       myName: "main shape"
@@ -267,7 +267,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinY = (): number => { return 0.5 * this.height; }
     }
 
-    Stencil.define(localTwoByFour, this.computeSpec);
+    Stencil.define(localTwoByFour, Stencil.spec(TwoByFour));
 
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',

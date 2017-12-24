@@ -187,10 +187,10 @@ export class foPage extends foShape2D {
 
             if (grab) {
                 this.onHandleMoving(loc, grab, keys)
-                grab.doMove(loc, offset);
+                grab.moveTo(loc, offset);
             } else if (shape) {
                 this.onMouseLocationChanged(loc, "move", keys);
-                shape.doMove(loc, offset);
+                shape.moveTo(loc, offset);
 
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);

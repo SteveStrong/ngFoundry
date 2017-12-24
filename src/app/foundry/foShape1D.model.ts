@@ -158,7 +158,7 @@ export class foShape1D extends foShape2D {
         ctx.moveTo(x, y - size);
         ctx.lineTo(x, y + size);
         ctx.lineWidth = 2;
-        ctx.strokeStyle = '#003300';
+        //ctx.strokeStyle = '#003300';
         ctx.stroke();
         ctx.restore();
     }
@@ -175,7 +175,7 @@ export class foShape1D extends foShape2D {
         ctx.moveTo(x + size, y - size);
         ctx.lineTo(x - size, y + size);
         ctx.lineWidth = 2;
-        ctx.strokeStyle = '#003300';
+        //ctx.strokeStyle = '#003300';
         ctx.stroke();
         ctx.restore();
     }
@@ -203,17 +203,20 @@ export class foShape1D extends foShape2D {
                 break;
 
             case 'center':
+                this.moveTo(loc)
                 break;
         }
-        ;
+        let { angle, length, cX, cY } = this.angleDistance();
+        this.x = cX;
+        this.y = cY;
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        this.drawOrigin(ctx);
+        //this.drawOrigin(ctx);
         this.updateContext(ctx);
-        this.drawOriginX(ctx);
+        //this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
@@ -222,8 +225,7 @@ export class foShape1D extends foShape2D {
 
         this.isSelected && this.drawSelected(ctx);
 
-        this.drawStart(ctx);
-        this.drawEnd(ctx);
+
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
@@ -239,10 +241,10 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        ctx.fillRect(0, 0, this.width, this.height);
+       // ctx.fillRect(0, 0, this.width, this.height);
 
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#003300';
+        ctx.lineWidth = 4;
+        //ctx.strokeStyle = '#003300';
 
         let { x: x1, y: y1 } = this.globalToLocalPoint(this.begin());
         let { x: x2, y: y2 } = this.globalToLocalPoint(this.end());
@@ -251,6 +253,9 @@ export class foShape1D extends foShape2D {
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
+
+        //this.drawStart(ctx);
+        //this.drawEnd(ctx);
     }
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
@@ -258,7 +263,7 @@ export class foShape1D extends foShape2D {
         ctx.fillStyle = 'red';
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
-        //this.drawHandles(ctx);
+        this.drawHandles(ctx);
         this.drawPin(ctx);
     }
 
@@ -271,25 +276,17 @@ export class foShape1D extends foShape2D {
         let { x: x1, y: y1 } = this.globalToLocalPoint(this.begin());
         let { x: x2, y: y2 } = this.globalToLocalPoint(this.end());
 
-        // let { angle, length, cX, cY } = this.angleDistance();
-
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;
 
-        ctx.fillStyle = 'green';
-        ctx.fillRect(0, 0, this.width, this.height);
+        //ctx.fillStyle = 'green';
+        //ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = 4;
         ctx.beginPath()
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-
-        this.drawHandles(ctx);
-        this.drawPin(ctx);
-
-        //this.drawText(ctx, this.myType)
-
     }
 }
 

@@ -104,10 +104,16 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
-    public doMove(loc: iPoint, offset?: iPoint) {
+    public moveTo(loc: iPoint, offset?: iPoint) {
         let x = loc.x + (offset ? offset.x : 0);
         let y = loc.y + (offset ? offset.y : 0);
-        return this.drop(x,y);
+        return this.drop(x, y);
+    }
+
+    public moveBy(loc: iPoint, offset?: iPoint) {
+        let x = this.x + loc.x + (offset ? offset.x : 0);
+        let y = this.y + loc.y + (offset ? offset.y : 0);
+        return this.drop(x, y);
     }
 
     updateContext(ctx: CanvasRenderingContext2D) {
@@ -186,10 +192,14 @@ export class foGlyph extends foNode implements iShape {
         this.y -= (this.height * (scale - 1)) / 2.0;
         this.width *= scale;
         this.height *= scale;
-        return this.getSize(1.0);
+        return this.getSize();
     }
 
-
+    public growSize = (dx: number, dy: number): iSize => {
+        this.width += dx;
+        this.height += dy;
+        return this.getSize();
+    }
 
     public setColor(color: string): string {
         this.color = color;
@@ -425,7 +435,7 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
-    public moveHandle(handle:foHandle, loc: iPoint) {
+    public moveHandle(handle: foHandle, loc: iPoint) {
     }
 
 

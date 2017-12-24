@@ -5,6 +5,7 @@ import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
+import { foHandle } from '../foundry/foHandle'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
@@ -19,9 +20,9 @@ export class foShape2D extends foGlyph {
 
     protected _angle: number;
     get angle(): number { return this._angle || 0.0; }
-    set angle(value: number) { 
+    set angle(value: number) {
         this.smash();
-        this._angle = value; 
+        this._angle = value;
     }
 
 
@@ -44,7 +45,7 @@ export class foShape2D extends foGlyph {
     updateContext(ctx: CanvasRenderingContext2D) {
         let mtx = this.getMatrix();
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
-        ctx.globalAlpha *= this.opacity;    
+        ctx.globalAlpha *= this.opacity;
     };
 
     getMatrix() {
@@ -57,7 +58,7 @@ export class foShape2D extends foGlyph {
     };
 
     get asJson() {
-        let parent = this.myParent && <foGlyph>this.myParent();
+        let parent = this.hasParent && <foGlyph>this.myParent();
         return {
             parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,
@@ -114,12 +115,28 @@ export class foShape2D extends foGlyph {
         }
     }
 
+    public moveHandle(handle: foHandle, loc: iPoint) {
+        let pt = handle.localToGlobal(0, 0).subtract(loc.x,loc.y);
+        this.growSize(pt.x, pt.y)
+        switch (handle.myName) {
+            case '0:0':
+                break;
+            case 'W:0':
+                break;
+            case 'W:H':
+                break;
+            case '0:H':
+                break;
+
+        }
+    }
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
         this.drawOrigin(ctx);
         this.updateContext(ctx);
-        this.drawOriginX(ctx); 
+        this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
@@ -178,6 +195,12 @@ export class Stencil {
         let instance = new type();
         this.lookup[instance.myType] = { create: type, defaults: properties };
         return type;
+    }
+
+    static spec<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
+        let instance = new type();
+        let { create, defaults } = this.lookup[instance.myType];
+        return defaults;
     }
 
     static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {

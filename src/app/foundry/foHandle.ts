@@ -85,12 +85,12 @@ export class foHandle extends foNode {
         return this;
     }
 
-    public doMove(loc: iPoint, offset?: iPoint) {
-        let x = loc.x + (offset ? offset.x : 0);
-        let y = loc.y + (offset ? offset.y : 0);
+    public moveTo(loc: iPoint, offset?: iPoint) {
+        //let x = loc.x + (offset ? offset.x : 0);
+        //let y = loc.y + (offset ? offset.y : 0);
 
         this.myParentGlyph().moveHandle(this, loc);
-        return this.drop(x,y);
+        return this;
     }
 
 
