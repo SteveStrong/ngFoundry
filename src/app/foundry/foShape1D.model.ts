@@ -55,20 +55,20 @@ export class foShape1D extends foShape2D {
     get height(): number { return this._height || 0.0; }
     set height(value: number) { this._height = value; }
 
-    public pinX = (): number => { return 0.5 * this.width; } // (this.startX + this.finishX); }
-    public pinY = (): number => { return 0.5 * this.height; }; //(this.startY + this.finishY); }
+    public pinX = (): number => { return 0.5 * this.width; }
+    public pinY = (): number => { return 0.5 * this.height; };
     public rotation = (): number => { return this.angle; }
 
-    public begin = (name?:string): cPoint => {
-        return new cPoint(this.startX, this.startY)
+    public begin = (name?: string): cPoint => {
+        return new cPoint(this.startX, this.startY, name)
     }
 
-    public end = (name?:string): cPoint => {
-        return new cPoint(this.finishX, this.finishY)
+    public end = (name?: string): cPoint => {
+        return new cPoint(this.finishX, this.finishY,name)
     }
 
-    public center = (name?:string): cPoint => {
-        return new cPoint((this.startX +this.finishX)/2, (this.startY +this.finishY)/2);
+    public center = (name?: string): cPoint => {
+        return new cPoint((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
     }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -182,23 +182,30 @@ export class foShape1D extends foShape2D {
 
     public createHandles(): foCollection<foHandle> {
 
-        let begin = this.globalToLocalPoint(this.begin());
-        let center = this.globalToLocalPoint(this.center());
-        let end = this.globalToLocalPoint(this.end());
+        let begin = this.globalToLocalPoint(this.begin('start'));
+        let center = this.globalToLocalPoint(this.center('center'));
+        let end = this.globalToLocalPoint(this.end('end'));
 
-
-        let spec = [
-            begin,
-            center,
-            end,
-        ];
-
+        let spec = [begin, center, end];
         return this.generateHandles(spec);
     }
 
     public moveHandle(handle: foHandle, loc: iPoint) {
-        this.finishX = loc.x;
-        this.finishY = loc.y;
+        switch (handle.myName) {
+            case 'start':
+                this.startX = loc.x;
+                this.startY = loc.y
+                break;
+
+            case 'end':
+                this.finishX = loc.x;
+                this.finishY = loc.y
+                break;
+
+            case 'center':
+                break;
+        }
+        ;
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {

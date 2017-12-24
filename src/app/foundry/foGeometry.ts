@@ -4,12 +4,12 @@ import { iPoint, iRect, iBox } from './foInterface';
 export class cPoint implements iPoint {
     public x: number;
     public y: number;
-    public name:string;
+    public myName:string;
 
     constructor(x: number = 0, y: number = 0, name?:string) {
         this.x = x;
         this.y = y;
-        this.name = name;
+        this.myName = name;
     }
 
     set(x: number = 0, y: number = 0) {
@@ -30,14 +30,14 @@ export class cRect implements iRect {
     public y: number;
     public width: number;
     public height: number;
-    public name:string;
+    public myName:string;
 
     constructor(x: number, y: number, width: number, height: number, name?:string) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.name = name;
+        this.myName = name;
     }
 
     moveBy(x: number = 0, y: number = 0): iRect {
