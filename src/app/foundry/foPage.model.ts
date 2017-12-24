@@ -135,6 +135,7 @@ export class foPage extends foShape2D {
         let offset: iPoint = null;
         let handles: foCollection<foHandle> = new foCollection<foHandle>()
         let grab: foHandle = null;
+        let float: foHandle = null;
 
         function findHandle(loc: cPoint): foHandle {
             for (var i: number = 0; i < handles.length; i++) {
@@ -187,7 +188,7 @@ export class foPage extends foShape2D {
             if (grab) {
                 this.onHandleMoving(loc, grab, keys)
                 //let pos = grab.globalToLocal(loc.x, loc.y)
-                grab.doMove(loc, offset);
+                grab.doMove(loc);
             } else if (shape) {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.doMove(loc, offset);
@@ -240,15 +241,16 @@ export class foPage extends foShape2D {
 
 
                 let handle = findHandle(loc);
-                if (handle && handle == grab) {
+                if (handle && handle == float) {
+                    float = handle;
                     this.onHandleHoverEnter(loc, handle, keys)
                 } else if (handle) {
-                    grab && this.onHandleHoverExit(loc, grab, keys)
-                    grab = handle;
-                    this.onHandleHoverEnter(loc, grab, keys)
-                } else if (grab) {
+                    float && this.onHandleHoverExit(loc, float, keys)
+                    float = handle;
+                    this.onHandleHoverEnter(loc, float, keys)
+                } else if (float) {
                     this.onHandleHoverExit(loc, handle, keys)
-                    grab = null;
+                    float = null;
                 }
             }
             this.sitOnShape = overshape || {};
