@@ -398,25 +398,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addSubcomponent(shape2);
     shape2.pinX = (): number => { return 0.0; }
 
+    let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
+    let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+
     let wire = Stencil.create(Line, {
       opacity: .5,
       height: 30,
+      startX: pt1.x,
+      startY: pt1.y,
+      finishX: pt2.x,
+      finishY: pt2.y,
       color: 'black',
     }).drop(400, 400);
 
-    wire.begin = (): cPoint => {
-      let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
-      //wire.startX = pt.x;
-      //wire.startY = pt.y;
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
-
-    wire.end = (): cPoint => {
-      let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
-      //wire.finishX = pt.x;
-      //wire.finishY = pt.y;
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
 
     this.addSubcomponent(wire);
   }
