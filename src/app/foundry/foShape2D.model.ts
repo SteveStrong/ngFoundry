@@ -6,6 +6,7 @@ import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foHandle } from '../foundry/foHandle'
+import { foGlue } from '../foundry/foGlue'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
@@ -25,6 +26,8 @@ export class foShape2D extends foGlyph {
         this._angle = value;
     }
 
+    get glue(): foCollection<foGlue> { return this._glue; }
+    protected _glue: foCollection<foGlue>;
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
@@ -129,6 +132,25 @@ export class foShape2D extends foGlyph {
                 break;
 
         }
+    }
+
+    createGlue(name:string, target:foShape2D, handle?:string){
+        let glue = this.addGlue(new foGlue({myName:name}));
+        glue.glueTo(target, handle);
+        target.addGlue(glue);
+        return glue;
+    }
+
+    addGlue(glue: foGlue){
+        if ( !this._glue ) {
+            this._glue = new foCollection<foGlue>();
+        }
+        this._glue.addMember(glue);
+
+        if ( !glue.hasParent) {
+            glue.myParent = () => { return this; }
+        }
+        return glue;
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {

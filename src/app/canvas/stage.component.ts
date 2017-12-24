@@ -17,6 +17,7 @@ import { foDictionary } from "../foundry/foDictionary.model";
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
+import { foGlue } from "../foundry/foGlue";
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
@@ -114,7 +115,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(`Hover (${loc.x},${loc.y}) Enter  ${shape.myName}`);
       //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
-      this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle.myName}`);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
     }
@@ -125,7 +126,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         //if (handle.hitTest(loc)) {
         //foObject.beep();
         //}
-        this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle.myName}`);
+        this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle && handle.myName}`);
         handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       })
 
@@ -138,7 +139,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(`Hover (${loc.x},${loc.y}) Move  ${shape.myName}`);
       //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
-      this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle.myName}`);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
     }
@@ -150,7 +151,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(`Hover (${loc.x},${loc.y}) Exit ${shape.myName}`);
       //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
-      this.message.push(`Handle Hover (${loc.x},${loc.y}) Exit ${handle.myName}`);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Exit ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
 
@@ -400,6 +401,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+    //console.log('start', pt1)
+    //console.log('finish', pt2)
 
     let wire = Stencil.create(Line, {
       opacity: .5,
@@ -409,8 +412,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
       color: 'black',
-    }).drop(400, 400);
+    });
 
+
+    wire.createGlue('begin', shape1);
+    wire.createGlue('end', shape2);
 
     this.addSubcomponent(wire);
   }
