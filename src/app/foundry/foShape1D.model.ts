@@ -59,12 +59,16 @@ export class foShape1D extends foShape2D {
     public pinY = (): number => { return 0.5 * this.height; }; //(this.startY + this.finishY); }
     public rotation = (): number => { return this.angle; }
 
-    public begin = (): cPoint => {
+    public begin = (name?:string): cPoint => {
         return new cPoint(this.startX, this.startY)
     }
 
-    public end = (): cPoint => {
+    public end = (name?:string): cPoint => {
         return new cPoint(this.finishX, this.finishY)
+    }
+
+    public center = (name?:string): cPoint => {
+        return new cPoint((this.startX +this.finishX)/2, (this.startY +this.finishY)/2);
     }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -87,11 +91,24 @@ export class foShape1D extends foShape2D {
     }
 
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x)) this.x = x;
-        if (!Number.isNaN(y)) this.y = y;
-        if (!Number.isNaN(angle)) this.angle = angle;
+        let ang = Number.isNaN(angle) ? 0 : angle;
+
+        if (!Number.isNaN(x) && !Number.isNaN(y)) {
+            this.x = x;
+            this.y = y;
+            let { angle, length, cX, cY } = this.angleDistance();
+            let mtx = new Matrix2D();
+            mtx.appendTransform(x - cX, y - cY, 1, 1, this.rotation(), 0, 0, 0, 0);
+            let start = mtx.transformPoint(this.startX, this.startY);
+            let finish = mtx.transformPoint(this.finishX, this.finishY);
+            this.startX = start.x;
+            this.startY = start.y;
+            this.finishX = finish.x;
+            this.finishY = finish.y;
+        }
         return this;
     }
+
 
     updateContext(ctx: CanvasRenderingContext2D) {
         let mtx = this.getMatrix();
@@ -103,18 +120,15 @@ export class foShape1D extends foShape2D {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
 
-            let { angle, length, cX, cY } = this.angleDistance();
- 
+            let { angle } = this.angleDistance();
+
             this._matrix.appendTransform(this.x, this.y, 1, 1, angle + this.rotation(), 0, 0, this.pinX(), this.pinY());
-            //this._matrix.appendTransform(cX, cY, 1, 1, angle + this.rotation(), 0, 0, this.pinX(), this.pinY());
-    }
+        }
         return this._matrix;
     };
 
 
     protected localHitTest = (hit: iPoint): boolean => {
-
-        //let { angle, length, cX, cY } = this.angleDistance();
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -167,21 +181,22 @@ export class foShape1D extends foShape2D {
     }
 
     public createHandles(): foCollection<foHandle> {
-        let { angle, length, cX, cY } = this.angleDistance();
 
-        let { x: x1, y: y1 } = this.begin();
-        let { x: x2, y: y2 } = this.end();
+        let begin = this.globalToLocalPoint(this.begin());
+        let center = this.globalToLocalPoint(this.center());
+        let end = this.globalToLocalPoint(this.end());
+
 
         let spec = [
-            this.globalToLocal(x1,y1),
-            this.globalToLocal(cX,cY),
-            this.globalToLocal(x2,y2),
+            begin,
+            center,
+            end,
         ];
 
         return this.generateHandles(spec);
     }
 
-    public moveHandle(handle:foHandle, loc: cPoint) {
+    public moveHandle(handle: foHandle, loc: iPoint) {
         this.finishX = loc.x;
         this.finishY = loc.y;
     }
@@ -191,7 +206,7 @@ export class foShape1D extends foShape2D {
 
         this.drawOrigin(ctx);
         this.updateContext(ctx);
-        this.drawOriginX(ctx); 
+        this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
@@ -249,7 +264,7 @@ export class foShape1D extends foShape2D {
         let { x: x1, y: y1 } = this.globalToLocalPoint(this.begin());
         let { x: x2, y: y2 } = this.globalToLocalPoint(this.end());
 
-        let { angle, length, cX, cY } = this.angleDistance();
+        // let { angle, length, cX, cY } = this.angleDistance();
 
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;

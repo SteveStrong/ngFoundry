@@ -377,7 +377,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: x2,
       finishY: y2,
       height: height,
-    }).drop(250, 150).addAsSubcomponent(this);
+    }).drop(400, 300).addAsSubcomponent(this);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
   }

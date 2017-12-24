@@ -79,8 +79,7 @@ export interface iShape extends iNode {
     overlapTest(hit: iShape, ctx: CanvasRenderingContext2D): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
-    setLocation(loc: iPoint): iPoint;
-    doMove(loc: iPoint, offset?: iPoint): iPoint;
+    doMove(loc: iPoint, offset?: iPoint);
     getSize(scale: number): iSize;
     scaleSize(scale: number): iSize;
     isSelected: boolean;

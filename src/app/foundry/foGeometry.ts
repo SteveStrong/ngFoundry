@@ -4,10 +4,12 @@ import { iPoint, iRect, iBox } from './foInterface';
 export class cPoint implements iPoint {
     public x: number;
     public y: number;
+    public name:string;
 
-    constructor(x: number = 0, y: number = 0) {
+    constructor(x: number = 0, y: number = 0, name?:string) {
         this.x = x;
         this.y = y;
+        this.name = name;
     }
 
     set(x: number = 0, y: number = 0) {
@@ -28,21 +30,35 @@ export class cRect implements iRect {
     public y: number;
     public width: number;
     public height: number;
+    public name:string;
 
-    constructor(x: number, y: number, width: number, height: number) {
+    constructor(x: number, y: number, width: number, height: number, name?:string) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.name = name;
     }
 
-    move(x: number = 0, y: number = 0): iRect {
+    moveBy(x: number = 0, y: number = 0): iRect {
         this.x += x;
         this.y += y;
         return this;
     }
 
-    size(width: number, height: number): iRect {
+    moveTo(x: number = 0, y: number = 0): iRect {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
+    sizeBy(width: number, height: number): iRect {
+        this.width += width;
+        this.height += height;
+        return this;
+    }
+
+    sizeTo(width: number, height: number): iRect {
         this.width = width;
         this.height = height;
         return this;
@@ -71,13 +87,9 @@ export class cRect implements iRect {
 }
 
 export class cBox extends cRect implements iBox {
-    public x: number;
-    public y: number;
-    public width: number;
-    public height: number;
 
-    constructor(x: number, y: number, width: number, height: number) {
-        super(x,y,width,height);
+    constructor(x: number, y: number, width: number, height: number, name?:string) {
+        super(x,y,width,height,name);
     }
 
     pinX(): number {

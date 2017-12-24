@@ -85,6 +85,15 @@ export class foHandle extends foNode {
         return this;
     }
 
+    public doMove(loc: iPoint, offset?: iPoint) {
+        let x = loc.x + (offset ? offset.x : 0);
+        let y = loc.y + (offset ? offset.y : 0);
+
+        this.myParentGlyph().moveHandle(this, loc);
+        return this.drop(x,y);
+    }
+
+
     updateContext(ctx: CanvasRenderingContext2D) {
         let mtx = this.getMatrix();
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
@@ -133,16 +142,10 @@ export class foHandle extends foNode {
     }
 
 
-    public doMove(loc: iPoint, offset?: iPoint): iPoint {
-        this.x = loc.x + (offset ? offset.x : 0);
-        this.y = loc.y + (offset ? offset.y : 0);
+    
 
-        let point =   new cPoint(this.x, this.y);
-        this.myParentGlyph().moveHandle(this,point);
-        return point;
-    }
 
-    public myParentGlyph():foGlyph {
+    public myParentGlyph(): foGlyph {
         return this.myParent && <foGlyph>this.myParent()
     }
 
