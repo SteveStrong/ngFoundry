@@ -38,6 +38,9 @@ export class foShape2D extends foGlyph {
         this.myGuid;
     }
 
+    public notify (name: string, ...args: any[]) {
+    }
+    
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
@@ -119,7 +122,7 @@ export class foShape2D extends foGlyph {
     }
 
     public moveHandle(handle: foHandle, loc: iPoint) {
-        let pt = handle.localToGlobal(0, 0).subtract(loc.x,loc.y);
+        let pt = handle.localToGlobal(0, 0).subtract(loc.x, loc.y);
         this.growSize(pt.x, pt.y)
         switch (handle.myName) {
             case '0:0':
@@ -134,21 +137,30 @@ export class foShape2D extends foGlyph {
         }
     }
 
-    createGlue(name:string, target:foShape2D, handle?:string){
-        let glue = this.addGlue(new foGlue({myName:name}));
+    createGlue(name: string, target: foShape2D, handle?: string) {
+        let glue = this.addGlue(new foGlue({ myName: name }));
         glue.glueTo(target, handle);
         target.addGlue(glue);
         return glue;
     }
 
-    addGlue(glue: foGlue){
-        if ( !this._glue ) {
+    addGlue(glue: foGlue) {
+        if (!this._glue) {
             this._glue = new foCollection<foGlue>();
         }
         this._glue.addMember(glue);
 
-        if ( !glue.hasParent) {
+        if (!glue.hasParent) {
             glue.myParent = () => { return this; }
+        }
+        return glue;
+    }
+
+
+    removeGlue(glue: foGlue) {
+        if (this._glue) {
+            this._glue.removeMember(glue);
+            glue.removeParent(this);
         }
         return glue;
     }
