@@ -53,7 +53,6 @@ export class foDisplayObject extends foGlyph {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
     }
 
     get isVisible() {

@@ -36,28 +36,28 @@ export class SignalRService {
     }
   }
 
-  public pubChannel(name: string, payload?: any) {
-    if (this.hub) {
-      //console.log('pubChannel ' + name)
-      payload._channel = this._guid;
-      this.hub.invoke("broadcast", name, payload);
-    }
-  }
+  // public pubChannel(name: string, payload?: any) {
+  //   if (this.hub) {
+  //     //console.log('pubChannel ' + name)
+  //     payload._channel = this._guid;
+  //     this.hub.invoke("broadcast", name, payload);
+  //   }
+  // }
 
-  public subChannel(name: string, callback) {
-    if (this.hub) {
-      //console.log('subChannel ' + name)
-      this.hub.on(name, data => {
-        //console.log(name + ':  ' + JSON.stringify(data, undefined, 3));
-        if ( data._channel != this._guid) {
-          delete data._channel;
-          callback(data);
-        }
-      });
-    } else {
-      Toast.warning("cannot connect at this moment", this.hubURL);
-    }
-  }
+  // public subChannel(name: string, callback) {
+  //   if (this.hub) {
+  //     //console.log('subChannel ' + name)
+  //     this.hub.on(name, data => {
+  //       //console.log(name + ':  ' + JSON.stringify(data, undefined, 3));
+  //       if ( data._channel != this._guid) {
+  //         delete data._channel;
+  //         callback(data);
+  //       }
+  //     });
+  //   } else {
+  //     Toast.warning("cannot connect at this moment", this.hubURL);
+  //   }
+  // }
 
 
   public pubCommand(name: string, command: any, payload?: any) {

@@ -27,20 +27,24 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
         return result;
     }
 
-    findItem(key: string, onMissing?): T {
+    findItem(key: string, onMissing?, onFound?): T {
         let found = this.getItem(key);
         if (!found && onMissing) {
             onMissing(key);
             found = this.getItem(key);
+        } else if (found) {
+            onFound && onFound(found);
         }
         return found;
     }
 
-    found(key: string, onFound?): T {
+    found(key: string, onFound?, onMissing?): T {
         let found = this.getItem(key);
         if (found && onFound) {
             onFound(found);
             found = this.getItem(key);
+        } else if (!found) {
+            onMissing && onMissing(key);
         }
         return found;
     }
@@ -79,7 +83,7 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
     };
 
     applyTo(mapFunc) {  //funct has 1 args.. value
-        for(let key in this._lookup) {
+        for (let key in this._lookup) {
             let value = this._lookup[key];
             mapFunc(value);
         };

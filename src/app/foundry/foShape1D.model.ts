@@ -73,7 +73,6 @@ export class foShape1D extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
     }
 
     private setStart(point: iPoint) {

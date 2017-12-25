@@ -64,20 +64,8 @@ export class foHandle extends foNode {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
     }
 
-    get asJson() {
-        return {
-            myGuid: this.myGuid,
-            myType: this.myType,
-            x: this.x,
-            y: this.y,
-            size: this.size,
-            opacity: this.opacity,
-            color: this.color,
-        }
-    }
 
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;

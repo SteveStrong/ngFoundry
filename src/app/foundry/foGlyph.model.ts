@@ -80,13 +80,10 @@ export class foGlyph extends foNode implements iShape {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
     }
 
     get asJson() {
-        let parent = this.myParent && <foGlyph>this.myParent();
         return {
-            parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,
             myType: this.myType,
             x: this.x,

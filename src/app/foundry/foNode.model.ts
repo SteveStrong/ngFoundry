@@ -8,7 +8,7 @@ import { foCollection } from './foCollection.model'
 
 export class foNode extends foObject implements iNode {
     private _index: number = 0;
-    private _myGuid: string;
+
 
     protected _subcomponents: foCollection<foNode>;
 
@@ -22,18 +22,7 @@ export class foNode extends foObject implements iNode {
     }
 
 
-    get myGuid() {
-        if (!this._myGuid) {
-            this._myGuid = Tools.generateUUID();
-        }
-        return this._myGuid;
-    }
 
-    set myGuid(value) {
-        if (!this._myGuid) {
-            this._myGuid = value;
-        }
-    }
 
 
 

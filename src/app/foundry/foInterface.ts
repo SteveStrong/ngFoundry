@@ -18,6 +18,7 @@ export interface Func<T,TResult>
 export interface iObject {
     myName: string;
     myParent: ModelRef<iObject>;
+    myGuid: string;
     asReference(): string;
     getChildAt(i: number): iObject;
     override(properties?: any);
