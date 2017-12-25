@@ -24,6 +24,14 @@ export class foGlyph extends foNode implements iShape {
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
 
+    protected _visible: boolean = true;
+    get visible(): boolean { return this._visible; }
+    set visible(value: boolean) { this._visible = value; }
+    
+    public get isVisible() {
+        return !!(this.visible && this.opacity > 0 );
+    };
+
     protected _subcomponents: foCollection<foGlyph>;
     protected _x: number;
     protected _y: number;

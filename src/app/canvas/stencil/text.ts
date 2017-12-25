@@ -1,6 +1,6 @@
-import { foDisplayObject } from "../../foundry/foDisplayObject.model";
+import { foDisplay2D } from "../../foundry/foDisplay2D.model";
 
-export class cText extends foDisplayObject {
+export class cText extends foDisplay2D {
     public x: number = 0;
     public y: number = 0;
     public radius: number = 10;

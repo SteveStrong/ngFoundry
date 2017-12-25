@@ -22,7 +22,7 @@ import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
-import { foDisplayObject } from "../foundry/foDisplayObject.model";
+import { foDisplay2D } from "../foundry/foDisplay2D.model";
 import { dRectangle, dGlue, Display } from "./displayshapes.model";
 
 import { Toast } from '../common/emitter.service';
@@ -386,22 +386,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
       opacity: .8,
 
-    }).drop(100, 300, 45)
-    this.addSubcomponent(shape1);
+    }).drop(100, 300, 45).addAsSubcomponent(this);
 
 
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-    }).drop(300, 400, 0)
-    this.addSubcomponent(shape2);
+    }).drop(300, 400, 0).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
     let pc = pt1.midpoint(pt2);
-    //console.log('start', pt1)
-    //console.log('finish', pt2)
+
 
     let shape = Stencil.create(Line, {
       opacity: .5,
@@ -426,20 +423,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
-
-
-
   }
 
   doObjGlue() {
     let shape1 = Display.create(dGlue, {
-    }).drop(100, 200, 30)
-    this.addSubcomponent(shape1);
+    }).drop(100, 200, 30).addAsSubcomponent(this);
 
     let shape2 = Display.create(dGlue, {
-    }).drop(400, 250)
-    this.addSubcomponent(shape2);
-
+    }).drop(400, 250).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
 
@@ -447,19 +438,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .5,
       height: 20,
       color: 'black',
-    }).drop(400, 400);
+    }).drop(400, 400).addAsSubcomponent(this);
 
-    wire.begin = (): cPoint => {
-      let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
-
-    wire.end = (): cPoint => {
-      let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
-
-    this.addSubcomponent(wire);
+    wire.createGlue('begin', shape1);
+    wire.createGlue('end', shape2);
   }
 
   doDropGlue() {
@@ -555,7 +537,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.start().then(() => {
 
       this.signalR.subCommand("moveShape", (cmd, data) => {
-        this.found(cmd.myGuid, shape => {
+        this.found(cmd.guid, shape => {
           TweenLite.to(shape, .8, {
             x: data.x,
             y: data.y,
@@ -566,7 +548,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("addGlyph", (cmd, data) => {
         //console.log(json);
-        this.findItem(cmd.myGuid, () => {
+        this.findItem(cmd.guid, () => {
           Pallet.create(foGlyph, data).addAsSubcomponent(this);
         });
       });
@@ -582,7 +564,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("deleteShape", (cmd, data) => {
         //console.log(json);
-        this.found(cmd.myGuid, shape => {
+        this.found(cmd.guid, shape => {
           this.removeSubcomponent(shape)
         });
       });
@@ -594,7 +576,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("parent", (cmd, data) => {
-        this.found(cmd.myGuid, (shape) => {
+        this.found(cmd.guid, (shape) => {
           this.message.push(data);
           this.removeSubcomponent(shape);
           shape.removeFromParent();
@@ -616,7 +598,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncGlyph", (cmd, data) => {
-        this.findItem(cmd.myGuid, () => {
+        this.findItem(cmd.guid, () => {
           let type = data.myType;
           let shape = Pallet.makeInstance(type, data)
           this.addSubcomponent(shape);
@@ -625,35 +607,27 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
-        this.findItem(cmd.myGuid, () => {
+        this.findItem(cmd.guid, () => {
           //this.message.push(json);
-          let type = cmd.myType;
+          let type = data.myType;
           let shape = Stencil.makeInstance(type, data);
-          this.found(cmd.parentGuid, (item) => {
-            item.addSubcomponent(shape);
-          },
-            (miss) => { }
+          this.found(cmd.parentGuid,
+            (item) => { item.addSubcomponent(shape); },
+            (miss) => { this.addSubcomponent(shape); }
           );
-
-
         });
       });
 
 
-      this.signalR.subCommand("syncDisp", (cmd, json) => {
+      this.signalR.subCommand("syncDisp", (cmd, data) => {
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
-          let type = json.myType;
-          let parent = json.parentGuid;
-          delete json.parentGuid;
-          let shape = Display.makeInstance(type, json);
-          if (parent) {
-            this.found(parent, (item) => {
-              item.addSubcomponent(shape);
-            });
-          } else {
-            this.addSubcomponent(shape);
-          }
+          let type = data.myType;
+          let shape = Display.makeInstance(type, data);
+          this.found(cmd.parentGuid,
+            (item) => { item.addSubcomponent(shape); },
+            (miss) => { this.addSubcomponent(shape); }
+          );
 
         });
       });
