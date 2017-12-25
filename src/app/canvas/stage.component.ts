@@ -388,21 +388,32 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
       opacity: .8,
 
-    }).drop(100, 100, 45)
+    }).drop(100, 300, 45)
     this.addSubcomponent(shape1);
 
 
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-    }).drop(400, 150, 0)
+    }).drop(300, 400, 0)
     this.addSubcomponent(shape2);
     shape2.pinX = (): number => { return 0.0; }
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+    let pc = pt1.midpoint(pt2);
     //console.log('start', pt1)
     //console.log('finish', pt2)
+
+    let shape = Stencil.create(Line, {
+      opacity: .5,
+      color: 'gray',
+      height: 30,
+      startX: pt1.x,
+      startY: pt1.y,
+      finishX: pt2.x,
+      finishY: pt2.y,
+    }).drop(600, 350).addAsSubcomponent(this);
 
     let wire = Stencil.create(Line, {
       opacity: .5,
@@ -412,13 +423,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
       color: 'black',
-    });
+    }).drop().addAsSubcomponent(this);
 
 
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
 
-    this.addSubcomponent(wire);
+
+
   }
 
   doObjGlue() {

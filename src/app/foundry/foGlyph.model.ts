@@ -98,6 +98,10 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        return this;
+    }
+
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;

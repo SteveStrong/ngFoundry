@@ -29,6 +29,12 @@ export class cPoint implements iPoint {
         this.y -= y;
         return this;
     }
+
+    midpoint(pt:cPoint) {
+        let x = (this.x + pt.x) / 2;
+        let y = (this.y + pt.y) / 2;
+        return new cPoint(x,y);
+    }
 }
 
 export class cRect implements iRect {

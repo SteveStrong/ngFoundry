@@ -116,21 +116,31 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        let ang = Number.isNaN(angle) ? 0 : angle;
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        let { x:cX, y:cY } = this.center();
+
+        this.x = Number.isNaN(x) ? cX: x;
+        this.y = Number.isNaN(y) ? cY: y;
+
+        let mtx = new Matrix2D();
+        mtx.appendTransform( this.x, this.y, 1, 1, ang + this.rotation(), 0, 0, cX, cY);
+        let start = mtx.transformPoint(this.startX, this.startY);
+        let finish = mtx.transformPoint(this.finishX, this.finishY);
+        this.startX = start.x;
+        this.startY = start.y;
+        this.finishX = finish.x;
+        this.finishY = finish.y;
+        return this;
+    }
+
+
+    public drop(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        let angle = Number.isNaN(ang) ? 0 : ang;
 
         if (!Number.isNaN(x) && !Number.isNaN(y)) {
-            this.x = x;
-            this.y = y;
-            let { angle, length, cX, cY } = this.angleDistance();
-            let mtx = new Matrix2D();
-            mtx.appendTransform(x - cX, y - cY, 1, 1, this.rotation(), 0, 0, 0, 0);
-            let start = mtx.transformPoint(this.startX, this.startY);
-            let finish = mtx.transformPoint(this.finishX, this.finishY);
-            this.startX = start.x;
-            this.startY = start.y;
-            this.finishX = finish.x;
-            this.finishY = finish.y;
+            this.initialize(x,y,angle);
+        } else {
+            this.initialize();
         }
         return this;
     }
@@ -161,8 +171,9 @@ export class foShape1D extends foShape2D {
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
 
-        if (loc.y < -this.height / 2) return false;
-        if (loc.y > this.height / 2) return false;
+        let size = this.height / 2;
+        if (loc.y < -size) return false;
+        if (loc.y > size) return false;
 
         return true;
     }
@@ -267,7 +278,7 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        // ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = 4;
         //ctx.strokeStyle = '#003300';
@@ -305,8 +316,8 @@ export class foShape1D extends foShape2D {
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;
 
-        //ctx.fillStyle = 'green';
-        //ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = 4;
         ctx.beginPath()
