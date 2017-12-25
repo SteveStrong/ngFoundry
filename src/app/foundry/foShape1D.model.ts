@@ -76,25 +76,31 @@ export class foShape1D extends foShape2D {
         this.myGuid;
     }
 
-    private setStart(point: cPoint){
+    private setStart(point: iPoint) {
         this.startX = point.x;
         this.startY = point.y;
+        let { x: cX, y: cY } = this.center();
+        this.x = cX;
+        this.y = cY;
     }
 
-    private setFinish(point: cPoint){
+    private setFinish(point: iPoint) {
         this.finishX = point.x;
         this.finishY = point.y;
+        let { x: cX, y: cY } = this.center();
+        this.x = cX;
+        this.y = cY;
     }
 
-    public notifyOnChange(source:any, channel: string, ...args: any[]) {
+    public notifyOnChange(source: any, channel: string, ...args: any[]) {
         switch (channel) {
             case 'drop':
                 let name = source.myName;
                 let pt = <cPoint>args[0];
-                if ( name == 'begin'){
+                if (name == 'begin') {
                     this.setStart(pt);
                 }
-                if ( name == 'end'){
+                if (name == 'end') {
                     this.setFinish(pt);
                 }
 
@@ -117,13 +123,13 @@ export class foShape1D extends foShape2D {
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-        let { x:cX, y:cY } = this.center();
+        let { x: cX, y: cY } = this.center();
 
-        this.x = Number.isNaN(x) ? cX: x;
-        this.y = Number.isNaN(y) ? cY: y;
+        this.x = Number.isNaN(x) ? cX : x;
+        this.y = Number.isNaN(y) ? cY : y;
 
         let mtx = new Matrix2D();
-        mtx.appendTransform( this.x, this.y, 1, 1, ang + this.rotation(), 0, 0, cX, cY);
+        mtx.appendTransform(this.x, this.y, 1, 1, ang + this.rotation(), 0, 0, cX, cY);
         let start = mtx.transformPoint(this.startX, this.startY);
         let finish = mtx.transformPoint(this.finishX, this.finishY);
         this.startX = start.x;
@@ -138,9 +144,7 @@ export class foShape1D extends foShape2D {
         let angle = Number.isNaN(ang) ? 0 : ang;
 
         if (!Number.isNaN(x) && !Number.isNaN(y)) {
-            this.initialize(x,y,angle);
-        } else {
-            this.initialize();
+            this.initialize(x, y, angle);
         }
         return this;
     }
@@ -230,22 +234,17 @@ export class foShape1D extends foShape2D {
     public moveHandle(handle: foHandle, loc: iPoint) {
         switch (handle.myName) {
             case 'start':
-                this.startX = loc.x;
-                this.startY = loc.y
+                this.setStart(loc)
                 break;
 
             case 'end':
-                this.finishX = loc.x;
-                this.finishY = loc.y
+                this.setFinish(loc);
                 break;
 
             case 'center':
                 this.moveTo(loc)
                 break;
         }
-        let { angle, length, cX, cY } = this.angleDistance();
-        this.x = cX;
-        this.y = cY;
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
@@ -278,7 +277,7 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        ctx.fillRect(0, 0, this.width, this.height);
+        //ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = 4;
         //ctx.strokeStyle = '#003300';
@@ -316,8 +315,8 @@ export class foShape1D extends foShape2D {
         ctx.fillStyle = this.color;
         ctx.globalAlpha = this.opacity;
 
-        ctx.fillStyle = 'green';
-        ctx.fillRect(0, 0, this.width, this.height);
+        //ctx.fillStyle = 'green';
+        //ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = 4;
         ctx.beginPath()

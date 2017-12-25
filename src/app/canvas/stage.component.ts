@@ -423,7 +423,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
       color: 'black',
-    }).drop().addAsSubcomponent(this);
+    }).addAsSubcomponent(this).initialize();
 
 
     wire.createGlue('begin', shape1);
