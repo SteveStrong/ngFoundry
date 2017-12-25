@@ -21,7 +21,7 @@ export class foConcept extends foKnowledge {
     private _spec: any;
 
     private _attributes: foDictionary<foAttribute> = new foDictionary<foAttribute>({ myName: 'attributes' });
-    private _projections: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'prohections' });
+    private _projections: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'projections' });
 
 
     constructor(properties?: any) {

@@ -38,7 +38,7 @@ export class foHandle extends foNode {
     get size(): number { return this._size || 20.0; }
     set size(value: number) { this._size = value; }
 
-    get opacity(): number { return this._opacity || 1; }
+    get opacity(): number { return this._opacity || .5; }
     set opacity(value: number) { this._opacity = value; }
 
     get color(): string {
@@ -85,6 +85,15 @@ export class foHandle extends foNode {
         return this;
     }
 
+    public moveTo(loc: iPoint, offset?: iPoint) {
+        //let x = loc.x + (offset ? offset.x : 0);
+        //let y = loc.y + (offset ? offset.y : 0);
+
+        this.myParentGlyph().moveHandle(this, loc);
+        return this;
+    }
+
+
     updateContext(ctx: CanvasRenderingContext2D) {
         let mtx = this.getMatrix();
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
@@ -118,12 +127,12 @@ export class foHandle extends foNode {
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
         let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt || new cPoint());
+        return mtx.transformPoint(x, y, pt);
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
         let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt || new cPoint());
+        return inv.transformPoint(x, y, pt);
     };
 
     public getOffset = (loc: iPoint): iPoint => {
@@ -133,14 +142,10 @@ export class foHandle extends foNode {
     }
 
 
-    public doMove(loc: iPoint, offset?: iPoint): iPoint {
-        this.x = loc.x + (offset ? offset.x : 0);
-        this.y = loc.y + (offset ? offset.y : 0);
+    
 
-        return new cPoint(this.x, this.y);
-    }
 
-    public myParentGlyph():foGlyph {
+    public myParentGlyph(): foGlyph {
         return this.myParent && <foGlyph>this.myParent()
     }
 

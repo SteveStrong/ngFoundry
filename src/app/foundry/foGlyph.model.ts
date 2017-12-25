@@ -17,6 +17,9 @@ import { foComponent } from './foComponent.model';
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
 
+    static DEG_TO_RAD = Math.PI / 180;
+    static RAD_TO_DEG = 180 / Math.PI;
+
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
@@ -95,10 +98,26 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        return this;
+    }
+
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
         return this;
+    }
+
+    public moveTo(loc: iPoint, offset?: iPoint) {
+        let x = loc.x + (offset ? offset.x : 0);
+        let y = loc.y + (offset ? offset.y : 0);
+        return this.drop(x, y);
+    }
+
+    public moveBy(loc: iPoint, offset?: iPoint) {
+        let x = this.x + loc.x + (offset ? offset.x : 0);
+        let y = this.y + loc.y + (offset ? offset.y : 0);
+        return this.drop(x, y);
     }
 
     updateContext(ctx: CanvasRenderingContext2D) {
@@ -133,12 +152,22 @@ export class foGlyph extends foNode implements iShape {
 
     localToGlobal(x: number, y: number, pt?: cPoint) {
         let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt || new cPoint());
+        return mtx.transformPoint(x, y, pt);
+    };
+
+    localToGlobalPoint(pt: cPoint) {
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(pt.x, pt.y, pt);
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint) {
         let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt || new cPoint());
+        return inv.transformPoint(x, y, pt);
+    };
+
+    globalToLocalPoint(pt: cPoint) {
+        let inv = this.getGlobalMatrix().invertCopy();
+        return inv.transformPoint(pt.x, pt.y, pt);
     };
 
     localToLocal(x: number, y: number, target: foGlyph, pt?: cPoint) {
@@ -158,11 +187,6 @@ export class foGlyph extends foNode implements iShape {
         return new cPoint(x, y);
     }
 
-    public setLocation = (loc: iPoint): iPoint => {
-        this.x = loc.x;
-        this.y = loc.y;
-        return this.getLocation();
-    }
 
     public getSize = (scale: number = 1): iSize => {
         //structual type
@@ -177,14 +201,16 @@ export class foGlyph extends foNode implements iShape {
         this.y -= (this.height * (scale - 1)) / 2.0;
         this.width *= scale;
         this.height *= scale;
-        return this.getSize(1.0);
+        return this.getSize();
     }
 
-    public doMove(loc: iPoint, offset?: iPoint): iPoint {
-        this.x = loc.x + (offset ? offset.x : 0);
-        this.y = loc.y + (offset ? offset.y : 0);
-
-        return new cPoint(this.x, this.y);
+    public growSize = (dx: number, dy: number): iSize => {
+        try {
+            this.width += dx;
+            this.height += dy;
+        } catch (ex) {
+        }
+        return this.getSize();
     }
 
     public setColor(color: string): string {
@@ -379,20 +405,34 @@ export class foGlyph extends foNode implements iShape {
         ctx.stroke();
     }
 
-    public createHandles(): foCollection<foHandle> {
+    protected generateHandles(spec: any): foCollection<foHandle> {
+
         if (!this._handles) {
-            let handles = [
-                { x: 0, y: 0, myName: "0:0" },
-                { x: this.width, y: 0, myName: "W:0" },
-                { x: this.width, y: this.height, myName: "W:H" },
-                { x: 0, y: this.height, myName: "0:H" },
-            ];
             this._handles = new foCollection<foHandle>()
-            handles.forEach(item => {
-                this._handles.addMember(new foHandle(item, undefined, this));
+            spec.forEach(item => {
+                let handle = new foHandle(item, undefined, this);
+                this._handles.addMember(handle);
+            });
+        } else {
+            let i = 0;
+            spec.forEach(item => {
+                let handle = this._handles.getChildAt(i++)
+                handle.override(item);
             });
         }
         return this._handles;
+    }
+
+    public createHandles(): foCollection<foHandle> {
+
+        let spec = [
+            { x: 0, y: 0, myName: "0:0" },
+            { x: this.width, y: 0, myName: "W:0" },
+            { x: this.width, y: this.height, myName: "W:H" },
+            { x: 0, y: this.height, myName: "0:H" },
+        ];
+
+        return this.generateHandles(spec);
     }
 
 
@@ -405,6 +445,9 @@ export class foGlyph extends foNode implements iShape {
                 return handle;
             }
         }
+    }
+
+    public moveHandle(handle: foHandle, loc: iPoint) {
     }
 
 

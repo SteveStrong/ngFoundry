@@ -112,6 +112,7 @@ export class foPage extends foShape2D {
             this._dictionary.removeItem(guid);
             super.removeSubcomponent(obj);
         });
+        return obj;
     }
 
     clearAll() {
@@ -134,6 +135,7 @@ export class foPage extends foShape2D {
         let offset: iPoint = null;
         let handles: foCollection<foHandle> = new foCollection<foHandle>()
         let grab: foHandle = null;
+        let float: foHandle = null;
 
         function findHandle(loc: cPoint): foHandle {
             for (var i: number = 0; i < handles.length; i++) {
@@ -184,12 +186,11 @@ export class foPage extends foShape2D {
 
 
             if (grab) {
-                //this.onHandleMoving(loc, grab, keys)
-                //let pos = grab.globalToLocal(loc.x, loc.y)
-                //grab.doMove(pos, offset);
+                this.onHandleMoving(loc, grab, keys)
+                grab.moveTo(loc, offset);
             } else if (shape) {
                 this.onMouseLocationChanged(loc, "move", keys);
-                shape.doMove(loc, offset);
+                shape.moveTo(loc, offset);
 
                 if (!overshape) {
                     overshape = this.findShapeUnder(shape);
@@ -239,21 +240,23 @@ export class foPage extends foShape2D {
 
 
                 let handle = findHandle(loc);
-                if (handle && handle == grab) {
+                if (handle && handle == float) {
+                    float = handle;
                     this.onHandleHoverEnter(loc, handle, keys)
                 } else if (handle) {
-                    grab && this.onHandleHoverExit(loc, grab, keys)
-                    grab = handle;
-                    this.onHandleHoverEnter(loc, grab, keys)
-                } else if (grab) {
+                    float && this.onHandleHoverExit(loc, float, keys)
+                    float = handle;
+                    this.onHandleHoverEnter(loc, float, keys)
+                } else if (float) {
                     this.onHandleHoverExit(loc, handle, keys)
-                    grab = null;
+                    float = null;
                 }
             }
             this.sitOnShape = overshape || {};
         });
 
         PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
+            grab = null;
             this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
 
@@ -271,7 +274,7 @@ export class foPage extends foShape2D {
             }
 
             shape = null;
-            grab = null;
+            
         });
 
     }
@@ -332,7 +335,7 @@ export class foPage extends foShape2D {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this._ctx = ctx;
 
-        let angle = this.rotation() * Math.PI / 180
+        let angle = this.rotation() * foGlyph.DEG_TO_RAD;
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
 

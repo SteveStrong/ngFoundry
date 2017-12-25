@@ -17,6 +17,7 @@ import { foDictionary } from "../foundry/foDictionary.model";
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
+import { foGlue } from "../foundry/foGlue";
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
@@ -69,16 +70,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doDuplicate() {
   }
 
-  private computeSpec: any = {
-    height: function () {
-      let size = parseInt(this.size.split(':')[1]);
-      return 25 * size;
-    },
-    width: function () {
-      let size = parseInt(this.size.split(':')[0]);
-      return 25 * size;
-    }
-  };
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
@@ -124,18 +115,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(`Hover (${loc.x},${loc.y}) Enter  ${shape.myName}`);
       //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
-      this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle.myName}`);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
     }
 
     this.onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
       this.message = [];
-      handles.forEach( handle => {
+      handles.forEach(handle => {
         //if (handle.hitTest(loc)) {
-          //foObject.beep();
+        //foObject.beep();
         //}
-        this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle.myName}`);
+        this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle && handle.myName}`);
         handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       })
 
@@ -148,7 +139,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(`Hover (${loc.x},${loc.y}) Move  ${shape.myName}`);
       //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
-      this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle.myName}`);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
     }
@@ -160,7 +151,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(`Hover (${loc.x},${loc.y}) Exit ${shape.myName}`);
       //shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
       //this.message.push(shape);
-      this.message.push(`Handle Hover (${loc.x},${loc.y}) Exit ${handle.myName}`);
+      this.message.push(`Handle Hover (${loc.x},${loc.y}) Exit ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
 
@@ -169,15 +160,24 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Pallet.define(foGlyph);
 
-    let compute = this.computeSpec;
+    let compute = {
+      height: function () {
+        let size = parseInt(this.size.split(':')[1]);
+        return 25 * size;
+      },
+      width: function () {
+        let size = parseInt(this.size.split(':')[0]);
+        return 25 * size;
+      }
+    }
     Stencil.define(OneByOne, compute);
 
     Stencil.define(OneByOne, compute);
     Stencil.define(TwoByOne, compute);
-    Stencil.define(TwoByTwo, compute);
+    Stencil.define(TwoByTwo, { width: 50, height: 50 });
     Stencil.define(TwoByFour, compute);
     Stencil.define(OneByTen, compute);
-    Stencil.define(TenByTen, compute);
+    Stencil.define(TenByTen, { width: 250, height: 250 });
   }
 
   onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
@@ -249,9 +249,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByTwo() {
+
     let shape = Stencil.create(TwoByTwo, {
       color: 'pink',
-      myName : "main shape"
+      myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
 
     this.signalR.pubChannel("syncShape", shape.asJson);
@@ -267,7 +268,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinY = (): number => { return 0.5 * this.height; }
     }
 
-    Stencil.define(localTwoByFour, this.computeSpec);
+    Stencil.define(localTwoByFour, Stencil.spec(TwoByFour));
 
     let shape = Stencil.create(localTwoByFour, {
       color: 'green',
@@ -354,19 +355,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let dY = y2 - y1;
 
     let spec = {
-      angle: Math.atan2(dY, dX),
+      angle: foGlyph.RAD_TO_DEG * Math.atan2(dY, dX),
       length: Math.sqrt(dX * dX + dY * dY),
       cX: (x2 + x1) / 2,
       cY: (y2 + y1) / 2,
-  }
+    }
 
-  let fake = Stencil.create(TenByTen, {
-    opacity: .5,
-    color: 'gray',
-    angle: spec.angle,
-    width: spec.length,
-    height: height,
-  }).drop(400, 400).addAsSubcomponent(this);
+    let fake = Stencil.create(foShape2D, {
+      opacity: .5,
+      color: 'gray',
+      angle: spec.angle,
+      width: spec.length,
+      height: height,
+    }).drop(400, 400).addAsSubcomponent(this);
 
 
     let shape = Stencil.create(Line, {
@@ -387,38 +388,49 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
       opacity: .8,
 
-    }).drop(100, 100, 45)
+    }).drop(100, 300, 45)
     this.addSubcomponent(shape1);
 
 
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-    }).drop(400, 150, 0)
+    }).drop(300, 400, 0)
     this.addSubcomponent(shape2);
     shape2.pinX = (): number => { return 0.0; }
+
+    let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
+    let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+    let pc = pt1.midpoint(pt2);
+    //console.log('start', pt1)
+    //console.log('finish', pt2)
+
+    let shape = Stencil.create(Line, {
+      opacity: .5,
+      color: 'gray',
+      height: 30,
+      startX: pt1.x,
+      startY: pt1.y,
+      finishX: pt2.x,
+      finishY: pt2.y,
+    }).drop(600, 350).addAsSubcomponent(this);
 
     let wire = Stencil.create(Line, {
       opacity: .5,
       height: 30,
+      startX: pt1.x,
+      startY: pt1.y,
+      finishX: pt2.x,
+      finishY: pt2.y,
       color: 'black',
-    }).drop(400, 400);
+    }).addAsSubcomponent(this).initialize();
 
-    wire.begin = (): cPoint => {
-      let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
-      //wire.startX = pt.x;
-      //wire.startY = pt.y;
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
 
-    wire.end = (): cPoint => {
-      let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
-      //wire.finishX = pt.x;
-      //wire.finishY = pt.y;
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
+    wire.createGlue('begin', shape1);
+    wire.createGlue('end', shape2);
 
-    this.addSubcomponent(wire);
+
+
   }
 
   doObjGlue() {
