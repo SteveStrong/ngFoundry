@@ -311,6 +311,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddStack(properties?: any) {
+
     let shape = Stencil.create(TenByTen, {
       myGuid: properties && properties.shape,
       opacity: .5,
@@ -345,7 +346,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     !properties && this.signalR.pubCommand("callMethod", { func: 'doAddStack' }, {
       shape: shape.myGuid,
-      subShape: shape.myGuid
+      subShape: subShape.myGuid
     });
   }
 
