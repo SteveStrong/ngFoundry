@@ -398,6 +398,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
 
     }).drop(100, 300, 45).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
 
 
     let shape2 = Stencil.create(TwoByOne, {
@@ -405,6 +406,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
     }).drop(300, 400, 0).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
+    this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
@@ -420,6 +422,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
     }).drop(600, 350).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
 
     let wire = Stencil.create(Line, {
       opacity: .5,
@@ -430,6 +433,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: pt2.y,
       color: 'black',
     }).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
 
     wire.createGlue('begin', shape1);
