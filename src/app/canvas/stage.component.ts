@@ -23,7 +23,7 @@ import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
-import { dRectangle, dGlue, Display } from "./displayshapes.model";
+import { dRectangle, dGlue } from "./displayshapes.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
@@ -160,7 +160,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Pallet.define(foGlyph);
 
-    Stencil.define(Line);
+
+
 
     let compute = {
       height: function () {
@@ -442,13 +443,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doObjGlue() {
-    let shape1 = Display.create(dGlue, {
-    }).drop(100, 200, 30).addAsSubcomponent(this);
-
-    let shape2 = Display.create(dGlue, {
-    }).drop(400, 250).addAsSubcomponent(this);
-    shape2.pinX = (): number => { return 0.0; }
-
 
     let wire = Stencil.create(Line, {
       opacity: .5,
@@ -456,12 +450,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'black',
     }).drop(400, 400).addAsSubcomponent(this);
 
+    this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
+
+    let shape1 = Stencil.create(dGlue);
+
+    let shape2 = Stencil.create(dGlue);
+    shape2.pinX = (): number => { return 0.0; }
+
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
+
+
+    shape1.addAsSubcomponent(this).drop(100, 200, 30);
+    shape2.addAsSubcomponent(this).drop(400, 250);
+
+    this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
   }
 
   doDropGlue() {
-    let subShape = Display.create(dGlue, {
+    let subShape = Stencil.create(dGlue, {
     }).drop(500, 300, 30);
     this.addSubcomponent(subShape);
 
@@ -480,7 +488,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    let subShape = Display.create(objRect, {
+    let subShape = Stencil.create(objRect, {
       color: 'blue',
       width: 150,
       height: 100,
@@ -500,7 +508,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinX = (): number => { return 50; }
     }
 
-    let shape = Display.create(myRect, {
+    let shape = Stencil.create(myRect, {
       color: 'purple',
       myName: 'root  dRectangle',
       width: 300,
@@ -510,7 +518,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
-    let subShape = Display.create(dRectangle, {
+    let subShape = Stencil.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
       width: 50,
@@ -558,7 +566,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             x: data.x,
             y: data.y,
             ease: Back.easeInOut
-          }).eventCallback("onComplete", () => { shape.override({ x: data.x, y: data.y }) });
+          }).eventCallback("onComplete", () => { 
+            shape.moveTo(data.x, data.y);
+          });
         });
       });
 
@@ -645,7 +655,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
-          let shape = Display.makeInstance(type, data);
+          let shape = Stencil.makeInstance(type, data);
           this.found(cmd.parentGuid,
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this.addSubcomponent(shape); }

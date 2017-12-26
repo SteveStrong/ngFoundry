@@ -3,6 +3,7 @@ import { cPoint } from '../foundry/foGeometry';
 
 import { iObject, iNode, iShape, iPoint, iSize, Action } from '../foundry/foInterface';
 
+import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
 
 //https://github.com/CreateJS/EaselJS
@@ -44,34 +45,42 @@ export class dGlue extends dRectangle {
 
 }
 
-export class Display {
-  static lookup = {}
-  static afterCreate: Action<foDisplay2D>;
+Stencil.define(dGlue);
 
-  static create<T extends foDisplay2D>(type: { new(p?: any): T; }, properties?: any): T {
-    let instance = new type(properties);
-    let { defaults = undefined } = this.lookup[instance.myType] || {};
+// export class Display {
+//   static lookup = {}
 
-    defaults && instance.extend(defaults)
-    this.afterCreate && this.afterCreate(instance);
-    return instance;
-  }
+//   static create<T extends foDisplay2D>(type: { new(p?: any): T; }, properties?: any): T {
+//     let instance = new type(properties);
+//     let { defaults = undefined } = this.lookup[instance.myType] || {};
 
-  static define<T extends foDisplay2D>(type: { new(p?: any): T; }, properties?: any) {
-    let instance = new type();
-    this.lookup[instance.myType] = { create: type, defaults: properties };
-    return type;
-  }
+//     defaults && instance.extend(defaults)
+//     instance.initialize();
 
-  static makeInstance<T extends foDisplay2D>(type: string, properties?: any, func?: Action<T>) {
-    let { create, defaults } = this.lookup[type];
-    let spec = Tools.union(properties, defaults);
-    let instance = new create(spec);
-    func && func(instance);
-    this.afterCreate && this.afterCreate(instance);
-    return instance;
-  }
-}
+//     return instance;
+//   }
+
+//   static define<T extends foDisplay2D>(type: { new(p?: any): T; }, properties?: any) {
+//     let instance = new type();
+//     this.lookup[instance.myType] = { create: type, defaults: properties };
+//     return type;
+//   }
+
+//   static spec<T extends foDisplay2D>(type: { new(p?: any): T; }, properties?: any) {
+//     let instance = new type();
+//     let { create, defaults } = this.lookup[instance.myType];
+//     return defaults;
+//   }
+
+//   static makeInstance<T extends foDisplay2D>(type: string, properties?: any, func?: Action<T>) {
+//     let { create, defaults } = this.lookup[type];
+//     let spec = Tools.union(properties, defaults);
+//     let instance = new create(spec);
+//     func && func(instance);
+
+//     return instance;
+//   }
+// }
 
 
 

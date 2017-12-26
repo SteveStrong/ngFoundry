@@ -220,12 +220,12 @@ export class foShape2D extends foGlyph {
 export class Stencil {
     static lookup = {}
 
-    static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
+    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
         let { defaults = undefined } = this.lookup[instance.myType] || {};
 
         defaults && instance.extend(defaults);
-        instance.initialize()
+        instance.initialize();
         
         return instance;
     }
