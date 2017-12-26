@@ -37,6 +37,12 @@ export class foShape2D extends foGlyph {
         super(properties, subcomponents, parent);
     }
 
+    protected toJson():any {
+        let result = super.toJson();
+        result.angle = this.angle;
+        return result;
+    }  
+
     public notifyOnChange(source:any, channel: string, ...args: any[]) {
     }
 

@@ -75,6 +75,15 @@ export class foShape1D extends foShape2D {
         super(properties, subcomponents, parent);
     }
 
+    protected toJson():any {
+        let result = super.toJson();
+        result.startX = this.startX;
+        result.startY = this.startY;
+        result.finishX = this.finishX;
+        result.finishY = this.finishY;
+        return result;
+    }
+
     private setStart(point: iPoint) {
         this.startX = point.x;
         this.startY = point.y;

@@ -261,7 +261,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
 
-  doAddTwoByFour() {
+  doAddTwoByFour(properties?: any) {
 
     class localTwoByFour extends TwoByFour {
       public pinX = (): number => { return 0.5 * this.width; }
@@ -270,13 +270,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Stencil.define(localTwoByFour, Stencil.spec(TwoByFour));
 
-    let shape = Stencil.create(localTwoByFour, {
+    let spec = {
       color: 'green',
-      angle: 45,
-    }).drop(200, 200);
+      angle: 45
+    }
+   
+    if (!properties) {
+      let shape = Stencil.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
+      this.signalR.pubCommand("callMethod", { func: 'doAddTwoByFour' }, shape.asJson);
+    } else {
+      Stencil.create(localTwoByFour, properties).addAsSubcomponent(this);
+    }
 
-    this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddOneByTen() {
@@ -616,6 +621,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             (miss) => { this.addSubcomponent(shape); }
           );
         });
+      });
+
+
+      this.signalR.subCommand("callMethod", (cmd, data) => {
+        let func = cmd.func;
+        func && this[func](data);
       });
 
 
