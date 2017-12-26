@@ -90,7 +90,6 @@ export class foGlyph extends foNode implements iShape {
         super(properties, subcomponents, parent);
     }
 
-    get asJson() { return this.toJson() }
     protected toJson():any {
         return {
             myGuid: this.myGuid,

@@ -436,8 +436,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
 
-    wire.createGlue('begin', shape1);
-    wire.createGlue('end', shape2);
+
+    this.signalR.pubCommand("syncGlue", wire.createGlue('begin', shape1).asJson);
+    this.signalR.pubCommand("syncGlue", wire.createGlue('end', shape2).asJson);
   }
 
   doObjGlue() {
@@ -652,6 +653,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
         });
       });
+
+      this.signalR.subCommand("syncGlue", (cmd, data) => {
+        this.found(cmd.sourceGuid, (source) => {
+          this.found(cmd.targetGuid, (target) => {
+            (<foShape2D>source).createGlue(cmd.handleTo, (<foShape2D>target));
+          });
+        });
+      })
 
     });
   }

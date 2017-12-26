@@ -38,17 +38,17 @@ export class foGlue extends foNode {
         return this;
     }
 
-    // notifyTarget(name: string, item:foGlue, ...args: any[]) {
-    //     let target = this.myTarget();
-    //     target.notify(name, args);
-    //     return this;
-    // }
+    protected toJson():any {
+        return {
+            guid: this.myGuid,
+            myType: this.myType,
+            sourceGuid: this.mySource().myGuid,
+            targetGuid: this.myTarget().myGuid,
+            handleTo: this.handleTo,
+            handleFrom: this.handleFrom,
+        }
+    }
 
-    // notifySource(name: string, item:foGlue, ...args: any[]) {
-    //     let source = this.mySource()
-    //     source.notify(name, args);
-    //     return this;
-    // }
 
 }
 

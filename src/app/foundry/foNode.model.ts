@@ -21,8 +21,13 @@ export class foNode extends foObject implements iNode {
         return this;
     }
 
-
-
+    get asJson() { return this.toJson() }
+    protected toJson():any {
+        return {
+            myGuid: this.myGuid,
+            myType: this.myType,
+        }
+    }
 
 
 
