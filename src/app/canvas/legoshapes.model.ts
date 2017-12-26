@@ -1,5 +1,5 @@
 
-import { foShape2D } from "../foundry/foShape2D.model";
+import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { cPoint, cRect } from "../foundry/foGeometry";
 
@@ -13,6 +13,8 @@ export class brick extends foShape2D {
 
 export class Line extends foShape1D {
 }
+
+Stencil.define(Line);
 
 export class legoCore extends foShape2D {
 
@@ -137,15 +139,6 @@ export class rotateDemo extends legoCore {
 }
 
 
-
-
-export class house extends legoCore {
-  description: string = "The Wall Is Solid";
-
-  constructor(properties?: any) {
-    super(properties);
-  }
-}
 
 
 

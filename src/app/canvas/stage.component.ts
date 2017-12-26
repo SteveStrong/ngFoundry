@@ -22,8 +22,8 @@ import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
-import { foDisplayObject } from "../foundry/foDisplayObject.model";
-import { dRectangle, dGlue, Display } from "./displayshapes.model";
+import { foDisplay2D } from "../foundry/foDisplay2D.model";
+import { dRectangle, dGlue } from "./displayshapes.model";
 
 import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
@@ -54,7 +54,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doClear() {
     this.clearAll();
     this.message = [];
-    this.signalR.pubChannel("clearAll", {});
+    this.signalR.pubCommand("clearAll", {});
   }
 
   doUndo() {
@@ -62,7 +62,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doDelete() {
     this.deleteSelected(shape => {
-      this.signalR.pubChannel("deleteShape", shape.asJson);
+      this.signalR.pubCommand("deleteShape", { guid: shape.myGuid });
     });
 
   }
@@ -73,11 +73,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubChannel("parent", shape.asJson);
+      this.signalR.pubCommand("parent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
     }
 
     this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.signalR.pubChannel("moveShape", shape.asJson);
+      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
     }
 
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
@@ -195,7 +195,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 20,
     });
     this.addSubcomponent(shape);
-    this.signalR.pubChannel("syncGlyph", shape.asJson);
+    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddGlyph() {
@@ -224,7 +224,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 300,
     }).addAsSubcomponent(shape);
 
-    this.signalR.pubChannel("addGlyph", shape.asJson);
+    this.signalR.pubCommand("addGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
 
@@ -237,7 +237,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 200,
     });
     this.addSubcomponent(shape);
-    this.signalR.pubChannel("syncShape", shape.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddTwoByOne() {
@@ -245,7 +245,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
-    this.signalR.pubChannel("syncShape", shape.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddTwoByTwo() {
@@ -255,13 +255,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
 
-    this.signalR.pubChannel("syncShape", shape.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
 
 
 
-  doAddTwoByFour() {
+  doAddTwoByFour(properties?: any) {
 
     class localTwoByFour extends TwoByFour {
       public pinX = (): number => { return 0.5 * this.width; }
@@ -270,13 +270,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Stencil.define(localTwoByFour, Stencil.spec(TwoByFour));
 
-    let shape = Stencil.create(localTwoByFour, {
+    let spec = {
       color: 'green',
-      angle: 45,
-    }).drop(200, 200);
+      angle: 45
+    }
 
-    this.addSubcomponent(shape);
-    this.signalR.pubChannel("syncShape", shape.asJson);
+    if (!properties) {
+      let shape = Stencil.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
+      this.signalR.pubCommand("callMethod", { func: 'doAddTwoByFour' }, shape.asJson);
+    } else {
+      Stencil.create(localTwoByFour, properties).addAsSubcomponent(this);
+    }
+
   }
 
   doAddOneByTen() {
@@ -292,8 +297,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }).drop(500, 500);
     this.addSubcomponent(shape);
-    this.signalR.pubChannel("syncShape", shape.asJson);
-
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddTenByTen() {
@@ -303,35 +307,35 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(600, 300);
 
     this.addSubcomponent(shape);
-    this.signalR.pubChannel("syncShape", shape.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
-  doAddStack() {
+  doAddStack(properties?: any) {
+
     let shape = Stencil.create(TenByTen, {
+      myGuid: properties && properties.shape,
       opacity: .5,
       color: 'gray',
-      angle: 0,
-      name: TenByTen.typeName()
-    }).drop(600, 300);
-
-    this.addSubcomponent(shape);
-
-    this.signalR.pubChannel("syncShape", shape.asJson);
+      angle: 10
+    }).drop(600, 300).addAsSubcomponent(this);
 
     let subShape = Stencil.create(TwoByFour, {
+      myGuid: properties && properties.subShape,
       color: 'red',
-    }).addAsSubcomponent(shape).override({
+    }).addAsSubcomponent(shape, {
       x: function () { return shape.width / 4; },
       y: 150,
       angle: 0,
     });
 
+
+
     // => does a scope that moves the page
-    subShape.doAnimation = (): void => {
-      let angle = this.angle + .5;
-      angle = angle >= 360 ? 0 : angle;
-      this.angle = angle;
-    }
+    // subShape.doAnimation = (): void => {
+    //   let angle = this.angle + .5;
+    //   angle = angle >= 360 ? 0 : angle;
+    //   this.angle = angle;
+    // }
 
     subShape.doAnimation = function (): void {
       let angle = this.angle + .5;
@@ -339,8 +343,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.angle = angle;
     }
 
-    this.signalR.pubChannel("syncShape", subShape.asJson);
-    //this.signalR.pubChannel("parent", subShape.asJson);
+
+    !properties && this.signalR.pubCommand("callMethod", { func: 'doAddStack' }, {
+      shape: shape.myGuid,
+      subShape: subShape.myGuid
+    });
   }
 
   doShape1D() {
@@ -368,7 +375,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: spec.length,
       height: height,
     }).drop(400, 400).addAsSubcomponent(this);
-
+    this.signalR.pubCommand("syncShape", { guid: fake.myGuid }, fake.asJson);
 
     let shape = Stencil.create(Line, {
       opacity: .5,
@@ -380,7 +387,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: height,
     }).drop(400, 300).addAsSubcomponent(this);
 
-    this.signalR.pubChannel("syncShape", shape.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
   doShapeGlue() {
@@ -388,22 +395,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
       opacity: .8,
 
-    }).drop(100, 300, 45)
-    this.addSubcomponent(shape1);
+    }).drop(100, 300, 45).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
 
 
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-    }).drop(300, 400, 0)
-    this.addSubcomponent(shape2);
+    }).drop(300, 400).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
+    this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
     let pc = pt1.midpoint(pt2);
-    //console.log('start', pt1)
-    //console.log('finish', pt2)
+
 
     let shape = Stencil.create(Line, {
       opacity: .5,
@@ -414,6 +420,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
     }).drop(600, 350).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
 
     let wire = Stencil.create(Line, {
       opacity: .5,
@@ -423,49 +430,49 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
       color: 'black',
-    }).addAsSubcomponent(this).initialize();
-
-
-    wire.createGlue('begin', shape1);
-    wire.createGlue('end', shape2);
+    }).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
 
 
+    this.signalR.pubCommand("syncGlue", wire.createGlue('begin', shape1).asJson);
+    this.signalR.pubCommand("syncGlue", wire.createGlue('end', shape2).asJson);
   }
 
   doObjGlue() {
-    let shape1 = Display.create(dGlue, {
-    }).drop(100, 200, 30)
-    this.addSubcomponent(shape1);
-
-    let shape2 = Display.create(dGlue, {
-    }).drop(400, 250)
-    this.addSubcomponent(shape2);
-
-    shape2.pinX = (): number => { return 0.0; }
-
 
     let wire = Stencil.create(Line, {
       opacity: .5,
       height: 20,
       color: 'black',
-    }).drop(400, 400);
+    }).drop(400, 400).addAsSubcomponent(this);
 
-    wire.begin = (): cPoint => {
-      let pt = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
+    this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
-    wire.end = (): cPoint => {
-      let pt = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
-      return wire.globalToLocal(pt.x, pt.y, pt);
-    }
+    let shape1 = Stencil.create(dGlue).addAsSubcomponent(this);
 
-    this.addSubcomponent(wire);
+    let shape2 = Stencil.create(dGlue).addAsSubcomponent(this);
+    shape2.pinX = (): number => { return 0.0; }
+
+    wire.createGlue('begin', shape1);
+    wire.createGlue('end', shape2);
+
+ 
+
+    shape1.drop(100, 200, 30);
+    shape2.drop(400, 250);
+
+    this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
+    this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
+
+    wire.glue.forEach( glue => {
+      this.signalR.pubCommand("syncGlue", glue.asJson);
+    })
+
   }
 
   doDropGlue() {
-    let subShape = Display.create(dGlue, {
+    let subShape = Stencil.create(dGlue, {
     }).drop(500, 300, 30);
     this.addSubcomponent(subShape);
 
@@ -484,7 +491,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    let subShape = Display.create(objRect, {
+    let subShape = Stencil.create(objRect, {
       color: 'blue',
       width: 150,
       height: 100,
@@ -504,7 +511,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinX = (): number => { return 50; }
     }
 
-    let shape = Display.create(myRect, {
+    let shape = Stencil.create(myRect, {
       color: 'purple',
       myName: 'root  dRectangle',
       width: 300,
@@ -514,7 +521,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
-    let subShape = Display.create(dRectangle, {
+    let subShape = Stencil.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
       width: 50,
@@ -556,53 +563,57 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.start().then(() => {
 
-      this.signalR.subChannel("moveShape", json => {
-        this.found(json.myGuid, shape => {
+      this.signalR.subCommand("moveShape", (cmd, data) => {
+        this.found(cmd.guid, shape => {
           TweenLite.to(shape, .8, {
-            x: json.x,
-            y: json.y,
+            x: data.x,
+            y: data.y,
             ease: Back.easeInOut
-          }).eventCallback("onComplete", () => { shape.override({ x: json.x, y: json.y }) });
+          }).eventCallback("onUpdate", () => {
+            shape.drop();
+          }).eventCallback("onComplete", () => { 
+            shape.moveTo(data.x, data.y);
+          });
         });
       });
 
-      this.signalR.subChannel("addGlyph", json => {
-        //console.log(json);
-        this.findItem(json.myGuid, () => {
-          Pallet.create(foGlyph, json, this.addSubcomponent.bind(this));
-        });
-      });
-
-      this.signalR.subCommand("Glyph", (cmd, json) => {
+      this.signalR.subCommand("addGlyph", (cmd, data) => {
         //console.log(json);
         this.findItem(cmd.guid, () => {
-          Pallet.create(foGlyph, json, this.addSubcomponent.bind(this));
+          Pallet.create(foGlyph, data).addAsSubcomponent(this);
+        });
+      });
+
+      this.signalR.subCommand("Glyph", (cmd, data) => {
+        //console.log(json);
+        this.findItem(cmd.guid, () => {
+          Pallet.create(foGlyph, data).addAsSubcomponent(this);
         });
       });
 
 
 
-      this.signalR.subChannel("deleteShape", json => {
+      this.signalR.subCommand("deleteShape", (cmd, data) => {
         //console.log(json);
-        this.found(json.myGuid, shape => {
+        this.found(cmd.guid, shape => {
           this.removeSubcomponent(shape)
         });
       });
 
-      this.signalR.subChannel("clearAll", json => {
+      this.signalR.subCommand("clearAll", (cmd, data) => {
         this.clearAll();
         this.message = [];
       });
 
 
-      this.signalR.subChannel("parent", json => {
-        this.found(json.myGuid, (shape) => {
-          this.message.push(json);
+      this.signalR.subCommand("parent", (cmd, data) => {
+        this.found(cmd.guid, (shape) => {
+          this.message.push(data);
           this.removeSubcomponent(shape);
           shape.removeFromParent();
-          if (json.parentGuid) {
-            this.found(json.parentGuid, (item) => {
-              item.addSubcomponent(shape, { x: json.x, y: json.y });
+          if (cmd.parentGuid) {
+            this.found(cmd.parentGuid, (item) => {
+              item.addSubcomponent(shape, { x: data.x, y: data.y });
               // TweenLite.to(shape, .8, {
               //   x: json.x,
               //   y: json.y,
@@ -617,50 +628,56 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         });
       });
 
-      this.signalR.subChannel("syncGlyph", json => {
-        this.findItem(json.myGuid, () => {
-          let type = json.myType;
-          let shape = Pallet.makeInstance(type, json)
+      this.signalR.subCommand("syncGlyph", (cmd, data) => {
+        this.findItem(cmd.guid, () => {
+          let type = data.myType;
+          let shape = Pallet.makeInstance(type, data)
           this.addSubcomponent(shape);
         });
       });
 
-      this.signalR.subChannel("syncShape", json => {
-        this.findItem(json.myGuid, () => {
-          //this.message.push(json);
-          let type = json.myType;
-          let parent = json.parentGuid;
-          delete json.parentGuid;
-          let shape = Stencil.makeInstance(type, json);
-          if (parent) {
-            this.found(parent, (item) => {
-              item.addSubcomponent(shape);
-            });
-          } else {
-            this.addSubcomponent(shape);
-          }
 
-        });
-      });
-
-
-      this.signalR.subCommand("syncDisp", (cmd, json) => {
+      this.signalR.subCommand("syncShape", (cmd, data) => {
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
-          let type = json.myType;
-          let parent = json.parentGuid;
-          delete json.parentGuid;
-          let shape = Display.makeInstance(type, json);
-          if (parent) {
-            this.found(parent, (item) => {
-              item.addSubcomponent(shape);
-            });
-          } else {
-            this.addSubcomponent(shape);
-          }
+          let type = data.myType;
+          let shape = Stencil.makeInstance(type, data);
+          this.found(cmd.parentGuid,
+            (item) => { item.addSubcomponent(shape); },
+            (miss) => { this.addSubcomponent(shape); }
+          );
+        });
+      });
+
+
+      this.signalR.subCommand("callMethod", (cmd, data) => {
+        let func = cmd.func;
+        func && this[func](data);
+      });
+
+
+      this.signalR.subCommand("syncDisp", (cmd, data) => {
+        this.findItem(cmd.guid, () => {
+          //this.message.push(json);
+          let type = data.myType;
+          let shape = Stencil.makeInstance(type, data);
+          this.found(cmd.parentGuid,
+            (item) => { item.addSubcomponent(shape); },
+            (miss) => { this.addSubcomponent(shape); }
+          );
 
         });
       });
+
+      this.signalR.subCommand("syncGlue", (cmd, data) => {
+        let cmdx = cmd;
+        this.found(cmd.sourceGuid, (source) => {
+          this.found(cmd.targetGuid, (target) => {
+            let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
+            (<foShape2D>target).drop();
+          });
+        });
+      })
 
     });
   }

@@ -11,7 +11,7 @@ import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foShape2D } from '../foundry/foShape2D.model'
+import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -73,7 +73,15 @@ export class foShape1D extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
+    }
+
+    protected toJson():any {
+        let result = super.toJson();
+        result.startX = this.startX;
+        result.startY = this.startY;
+        result.finishX = this.finishX;
+        result.finishY = this.finishY;
+        return result;
     }
 
     private setStart(point: iPoint) {
@@ -247,6 +255,7 @@ export class foShape1D extends foShape2D {
         }
     }
 
+    //same as Shape1D
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
@@ -260,8 +269,6 @@ export class foShape1D extends foShape2D {
         this.postDraw && this.postDraw(ctx);
 
         this.isSelected && this.drawSelected(ctx);
-
-
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);
@@ -325,6 +332,8 @@ export class foShape1D extends foShape2D {
         ctx.stroke();
     }
 }
+
+Stencil.define(foShape1D);
 
 
 

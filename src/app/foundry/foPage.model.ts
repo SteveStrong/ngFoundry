@@ -52,17 +52,16 @@ export class foPage extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
         this.color = 'Linen';
         this.setupMouseEvents();
     }
 
-    findItem(key: string, onMissing?: Action<foGlyph>) {
-        return this._dictionary.findItem(key, onMissing);
+    findItem(key: string, onMissing?: Action<foGlyph>, onFound?: Action<foGlyph>) {
+        return this._dictionary.findItem(key, onMissing, onFound);
     }
 
-    found(key: string, onFound?: Action<foGlyph>) {
-        return this._dictionary.found(key, onFound);
+    found(key: string, onFound?: Action<foGlyph>, onMissing?: Action<foGlyph>) {
+        return this._dictionary.found(key, onFound, onMissing);
     }
 
     getMatrix() {
@@ -95,11 +94,11 @@ export class foPage extends foShape2D {
     }
 
 
-    addSubcomponent(obj: foNode, properties?:any) {
+    addSubcomponent(obj: foNode, properties?: any) {
         let guid = obj.myGuid;
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
-            super.addSubcomponent(obj, properties); 
+            super.addSubcomponent(obj, properties);
         });
         return obj;
     }
@@ -274,7 +273,7 @@ export class foPage extends foShape2D {
             }
 
             shape = null;
-            
+
         });
 
     }

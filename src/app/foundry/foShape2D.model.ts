@@ -26,7 +26,7 @@ export class foShape2D extends foGlyph {
         this._angle = value;
     }
 
-    //get glue(): foCollection<foGlue> { return this._glue; }
+    get glue(): foCollection<foGlue> { return this._glue; }
     protected _glue: foCollection<foGlue>;
 
     public pinX = (): number => { return 0.5 * this.width; }
@@ -35,8 +35,13 @@ export class foShape2D extends foGlyph {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
     }
+
+    protected toJson():any {
+        let result = super.toJson();
+        result.angle = this.angle;
+        return result;
+    }  
 
     public notifyOnChange(source:any, channel: string, ...args: any[]) {
     }
@@ -76,21 +81,6 @@ export class foShape2D extends foGlyph {
         return this._matrix;
     };
 
-    get asJson() {
-        let parent = this.hasParent && <foGlyph>this.myParent();
-        return {
-            parentGuid: parent && parent.myGuid,
-            myGuid: this.myGuid,
-            myType: this.myType,
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height,
-            angle: this.angle,
-            opacity: this.opacity,
-            color: this.color,
-        }
-    }
 
     protected localHitTest = (hit: iPoint): boolean => {
 
@@ -230,11 +220,13 @@ export class foShape2D extends foGlyph {
 export class Stencil {
     static lookup = {}
 
-    static create<T extends foShape2D>(type: { new(p?: any): T; }, properties?: any): T {
+    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
         let instance = new type(properties);
         let { defaults = undefined } = this.lookup[instance.myType] || {};
 
-        defaults && instance.extend(defaults)
+        defaults && instance.extend(defaults);
+        instance.initialize();
+        
         return instance;
     }
 
@@ -260,4 +252,6 @@ export class Stencil {
         return instance;
     }
 }
+
+Stencil.define(foShape2D);
 

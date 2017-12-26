@@ -3,6 +3,7 @@ import { iObject, Action, ModelRef } from './foInterface'
 
 
 export class foObject implements iObject {
+    private _myGuid: string;
     myName: string = 'unknown';
     myParent: ModelRef<iObject>;
 
@@ -31,6 +32,19 @@ export class foObject implements iObject {
         return comp.name;
     }
     set myType(ignore: string) {
+    }
+
+    get myGuid():string {
+        if (!this._myGuid) {
+            this._myGuid = Tools.generateUUID();
+        }
+        return this._myGuid;
+    }
+
+    set myGuid(value) {
+        if (!this._myGuid) {
+            this._myGuid = value;
+        }
     }
 
     asReference(): string {

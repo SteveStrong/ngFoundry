@@ -24,6 +24,14 @@ export class foGlyph extends foNode implements iShape {
     get isSelected(): boolean { return this._isSelected; }
     set isSelected(value: boolean) { this._isSelected = value; }
 
+    protected _visible: boolean = true;
+    get visible(): boolean { return this._visible; }
+    set visible(value: boolean) { this._visible = value; }
+    
+    public get isVisible() {
+        return !!(this.visible && this.opacity > 0 );
+    };
+
     protected _subcomponents: foCollection<foGlyph>;
     protected _x: number;
     protected _y: number;
@@ -80,13 +88,10 @@ export class foGlyph extends foNode implements iShape {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.myGuid;
     }
 
-    get asJson() {
-        let parent = this.myParent && <foGlyph>this.myParent();
+    protected toJson():any {
         return {
-            parentGuid: parent && parent.myGuid,
             myGuid: this.myGuid,
             myType: this.myType,
             x: this.x,
@@ -505,4 +510,6 @@ export class Pallet {
         return instance;
     }
 }
+
+Pallet.define(foGlyph);
 
