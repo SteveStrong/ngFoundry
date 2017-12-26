@@ -255,6 +255,7 @@ export class foShape1D extends foShape2D {
         }
     }
 
+    //same as Shape1D
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
@@ -268,8 +269,6 @@ export class foShape1D extends foShape2D {
         this.postDraw && this.postDraw(ctx);
 
         this.isSelected && this.drawSelected(ctx);
-
-
 
         deep && this._subcomponents.forEach(item => {
             item.render(ctx, deep);

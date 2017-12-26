@@ -41,12 +41,6 @@ export class foDisplay2D extends foShape2D {
     }
 
 
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x)) this.x = x;
-        if (!Number.isNaN(y)) this.y = y;
-        if (!Number.isNaN(angle)) this.angle = angle;
-        return this;
-    }
 	/**
 	 * Applies this display object's transformation, alpha, globalCompositeOperation, clipping path (mask), and shadow
 	 * to the specified context. This is typically called prior to "DisplayObject/draw".
@@ -74,8 +68,6 @@ export class foDisplay2D extends foShape2D {
         }
         return this._matrix;
     };
-
-
 
 
     public hitTestWithDraw = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {

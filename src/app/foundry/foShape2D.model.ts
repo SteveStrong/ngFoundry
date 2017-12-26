@@ -26,7 +26,7 @@ export class foShape2D extends foGlyph {
         this._angle = value;
     }
 
-    //get glue(): foCollection<foGlue> { return this._glue; }
+    get glue(): foCollection<foGlue> { return this._glue; }
     protected _glue: foCollection<foGlue>;
 
     public pinX = (): number => { return 0.5 * this.width; }

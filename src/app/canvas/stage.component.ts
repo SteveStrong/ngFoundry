@@ -160,9 +160,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Pallet.define(foGlyph);
 
-
-
-
     let compute = {
       height: function () {
         let size = parseInt(this.size.split(':')[1]);
@@ -452,20 +449,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
-    let shape1 = Stencil.create(dGlue);
+    let shape1 = Stencil.create(dGlue).addAsSubcomponent(this);
 
-    let shape2 = Stencil.create(dGlue);
+    let shape2 = Stencil.create(dGlue).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
 
+ 
 
-    shape1.addAsSubcomponent(this).drop(100, 200, 30);
-    shape2.addAsSubcomponent(this).drop(400, 250);
+    shape1.drop(100, 200, 30);
+    shape2.drop(400, 250);
 
     this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
     this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
+
+    wire.glue.forEach( glue => {
+      this.signalR.pubCommand("syncGlue", glue.asJson);
+    })
+
   }
 
   doDropGlue() {
@@ -668,7 +671,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         let cmdx = cmd;
         this.found(cmd.sourceGuid, (source) => {
           this.found(cmd.targetGuid, (target) => {
-            (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
+            let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
+            (<foShape2D>target).drop();
           });
         });
       })
