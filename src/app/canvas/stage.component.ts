@@ -312,22 +312,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddStack(properties?: any) {
     let shape = Stencil.create(TenByTen, {
+      myGuid: properties && properties.shape,
       opacity: .5,
       color: 'gray',
       angle: 10
-    }).drop(600, 300).addAsSubcomponent(this, properties && { myGuid: properties.shape });
-    shape.myName = shape.myGuid;
+    }).drop(600, 300).addAsSubcomponent(this);
 
     let subShape = Stencil.create(TwoByFour, {
+      myGuid: properties && properties.subShape,
       color: 'red',
-    }).addAsSubcomponent(shape, properties && { myGuid: properties.subShape })
-      .override({
-        x: function () { return shape.width / 4; },
-        y: 150,
-        angle: 0,
-      });
+    }).addAsSubcomponent(shape, {
+      x: function () { return shape.width / 4; },
+      y: 150,
+      angle: 0,
+    });
 
-    subShape.myName = subShape.myGuid;
 
 
     // => does a scope that moves the page
