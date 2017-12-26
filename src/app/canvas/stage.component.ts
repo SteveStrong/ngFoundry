@@ -569,6 +569,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             x: data.x,
             y: data.y,
             ease: Back.easeInOut
+          }).eventCallback("onUpdate", () => {
+            shape.drop();
           }).eventCallback("onComplete", () => { 
             shape.moveTo(data.x, data.y);
           });
