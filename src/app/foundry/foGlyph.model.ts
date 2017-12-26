@@ -512,3 +512,5 @@ export class Pallet {
     }
 }
 
+Pallet.define(foGlyph);
+

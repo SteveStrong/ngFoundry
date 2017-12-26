@@ -253,3 +253,5 @@ export class Stencil {
     }
 }
 
+Stencil.define(foShape2D);
+

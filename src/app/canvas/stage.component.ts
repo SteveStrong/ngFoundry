@@ -160,6 +160,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Pallet.define(foGlyph);
 
+    Stencil.define(Line);
+
     let compute = {
       height: function () {
         let size = parseInt(this.size.split(':')[1]);
@@ -375,7 +377,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: spec.length,
       height: height,
     }).drop(400, 400).addAsSubcomponent(this);
-
+    this.signalR.pubCommand("syncShape", { guid: fake.myGuid }, fake.asJson);
 
     let shape = Stencil.create(Line, {
       opacity: .5,

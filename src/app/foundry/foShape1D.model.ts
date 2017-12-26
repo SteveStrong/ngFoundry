@@ -11,7 +11,7 @@ import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foShape2D } from '../foundry/foShape2D.model'
+import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -333,6 +333,8 @@ export class foShape1D extends foShape2D {
         ctx.stroke();
     }
 }
+
+Stencil.define(foShape1D);
 
 
 
