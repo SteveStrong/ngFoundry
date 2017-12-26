@@ -26,8 +26,8 @@ export class foNode extends foObject implements iNode {
 
 
 
-    addAsSubcomponent(parent: foNode) {
-        parent.addSubcomponent(this);
+    addAsSubcomponent(parent: foNode, properties?:any) {
+        parent.addSubcomponent(this, properties);
         return this;
     }
 

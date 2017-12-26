@@ -274,7 +274,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'green',
       angle: 45
     }
-   
+
     if (!properties) {
       let shape = Stencil.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
       this.signalR.pubCommand("callMethod", { func: 'doAddTwoByFour' }, shape.asJson);
@@ -310,31 +310,32 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
-  doAddStack() {
+  doAddStack(properties?: any) {
     let shape = Stencil.create(TenByTen, {
       opacity: .5,
       color: 'gray',
       angle: 10
-    }).drop(600, 300);
-
-    this.addSubcomponent(shape);
-
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    }).drop(600, 300).addAsSubcomponent(this, properties && { myGuid: properties.shape });
+    shape.myName = shape.myGuid;
 
     let subShape = Stencil.create(TwoByFour, {
       color: 'red',
-    }).addAsSubcomponent(shape).override({
-      x: function () { return shape.width / 4; },
-      y: 150,
-      angle: 0,
-    });
+    }).addAsSubcomponent(shape, properties && { myGuid: properties.subShape })
+      .override({
+        x: function () { return shape.width / 4; },
+        y: 150,
+        angle: 0,
+      });
+
+    subShape.myName = subShape.myGuid;
+
 
     // => does a scope that moves the page
-    subShape.doAnimation = (): void => {
-      let angle = this.angle + .5;
-      angle = angle >= 360 ? 0 : angle;
-      this.angle = angle;
-    }
+    // subShape.doAnimation = (): void => {
+    //   let angle = this.angle + .5;
+    //   angle = angle >= 360 ? 0 : angle;
+    //   this.angle = angle;
+    // }
 
     subShape.doAnimation = function (): void {
       let angle = this.angle + .5;
@@ -342,8 +343,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.angle = angle;
     }
 
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
-    //this.signalR.pubChannel("parent", subShape.asJson);
+
+    !properties && this.signalR.pubCommand("callMethod", { func: 'doAddStack' }, {
+      shape: shape.myGuid,
+      subShape: shape.myGuid
+    });
   }
 
   doShape1D() {
