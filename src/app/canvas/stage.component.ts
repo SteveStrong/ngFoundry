@@ -404,7 +404,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape2 = Stencil.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-    }).drop(300, 400, 0).addAsSubcomponent(this);
+    }).drop(300, 400).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
     this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
 
@@ -655,9 +655,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
+        let cmdx = cmd;
         this.found(cmd.sourceGuid, (source) => {
           this.found(cmd.targetGuid, (target) => {
-            (<foShape2D>source).createGlue(cmd.handleTo, (<foShape2D>target));
+            (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
           });
         });
       })

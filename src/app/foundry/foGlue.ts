@@ -15,14 +15,14 @@ export class foGlue extends foNode {
     myTarget: ModelRef<foShape2D>;
     mySource: ModelRef<foShape2D>;
 
-    protected _handleTo: string;
-    get handleTo(): string { return this.handleTo; }
-    set handleTo(value: string) {
-        this._handleTo = value;
+    protected _targetHandle: string;
+    get targetHandle(): string { return this._targetHandle; }
+    set targetHandle(value: string) {
+        this._targetHandle = value;
     }
 
-    get handleFrom(): string { return this.myName; }
-    set handleFrom(value: string) {
+    get sourceHandle(): string { return this.myName; }
+    set sourceHandle(value: string) {
         this.myName = value;
     }
 
@@ -31,10 +31,10 @@ export class foGlue extends foNode {
         super(properties, undefined, parent);
     }
 
-    glueTo(target: foShape2D, handleTo: string) {
+    glueTo(target: foShape2D, handle: string) {
         this.myTarget = () => { return target };
         this.mySource = () => { return <foShape2D>this.myParent() };
-        this.handleTo = handleTo;
+        this.targetHandle = handle;
         return this;
     }
 
@@ -42,10 +42,11 @@ export class foGlue extends foNode {
         return {
             guid: this.myGuid,
             myType: this.myType,
-            sourceGuid: this.mySource().myGuid,
-            targetGuid: this.myTarget().myGuid,
-            handleTo: this.handleTo,
-            handleFrom: this.handleFrom,
+            sourceGuid: this.mySource() && this.mySource().myGuid,
+            sourceHandle: this.sourceHandle,
+            targetGuid: this.myTarget() && this.myTarget().myGuid,
+            targetHandle: this.targetHandle,
+
         }
     }
 
