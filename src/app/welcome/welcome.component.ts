@@ -19,7 +19,8 @@ export class WelcomeComponent implements OnInit {
   typeinText: string = '';
   postList: Array<any> = [];
   model = [];
-  def: foConcept = new foConcept();
+  
+  def: foConcept<foNode> = new foConcept<foNode>();
 
   constructor(private signalR: SignalRService) {
 

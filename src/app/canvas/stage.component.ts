@@ -12,7 +12,7 @@ import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
-
+import { Concept } from "../foundry/foConcept.model";
 
 import { foPage } from "../foundry/foPage.model";
 
@@ -203,11 +203,24 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doText() {
-    let shape = Stencil.create(foText2D, {
+    let textBlock = Concept.define<foText2D>('text::block', foText2D, {
       color: 'black',
+      text: 'Hello',
+      fontSize: 20
+    });
+
+    // let shape = Stencil.create(foText2D, {
+    //   color: 'black',
+    //   text: 'Hello Steve',
+    //   fontSize: 20,
+    // }).drop(350, 100).addAsSubcomponent(this);
+
+    let shape = textBlock.newInstance({
       text: 'Hello Steve',
       fontSize: 20,
-    }).drop(350, 100).addAsSubcomponent(this);
+    });
+    
+    shape.drop(350, 100).addAsSubcomponent(this);
     
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson); 
   }

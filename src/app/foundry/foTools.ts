@@ -66,6 +66,33 @@ export class foTools {
         return JSON.stringify(target, resolveCircular, deep);
     };
 
+    splitNamespaceType(id: string) {
+        var typeId = id.split('::');
+        return {
+            namespace: typeId.length == 2 ? typeId[0] : '',
+            name: typeId.length == 2 ? typeId[1] : typeId[0],
+        }
+    };
+
+    getNamespace(obj) {
+        var myNamespace = obj.myType ? obj.myType.split('::') : [''];
+        myNamespace = myNamespace[0];
+        return myNamespace;
+    };
+
+    getType(obj) {
+        let myType = obj.myType ? obj.myType.split('::') : [''];
+        myType = myType.length == 2 ? myType[1] : myType[0];
+        return myType;
+    };
+
+    computeNamespace(space: string, obj) {
+        return `${space}::{this.getType(obj)}`;
+    };
+
+    randomInt(low:number, high:number) {
+        return low + Math.floor(Math.random() * (high - low + 1));
+    };
 
     isSelf(ref) {
         return ref.matches('@') || ref.matches('this') || ref.matches('self')

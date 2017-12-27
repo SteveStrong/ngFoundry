@@ -86,7 +86,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

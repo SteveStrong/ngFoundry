@@ -28,21 +28,18 @@ import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
 export class foText2D extends foShape2D {
-    public text: string = '';
-    public textAlign:string = 'center';
-    public textBaseline:string = 'middle';
+    public text: string;
+    public textAlign:string;
+    public textBaseline:string;
 
     public fontSize: number = 20;
-    public font: string = "20px Georgia";
+    public font: string;
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.override(properties);
-
-        this.font = this.fontSize + "px Georgia";
     }
 
     protected toJson(): any {
@@ -54,9 +51,9 @@ export class foText2D extends foShape2D {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        ctx.textAlign = this.textAlign;
-        ctx.textBaseline = this.textBaseline;
-        ctx.font = this.font;
+        ctx.textAlign = this.textAlign || 'center';
+        ctx.textBaseline = this.textBaseline || 'middle';
+        ctx.font = this.font ||  this.fontSize + "px Georgia";
 
         let textMetrics = ctx.measureText(this.text);
         this.width = textMetrics.width;

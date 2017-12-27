@@ -33,7 +33,7 @@ export class foShape2D extends foGlyph {
     public pinY = (): number => { return 0.5 * this.height; }
     public rotation = (): number => { return this.angle; }
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
@@ -234,6 +234,8 @@ export class Stencil {
         return instance.myType;
     }
 
+
+    //create foConcepts so you can build things
     static extends<T extends foGlyph>(name: string, type: { new(p?: any): T; }, properties?: any) {
         this.lookup[name] = { type: name, create: type, defaults: properties };
         return this.lookup[name]

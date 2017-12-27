@@ -1,5 +1,5 @@
 import { Tools } from './foTools'
-import { iObject } from './foInterface'
+import { iObject, Action } from '../foundry/foInterface'
 import { PubSub } from './foPubSub'
 
 import { foKnowledge } from './foKnowledge.model'
@@ -12,24 +12,35 @@ import { foNode } from './foNode.model'
 
 
 
-export class foConcept extends foKnowledge {
+export class foConcept<T extends foNode> extends foKnowledge {
 
-    private _create = (properties?: any, subcomponents?: Array<foNode>, parent?: foObject) => {
-        return new foObject();
+    private _create = (properties?: any, subcomponents?: Array<foNode>, parent?: foObject): T => {
+        return <T>new foNode(properties, subcomponents, parent);
     }
 
     private _spec: any;
 
     private _attributes: foDictionary<foAttribute> = new foDictionary<foAttribute>({ myName: 'attributes' });
-    private _projections: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'projections' });
+    private _projections: foDictionary<foProjection<T>> = new foDictionary<foProjection<T>>({ myName: 'projections' });
 
 
-    constructor(properties?: any) {
+    createType(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+        this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
+            return new type(properties, subcomponents, parent);
+        }
+        return this;
+    }
+
+    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T) => T) {
         super(properties);
         this._spec = properties || {};
 
-        this.createNode();
-        //this.createComponent();
+        if (create) {
+            this._create = create;
+        } else {
+            this._create = (p?: any, s?: Array<T>, r?: T) => { return new foNode(p,s,r) as T; };
+        }
+
     }
 
 
@@ -54,7 +65,7 @@ export class foConcept extends foKnowledge {
 
     get projections() {
         if (!this._projections) {
-            this._projections = new foDictionary<foProjection>({ myName: 'projections' });
+            this._projections = new foDictionary<foProjection<T>>({ myName: 'projections' });
         }
         return this._projections;
     }
@@ -88,44 +99,19 @@ export class foConcept extends foKnowledge {
         return result;
     }
 
-    newInstance(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
         let fullSpec = Tools.union(this._spec, properties)
-        let result = this._create(fullSpec, subcomponents, parent);
+        let result = this._create(fullSpec, subcomponents, parent) as T;
         return result;
-    }
-
-
-    //start fluent interface
-    target() {
-        return this;
-    }
-
-    createNode() {
-        this._create = (properties?, subcomponents?, parent?) => {
-            return new foNode(properties, subcomponents, parent);
-        }
-        return this;
-    }
-
-    createComponent() {
-        this._create = (properties?, subcomponents?, parent?) => {
-            return new foComponent(properties, subcomponents, parent);
-        }
-        return this;
-    }
-
-    createCustom(funct) {
-        this._create = funct;
-        return this;
     }
 
 }
 
-export class foProjection extends foConcept {
+export class foProjection<T extends foNode> extends foConcept<T> {
 
-    private _mySource: foConcept = undefined;
+    private _mySource: foConcept<T> = undefined;
 
-    constructor(source: foConcept, properties?: any) {
+    constructor(source: foConcept<T>, properties?: any) {
         super(properties);
         this._mySource = source;
 
@@ -144,11 +130,61 @@ export class foProjection extends foConcept {
             view = new foViewAttribute(attribute, spec);
             this.attributes.addItem(key, view);
             view.myName = key;
-           
+
         }
         return view;
     }
 
 
 
+}
+
+export class Concept {
+    static lookup = {}
+
+    static find<T extends foNode>(id: string): foConcept<T> {
+        let { namespace, name } = Tools.splitNamespaceType(id);
+        let concept = this.findConcept(namespace, name) as foConcept<T>;
+        return concept;
+    }
+
+    static register<T extends foNode>(id: string, concept: foConcept<T>): foConcept<T> {
+        let { namespace, name } = Tools.splitNamespaceType(id);
+
+        return this.registerConcept(namespace, name, concept);
+    }
+
+    static registerConcept<T extends foNode>(namespace: string, name: string, concept: foConcept<T>): foConcept<T> {
+        let space = this.lookup[namespace] ? this.lookup[namespace] : {}
+        space[name] = concept;
+        return concept;
+    }
+
+    static findConcept<T extends foNode>(namespace: string, name: string): foConcept<T> {
+        let space = this.lookup[namespace];
+        let concept = space && space[name];
+        return concept;
+    }
+
+    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any): foConcept<T> {
+        let { namespace, name } = Tools.splitNamespaceType(id);
+
+        let create = (p?: any, s?: Array<T>, r?: T) => { 
+            return new type(p, s, r); 
+        };
+
+        let concept = new foConcept<T>(properties, create);
+
+        return this.registerConcept(namespace, name, concept);
+    }
+
+
+    static makeInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
+        let { namespace, name } = Tools.splitNamespaceType(id);
+        let concept = this.findConcept(namespace, name);
+
+        let instance = concept.newInstance(concept) as T;
+        func && func(instance);
+        return instance;
+    }
 }
