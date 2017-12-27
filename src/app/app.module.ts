@@ -8,7 +8,7 @@ import { HttpModule } from '@angular/http';
 
 
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
-import { MaptoKeysPipe } from './common/maptokeys.pipe';
+import { MaptoKeysPipe, ModelJsonPipe } from './common/maptokeys.pipe';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -38,6 +38,7 @@ import { CanvasTestComponent } from './canvas/canvastest.component';
   declarations: [
     AppComponent,
     MaptoKeysPipe,
+    ModelJsonPipe,
     TreeviewComponent,
     ListviewComponent,
     NetworkviewComponent,

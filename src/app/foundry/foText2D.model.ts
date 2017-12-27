@@ -36,10 +36,10 @@ export class foText2D extends foShape2D {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.fillRect(0, 0, this.width, this.height);
+        ctx.rect(0, 0, this.width, this.height);
 
-        l
-        this.drawText(ctx, this.myType)
+        
+        this.drawText(ctx, this.text)
     }
 
 }
