@@ -20,6 +20,7 @@ import { foHandle } from "../foundry/foHandle";
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
+import { foText2D } from "../foundry/foText2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
@@ -196,6 +197,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     });
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+  }
+
+  doText() {
+    let shape = Stencil.create(foText2D, {
+      color: 'red',
+      x: 200,
+      y: 200,
+    });
+    this.addSubcomponent(shape);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson); 
   }
 
   doAddGlyph() {
