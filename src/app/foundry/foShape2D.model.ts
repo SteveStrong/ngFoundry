@@ -37,24 +37,24 @@ export class foShape2D extends foGlyph {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson():any {
+    protected toJson(): any {
         let result = super.toJson();
         result.angle = this.angle;
         return result;
-    }  
+    }
 
-    public notifyOnChange(source:any, channel: string, ...args: any[]) {
+    public notifyOnChange(source: any, channel: string, ...args: any[]) {
     }
 
     notifySource(channel: string, ...args: any[]) {
         this._glue && this._glue.forEach(item => {
-            item.mySource().notifyOnChange(item,channel, ...args);
+            item.mySource().notifyOnChange(item, channel, ...args);
         })
     }
 
     notifyTarget(channel: string, ...args: any[]) {
         this._glue && this._glue.forEach(item => {
-            item.myTarget().notifyOnChange(item,channel, ...args);
+            item.myTarget().notifyOnChange(item, channel, ...args);
         })
     }
 
@@ -224,14 +224,19 @@ export class Stencil {
 
         defaults && instance.extend(defaults);
         instance.initialize();
-        
+
         return instance;
     }
 
     static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type();
         this.lookup[instance.myType] = { create: type, defaults: properties };
-        return type;
+        return instance.myType;
+    }
+
+    static extends<T extends foGlyph>(name: string, type: { new(p?: any): T; }, properties?: any) {
+        this.lookup[name] = { type: name, create: type, defaults: properties };
+        return this.lookup[name]
     }
 
     static spec<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {

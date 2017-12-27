@@ -204,10 +204,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doText() {
     let shape = Stencil.create(foText2D, {
-      color: 'red',
-      width: 400,
-      height: 100,
+      color: 'black',
+      text: 'Hello Steve',
+      fontSize: 20,
     }).drop(350, 100).addAsSubcomponent(this);
+    
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson); 
   }
 

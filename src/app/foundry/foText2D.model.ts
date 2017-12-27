@@ -15,13 +15,34 @@ import { foComponent } from '../foundry/foComponent.model'
 import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 
 
+// ctx.textAlign = "left" || "right" || "center" || "start" || "end";
+
+// ctx.textBaseline = "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom";
+
+// ctx.font = '48px serif';
+// ctx.font = "20px Georgia";
+// ctx.font = "italic 10pt Courier";
+// ctx.font = "bold 10pt Courier";
+// ctx.font = "italic bold 10pt Courier";
+
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
 export class foText2D extends foShape2D {
-    text: string = 'This is the default text'
+    public text: string = '';
+    public textAlign:string = 'center';
+    public textBaseline:string = 'middle';
+
+    public fontSize: number = 20;
+    public font: string = "20px Georgia";
+
+    public pinX = (): number => { return 0.5 * this.width; }
+    public pinY = (): number => { return 0.5 * this.height; }
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
+        this.override(properties);
+
+        this.font = this.fontSize + "px Georgia";
     }
 
     protected toJson(): any {
@@ -32,6 +53,14 @@ export class foText2D extends foShape2D {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
+
+        ctx.textAlign = this.textAlign;
+        ctx.textBaseline = this.textBaseline;
+        ctx.font = this.font;
+
+        let textMetrics = ctx.measureText(this.text);
+        this.width = textMetrics.width;
+        this.height = this.fontSize;
 
         //this.drawOrigin(ctx);
         this.updateContext(ctx);
@@ -54,29 +83,22 @@ export class foText2D extends foShape2D {
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         ctx.strokeStyle = "red";
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 1;
         this.drawOutline(ctx);
-        this.drawHandles(ctx);
+        //this.drawHandles(ctx);
         this.drawPin(ctx);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
+
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        //ctx.fillRect(0, 0, this.width, this.height);
+        //ctx.rect(0, 0, this.width, this.height);
 
+        ctx.fillText(this.text, this.pinX(), this.pinY());
 
-
-        this.drawOutline(ctx);
-        this.drawHandles(ctx);
-        this.drawPin(ctx);
-
-
-
-        this.drawText(ctx, this.text);
-
-        this.drawTextBG(ctx, 'HELLO STEVE', "10pt Courier", 100, 200)
+        //this.drawTextBG(ctx, 'HELLO STEVE', "10pt Courier", 100, 200)
         //this.drawSample(ctx);
     }
 
@@ -100,6 +122,7 @@ export class foText2D extends foShape2D {
         ctx.strokeText(strokeText, 20, 80);
     }
 
+    //http://tutorials.jenkov.com/html5-canvas/text.html
     /// expand with color, background etc.
     drawTextBG(ctx: CanvasRenderingContext2D, txt:string, font:string, x:number, y:number) {
        
@@ -127,7 +150,8 @@ export class foText2D extends foShape2D {
         ctx.restore();
     }
 
-    drawText(ctx: CanvasRenderingContext2D, text: string) {
+
+    drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
 
         let textMetrics = ctx.measureText(text);
 
@@ -152,6 +176,6 @@ export class foText2D extends foShape2D {
         }
 
     }
+}
 
-
-//Stencil.define(foText2D);
+Stencil.define(foText2D);
