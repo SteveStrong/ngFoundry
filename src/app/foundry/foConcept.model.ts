@@ -19,6 +19,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
 
     private _spec: any;
+    private _init: Action<T>;
 
     private _attributes: foDictionary<foAttribute> = new foDictionary<foAttribute>({ myName: 'attributes' });
     private _projections: foDictionary<foProjection<T>> = new foDictionary<foProjection<T>>({ myName: 'projections' });
@@ -31,9 +32,10 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
-    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T) => T) {
+    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T ) => T, init?:Action<T>) {
         super(properties);
         this._spec = properties || {};
+        this._init = init;
 
         if (create) {
             this._create = create;
@@ -102,6 +104,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
         let fullSpec = Tools.union(this._spec, properties)
         let result = this._create(fullSpec, subcomponents, parent) as T;
+        this._init && this._init(result);
         return result;
     }
 
@@ -166,14 +169,14 @@ export class Concept {
         return concept;
     }
 
-    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any): foConcept<T> {
+    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, func?: Action<T>): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
 
         let create = (p?: any, s?: Array<T>, r?: T) => { 
             return new type(p, s, r); 
         };
 
-        let concept = new foConcept<T>(properties, create);
+        let concept = new foConcept<T>(properties, create, func);
 
         return this.registerConcept(namespace, name, concept);
     }
@@ -183,7 +186,7 @@ export class Concept {
         let { namespace, name } = Tools.splitNamespaceType(id);
         let concept = this.findConcept(namespace, name);
 
-        let instance = concept.newInstance(concept) as T;
+        let instance = concept.newInstance(properties) as T;
         func && func(instance);
         return instance;
     }

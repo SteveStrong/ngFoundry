@@ -21,6 +21,7 @@ import { foHandle } from "../foundry/foHandle";
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
+import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
@@ -206,23 +207,47 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let textBlock = Concept.define<foText2D>('text::block', foText2D, {
       color: 'black',
       text: 'Hello',
-      fontSize: 20
     });
 
-    // let shape = Stencil.create(foText2D, {
-    //   color: 'black',
-    //   text: 'Hello Steve',
-    //   fontSize: 20,
-    // }).drop(350, 100).addAsSubcomponent(this);
+    let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
+      color: 'green',
+    }, (obj:foShape1D)=> { obj.initialize(); } );
 
-    let shape = textBlock.newInstance({
-      text: 'Hello Steve',
-      fontSize: 20,
-    });
-    
-    shape.drop(350, 100).addAsSubcomponent(this);
-    
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson); 
+    let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
+    let objects = [];
+
+    let y = 100;
+    let size = 20;
+    let last = undefined;
+    list.forEach(item => {
+      size += 2;
+      let shape = textBlock.newInstance({
+        text: 'Hello ' + item,
+        fontSize: size,
+      }).drop(350, y).addAsSubcomponent(this);
+      y += 1.5 * shape.fontSize;
+      this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+
+      objects.push(shape)
+
+      if (!last) {
+        last = shape;
+      } else {
+        let wire = wireConcept.newInstance().addAsSubcomponent(this);
+
+        this.signalR.pubCommand("syncGlue", wire.glueStart(last).asJson);
+        this.signalR.pubCommand("syncGlue", wire.glueFinish(shape).asJson);
+        last = shape;
+      }
+    })
+
+
+    objects.forEach( shape => {
+      shape.drop(shape.x + Tools.randomInt(-100, 100));
+      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+    })
+
+
   }
 
   doAddGlyph() {
@@ -484,7 +509,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
 
- 
+
 
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
@@ -492,7 +517,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
     this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
 
-    wire.glue.forEach( glue => {
+    wire.glue.forEach(glue => {
       this.signalR.pubCommand("syncGlue", glue.asJson);
     })
 
@@ -598,7 +623,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             ease: Back.easeInOut
           }).eventCallback("onUpdate", () => {
             shape.drop();
-          }).eventCallback("onComplete", () => { 
+          }).eventCallback("onComplete", () => {
             shape.moveTo(data.x, data.y);
           });
         });

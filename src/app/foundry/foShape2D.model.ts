@@ -140,6 +140,9 @@ export class foShape2D extends foGlyph {
         }
     }
 
+
+
+
     createGlue(name: string, target: foShape2D, handle?: string) {
         let glue = this.addGlue(new foGlue({ myName: name }));
         glue.glueTo(target, handle);

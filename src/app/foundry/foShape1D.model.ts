@@ -71,7 +71,7 @@ export class foShape1D extends foShape2D {
         return new cPoint((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
     }
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
@@ -130,6 +130,14 @@ export class foShape1D extends foShape2D {
         };
     }
 
+    glueStart(target: foShape2D, handle?: string){
+        return this.createGlue('begin', target, handle);
+    }
+
+    glueFinish(target: foShape2D, handle?: string){
+        return this.createGlue('end', target, handle);
+    }
+    
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         let { x: cX, y: cY } = this.center();
 
