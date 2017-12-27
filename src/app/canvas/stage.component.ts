@@ -17,6 +17,7 @@ import { foDictionary } from "../foundry/foDictionary.model";
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
+
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
@@ -32,6 +33,35 @@ import { SignalRService } from "../common/signalr.service";
 //https://greensock.com/docs/TweenMax
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
+
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'modelJson', pure: true })
+export class ModelJsonPipe {
+    transform(val) {
+        if (val && val.stringify) {
+            return val.stringify(val);
+        }
+
+        function resolveCircular(key, value) {
+
+            switch (key) {
+                case 'parent':
+                    return;
+            }
+            if (key.startsWith('_')) return;
+
+            return value;
+        }
+
+        try {
+            return JSON.stringify(val, resolveCircular, 3);
+        } catch (error) {
+            throw error;
+        }
+
+    }
+}
 
 
 @Component({
