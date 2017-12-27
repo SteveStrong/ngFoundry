@@ -12,7 +12,7 @@ export class MaptoKeysPipe implements PipeTransform {
   }
 }
 
-@Pipe({ name: 'modelJson', pure: true })
+@Pipe({ name: 'modelJson' })
 export class ModelJsonPipe {
     transform(val) {
         if (val && val.stringify) {

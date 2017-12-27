@@ -211,8 +211,6 @@ export class foShape2D extends foGlyph {
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(0, 0, this.width, this.height);
-
-        //this.drawText(ctx, this.myType)
     }
 
 }

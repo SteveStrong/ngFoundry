@@ -18,32 +18,140 @@ import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
 export class foText2D extends foShape2D {
-    text:string = 'This is the default text'
+    text: string = 'This is the default text'
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson():any {
+    protected toJson(): any {
         let result = super.toJson();
-        result.angle = this.angle;
+        result.text = this.text;
         return result;
-    }  
+    }
 
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        ctx.save();
 
+        //this.drawOrigin(ctx);
+        this.updateContext(ctx);
+        //this.drawOriginX(ctx);
+
+        this.preDraw && this.preDraw(ctx);
+        this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
+
+        this.isSelected && this.drawSelected(ctx);
+
+        deep && this._subcomponents.forEach(item => {
+            item.render(ctx, deep);
+        });
+        ctx.restore();
+
+        this.afterRender && this.afterRender(ctx);
+    }
+
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        this.drawOutline(ctx);
+        this.drawHandles(ctx);
+        this.drawPin(ctx);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
-        ctx.rect(0, 0, this.width, this.height);
+        //ctx.fillRect(0, 0, this.width, this.height);
 
-        
-        this.drawText(ctx, this.text)
+
+
+        this.drawOutline(ctx);
+        this.drawHandles(ctx);
+        this.drawPin(ctx);
+
+
+
+        this.drawText(ctx, this.text);
+
+        this.drawTextBG(ctx, 'HELLO STEVE', "10pt Courier", 100, 200)
+        //this.drawSample(ctx);
     }
 
-}
+    drawSample(ctx) {
+        ctx.translate(-10, 25);
+        ctx.scale(1.2, 0.8);
+        ctx.rotate(5 * Math.PI / 180);
+
+        var fillText = "fillText";
+        var strokeText = "strokeText";
+
+        ctx.textBaseline = "top";
+        ctx.font = "32pt Arial";
+
+        ctx.fillStyle = "orange";  // shadow color
+        ctx.fillText(fillText, 22, 22);
+        ctx.fillStyle = "red";
+        ctx.fillText(fillText, 20, 20);
+
+        ctx.strokeStyle = "blue";
+        ctx.strokeText(strokeText, 20, 80);
+    }
+
+    /// expand with color, background etc.
+    drawTextBG(ctx: CanvasRenderingContext2D, txt:string, font:string, x:number, y:number) {
+       
+        ctx.save();
+
+        ctx.font = font;
+
+        /// draw text from top - makes life easier at the moment
+        ctx.textBaseline = 'top';
+
+        /// color for background
+        ctx.fillStyle = '#f50';
+
+        /// get width of text
+        var width = ctx.measureText(txt).width;
+
+        /// draw background rect assuming height of font
+        ctx.fillRect(x, y, width, parseInt(font, 10));
+
+        ctx.fillStyle = '#000';
+
+        /// draw text on top
+        ctx.fillText(txt, x, y);
+
+        ctx.restore();
+    }
+
+    drawText(ctx: CanvasRenderingContext2D, text: string) {
+
+        let textMetrics = ctx.measureText(text);
+
+        ctx.textAlign = "left" || "right" || "center" || "start" || "end";
+
+        ctx.textBaseline = "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom";
+
+        ctx.font = '48px serif';
+        ctx.font = "20px Georgia";
+        ctx.font = "italic 10pt Courier";
+        ctx.font = "bold 10pt Courier";
+        ctx.font = "italic bold 10pt Courier";
+
+        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
+        let fontsize = 60;
+        let array = text.split('|');
+        let dx = 10;
+        let dy = 20;
+        for (var i = 0; i < array.length; i++) {
+            ctx.fillText(array[i], dx, dy);
+            dy += (fontsize + 4);
+        }
+
+    }
 
 
-Stencil.define(foText2D);
-
+//Stencil.define(foText2D);
