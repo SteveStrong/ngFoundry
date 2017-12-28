@@ -27,9 +27,9 @@ export class foGlyph extends foNode implements iShape {
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
     set visible(value: boolean) { this._visible = value; }
-    
+
     public get isVisible() {
-        return !!(this.visible && this.opacity > 0 );
+        return !!(this.visible && this.opacity > 0);
     };
 
     protected _subcomponents: foCollection<foGlyph>;
@@ -40,7 +40,7 @@ export class foGlyph extends foNode implements iShape {
     protected _opacity: number;
     protected _color: string;
 
-    public context:any;
+    public context: any;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -90,7 +90,7 @@ export class foGlyph extends foNode implements iShape {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson():any {
+    protected toJson(): any {
         return {
             myGuid: this.myGuid,
             myType: this.myType,
@@ -485,6 +485,49 @@ export class foGlyph extends foNode implements iShape {
 
     toggleSelected() {
         this._isSelected = !this._isSelected;
+    }
+
+    layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
+        let { x, y } = this.getLocation();
+        let self = this;
+        if (resize) {
+            self.height = self.width = 0;
+        }
+        this.Subcomponents.forEach(item => {
+            let shape = <foGlyph>item;
+            let i = shape.index + 1;
+            let pinY = i * (space + shape.height);
+            let { x: pinX } = shape.pinLocation()
+
+            shape.drop(pinX, pinY);
+            if (resize) {
+                self.width = Math.max(self.width, shape.width);
+                self.height = shape.y + (space + shape.height);
+            }
+        });
+        self.drop(x, y)
+    }
+
+    layoutSubcomponentsHorizontal(resize: boolean = true, space: number = 0) {
+        let { x, y } = this.getLocation();
+        let self = this;
+        if (resize) {
+            self.height = self.width = 0;
+        }
+        let dropX = 0;
+        this.Subcomponents.forEach(item => {
+            let shape = <foGlyph>item;
+
+            let { x: pinX, y: pinY } = shape.pinLocation()
+            shape.drop(dropX+pinX, pinY);
+
+            if (resize) {
+                self.height = Math.max(self.height, shape.height);
+                self.width += (space + shape.width);
+            }
+            dropX += (space + shape.width);
+        });
+        self.drop(x, y)
     }
 }
 

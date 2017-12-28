@@ -79,6 +79,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doDuplicate() {
   }
 
+  doVert(){
+    this.layoutSubcomponentsVertical(false, 10)
+  }
+
+  doHorz(){
+    this.layoutSubcomponentsHorizontal(false, 10)
+  }
+
 
   ngOnInit() {
     this.onItemChangedParent = (shape: foGlyph): void => {
@@ -216,7 +224,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
     }, (parent) => {
       parent.context.forEach(item => {
-        let shape = block.newInstance({
+        block.newInstance({
           context: item,
         }).addAsSubcomponent(parent);
       });
@@ -228,26 +236,25 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     source.subscribe(res => {
       let data = res.json();
 
-      let categories = data.categories;
-
       let frame = body.newInstance({
-        context: categories,
-        width: 100, 
-        height: 100,
+        context: data.categories
       }).drop(300, 200).addAsSubcomponent(this);
 
       //give this a chance to render so sizes are right for text
       setTimeout(() => {
-        frame.Subcomponents.forEach(item => {
-          let shape = (<foText2D>item);
-          let i = shape.index+1;
-          shape.drop(shape.pinX(), i * shape.height);
-
-          frame.width = Math.max(frame.width, shape.width);
-          frame.height =  shape.y + shape.height;
-        })      
+        frame.layoutSubcomponentsVertical();
+        //frame.layoutSubcomponentsHorizontal(true, 10);
       }, 10);
 
+      data.containers.forEach(item =>{
+        block.newInstance({
+          context: item,
+        }).addAsSubcomponent(this);
+      });
+
+      setTimeout(() => {
+        this.layoutSubcomponentsVertical(false)
+      }, 10)
 
     });
 
