@@ -217,7 +217,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doDocker() {
     let block = Concept.define<foText2D>('text::block', foText2D, {
-      color: 'black'
+      color: 'green'
     });
 
     let body = Concept.define<foShape2D>('text::body', foShape2D, {
@@ -243,7 +243,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //give this a chance to render so sizes are right for text
       setTimeout(() => {
         frame.layoutSubcomponentsVertical();
-        //frame.layoutSubcomponentsHorizontal(true, 10);
       }, 10);
 
       data.containers.forEach(item =>{
@@ -270,16 +269,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
       color: 'green',
+      thickness: 1,
     });
 
     let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
     let objects = [];
 
     let y = 100;
-    let size = 20;
+    let size = 8;
     let last = undefined;
     list.forEach(item => {
-      size += 2;
+      size += 4;
       let shape = textBlock.newInstance({
         text: 'Hello ' + item,
         fontSize: size,
@@ -740,7 +740,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
-        alert(JSON.stringify(data, undefined, 3));
+        //alert(JSON.stringify(data, undefined, 3));
       });
 
       this.signalR.subCommand("syncGlyph", (cmd, data) => {

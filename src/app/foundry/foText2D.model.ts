@@ -32,7 +32,7 @@ export class foText2D extends foShape2D {
     public textAlign: string;
     public textBaseline: string;
 
-    public fontSize: number = 20;
+    public fontSize: number;
     public font: string;
 
     public pinX = (): number => { return 0.5 * this.width; }
@@ -40,9 +40,8 @@ export class foText2D extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.height = this.fontSize;
 
-        this.override({
+        this.extend({
             text: function () {
                 if (this.context && this.context.text) {
                     return this.context.text;
@@ -65,11 +64,12 @@ export class foText2D extends foShape2D {
 
         ctx.textAlign = this.textAlign || 'center';
         ctx.textBaseline = this.textBaseline || 'middle';
-        ctx.font = this.font || this.fontSize + "px Georgia";
+
+        this.height = (this.fontSize || 12 );
+        ctx.font = this.font || this.height + "px Georgia";
 
         let textMetrics = ctx.measureText(this.text);
         this.width = textMetrics.width;
-        this.height = this.fontSize;
 
         //this.drawOrigin(ctx);
         this.updateContext(ctx);

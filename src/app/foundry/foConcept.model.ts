@@ -103,8 +103,9 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
 
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
-        let fullSpec = Tools.union(this._spec, properties)
-        let result = this._create(fullSpec, subcomponents, parent) as T;
+        let spec = Tools.union(this._spec, properties);
+        let result = this._create(spec, subcomponents, parent) as T;
+        result.myType = this.myName;
         result.initialize();
         this._init && this._init(result);
         return result;
