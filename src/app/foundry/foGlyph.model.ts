@@ -40,7 +40,7 @@ export class foGlyph extends foNode implements iShape {
     protected _opacity: number;
     protected _color: string;
 
-
+    public context:any;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {

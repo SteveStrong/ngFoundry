@@ -29,8 +29,8 @@ import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 //and have all the same properties
 export class foText2D extends foShape2D {
     public text: string;
-    public textAlign:string;
-    public textBaseline:string;
+    public textAlign: string;
+    public textBaseline: string;
 
     public fontSize: number = 20;
     public font: string;
@@ -40,6 +40,18 @@ export class foText2D extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+        this.height = this.fontSize;
+
+        this.override({
+            text: function () {
+                if (this.context && this.context.text) {
+                    return this.context.text;
+                } if (this.context && Tools.isObject(this.context)) {
+                    return JSON.stringify(this.context, undefined, 3);
+                }
+                return this.context;
+            }
+        });
     }
 
     protected toJson(): any {
@@ -53,7 +65,7 @@ export class foText2D extends foShape2D {
 
         ctx.textAlign = this.textAlign || 'center';
         ctx.textBaseline = this.textBaseline || 'middle';
-        ctx.font = this.font ||  this.fontSize + "px Georgia";
+        ctx.font = this.font || this.fontSize + "px Georgia";
 
         let textMetrics = ctx.measureText(this.text);
         this.width = textMetrics.width;
@@ -121,8 +133,8 @@ export class foText2D extends foShape2D {
 
     //http://tutorials.jenkov.com/html5-canvas/text.html
     /// expand with color, background etc.
-    drawTextBG(ctx: CanvasRenderingContext2D, txt:string, font:string, x:number, y:number) {
-       
+    drawTextBG(ctx: CanvasRenderingContext2D, txt: string, font: string, x: number, y: number) {
+
         ctx.save();
 
         ctx.font = font;

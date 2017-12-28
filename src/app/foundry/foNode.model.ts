@@ -29,7 +29,10 @@ export class foNode extends foObject implements iNode {
         }
     }
 
-
+    //deep hook for syncing matrix2d with geometry 
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        return this;
+    }
 
     addAsSubcomponent(parent: foNode, properties?:any) {
         parent.addSubcomponent(this, properties);

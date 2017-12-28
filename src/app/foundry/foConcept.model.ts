@@ -95,6 +95,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
     get asJson() {
         let result = Tools.asJson(this);
+        result.spec = this._spec;
         result.attributes = Tools.asArray(this.attributes.asJson);
         result.projections = Tools.asArray(this.projections.asJson);
         //let result = this.jsonMerge(this._attributes.values);
@@ -104,6 +105,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
         let fullSpec = Tools.union(this._spec, properties)
         let result = this._create(fullSpec, subcomponents, parent) as T;
+        result.initialize();
         this._init && this._init(result);
         return result;
     }
@@ -177,6 +179,7 @@ export class Concept {
         };
 
         let concept = new foConcept<T>(properties, create, func);
+        concept.myName = id;
 
         return this.registerConcept(namespace, name, concept);
     }

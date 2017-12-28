@@ -156,6 +156,22 @@ export class foTools {
 
     };
 
+    removeDQ(str:string):string {
+        return str.replace(/^"(.*)"$/, '$1');
+    }
+
+    unwrap(str:string):string {
+        return str.substring(1,str.length-1)
+    }
+
+    wrapDQ(str:string):string {
+        return `"${str}"`;
+    }
+
+    wrapSQ(str:string):string {
+        return `'${str}'`;
+    }
+
     decomposeHostPath(filename) {
         var string = filename.toLowerCase();
         string = string.replace('http://', "")

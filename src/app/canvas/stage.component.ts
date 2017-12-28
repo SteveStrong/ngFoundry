@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+import { Http, Response } from '@angular/http';
+
 import { EmitterService } from '../common/emitter.service';
 
 
@@ -52,7 +54,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   screen2D: Sceen2D = new Sceen2D();
 
 
-  constructor(private signalR: SignalRService) {
+  constructor(
+    private signalR: SignalRService,
+    private http: Http) {
     super();
   }
 
@@ -203,15 +207,63 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
+  doDocker() {
+    let block = Concept.define<foText2D>('text::block', foText2D, {
+      color: 'black'
+    });
+
+    let body = Concept.define<foShape2D>('text::body', foShape2D, {
+      color: 'cyan',
+    }, (parent) => {
+      parent.context.forEach(item => {
+        let shape = block.newInstance({
+          context: item,
+        }).addAsSubcomponent(parent);
+      });
+    });
+
+
+
+    let source = this.http.get('assets/caas.json');
+    source.subscribe(res => {
+      let data = res.json();
+
+      let categories = data.categories;
+
+      let frame = body.newInstance({
+        context: categories,
+        width: 100, 
+        height: 100,
+      }).drop(300, 200).addAsSubcomponent(this);
+
+      //give this a chance to render so sizes are right for text
+      setTimeout(() => {
+        frame.Subcomponents.forEach(item => {
+          let shape = (<foText2D>item);
+          let i = shape.index+1;
+          shape.drop(shape.pinX(), i * shape.height);
+
+          frame.width = Math.max(frame.width, shape.width);
+          frame.height =  shape.y + shape.height;
+        })      
+      }, 10);
+
+
+    });
+
+  }
+
   doText() {
     let textBlock = Concept.define<foText2D>('text::block', foText2D, {
       color: 'black',
       text: 'Hello',
     });
 
+    this.signalR.pubCommand("syncConcept", { guid: textBlock.myGuid }, textBlock.asJson);
+
     let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
       color: 'green',
-    }, (obj:foShape1D)=> { obj.initialize(); } );
+    });
 
     let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
     let objects = [];
@@ -242,7 +294,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     })
 
 
-    objects.forEach( shape => {
+    objects.forEach(shape => {
       shape.drop(shape.x + Tools.randomInt(-100, 100));
       this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
     })
@@ -678,6 +730,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           }
 
         });
+      });
+
+      this.signalR.subCommand("syncConcept", (cmd, data) => {
+        alert(JSON.stringify(data, undefined, 3));
       });
 
       this.signalR.subCommand("syncGlyph", (cmd, data) => {
