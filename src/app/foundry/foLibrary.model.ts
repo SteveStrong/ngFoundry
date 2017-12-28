@@ -6,10 +6,11 @@ import { foConcept, foProjection } from './foConcept.model'
 import { foProperty } from './foProperty.model'
 import { foMethod } from './foMethod.model'
 
+import { foNode } from './foNode.model'
 
-export class foLibrary extends foKnowledge {
+export class foLibrary<T extends foNode> extends foKnowledge {
 
-    private _concepts: foDictionary<foConcept> = new foDictionary<foConcept>({ myName: 'concepts' });
+    private _concepts: foDictionary<foConcept<T>> = new foDictionary<foConcept<T>>({ myName: 'concepts' });
     private _properties: foDictionary<foProperty> = new foDictionary<foProperty>({ myName: 'properties' });
     //private _projection: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'projections' });
 
@@ -62,17 +63,4 @@ export class foLibrary extends foKnowledge {
         return property;
     }
 
-    // get projections() {
-    //     return this._projection;
-    // }
-
-    // establishProjection(key: string, spec: any = undefined) {
-    //     let projections = this.projections;
-    //     let projection = projections.get(key);
-    //     if (!projection) {
-    //         projection = projections.add(key, new foProjection(spec));
-    //         projection.myName = key;
-    //     }
-    //     return projection;
-    // }
 }

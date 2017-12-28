@@ -33,28 +33,28 @@ export class foShape2D extends foGlyph {
     public pinY = (): number => { return 0.5 * this.height; }
     public rotation = (): number => { return this.angle; }
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson():any {
+    protected toJson(): any {
         let result = super.toJson();
         result.angle = this.angle;
         return result;
-    }  
+    }
 
-    public notifyOnChange(source:any, channel: string, ...args: any[]) {
+    public notifyOnChange(source: any, channel: string, ...args: any[]) {
     }
 
     notifySource(channel: string, ...args: any[]) {
         this._glue && this._glue.forEach(item => {
-            item.mySource().notifyOnChange(item,channel, ...args);
+            item.mySource().notifyOnChange(item, channel, ...args);
         })
     }
 
     notifyTarget(channel: string, ...args: any[]) {
         this._glue && this._glue.forEach(item => {
-            item.myTarget().notifyOnChange(item,channel, ...args);
+            item.myTarget().notifyOnChange(item, channel, ...args);
         })
     }
 
@@ -140,6 +140,9 @@ export class foShape2D extends foGlyph {
         }
     }
 
+
+
+
     createGlue(name: string, target: foShape2D, handle?: string) {
         let glue = this.addGlue(new foGlue({ myName: name }));
         glue.glueTo(target, handle);
@@ -211,8 +214,6 @@ export class foShape2D extends foGlyph {
         ctx.lineWidth = 1;
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(0, 0, this.width, this.height);
-
-        //this.drawText(ctx, this.myType)
     }
 
 }
@@ -226,14 +227,21 @@ export class Stencil {
 
         defaults && instance.extend(defaults);
         instance.initialize();
-        
+
         return instance;
     }
 
     static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type();
         this.lookup[instance.myType] = { create: type, defaults: properties };
-        return type;
+        return instance.myType;
+    }
+
+
+    //create foConcepts so you can build things
+    static extends<T extends foGlyph>(name: string, type: { new(p?: any): T; }, properties?: any) {
+        this.lookup[name] = { type: name, create: type, defaults: properties };
+        return this.lookup[name]
     }
 
     static spec<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {

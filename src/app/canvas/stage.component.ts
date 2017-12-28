@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
+import { Http, Response } from '@angular/http';
+
 import { EmitterService } from '../common/emitter.service';
 
 
@@ -7,12 +9,12 @@ import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { PubSub } from "../foundry/foPubSub";
 import { Matrix2D } from "../foundry/foMatrix2D";
-import { cPoint, cRect } from "../foundry/foGeometry";
+import { cPoint, cRect, cMargin } from "../foundry/foGeometry";
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
-
+import { Concept } from "../foundry/foConcept.model";
 
 import { foPage } from "../foundry/foPage.model";
 
@@ -21,6 +23,8 @@ import { foHandle } from "../foundry/foHandle";
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
+import { foShape1D } from "../foundry/foShape1D.model";
+import { foText2D } from "../foundry/foText2D.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
@@ -33,34 +37,7 @@ import { SignalRService } from "../common/signalr.service";
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 
-import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'modelJson', pure: true })
-export class ModelJsonPipe {
-    transform(val) {
-        if (val && val.stringify) {
-            return val.stringify(val);
-        }
-
-        function resolveCircular(key, value) {
-
-            switch (key) {
-                case 'parent':
-                    return;
-            }
-            if (key.startsWith('_')) return;
-
-            return value;
-        }
-
-        try {
-            return JSON.stringify(val, resolveCircular, 3);
-        } catch (error) {
-            throw error;
-        }
-
-    }
-}
 
 
 @Component({
@@ -77,7 +54,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   screen2D: Sceen2D = new Sceen2D();
 
 
-  constructor(private signalR: SignalRService) {
+  constructor(
+    private signalR: SignalRService,
+    private http: Http) {
     super();
   }
 
@@ -98,6 +77,20 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDuplicate() {
+  }
+
+  doVert() {
+    let pt = new cPoint(100,150);
+    this.layoutSubcomponentsVertical(false,2).nodes.forEach(item =>{
+      item.moveBy(pt);
+    })
+  }
+
+  doHorz() {
+    let pt = new cPoint(100,150);
+    this.layoutSubcomponentsHorizontal(false,2).nodes.forEach(item =>{
+      item.moveBy(pt);
+    })
   }
 
 
@@ -226,6 +219,178 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     });
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+  }
+
+  doBlocks(){
+    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+      color: 'green',
+      width: 100,
+      height:50
+    });
+
+
+
+    let text = Concept.define<foText2D>('words::text2d', foText2D, {
+      color: 'black',
+      background: 'yellow',
+      context: 'HELLO',
+      width: 100,
+      height:50
+    });
+
+    for(var i=0; i<5; i++){
+      let body = block.newInstance({
+        width: 10 + i * 10,
+        height: 10 + i * 10,
+      }).drop(100, 100).addAsSubcomponent(this);
+    }
+
+    for(var i=0; i<5; i++){
+      let body = text.newInstance({
+        width: 10 + i * 10,
+        fontSize: 10 + i * 10,
+      }).drop(100, 300).addAsSubcomponent(this);
+    }
+
+  }
+
+  doDocker() {
+    let block = Concept.define<foText2D>('text::block', foText2D, {
+      color: 'green',
+      fontSize: 20,
+    });
+
+    let attribute = Concept.define<foText2D>('text::attribute', foText2D, {
+      color: 'red',
+      background: 'white',
+      fontSize: 20,
+    });
+
+    let formula = Concept.define<foText2D>('text::formula', foText2D, {
+      color: 'gray',
+      background: 'white',
+      fontSize: 20,
+    });
+
+    let concept = Concept.define<foText2D>('text::concept', foText2D, {
+      color: 'blue',
+      background: 'yellow',
+      fontSize: 20,
+    });
+
+    let body = Concept.define<foShape2D>('text::body', foShape2D, {
+      color: 'cyan',
+      fontSize: 30,
+    }, (parent) => {
+      parent.context.forEach(item => {
+        block.newInstance({
+          context: item,
+        }).addAsSubcomponent(parent);
+      });
+    });
+
+
+
+    let source = this.http.get('assets/caas.json');
+    source.subscribe(res => {
+      let data = res.json();
+
+      let frame = body.newInstance({
+        context: data.categories
+      }).drop(100, 200).addAsSubcomponent(this);
+
+      //give this a chance to render so sizes are right for text
+      setTimeout(() => {
+        frame.layoutSubcomponentsVertical();
+        //frame.layoutSubcomponentsHorizontal();
+      }, 10);
+
+
+      data.containers.forEach(item => {
+        let body = concept.newInstance({
+          fontSize:30,
+          context: 'Container',
+        }).addAsSubcomponent(this);
+
+        Tools.forEachKeyValue(item, (key, value) => {
+          let attr = attribute.newInstance({
+            context: key,
+            text: function () { return this.context + " : " }
+          }).addAsSubcomponent(body);
+
+          formula.newInstance({
+            context: value,
+            text: function () { return this.context }
+          }).addAsSubcomponent(attr);
+          
+          setTimeout(() => {
+            attr.layoutMarginRight();
+          }, 10)
+        });
+
+        setTimeout(() => {
+          body.layoutMarginTop()
+        }, 10)
+      });
+
+      setTimeout(() => {
+        this.layoutSubcomponentsVertical(false)
+      }, 10)
+
+    });
+
+  }
+
+  doText() {
+    let textBlock = Concept.define<foText2D>('text::block', foText2D, {
+      color: 'black',
+      text: 'Hello',
+      background: 'yellow',
+      margin: new cMargin(0,0,0,0)
+    });
+
+    this.signalR.pubCommand("syncConcept", { guid: textBlock.myGuid }, textBlock.asJson);
+
+    let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
+      color: 'green',
+      thickness: 1,
+    });
+
+    let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
+    let objects = [];
+
+    let y = 100;
+    let size = 8;
+    let last = undefined;
+    list.forEach(item => {
+      size += 4;
+      let shape = textBlock.newInstance({
+        text: 'Hello ' + item,
+        fontSize: size,
+      }).drop(350, y).addAsSubcomponent(this);
+      y += 50;
+      this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+
+      objects.push(shape)
+
+      // if (!last) {
+      //   last = shape;
+      // } else {
+      //   let wire = wireConcept.newInstance().addAsSubcomponent(this);
+
+      //   this.signalR.pubCommand("syncGlue", wire.glueStart(last).asJson);
+      //   this.signalR.pubCommand("syncGlue", wire.glueFinish(shape).asJson);
+      //   last = shape;
+      // }
+    })
+
+
+    objects.forEach(shape => {
+      //shape.drop(shape.x + Tools.randomInt(-100, 100));
+      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+    })
+
+
   }
 
   doAddGlyph() {
@@ -487,7 +652,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
 
- 
+
 
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
@@ -495,7 +660,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
     this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
 
-    wire.glue.forEach( glue => {
+    wire.glue.forEach(glue => {
       this.signalR.pubCommand("syncGlue", glue.asJson);
     })
 
@@ -601,7 +766,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             ease: Back.easeInOut
           }).eventCallback("onUpdate", () => {
             shape.drop();
-          }).eventCallback("onComplete", () => { 
+          }).eventCallback("onComplete", () => {
             shape.moveTo(data.x, data.y);
           });
         });
@@ -656,6 +821,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           }
 
         });
+      });
+
+      this.signalR.subCommand("syncConcept", (cmd, data) => {
+        //alert(JSON.stringify(data, undefined, 3));
       });
 
       this.signalR.subCommand("syncGlyph", (cmd, data) => {

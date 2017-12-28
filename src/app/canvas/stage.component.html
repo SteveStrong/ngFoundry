@@ -17,7 +17,9 @@
       <button (click)="doUndo()" type="button" class="btn btn-warning">undo</button>
       <button (click)="doDuplicate()" type="button" class="btn btn-warning">duplicate</button>
       <button (click)="doClear()" type="button" class="btn btn-danger">Clear</button>
-    </div>
+      <button (click)="doVert()" type="button" class="btn btn-warning">Vert</button>
+      <button (click)="doHorz()" type="button" class="btn btn-warning">Horz</button>
+        </div>
     <div class="btn-group mr-2" role="group" aria-label="Creating Glyphs">
       <button (click)="doAddGlyph()" type="button" class="btn btn-info">add Glyph</button>
       <button (click)="doAddSubGlyph()" type="button" class="btn btn-info">add SubGlyph</button>
@@ -42,6 +44,9 @@
     </div>
 
     <div class="btn-group" role="group" aria-label="Creating Display">
+        <button (click)="doBlocks()" type="button" class="btn btn-success">Blocks</button>
+      <button (click)="doText()" type="button" class="btn btn-success">Text</button>
+      <button (click)="doDocker()" type="button" class="btn btn-success">Docker</button>
       <button (click)="doObjRect()" type="button" class="btn btn-info">Rect</button>
       <button (click)="doObjGroup()" type="button" class="btn btn-info">Group</button>
       <button (click)="doDropGlue()" type="button" class="btn btn-info">Glue</button>
@@ -59,7 +64,7 @@
   <div class="col-md-4">
     <pre class="well">{{mouseLoc | json}}</pre>
     <!-- <pre class="well">{{this.asJson | json}}</pre> -->
-    <pre class="well">{{message | modelJson}}</pre>
+    <pre class="well">{{message | json}}</pre>
 
     <!-- <pre class="well">{{sitOnShape | json}}</pre> -->
 

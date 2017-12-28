@@ -29,7 +29,10 @@ export class foNode extends foObject implements iNode {
         }
     }
 
-
+    //deep hook for syncing matrix2d with geometry 
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        return this;
+    }
 
     addAsSubcomponent(parent: foNode, properties?:any) {
         parent.addSubcomponent(this, properties);
@@ -94,7 +97,7 @@ export class foNode extends foObject implements iNode {
     }
 
     get Subcomponents() {
-        return this._subcomponents.members;
+        return this.nodes.members;
     }
 
     get nodes(): foCollection<foNode> {
@@ -102,6 +105,7 @@ export class foNode extends foObject implements iNode {
     }
 
     get hasSubcomponents(): boolean {
-        return this._subcomponents && this._subcomponents.hasMembers;
+        let list = this.nodes;
+        return list && list.hasMembers;
     }
 }

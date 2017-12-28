@@ -5,17 +5,16 @@ import { iObject } from '../foundry/foInterface'
 import { foObject } from '../foundry/foObject.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
+import { foNode } from '../foundry/foNode.model'
 
 
 
 
-export class svgConcept extends foConcept {
+export class svgConcept extends foConcept<foNode> {
     constructor(properties?: any) {
         super(properties);
 
-        this.createCustom((properties?, subcomponents?, parent?) => {
-            return new svgShapeView(properties, subcomponents, parent);
-        });
+        this.createType(svgShapeView);
     }
 }
 

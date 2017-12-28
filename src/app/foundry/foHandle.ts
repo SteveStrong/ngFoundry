@@ -35,7 +35,7 @@ export class foHandle extends foNode {
         this._y = value;
     }
 
-    get size(): number { return this._size || 20.0; }
+    get size(): number { return this._size || 10.0; }
     set size(value: number) { this._size = value; }
 
     get opacity(): number { return this._opacity || .5; }

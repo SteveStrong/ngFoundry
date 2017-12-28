@@ -2,6 +2,8 @@
 import { Tools } from './foTools';
 import { cPoint } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
+import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+
 
 import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
 
@@ -27,10 +29,12 @@ export class foGlyph extends foNode implements iShape {
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
     set visible(value: boolean) { this._visible = value; }
-    
+
     public get isVisible() {
-        return !!(this.visible && this.opacity > 0 );
+        return !!(this.visible && this.opacity > 0);
     };
+
+
 
     protected _subcomponents: foCollection<foGlyph>;
     protected _x: number;
@@ -40,7 +44,7 @@ export class foGlyph extends foNode implements iShape {
     protected _opacity: number;
     protected _color: string;
 
-
+    public context: any;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -86,11 +90,11 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson():any {
+    protected toJson(): any {
         return {
             myGuid: this.myGuid,
             myType: this.myType,
@@ -110,6 +114,24 @@ export class foGlyph extends foNode implements iShape {
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
+        return this;
+    }
+
+    get nodes(): foCollection<foGlyph> {
+        return this._subcomponents;
+    }
+
+    public easeTo(x: number, y: number, time: number = .5, force: boolean = false) {
+
+        TweenLite.to(this, force ? 0 : time, {
+            x: x,
+            y: y,
+            ease: Back.ease
+        }).eventCallback("onUpdate", () => {
+            this.drop();
+        }).eventCallback("onComplete", () => {
+            this.drop(x, y);
+        });
         return this;
     }
 
@@ -190,6 +212,10 @@ export class foGlyph extends foNode implements iShape {
         let x = this.x;
         let y = this.y;
         return new cPoint(x, y);
+    }
+    public setLocation = (loc?: iPoint) => {
+        this.x = loc ? loc.x : 0;
+        this.y = loc ? loc.y : 0;
     }
 
 
@@ -485,6 +511,110 @@ export class foGlyph extends foNode implements iShape {
 
     toggleSelected() {
         this._isSelected = !this._isSelected;
+    }
+
+    layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
+        let loc = this.getLocation();
+        let self = this;
+
+        if (resize) {
+            self.height = self.width = 0;
+            loc.x = loc.y = 0;
+        } else {
+            loc = this.nodes.first().getLocation();
+        }
+
+        this.nodes.forEach(item => {
+            item.setLocation(loc);
+        });
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.x = resize ? pinX : loc.x;
+            loc.y += pinY;
+            item.easeTo(loc.x, loc.y);
+            loc.y += (space + item.height) - pinY;
+
+            if (resize) {
+                self.width = Math.max(self.width, item.width);
+                self.height = loc.y;
+            }
+        });
+        //self.drop(x, y);
+        return this;
+    }
+
+    layoutSubcomponentsHorizontal(resize: boolean = true, space: number = 0) {
+        let loc = this.getLocation();
+        let self = this;
+
+        if (resize) {
+            self.height = self.width = 0;
+            loc.x = loc.y = 0;
+        } else {
+            loc = this.nodes.first().getLocation();
+        }
+
+        this.nodes.forEach(item => {
+            item.setLocation(loc);
+        });
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.x += pinX;
+            loc.y = resize ? pinY : loc.y;
+            item.easeTo(loc.x, loc.y);
+            loc.x += (space + item.width) - pinX;
+
+            if (resize) {
+                self.width = loc.x;
+                self.height = Math.max(self.height, item.height);
+            }
+        });
+        //self.drop(x, y);
+        return this;
+    }
+
+    layoutMarginRight(resize: boolean = false, space: number = 0) {
+        let loc = this.getLocation();
+        let self = this;
+
+        loc.x = (space + this.width);
+        loc.y = 0;
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.x += pinX;
+            item.easeTo(loc.x, loc.y + pinY);
+            loc.x += (space + item.width) - pinX;
+
+            if (resize) {
+                self.width = loc.x;
+                self.height = Math.max(self.height, item.height);
+            }
+        });
+        return this;
+    }
+
+    layoutMarginTop(resize: boolean = false, space: number = 0) {
+        let loc = this.getLocation();
+        let self = this;
+
+        loc.x = 10;
+        loc.y = (space + this.height);
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.y += pinY;
+            item.easeTo(loc.x + pinX, loc.y);
+            loc.y += (space + item.height) - pinY;
+
+            if (resize) {
+                self.width = Math.max(self.width, item.width);
+                self.height = loc.y;
+            }
+        });
+        return this;
     }
 }
 

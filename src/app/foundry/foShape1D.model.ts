@@ -18,6 +18,8 @@ import { foGlyph } from '../foundry/foGlyph.model'
 //and have all the same properties
 export class foShape1D extends foShape2D {
 
+    public thickness:number;
+
     protected _x1: number;
     protected _y1: number;
     protected _x2: number;
@@ -71,7 +73,7 @@ export class foShape1D extends foShape2D {
         return new cPoint((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
     }
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
@@ -130,6 +132,14 @@ export class foShape1D extends foShape2D {
         };
     }
 
+    glueStart(target: foShape2D, handle?: string){
+        return this.createGlue('begin', target, handle);
+    }
+
+    glueFinish(target: foShape2D, handle?: string){
+        return this.createGlue('end', target, handle);
+    }
+    
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         let { x: cX, y: cY } = this.center();
 
@@ -286,7 +296,7 @@ export class foShape1D extends foShape2D {
 
         //ctx.fillRect(0, 0, this.width, this.height);
 
-        ctx.lineWidth = 4;
+        ctx.lineWidth = this.thickness || 4;
         //ctx.strokeStyle = '#003300';
 
         let { x: x1, y: y1 } = this.globalToLocalPoint(this.begin());
@@ -304,7 +314,7 @@ export class foShape1D extends foShape2D {
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         ctx.strokeStyle = "red";
         ctx.fillStyle = 'red';
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 2 * (this.thickness || 4);
         this.drawOutline(ctx);
         this.drawHandles(ctx);
         this.drawPin(ctx);
@@ -320,12 +330,12 @@ export class foShape1D extends foShape2D {
         let { x: x2, y: y2 } = this.globalToLocalPoint(this.end());
 
         ctx.fillStyle = this.color;
-        ctx.globalAlpha = this.opacity;
+        ctx.strokeStyle = this.color;
 
         //ctx.fillStyle = 'green';
         //ctx.fillRect(0, 0, this.width, this.height);
 
-        ctx.lineWidth = 4;
+        ctx.lineWidth = this.thickness || 1;
         ctx.beginPath()
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);

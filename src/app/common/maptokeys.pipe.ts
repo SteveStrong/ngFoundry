@@ -1,8 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'maptokeys'
-})
+@Pipe({ name: 'maptokeys', pure: true })
 export class MaptoKeysPipe implements PipeTransform {
 
   transform(value, args:string[]) : any {
@@ -12,4 +10,30 @@ export class MaptoKeysPipe implements PipeTransform {
     }
     return keys;
   }
+}
+
+@Pipe({ name: 'modelJson' })
+export class ModelJsonPipe {
+    transform(val) {
+        if (val && val.stringify) {
+            return val.stringify(val);
+        }
+
+        function resolveCircular(key, value) {
+            // switch (key) {
+            //     case 'parent':
+            //         return;
+            // }
+            if (key.startsWith('_')) return;
+
+            return value;
+        }
+
+        try {
+            return JSON.stringify(val, resolveCircular, 3);
+        } catch (error) {
+            throw error;
+        }
+
+    }
 }

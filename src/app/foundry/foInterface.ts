@@ -40,6 +40,13 @@ export interface iPoint {
     add(x: number, y: number): iPoint
 }
 
+export interface iMargin {
+    left: number;
+    top: number;
+    right: number;
+    bottom: number;
+}
+
 export interface iSize {
     width: number;
     height: number;

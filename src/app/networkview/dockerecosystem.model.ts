@@ -1,9 +1,10 @@
 import { Tools } from '../foundry/foTools'
 import { foConcept } from '../foundry/foConcept.model'
+import { foNode } from '../foundry/foNode.model'
 
 import * as d3 from 'd3';
 
-export class Shape extends foConcept {
+export class Shape extends foConcept<foNode> {
     public color = d3.scaleOrdinal(d3.schemeCategory20);
 
     constructor(properties?: any) {
