@@ -2,6 +2,8 @@
 import { Tools } from './foTools';
 import { cPoint } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
+import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+
 
 import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
 
@@ -119,6 +121,20 @@ export class foGlyph extends foNode implements iShape {
         return this._subcomponents;
     }
 
+    public easeTo(x: number, y: number, time: number = .5, force: boolean = false) {
+
+        TweenLite.to(this, force ? 0 : time, {
+            x: x,
+            y: y,
+            ease: Back.ease
+        }).eventCallback("onUpdate", () => {
+            this.drop();
+        }).eventCallback("onComplete", () => {
+            this.drop(x, y);
+        });
+        return this;
+    }
+
     public moveTo(loc: iPoint, offset?: iPoint) {
         let x = loc.x + (offset ? offset.x : 0);
         let y = loc.y + (offset ? offset.y : 0);
@@ -196,6 +212,10 @@ export class foGlyph extends foNode implements iShape {
         let x = this.x;
         let y = this.y;
         return new cPoint(x, y);
+    }
+    public setLocation = (loc?: iPoint) => {
+        this.x = loc ? loc.x : 0;
+        this.y = loc ? loc.y : 0;
     }
 
 
@@ -494,47 +514,61 @@ export class foGlyph extends foNode implements iShape {
     }
 
     layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
-        let { x, y } = this.getLocation();
+        let loc = this.getLocation();
         let self = this;
+
         if (resize) {
             self.height = self.width = 0;
+        } else {
+            loc = this.nodes.first().getLocation();
         }
-        this.Subcomponents.forEach(item => {
-            let shape = <foGlyph>item;
-            let i = shape.index + 1;
-            let pinY = i * (space + shape.height);
-            let { x: pinX } = shape.pinLocation()
 
-            shape.drop(pinX, pinY);
+        this.nodes.forEach(item => {
+            item.setLocation(loc);
+        });
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.y += pinY;
+            item.easeTo(loc.x, loc.y);
+            loc.y += (space + item.height) - pinY;
+
             if (resize) {
-                self.width = Math.max(self.width, shape.width);
-                self.height = shape.y + (space + shape.height);
+                self.width = Math.max(self.width, item.width);
+                self.height = loc.y;
             }
         });
-        self.drop(x, y);
+        //self.drop(x, y);
         return this;
     }
 
     layoutSubcomponentsHorizontal(resize: boolean = true, space: number = 0) {
-        let { x, y } = this.getLocation();
+        let loc = this.getLocation();
         let self = this;
+
         if (resize) {
             self.height = self.width = 0;
+        } else {
+            loc = this.nodes.first().getLocation();
         }
-        let dropX = 0;
-        this.Subcomponents.forEach(item => {
-            let shape = <foGlyph>item;
 
-            let { x: pinX, y: pinY } = shape.pinLocation()
-            shape.drop(dropX + pinX, pinY);
+        this.nodes.forEach(item => {
+            item.setLocation(loc);
+        });
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.x += pinX;
+            item.easeTo(loc.x, loc.y);
+            loc.x += (space + item.width) - pinX;
 
             if (resize) {
-                self.height = Math.max(self.height, shape.height);
-                self.width += (space + shape.width);
+                self.width = loc.x;
+                self.height = Math.max(self.height, item.height);
+
             }
-            dropX += (space + shape.width);
         });
-        self.drop(x, y);
+        //self.drop(x, y);
         return this;
     }
 

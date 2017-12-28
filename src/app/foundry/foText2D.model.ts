@@ -75,11 +75,13 @@ export class foText2D extends foShape2D {
         ctx.textAlign = this.textAlign || 'center';
         ctx.textBaseline = this.textBaseline || 'middle';
 
-        this.height = (this.fontSize || 12) + ((this.margin && this.margin.height) || 0);
-        ctx.font = this.font || this.height + "px Georgia";
+        let size = (this.fontSize || 12)
+
+        ctx.font = this.font || size + "px Georgia";
 
         let textMetrics = ctx.measureText(this.text);
         this.width = textMetrics.width + ((this.margin && this.margin.width) || 0);
+        this.height = size + ((this.margin && this.margin.height) || 0);
 
         //this.drawOrigin(ctx);
         this.updateContext(ctx);
@@ -117,17 +119,19 @@ export class foText2D extends foShape2D {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
+        let left = ((this.margin && this.margin.left) || 0);
+        let top = ((this.margin && this.margin.top) || 0);
+
+        ctx.save();
         if (this.background) {
             ctx.fillStyle = this.background;
             ctx.fillRect(0, 0, this.width, this.height);
         }
+        ctx.restore();
 
         ctx.fillStyle = this.color;
-        let pinX = this.pinX() + ((this.margin && this.margin.left) || 0);
-        let pinY = this.pinX() + ((this.margin && this.margin.top) || 0);
 
-
-        ctx.fillText(this.text, pinX, pinY);
+        ctx.fillText(this.text, this.pinX() + left, this.pinY() + top);
     }
 
     drawSample(ctx) {

@@ -9,7 +9,7 @@ import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { PubSub } from "../foundry/foPubSub";
 import { Matrix2D } from "../foundry/foMatrix2D";
-import { cPoint, cRect } from "../foundry/foGeometry";
+import { cPoint, cRect, cMargin } from "../foundry/foGeometry";
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
@@ -80,15 +80,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doVert() {
-    this.layoutSubcomponentsVertical(false, 10).nodes.forEach(item =>{
-      let pt = new cPoint(100,150);
+    let pt = new cPoint(100,150);
+    this.layoutSubcomponentsVertical(false,2).nodes.forEach(item =>{
       item.moveBy(pt);
     })
   }
 
   doHorz() {
-    this.layoutSubcomponentsHorizontal(false, 10).nodes.forEach(item =>{
-      let pt = new cPoint(100,150);
+    let pt = new cPoint(100,150);
+    this.layoutSubcomponentsHorizontal(false,2).nodes.forEach(item =>{
       item.moveBy(pt);
     })
   }
@@ -221,6 +221,39 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
+  doBlocks(){
+    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+      color: 'green',
+      width: 100,
+      height:50
+    });
+
+
+
+    let text = Concept.define<foText2D>('words::text2d', foText2D, {
+      color: 'black',
+      background: 'yellow',
+      context: 'HELLO',
+      width: 100,
+      height:50
+    });
+
+    for(var i=0; i<5; i++){
+      let body = block.newInstance({
+        width: 10 + i * 10,
+        height: 10 + i * 10,
+      }).drop(100, 100).addAsSubcomponent(this);
+    }
+
+    for(var i=0; i<5; i++){
+      let body = text.newInstance({
+        width: 10 + i * 10,
+        fontSize: 10 + i * 10,
+      }).drop(100, 300).addAsSubcomponent(this);
+    }
+
+  }
+
   doDocker() {
     let block = Concept.define<foText2D>('text::block', foText2D, {
       color: 'green'
@@ -303,6 +336,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let textBlock = Concept.define<foText2D>('text::block', foText2D, {
       color: 'black',
       text: 'Hello',
+      background: 'yellow',
+      margin: new cMargin(0,0,0,0)
     });
 
     this.signalR.pubCommand("syncConcept", { guid: textBlock.myGuid }, textBlock.asJson);
@@ -324,25 +359,25 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         text: 'Hello ' + item,
         fontSize: size,
       }).drop(350, y).addAsSubcomponent(this);
-      y += 1.5 * shape.fontSize;
+      y += 50;
       this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
 
       objects.push(shape)
 
-      if (!last) {
-        last = shape;
-      } else {
-        let wire = wireConcept.newInstance().addAsSubcomponent(this);
+      // if (!last) {
+      //   last = shape;
+      // } else {
+      //   let wire = wireConcept.newInstance().addAsSubcomponent(this);
 
-        this.signalR.pubCommand("syncGlue", wire.glueStart(last).asJson);
-        this.signalR.pubCommand("syncGlue", wire.glueFinish(shape).asJson);
-        last = shape;
-      }
+      //   this.signalR.pubCommand("syncGlue", wire.glueStart(last).asJson);
+      //   this.signalR.pubCommand("syncGlue", wire.glueFinish(shape).asJson);
+      //   last = shape;
+      // }
     })
 
 
     objects.forEach(shape => {
-      shape.drop(shape.x + Tools.randomInt(-100, 100));
+      //shape.drop(shape.x + Tools.randomInt(-100, 100));
       this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
     })
 
