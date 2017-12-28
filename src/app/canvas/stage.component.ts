@@ -256,26 +256,31 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doDocker() {
     let block = Concept.define<foText2D>('text::block', foText2D, {
-      color: 'green'
+      color: 'green',
+      fontSize: 20,
     });
 
     let attribute = Concept.define<foText2D>('text::attribute', foText2D, {
       color: 'red',
-      background: 'orange',
+      background: 'white',
+      fontSize: 20,
     });
 
     let formula = Concept.define<foText2D>('text::formula', foText2D, {
       color: 'gray',
       background: 'white',
+      fontSize: 20,
     });
 
     let concept = Concept.define<foText2D>('text::concept', foText2D, {
       color: 'blue',
       background: 'yellow',
+      fontSize: 20,
     });
 
     let body = Concept.define<foShape2D>('text::body', foShape2D, {
       color: 'cyan',
+      fontSize: 30,
     }, (parent) => {
       parent.context.forEach(item => {
         block.newInstance({
@@ -292,15 +297,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       let frame = body.newInstance({
         context: data.categories
-      }).drop(800, 200).addAsSubcomponent(this);
+      }).drop(100, 200).addAsSubcomponent(this);
 
       //give this a chance to render so sizes are right for text
       setTimeout(() => {
         frame.layoutSubcomponentsVertical();
+        //frame.layoutSubcomponentsHorizontal();
       }, 10);
+
 
       data.containers.forEach(item => {
         let body = concept.newInstance({
+          fontSize:30,
           context: 'Container',
         }).addAsSubcomponent(this);
 
@@ -309,18 +317,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             context: key,
             text: function () { return this.context + " : " }
           }).addAsSubcomponent(body);
+
           formula.newInstance({
             context: value,
             text: function () { return this.context }
           }).addAsSubcomponent(attr);
           
           setTimeout(() => {
-            attr.layoutSubcomponentsAppended(20);
+            attr.layoutMarginRight();
           }, 10)
         });
 
         setTimeout(() => {
-          body.layoutSubcomponentsVertical(false)
+          body.layoutMarginTop()
         }, 10)
       });
 

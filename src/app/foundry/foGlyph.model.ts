@@ -519,6 +519,7 @@ export class foGlyph extends foNode implements iShape {
 
         if (resize) {
             self.height = self.width = 0;
+            loc.x = loc.y = 0;
         } else {
             loc = this.nodes.first().getLocation();
         }
@@ -529,6 +530,7 @@ export class foGlyph extends foNode implements iShape {
 
         this.nodes.forEach(item => {
             let { x: pinX, y: pinY } = item.pinLocation();
+            loc.x = resize ? pinX : loc.x;
             loc.y += pinY;
             item.easeTo(loc.x, loc.y);
             loc.y += (space + item.height) - pinY;
@@ -548,6 +550,7 @@ export class foGlyph extends foNode implements iShape {
 
         if (resize) {
             self.height = self.width = 0;
+            loc.x = loc.y = 0;
         } else {
             loc = this.nodes.first().getLocation();
         }
@@ -559,27 +562,57 @@ export class foGlyph extends foNode implements iShape {
         this.nodes.forEach(item => {
             let { x: pinX, y: pinY } = item.pinLocation();
             loc.x += pinX;
+            loc.y = resize ? pinY : loc.y;
             item.easeTo(loc.x, loc.y);
             loc.x += (space + item.width) - pinX;
 
             if (resize) {
                 self.width = loc.x;
                 self.height = Math.max(self.height, item.height);
-
             }
         });
         //self.drop(x, y);
         return this;
     }
 
-    layoutSubcomponentsAppended(space: number = 0) {
-        let dropX = this.width + space;
-        this.Subcomponents.forEach(item => {
-            let shape = <foGlyph>item;
+    layoutMarginRight(resize: boolean = false, space: number = 0) {
+        let loc = this.getLocation();
+        let self = this;
 
-            let { x: pinX, y: pinY } = shape.pinLocation()
-            shape.drop(dropX + pinX, pinY);
-            dropX += (space + shape.width);
+        loc.x = (space + this.width);
+        loc.y = 0;
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.x += pinX;
+            item.easeTo(loc.x, loc.y + pinY);
+            loc.x += (space + item.width) - pinX;
+
+            if (resize) {
+                self.width = loc.x;
+                self.height = Math.max(self.height, item.height);
+            }
+        });
+        return this;
+    }
+
+    layoutMarginTop(resize: boolean = false, space: number = 0) {
+        let loc = this.getLocation();
+        let self = this;
+
+        loc.x = 10;
+        loc.y = (space + this.height);
+
+        this.nodes.forEach(item => {
+            let { x: pinX, y: pinY } = item.pinLocation();
+            loc.y += pinY;
+            item.easeTo(loc.x + pinX, loc.y);
+            loc.y += (space + item.height) - pinY;
+
+            if (resize) {
+                self.width = Math.max(self.width, item.width);
+                self.height = loc.y;
+            }
         });
         return this;
     }
