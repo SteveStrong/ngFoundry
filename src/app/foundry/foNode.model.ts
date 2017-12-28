@@ -97,7 +97,7 @@ export class foNode extends foObject implements iNode {
     }
 
     get Subcomponents() {
-        return this._subcomponents.members;
+        return this.nodes.members;
     }
 
     get nodes(): foCollection<foNode> {
@@ -105,6 +105,7 @@ export class foNode extends foObject implements iNode {
     }
 
     get hasSubcomponents(): boolean {
-        return this._subcomponents && this._subcomponents.hasMembers;
+        let list = this.nodes;
+        return list && list.hasMembers;
     }
 }

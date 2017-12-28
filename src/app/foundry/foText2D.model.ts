@@ -1,6 +1,6 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint, cMargin } from "../foundry/foGeometry";
 import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
@@ -32,8 +32,18 @@ export class foText2D extends foShape2D {
     public textAlign: string;
     public textBaseline: string;
 
+
+    public margin: cMargin;
     public fontSize: number;
     public font: string;
+
+    protected _background: string;
+    get background(): string {
+        return this._background;
+    }
+    set background(value: string) {
+        this._background = value;
+    }
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
@@ -65,11 +75,11 @@ export class foText2D extends foShape2D {
         ctx.textAlign = this.textAlign || 'center';
         ctx.textBaseline = this.textBaseline || 'middle';
 
-        this.height = (this.fontSize || 12 );
+        this.height = (this.fontSize || 12) + ((this.margin && this.margin.height) || 0);
         ctx.font = this.font || this.height + "px Georgia";
 
         let textMetrics = ctx.measureText(this.text);
-        this.width = textMetrics.width;
+        this.width = textMetrics.width + ((this.margin && this.margin.width) || 0);
 
         //this.drawOrigin(ctx);
         this.updateContext(ctx);
@@ -90,6 +100,13 @@ export class foText2D extends foShape2D {
         this.afterRender && this.afterRender(ctx);
     }
 
+    public drawOutline(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(0, 0, this.width, this.height);
+        ctx.stroke();
+    }
+
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 1;
@@ -100,15 +117,17 @@ export class foText2D extends foShape2D {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
+        if (this.background) {
+            ctx.fillStyle = this.background;
+            ctx.fillRect(0, 0, this.width, this.height);
+        }
+
         ctx.fillStyle = this.color;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = this.opacity;
-        //ctx.rect(0, 0, this.width, this.height);
+        let pinX = this.pinX() + ((this.margin && this.margin.left) || 0);
+        let pinY = this.pinX() + ((this.margin && this.margin.top) || 0);
 
-        ctx.fillText(this.text, this.pinX(), this.pinY());
 
-        //this.drawTextBG(ctx, 'HELLO STEVE', "10pt Courier", 100, 200)
-        //this.drawSample(ctx);
+        ctx.fillText(this.text, pinX, pinY);
     }
 
     drawSample(ctx) {

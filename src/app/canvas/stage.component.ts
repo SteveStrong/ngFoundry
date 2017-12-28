@@ -79,12 +79,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doDuplicate() {
   }
 
-  doVert(){
-    this.layoutSubcomponentsVertical(false, 10)
+  doVert() {
+    this.layoutSubcomponentsVertical(false, 10).nodes.forEach(item =>{
+      let pt = new cPoint(100,150);
+      item.moveBy(pt);
+    })
   }
 
-  doHorz(){
-    this.layoutSubcomponentsHorizontal(false, 10)
+  doHorz() {
+    this.layoutSubcomponentsHorizontal(false, 10).nodes.forEach(item =>{
+      let pt = new cPoint(100,150);
+      item.moveBy(pt);
+    })
   }
 
 
@@ -220,6 +226,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'green'
     });
 
+    let attribute = Concept.define<foText2D>('text::attribute', foText2D, {
+      color: 'red',
+      background: 'orange',
+    });
+
+    let formula = Concept.define<foText2D>('text::formula', foText2D, {
+      color: 'gray',
+      background: 'white',
+    });
+
+    let concept = Concept.define<foText2D>('text::concept', foText2D, {
+      color: 'blue',
+      background: 'yellow',
+    });
+
     let body = Concept.define<foShape2D>('text::body', foShape2D, {
       color: 'cyan',
     }, (parent) => {
@@ -238,17 +259,36 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       let frame = body.newInstance({
         context: data.categories
-      }).drop(300, 200).addAsSubcomponent(this);
+      }).drop(800, 200).addAsSubcomponent(this);
 
       //give this a chance to render so sizes are right for text
       setTimeout(() => {
         frame.layoutSubcomponentsVertical();
       }, 10);
 
-      data.containers.forEach(item =>{
-        block.newInstance({
-          context: item,
+      data.containers.forEach(item => {
+        let body = concept.newInstance({
+          context: 'Container',
         }).addAsSubcomponent(this);
+
+        Tools.forEachKeyValue(item, (key, value) => {
+          let attr = attribute.newInstance({
+            context: key,
+            text: function () { return this.context + " : " }
+          }).addAsSubcomponent(body);
+          formula.newInstance({
+            context: value,
+            text: function () { return this.context }
+          }).addAsSubcomponent(attr);
+          
+          setTimeout(() => {
+            attr.layoutSubcomponentsAppended(20);
+          }, 10)
+        });
+
+        setTimeout(() => {
+          body.layoutSubcomponentsVertical(false)
+        }, 10)
       });
 
       setTimeout(() => {

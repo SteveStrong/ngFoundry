@@ -32,6 +32,8 @@ export class foGlyph extends foNode implements iShape {
         return !!(this.visible && this.opacity > 0);
     };
 
+
+
     protected _subcomponents: foCollection<foGlyph>;
     protected _x: number;
     protected _y: number;
@@ -111,6 +113,10 @@ export class foGlyph extends foNode implements iShape {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
         return this;
+    }
+
+    get nodes(): foCollection<foGlyph> {
+        return this._subcomponents;
     }
 
     public moveTo(loc: iPoint, offset?: iPoint) {
@@ -505,7 +511,8 @@ export class foGlyph extends foNode implements iShape {
                 self.height = shape.y + (space + shape.height);
             }
         });
-        self.drop(x, y)
+        self.drop(x, y);
+        return this;
     }
 
     layoutSubcomponentsHorizontal(resize: boolean = true, space: number = 0) {
@@ -519,7 +526,7 @@ export class foGlyph extends foNode implements iShape {
             let shape = <foGlyph>item;
 
             let { x: pinX, y: pinY } = shape.pinLocation()
-            shape.drop(dropX+pinX, pinY);
+            shape.drop(dropX + pinX, pinY);
 
             if (resize) {
                 self.height = Math.max(self.height, shape.height);
@@ -527,7 +534,20 @@ export class foGlyph extends foNode implements iShape {
             }
             dropX += (space + shape.width);
         });
-        self.drop(x, y)
+        self.drop(x, y);
+        return this;
+    }
+
+    layoutSubcomponentsAppended(space: number = 0) {
+        let dropX = this.width + space;
+        this.Subcomponents.forEach(item => {
+            let shape = <foGlyph>item;
+
+            let { x: pinX, y: pinY } = shape.pinLocation()
+            shape.drop(dropX + pinX, pinY);
+            dropX += (space + shape.width);
+        });
+        return this;
     }
 }
 
