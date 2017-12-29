@@ -1,5 +1,6 @@
 import { Tools } from './foTools'
 import { iObject, Action, ModelRef } from './foInterface'
+//import { setTimeout } from 'timers';
 
 
 export class foObject implements iObject {
@@ -68,6 +69,11 @@ export class foObject implements iObject {
     }
 
     public notifyOnChange(source:any, channel: string, ...args: any[]) {
+    }
+
+    public wait(time:number, func:()=> void){
+        setTimeout( func, time);
+        return this;
     }
 
     getChildAt(i: number): iObject {

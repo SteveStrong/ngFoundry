@@ -1,17 +1,14 @@
 //https://www.typescriptlang.org/docs/handbook/decorators.html
 
-export interface Action<T>
-{
+export interface Action<T> {
     (item: T): void;
 }
 
-export interface ModelRef<T>
-{
+export interface ModelRef<T> {
     (): T;
 }
 
-export interface Func<T,TResult>
-{
+export interface Func<T, TResult> {
     (item: T): TResult;
 }
 
@@ -22,7 +19,7 @@ export interface iObject {
     asReference(): string;
     getChildAt(i: number): iObject;
     override(properties?: any);
- }
+}
 
 export interface iNode {
     addAsSubcomponent(obj: iNode);
@@ -61,6 +58,17 @@ export interface iRect {
     setValue(x: number, y: number, width: number, height: number): iRect
 }
 
+export interface iFrame {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+
+    setValue(x1: number, y1: number, x2: number, y2: number): iFrame;
+    merge(obj: iFrame): iFrame;
+    minmax(obj:iPoint): iFrame;
+}
+
 export interface iBox {
     x: number;
     y: number;
@@ -79,8 +87,8 @@ export interface iShape extends iNode {
     // childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph;
     // findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): foGlyph;
     // childObjectUnderShape(hit: iShape, ctx: CanvasRenderingContext2D): foGlyph;
-   
-    render(ctx: CanvasRenderingContext2D, deep:boolean): void;
+
+    render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
@@ -92,7 +100,7 @@ export interface iShape extends iNode {
     scaleSize(scale: number): iSize;
     isSelected: boolean;
 
-    setColor(color:string): string;
-    setOpacity(opacity:number): number;
+    setColor(color: string): string;
+    setOpacity(opacity: number): number;
 }
 

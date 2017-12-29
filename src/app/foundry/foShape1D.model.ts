@@ -284,8 +284,6 @@ export class foShape1D extends foShape2D {
             item.render(ctx, deep);
         });
         ctx.restore();
-
-        this.afterRender && this.afterRender(ctx);
     }
 
 

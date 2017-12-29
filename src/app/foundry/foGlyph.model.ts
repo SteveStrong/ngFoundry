@@ -1,6 +1,6 @@
 
 import { Tools } from './foTools';
-import { cPoint } from './foGeometry';
+import { cPoint, cFrame } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 
@@ -79,7 +79,6 @@ export class foGlyph extends foNode implements iShape {
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
-    public afterRender: (ctx: CanvasRenderingContext2D) => void;
 
     protected _matrix: Matrix2D;
     protected _invMatrix: Matrix2D;
@@ -89,6 +88,30 @@ export class foGlyph extends foNode implements iShape {
         this._invMatrix = undefined;
     }
 
+
+    
+    private _boundry:cFrame = new cFrame()
+    get boundryFrame(): cFrame { 
+        let mtx = this.getGlobalMatrix();
+        //this is a buffer so we create less garbage
+        let pt = this._boundry.point;
+        this._boundry.init(mtx.transformPoint(0, 0, pt))
+        this._boundry.minmax(mtx.transformPoint(0, this.height, pt));
+        this._boundry.minmax(mtx.transformPoint(this.width, 0, pt));
+        this._boundry.minmax(mtx.transformPoint(this.width, this.height, pt));
+
+        this.nodes.forEach(item => {
+            this._boundry.merge(item.boundryFrame);
+        });
+        return this._boundry; 
+    }
+
+    public drawBoundry(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.setLineDash([5, 5]);
+        this.boundryFrame.draw(ctx,false);
+        ctx.stroke();
+    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -346,7 +369,19 @@ export class foGlyph extends foNode implements iShape {
         }
     }
 
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
+        ctx.save();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'pink';
+        this.drawBoundry(ctx);
+        ctx.restore();
+
+        deep && this.nodes.forEach(item => {
+            item.afterRender(ctx, deep);
+        });
+    }
+
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {       
         ctx.save();
 
         //this.drawOrigin(ctx);
@@ -365,7 +400,6 @@ export class foGlyph extends foNode implements iShape {
         });
 
         ctx.restore();
-        this.afterRender && this.afterRender(ctx);
     }
 
     drawText(ctx: CanvasRenderingContext2D, text: string) {
@@ -436,6 +470,8 @@ export class foGlyph extends foNode implements iShape {
         ctx.stroke();
     }
 
+
+
     protected generateHandles(spec: any): foCollection<foHandle> {
 
         if (!this._handles) {
@@ -496,6 +532,8 @@ export class foGlyph extends foNode implements iShape {
         this.drawHandles(ctx)
         this.drawPin(ctx);
     }
+
+
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;

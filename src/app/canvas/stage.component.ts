@@ -80,15 +80,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doVert() {
-    let pt = new cPoint(100,150);
-    this.layoutSubcomponentsVertical(false,2).nodes.forEach(item =>{
+    let pt = new cPoint(100, 150);
+    this.layoutSubcomponentsVertical(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
     })
   }
 
   doHorz() {
-    let pt = new cPoint(100,150);
-    this.layoutSubcomponentsHorizontal(false,2).nodes.forEach(item =>{
+    let pt = new cPoint(100, 150);
+    this.layoutSubcomponentsHorizontal(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
     })
   }
@@ -221,11 +221,52 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
-  doBlocks(){
+  doBoundry() {
+
+    let text = Concept.define<foText2D>('words::text2d', foText2D, {
+      color: 'black',
+      background: 'yellow',
+      context: 'HELLO',
+      fontSize: 30,
+    });
+
     let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
       color: 'green',
       width: 100,
-      height:50
+      height: 50
+    });
+
+    let boundry = Concept.define<foShape2D>('blocks::boundry2d', foShape2D, {
+      color: 'cyan',
+      width: 100,
+      height: 50
+    });
+
+    let box = boundry.newInstance().drop(200, 100).addAsSubcomponent(this);
+
+
+    for (var i = 0; i < 3; i++) {
+      let body = block.newInstance({
+        width: 10 + i * 10,
+        height: 10 + i * 10,
+      }).addAsSubcomponent(box);
+
+      for (var j = 0; j < 4; j++) {
+        text.newInstance({
+          context: 'test ' + j
+        }).addAsSubcomponent(body);
+      }
+      body.wait(10, () => body.layoutSubcomponentsVertical(true, 10));
+    }
+    box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
+
+  }
+
+  doBlocks() {
+    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+      color: 'green',
+      width: 100,
+      height: 50
     });
 
 
@@ -235,17 +276,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       background: 'yellow',
       context: 'HELLO',
       width: 100,
-      height:50
+      height: 50
     });
 
-    for(var i=0; i<5; i++){
+    for (var i = 0; i < 5; i++) {
       let body = block.newInstance({
         width: 10 + i * 10,
         height: 10 + i * 10,
       }).drop(100, 100).addAsSubcomponent(this);
     }
 
-    for(var i=0; i<5; i++){
+    for (var i = 0; i < 5; i++) {
       let body = text.newInstance({
         width: 10 + i * 10,
         fontSize: 10 + i * 10,
@@ -308,7 +349,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       data.containers.forEach(item => {
         let body = concept.newInstance({
-          fontSize:30,
+          fontSize: 30,
           context: 'Container',
         }).addAsSubcomponent(this);
 
@@ -322,7 +363,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             context: value,
             text: function () { return this.context }
           }).addAsSubcomponent(attr);
-          
+
           setTimeout(() => {
             attr.layoutMarginRight();
           }, 10)
@@ -346,7 +387,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'black',
       text: 'Hello',
       background: 'yellow',
-      margin: new cMargin(0,0,0,0)
+      margin: new cMargin(0, 0, 0, 0)
     });
 
     this.signalR.pubCommand("syncConcept", { guid: textBlock.myGuid }, textBlock.asJson);
@@ -745,6 +786,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
       ctx.save();
       this.render(ctx);
+
       ctx.restore();
     }
 
