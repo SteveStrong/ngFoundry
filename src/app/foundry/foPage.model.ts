@@ -26,7 +26,7 @@ export class foPage extends foShape2D {
 
     gridSizeX: number = 50;
     gridSizeY: number = 50;
-    showBoundry:boolean = true;
+    showBoundry:boolean = false;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
