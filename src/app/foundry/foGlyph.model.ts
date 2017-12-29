@@ -92,10 +92,13 @@ export class foGlyph extends foNode implements iShape {
     get boundryFrame(): cFrame { 
         //let pt1 = this.localToGlobal(this.x, this.y);
         //let pt2 = this.localToGlobal(this.x + this.width, this.y + this.height);
-
         let pt1 = this.localToGlobal(0, 0);
         let pt2 = this.localToGlobal(this.width, this.height);
         let frame = new cFrame(pt1.x, pt1.y, pt2.x, pt2.y);
+        frame.minmax(pt1).minmax(pt2);
+        pt1 = this.localToGlobal(0, this.height);
+        pt2 = this.localToGlobal(this.width, 0);
+        frame.minmax(pt1).minmax(pt2);
         //console.log(rect);
         this.nodes.forEach(item => {
             frame.merge(item.boundryFrame);

@@ -66,6 +66,7 @@ export interface iFrame {
 
     setValue(x1: number, y1: number, x2: number, y2: number): iFrame;
     merge(obj: iFrame): iFrame;
+    minmax(obj:iPoint): iFrame;
 }
 
 export interface iBox {
