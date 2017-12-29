@@ -26,6 +26,7 @@ export class foPage extends foShape2D {
 
     gridSizeX: number = 50;
     gridSizeY: number = 50;
+    showBoundry:boolean = true;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -362,7 +363,7 @@ export class foPage extends foShape2D {
         });
         ctx.restore();
 
-        this.afterRender(ctx);
+        this.showBoundry && this.afterRender(ctx);
     }
 
 

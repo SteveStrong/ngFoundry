@@ -89,21 +89,21 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
+    
+    private _boundry:cFrame = new cFrame()
     get boundryFrame(): cFrame { 
-        //let pt1 = this.localToGlobal(this.x, this.y);
-        //let pt2 = this.localToGlobal(this.x + this.width, this.y + this.height);
-        let pt1 = this.localToGlobal(0, 0);
-        let pt2 = this.localToGlobal(this.width, this.height);
-        let frame = new cFrame(pt1.x, pt1.y, pt2.x, pt2.y);
-        frame.minmax(pt1).minmax(pt2);
-        pt1 = this.localToGlobal(0, this.height);
-        pt2 = this.localToGlobal(this.width, 0);
-        frame.minmax(pt1).minmax(pt2);
-        //console.log(rect);
+        let mtx = this.getGlobalMatrix();
+        //this is a buffer so we create less garbage
+        let pt = this._boundry.point;
+        this._boundry.init(mtx.transformPoint(0, 0, pt))
+        this._boundry.minmax(mtx.transformPoint(0, this.height, pt));
+        this._boundry.minmax(mtx.transformPoint(this.width, 0, pt));
+        this._boundry.minmax(mtx.transformPoint(this.width, this.height, pt));
+
         this.nodes.forEach(item => {
-            frame.merge(item.boundryFrame);
+            this._boundry.merge(item.boundryFrame);
         });
-        return frame; 
+        return this._boundry; 
     }
 
     public drawBoundry(ctx: CanvasRenderingContext2D) {
@@ -371,7 +371,7 @@ export class foGlyph extends foNode implements iShape {
 
     public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
         ctx.save();
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 4;
         ctx.strokeStyle = 'pink';
         this.drawBoundry(ctx);
         ctx.restore();
@@ -384,9 +384,9 @@ export class foGlyph extends foNode implements iShape {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {       
         ctx.save();
 
-        this.drawOrigin(ctx);
+        //this.drawOrigin(ctx);
         this.updateContext(ctx);
-        this.drawOriginX(ctx);
+        //this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);

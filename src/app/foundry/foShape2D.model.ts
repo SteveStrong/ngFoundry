@@ -175,9 +175,9 @@ export class foShape2D extends foGlyph {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        this.drawOrigin(ctx);
+        //this.drawOrigin(ctx);
         this.updateContext(ctx);
-        this.drawOriginX(ctx);
+        //this.drawOriginX(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
