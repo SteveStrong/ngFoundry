@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
 import { PubSub } from "../foundry/foPubSub";
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint, cFrame } from "../foundry/foGeometry";
 import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
@@ -330,6 +330,21 @@ export class foPage extends foShape2D {
         ctx.restore();
     }
 
+    get boundryFrame(): cFrame { 
+        let frame = this.nodes.first().boundryFrame;
+        this.nodes.forEach(item => {
+            frame.merge(item.boundryFrame);
+        });
+        return frame; 
+    }
+
+    public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
+        ctx.save();
+        deep && this.nodes.forEach(item => {
+            item.afterRender(ctx, deep);
+        });
+        ctx.restore();
+    }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this._ctx = ctx;
@@ -346,6 +361,8 @@ export class foPage extends foShape2D {
             item.render(ctx, deep);
         });
         ctx.restore();
+
+        this.afterRender(ctx);
     }
 
 

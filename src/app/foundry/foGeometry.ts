@@ -120,6 +120,13 @@ export class cFrame implements iFrame {
         return this;
     }
 
+    merge(obj:iFrame): iFrame {
+        this.x1 = Math.min(this.x1,obj.x1);
+        this.y1 = Math.min(this.y1,obj.y1);
+        this.x2 = Math.max(this.x2,obj.x2);
+        this.y2 = Math.max(this.y2,obj.y2);
+        return this;
+    }
     contains(x: number, y: number) {
         return this.x1 <= x && x <= this.x2 && this.y1 <= y && y <= this.y2;
     }

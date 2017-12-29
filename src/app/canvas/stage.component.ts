@@ -786,7 +786,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
       ctx.save();
       this.render(ctx);
-      this.afterRender(ctx);
+
       ctx.restore();
     }
 

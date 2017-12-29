@@ -89,14 +89,26 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    get boundryRect(): cFrame { 
-        let pt1 = this.localToGlobal(this.x, this.y);
-        let pt2 = this.localToGlobal(this.x + this.width, this.y + this.height);
-        let rect = new cFrame(pt1.x, pt1.y, pt2.x, pt2.y);
+    get boundryFrame(): cFrame { 
+        //let pt1 = this.localToGlobal(this.x, this.y);
+        //let pt2 = this.localToGlobal(this.x + this.width, this.y + this.height);
+
+        let pt1 = this.localToGlobal(0, 0);
+        let pt2 = this.localToGlobal(this.width, this.height);
+        let frame = new cFrame(pt1.x, pt1.y, pt2.x, pt2.y);
         //console.log(rect);
-        return rect; 
+        this.nodes.forEach(item => {
+            frame.merge(item.boundryFrame);
+        });
+        return frame; 
     }
 
+    public drawBoundry(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.setLineDash([5, 5]);
+        this.boundryFrame.draw(ctx,false);
+        ctx.stroke();
+    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -355,8 +367,13 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
+        ctx.save();
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = 'pink';
         this.drawBoundry(ctx);
-        deep && this._subcomponents.forEach(item => {
+        ctx.restore();
+
+        deep && this.nodes.forEach(item => {
             item.afterRender(ctx, deep);
         });
     }
@@ -450,15 +467,7 @@ export class foGlyph extends foNode implements iShape {
         ctx.stroke();
     }
 
-    public drawBoundry(ctx: CanvasRenderingContext2D) {
-        ctx.lineWidth = 10;
-        ctx.strokeStyle = 'pink';
 
-        ctx.beginPath()
-        ctx.setLineDash([5, 5]);
-        this.boundryRect.draw(ctx,false);
-        ctx.stroke();
-    }
 
     protected generateHandles(spec: any): foCollection<foHandle> {
 
