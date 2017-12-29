@@ -76,7 +76,7 @@ export class cRect implements iRect {
         return this;
     }
 
-    setValue(x: number, y: number, width: number, height: number): iRect {
+    set(x: number, y: number, width: number, height: number): iRect {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -107,7 +107,7 @@ export class cFrame implements iFrame {
 
     public point:cPoint = new cPoint()
 
-    setValue(x1: number, y1: number, x2: number, y2: number): iFrame {
+    set(x1: number, y1: number, x2: number, y2: number): iFrame {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;

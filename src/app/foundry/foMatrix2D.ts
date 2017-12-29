@@ -69,7 +69,7 @@ export class Matrix2D {
         return this;
     };
 
-    setValues(a: number, b: number, c: number, d: number, tx: number, ty: number) {
+    set(a: number, b: number, c: number, d: number, tx: number, ty: number) {
         this.a = a;
         this.b = b;
         this.c = c;

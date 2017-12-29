@@ -34,6 +34,9 @@ export interface iKnowledge extends iObject {
 export interface iPoint {
     x: number;
     y: number;
+    myName: string;
+
+    set(x: number, y: number): iPoint
     add(x: number, y: number): iPoint
 }
 
@@ -54,8 +57,10 @@ export interface iRect {
     y: number;
     width: number;
     height: number;
+    myName: string;
 
-    setValue(x: number, y: number, width: number, height: number): iRect
+    set(x: number, y: number, width: number, height: number): iRect
+    contains(x: number, y: number): boolean;
 }
 
 export interface iFrame {
@@ -64,12 +69,12 @@ export interface iFrame {
     x2: number;
     y2: number;
 
-    setValue(x1: number, y1: number, x2: number, y2: number): iFrame;
+    set(x1: number, y1: number, x2: number, y2: number): iFrame;
     merge(obj: iFrame): iFrame;
-    minmax(obj:iPoint): iFrame;
+    minmax(obj: iPoint): iFrame;
 }
 
-export interface iBox {
+export interface iBox extends iRect {
     x: number;
     y: number;
     width: number;
@@ -78,21 +83,16 @@ export interface iBox {
     pinX(): number;
     pinY(): number;
 
-    setValue(x: number, y: number, width: number, height: number): iRect
+    set(x: number, y: number, width: number, height: number): iRect
 }
 
-export interface iShape extends iNode {
-
-    // findObjectUnderPoint(hit: iPoint, deep:boolean, ctx: CanvasRenderingContext2D): foGlyph;
-    // childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph;
-    // findObjectUnderShape(hit: iShape, deep:boolean, ctx: CanvasRenderingContext2D): foGlyph;
-    // childObjectUnderShape(hit: iShape, ctx: CanvasRenderingContext2D): foGlyph;
+export interface iShape extends iRect, iNode {
 
     render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
-    overlapTest(hit: iShape, ctx: CanvasRenderingContext2D): boolean;
+    overlapTest(hit: iRect, ctx: CanvasRenderingContext2D): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
     moveTo(loc: iPoint, offset?: iPoint);

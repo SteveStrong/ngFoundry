@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
 import { cPoint, cRect } from "../foundry/foGeometry";
-import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
+import { iRect, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -102,7 +102,7 @@ export class foShape2D extends foGlyph {
     }
 
 
-    public overlapTest = (hit: iShape): boolean => {
+    public overlapTest = (hit: iRect): boolean => {
         let loc = hit.getLocation();
         let size = hit.getSize(1.0);
 
