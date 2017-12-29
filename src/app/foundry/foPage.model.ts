@@ -193,13 +193,13 @@ export class foPage extends foShape2D {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.moveTo(loc, offset);
 
-                if (!overshape) {
+                if (!overshape && keys.ctrl) {
                     overshape = this.findShapeUnder(shape);
                     if (overshape && shape.myParent && shape.myParent() != overshape) {
                         overshape['saveColor'] = overshape.color;
                         overshape.setColor('orange');
                     }
-                } else if (!overshape.overlapTest(shape.boundryFrame, this._ctx)) {
+                } else if (overshape && !overshape.overlapTest(shape.boundryFrame, this._ctx)) {
                     overshape.setColor(overshape['saveColor']);
                     delete overshape['saveColor'];
                     overshape = null;

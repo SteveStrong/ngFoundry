@@ -61,6 +61,7 @@ export interface iRect {
 
     set(x: number, y: number, width: number, height: number): iRect
     contains(x: number, y: number): boolean;
+    localContains(x: number, y: number): boolean;
 }
 
 export interface iFrame {
@@ -88,18 +89,18 @@ export interface iBox extends iRect {
 }
 
 export interface iShape extends iRect, iNode {
+    isSelected: boolean;
 
     render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
     overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
+    
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
     moveTo(loc: iPoint, offset?: iPoint);
-    getSize(scale: number): iSize;
-    scaleSize(scale: number): iSize;
-    isSelected: boolean;
+    moveBy(loc: iPoint, offset?: iPoint)
 
     setColor(color: string): string;
     setOpacity(opacity: number): number;

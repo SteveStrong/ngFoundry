@@ -88,6 +88,10 @@ export class cRect implements iRect {
         return this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height;
     }
 
+    localContains(x: number, y: number): boolean {
+        return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
+    }
+    
     draw(ctx: CanvasRenderingContext2D, fill?: boolean) {
         if (fill) {
             ctx.fillRect(this.x, this.y, this.width, this.height);

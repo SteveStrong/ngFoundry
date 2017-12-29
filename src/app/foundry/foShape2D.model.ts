@@ -121,7 +121,7 @@ export class foShape2D extends foGlyph {
 
     public moveHandle(handle: foHandle, loc: iPoint) {
         let pt = handle.localToGlobal(0, 0).subtract(loc.x, loc.y);
-        this.growSize(pt.x, pt.y)
+        //this.growSize(pt.x, pt.y)
         switch (handle.myName) {
             case '0:0':
                 break;

@@ -129,6 +129,10 @@ export class foGlyph extends foNode implements iShape {
         return this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height;
     }
 
+    localContains(x: number, y: number): boolean {
+        return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
+    }
+
     protected toJson(): any {
         return {
             myGuid: this.myGuid,
@@ -265,30 +269,30 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    public getSize = (scale: number = 1): iSize => {
-        //structual type
-        return {
-            width: this.width * scale,
-            height: this.height * scale
-        }
-    }
+    // public getSize = (scale: number = 1): iSize => {
+    //     //structual type
+    //     return {
+    //         width: this.width * scale,
+    //         height: this.height * scale
+    //     }
+    // }
 
-    public scaleSize = (scale: number): iSize => {
-        this.x -= (this.width * (scale - 1)) / 2.0;
-        this.y -= (this.height * (scale - 1)) / 2.0;
-        this.width *= scale;
-        this.height *= scale;
-        return this.getSize();
-    }
+    // public scaleSize = (scale: number): iSize => {
+    //     this.x -= (this.width * (scale - 1)) / 2.0;
+    //     this.y -= (this.height * (scale - 1)) / 2.0;
+    //     this.width *= scale;
+    //     this.height *= scale;
+    //     return this.getSize();
+    // }
 
-    public growSize = (dx: number, dy: number): iSize => {
-        try {
-            this.width += dx;
-            this.height += dy;
-        } catch (ex) {
-        }
-        return this.getSize();
-    }
+    // public growSize = (dx: number, dy: number): iSize => {
+    //     try {
+    //         this.width += dx;
+    //         this.height += dy;
+    //     } catch (ex) {
+    //     }
+    //     return this.getSize();
+    // }
 
     public setColor(color: string): string {
         this.color = color;
