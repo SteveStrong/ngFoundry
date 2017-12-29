@@ -15,8 +15,6 @@ import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph } from '../foundry/foGlyph.model'
 import { foShape2D } from '../foundry/foShape2D.model'
-//https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foHandle } from 'app/foundry/foHandle';
 
 
@@ -75,18 +73,18 @@ export class foPage extends foShape2D {
 
     findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
         let found: foGlyph = undefined;
-        for (var i: number = 0; i < this._subcomponents.length; i++) {
-            let shape: foGlyph = this._subcomponents.getMember(i);
+        for (var i: number = 0; i < this.nodes.length; i++) {
+            let shape: foGlyph = this.nodes.getMember(i);
             if (shape == exclude) continue;
-            found = <foGlyph>shape.findObjectUnderPoint(loc, deep, this._ctx);
+            found = shape.findObjectUnderPoint(loc, deep, this._ctx);
             if (found) break;
         }
         return found;
     }
 
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
-        for (var i: number = 0; i < this.Subcomponents.length; i++) {
-            let shape: foGlyph = this._subcomponents.getMember(i);
+        for (var i: number = 0; i < this.nodes.length; i++) {
+            let shape: foGlyph = this.nodes.getMember(i);
             if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
                 return shape;
             }
@@ -196,28 +194,12 @@ export class foPage extends foShape2D {
                     overshape = this.findShapeUnder(shape);
                     if (overshape && shape.myParent && shape.myParent() != overshape) {
                         overshape['saveColor'] = overshape.color;
-                        //overshape['hold'] = overshape.getSize(1);
-                        //let size = overshape.getSize(1.1);
-                        //let target = overshape.getSize(1.1);
-                        //size['ease'] = Power0.easeNone;
-                        //size['onComplete'] = () => {
                         overshape.setColor('orange');
-                        //overshape.override(target);
-                        //}
-                        //TweenMax.to(overshape, 0.3, size);
                     }
                 } else if (!overshape.overlapTest(shape, this._ctx)) {
-                    //let target = overshape['hold'];
-                    //let size = overshape['hold'];
-                    //size['ease'] = Power0.easeNone;
-                    //size['onComplete'] = () => {
                     overshape.setColor(overshape['saveColor']);
                     delete overshape['saveColor'];
-                    //overshape.override(target);
-                    //delete overshape['hold'];
                     overshape = null;
-                    //}
-                    //TweenMax.to(overshape, 0.3, size);
                 }
 
             } else {

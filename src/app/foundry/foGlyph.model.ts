@@ -144,12 +144,12 @@ export class foGlyph extends foNode implements iShape {
         return this._subcomponents;
     }
 
-    public easeTo(x: number, y: number, time: number = .5, force: boolean = false) {
+    public easeTo(x: number, y: number, ease:any=Back.ease,  time: number = .5) {
 
-        TweenLite.to(this, force ? 0 : time, {
+        TweenLite.to(this, time, {
             x: x,
             y: y,
-            ease: Back.ease
+            ease: ease
         }).eventCallback("onUpdate", () => {
             this.drop();
         }).eventCallback("onComplete", () => {
@@ -286,10 +286,11 @@ export class foGlyph extends foNode implements iShape {
     }
 
     protected childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph {
-        let children = this.Subcomponents;
-        let total = children.length;
-        for (let i: number = 0; i < total; i++) {
-            let child: foGlyph = <foGlyph>children[i];
+        let children = this.nodes;
+        for (let i: number = 0; i < children.length; i++) {
+            let child: foGlyph = children.getMember(i);
+            let found = child.childObjectUnderPoint(hit, ctx);
+            if ( found) return found;
             if (child.hitTest(hit, ctx)) {
                 return child;
             }

@@ -223,11 +223,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doBoundry() {
 
-    let text = Concept.define<foText2D>('words::text2d', foText2D, {
-      color: 'black',
-      background: 'yellow',
-      context: 'HELLO',
-      fontSize: 30,
+    // let text = Concept.define<foText2D>('words::text2d', foText2D, {
+    //   color: 'black',
+    //   background: 'grey',
+    //   context: 'HELLO',
+    //   fontSize: 30,
+    // });
+
+    let text = Concept.define<foShape2D>('blocks::text2d', foShape2D, {
+      color: 'gray',
+      width: 50,
+      height: 25
     });
 
     let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
@@ -802,15 +808,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("moveShape", (cmd, data) => {
         this.found(cmd.guid, shape => {
-          TweenLite.to(shape, .8, {
-            x: data.x,
-            y: data.y,
-            ease: Back.easeInOut
-          }).eventCallback("onUpdate", () => {
-            shape.drop();
-          }).eventCallback("onComplete", () => {
-            shape.moveTo(data.x, data.y);
-          });
+          shape.easeTo(data.x, data.y, Back.easeInOut, .8);
         });
       });
 
