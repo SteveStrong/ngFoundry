@@ -334,12 +334,8 @@ export class foPage extends foShape2D {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this._ctx = ctx;
 
-        let angle = this.rotation() * foGlyph.DEG_TO_RAD;
-        let cos = Math.cos(angle);
-        let sin = Math.sin(angle);
-
         ctx.save();
-        ctx.transform(cos, sin, -sin, cos, this.marginX, this.marginY);
+        this.updateContext(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
@@ -350,8 +346,6 @@ export class foPage extends foShape2D {
             item.render(ctx, deep);
         });
         ctx.restore();
-
-        this.afterRender && this.afterRender(ctx);
     }
 
 

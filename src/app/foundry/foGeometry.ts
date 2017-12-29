@@ -1,5 +1,5 @@
 
-import { iPoint, iRect, iBox, iMargin } from './foInterface';
+import { iPoint, iRect, iBox, iMargin, iFrame } from './foInterface';
 
 export class cPoint implements iPoint {
     public x: number;
@@ -98,6 +98,43 @@ export class cRect implements iRect {
     }
 }
 
+
+export class cFrame implements iFrame {
+    public x1: number;
+    public y1: number;
+    public x2: number;
+    public y2: number;
+
+    constructor(x1: number, y1: number, x2: number, y2: number) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+
+    setValue(x1: number, y1: number, x2: number, y2: number): iFrame {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+        return this;
+    }
+
+    contains(x: number, y: number) {
+        return this.x1 <= x && x <= this.x2 && this.y1 <= y && y <= this.y2;
+    }
+
+    draw(ctx: CanvasRenderingContext2D, fill?: boolean) {
+        let width = this.x2 - this.x1;
+        let height = this.y2 - this.y1;
+        if (fill) {
+            ctx.fillRect(this.x1, this.y1, width, height);
+        } else {
+            ctx.rect(this.x1, this.y1, width, height);
+        }
+        return this;
+    }
+}
 
 export class cMargin implements iMargin {
     public left: number = 0;

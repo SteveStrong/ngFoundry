@@ -51,7 +51,6 @@ export class foHandle extends foNode {
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
-    public afterRender: (ctx: CanvasRenderingContext2D) => void;
 
     protected _matrix: Matrix2D;
     protected _invMatrix: Matrix2D;
@@ -165,7 +164,6 @@ export class foHandle extends foNode {
         this.postDraw && this.postDraw(ctx);
 
         ctx.restore();
-        this.afterRender && this.afterRender(ctx);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {

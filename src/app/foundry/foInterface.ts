@@ -61,6 +61,15 @@ export interface iRect {
     setValue(x: number, y: number, width: number, height: number): iRect
 }
 
+export interface iFrame {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+
+    setValue(x1: number, y1: number, x2: number, y2: number): iFrame
+}
+
 export interface iBox {
     x: number;
     y: number;

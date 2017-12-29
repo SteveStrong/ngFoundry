@@ -98,8 +98,6 @@ export class foText2D extends foShape2D {
             item.render(ctx, deep);
         });
         ctx.restore();
-
-        this.afterRender && this.afterRender(ctx);
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {

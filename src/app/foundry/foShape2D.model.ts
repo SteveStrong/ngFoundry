@@ -1,6 +1,6 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint, cRect } from "../foundry/foGeometry";
 import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
@@ -32,6 +32,7 @@ export class foShape2D extends foGlyph {
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
     public rotation = (): number => { return this.angle; }
+
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -189,8 +190,6 @@ export class foShape2D extends foGlyph {
             item.render(ctx, deep);
         });
         ctx.restore();
-
-        this.afterRender && this.afterRender(ctx);
     }
 
 
