@@ -5,7 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 
 
-import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
+import { iObject, iNode, iShape, iPoint, iSize, iRect, iFrame, Action } from './foInterface';
 
 import { foHandle } from './foHandle';
 import { foObject } from './foObject.model';
@@ -232,14 +232,14 @@ export class foGlyph extends foNode implements iShape {
         return inv.transformPoint(pt.x, pt.y, pt);
     };
 
-    globalToLocalFrame(x: number, y: number, width: number, height: number, frame?: cFrame): cFrame {
+    globalToLocalFrame(x1: number, y1: number, x2: number, y2: number, frame?: cFrame): cFrame {
         frame = frame || new cFrame();
         let inv = this.getGlobalMatrix().invertCopy();
 
-        frame.init(inv.transformPoint(x, y, frame.point));
-        frame.minmax(inv.transformPoint(x + width, y, frame.point));
-        frame.minmax(inv.transformPoint(x, y + height, frame.point));
-        frame.minmax(inv.transformPoint(x + width, y + height, frame.point))
+        frame.init(inv.transformPoint(x1, y1, frame.point));
+        frame.minmax(inv.transformPoint(x1, y2, frame.point));
+        frame.minmax(inv.transformPoint(x2, y1, frame.point));
+        frame.minmax(inv.transformPoint(x2, y2, frame.point))
         return frame;
     };
 
@@ -331,21 +331,21 @@ export class foGlyph extends foNode implements iShape {
         return found;
     }
 
-    findObjectUnderShape(hit: iShape, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
+    findObjectUnderFrame(hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
         let found: foGlyph = this.overlapTest(hit, ctx) ? this : undefined;
 
         if (deep) {
-            let child = this.childObjectUnderShape(hit, ctx);
+            let child = this.childObjectUnderFrame(hit, ctx);
             found = child ? child : found;
         }
         return found;
     }
 
-    protected childObjectUnderShape(hit: iShape, ctx: CanvasRenderingContext2D): foGlyph {
+    protected childObjectUnderFrame(hit: iFrame, ctx: CanvasRenderingContext2D): foGlyph {
         let children = this.nodes;
         for (let i: number = 0; i < children.length; i++) {
             let child: foGlyph = children.getMember(i);
-            let found = child.childObjectUnderShape(hit, ctx);
+            let found = child.childObjectUnderFrame(hit, ctx);
             if (found) return found;
             if (child.overlapTest(hit, ctx)) {
                 return child;
@@ -374,8 +374,8 @@ export class foGlyph extends foNode implements iShape {
 
 
 
-    public overlapTest = (hit: iRect, ctx: CanvasRenderingContext2D): boolean => {
-        let frame = this.globalToLocalFrame(hit.x, hit.y, hit.width, hit.height);
+    public overlapTest = (hit: iFrame, ctx: CanvasRenderingContext2D): boolean => {
+        let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
         if (this.contains(frame.x1, frame.y1)) return true;
         if (this.contains(frame.x1, frame.y2)) return true;

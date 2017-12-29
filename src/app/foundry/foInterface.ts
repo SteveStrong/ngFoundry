@@ -70,6 +70,7 @@ export interface iFrame {
     y2: number;
 
     set(x1: number, y1: number, x2: number, y2: number): iFrame;
+    contains(x: number, y: number): boolean;
     merge(obj: iFrame): iFrame;
     minmax(obj: iPoint): iFrame;
 }
@@ -92,7 +93,7 @@ export interface iShape extends iRect, iNode {
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
-    overlapTest(hit: iRect, ctx: CanvasRenderingContext2D): boolean;
+    overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
     moveTo(loc: iPoint, offset?: iPoint);

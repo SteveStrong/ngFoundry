@@ -83,9 +83,12 @@ export class foPage extends foShape2D {
     }
 
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+        let frame = source.boundryFrame;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape: foGlyph = this.nodes.getMember(i);
-            if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
+            if ( shape == source || shape == exclude) continue;
+
+            if (shape.findObjectUnderFrame(frame, deep, this._ctx)) {
                 return shape;
             }
         }
@@ -196,7 +199,7 @@ export class foPage extends foShape2D {
                         overshape['saveColor'] = overshape.color;
                         overshape.setColor('orange');
                     }
-                } else if (!overshape.overlapTest(shape, this._ctx)) {
+                } else if (!overshape.overlapTest(shape.boundryFrame, this._ctx)) {
                     overshape.setColor(overshape['saveColor']);
                     delete overshape['saveColor'];
                     overshape = null;

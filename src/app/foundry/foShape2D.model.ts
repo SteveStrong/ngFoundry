@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
 import { cPoint, cRect } from "../foundry/foGeometry";
-import { iRect, iPoint, iSize, Action } from '../foundry/foInterface'
+import { iRect, iPoint, iSize, iFrame, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -102,20 +102,14 @@ export class foShape2D extends foGlyph {
     }
 
 
-    public overlapTest = (hit: iRect): boolean => {
-        let loc = hit.getLocation();
-        let size = hit.getSize(1.0);
+    public overlapTest = (hit: iFrame, ctx: CanvasRenderingContext2D): boolean => {
+        let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
-        let pos = this.getLocation();
-        let width = this.width;
-        if (loc.x > pos.x + width) return false;
-        if (loc.x + size.width < pos.x) return false;
-
-        let height = this.height;
-        if (loc.y > pos.y + height) return false;
-        if (loc.y + size.height < pos.y) return false;
-
-        return true;
+        if (this.contains(frame.x1, frame.y1)) return true;
+        if (this.contains(frame.x1, frame.y2)) return true;
+        if (this.contains(frame.x2, frame.y1)) return true;
+        if (this.contains(frame.x2, frame.y2)) return true;
+        return false;
     }
 
     protected pinLocation() {
