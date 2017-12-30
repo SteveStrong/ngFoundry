@@ -188,17 +188,23 @@ export class foPage extends foShape2D {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.moveTo(loc, offset);
 
-                let found = this.findShapeUnder(shape);
-                if (found && found == shapeUnder) {
-                    this.onItemOverlapEnter(loc, shape, shapeUnder, keys);
-                } else if (found) {
+                if (keys.ctrl) {
+                    let found = this.findShapeUnder(shape);
+                    if (found && found == shapeUnder) {
+                        this.onItemOverlapEnter(loc, shape, shapeUnder, keys);
+                    } else if (found) {
+                        shapeUnder && this.onItemOverlapExit(loc, shape, shapeUnder, keys);
+                        shapeUnder = found;
+                        this.onItemOverlapEnter(loc, shape, shapeUnder, keys);
+                    } else if (shapeUnder) {
+                        this.onItemOverlapExit(loc, shape, shapeUnder, keys);
+                        shapeUnder = null;
+                    }
+                } else {
                     shapeUnder && this.onItemOverlapExit(loc, shape, shapeUnder, keys);
-                    shapeUnder = found;
-                    this.onItemOverlapEnter(loc, shape, shapeUnder, keys);
-                } else if (shapeUnder) {
-                    this.onItemOverlapExit(loc, shape, shapeUnder, keys);
                     shapeUnder = null;
                 }
+
 
             } else {
                 this.onMouseLocationChanged(loc, "hover", keys);
@@ -241,7 +247,7 @@ export class foPage extends foShape2D {
 
             this._subcomponents.moveToTop(shape);
 
-            if (shapeUnder) {
+            if (shapeUnder && keys.ctrl) {
                 //foObject.beep();
                 let { x, y } = shape.getLocation();
                 let drop = shapeUnder.globalToLocal(x, y);
@@ -254,13 +260,13 @@ export class foPage extends foShape2D {
                 this.onItemChangedPosition(shape)
             }
 
-            if ( shape.myParent() != this && keys.ctrl) {
+            if (shape.myParent() != this && keys.ctrl) {
                 //foObject.beep();
                 let { x, y } = shape.pinLocation();
-                let drop = shape.localToGlobal(x,y);
+                let drop = shape.localToGlobal(x, y);
                 this.addSubcomponent(shape.removeFromParent());
                 shape.easeTo(drop.x, drop.y);
-                this.onItemChangedParent(shape)             
+                this.onItemChangedParent(shape)
             }
 
             shape = shapeUnder = null;

@@ -44,6 +44,7 @@
     </div>
 
     <div class="btn-group" role="group" aria-label="Creating Display">
+      <button (click)="doImage()" type="button" class="btn btn-success">Image</button>
       <button (click)="doBlocks()" type="button" class="btn btn-success">Blocks</button>
       <button (click)="doBoundry()" type="button" class="btn btn-info">Boundry</button>
       <button (click)="doText()" type="button" class="btn btn-success">Text</button>
@@ -64,11 +65,11 @@
 
   <div class="col-md-4">
     <fo-inspector [rootPage]="this"></fo-inspector>
-    <pre class="well">{{mouseLoc | json}}</pre>
+    <!-- <pre class="well">{{mouseLoc | json}}</pre> -->
 
 
     <!-- <pre class="well">{{this.asJson | json}}</pre> -->
-    <pre class="well">{{message | json}}</pre>
+    <!-- <pre class="well">{{message | json}}</pre> -->
 
     <!-- <pre class="well">{{sitOnShape | json}}</pre> -->
 

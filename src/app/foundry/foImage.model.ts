@@ -16,8 +16,24 @@ import { foShape2D, Stencil } from '../foundry/foShape2D.model'
 
 
 export class foImage extends foShape2D {
+    protected _loaded: boolean = false;
+
     public margin: cMargin;
 
+    protected _image: HTMLImageElement;
+    protected _imageURL: string;
+    get imageURL(): string { return this._imageURL; }
+    set imageURL(value: string) {
+        this._loaded = false;
+
+        this._imageURL = value;
+        this._image = new Image();
+        this._image.onload = () => {
+            this._loaded = true;
+        };
+        this._image.src = this._imageURL;
+
+    }
     protected _background: string;
     get background(): string {
         return this._background;
@@ -26,6 +42,7 @@ export class foImage extends foShape2D {
         this._background = value;
     }
 
+    //"http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg";
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
 
@@ -35,8 +52,19 @@ export class foImage extends foShape2D {
 
     protected toJson(): any {
         let result = super.toJson();
+        result.background = this.background;
+        result.imageURL = this.imageURL;
+        result.margin = this.margin;
         return result;
     }
+    public override(properties?: any) {
+        if ( properties && properties.margin ) {
+            let m = properties.margin;
+            properties.margin = new cMargin(m.left, m.top, m.right, m.bottom);
+        }
+        return super.override(properties);
+    }
+
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
@@ -59,9 +87,12 @@ export class foImage extends foShape2D {
     }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
+        let width = this.width + ((this.margin && this.margin.width) || 0);
+        let height = this.height + ((this.margin && this.margin.height) || 0);
+
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
-        ctx.rect(0, 0, this.width, this.height);
+        ctx.rect(0, 0, width, height);
         ctx.stroke();
     }
 
@@ -74,20 +105,22 @@ export class foImage extends foShape2D {
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-
         let left = ((this.margin && this.margin.left) || 0);
         let top = ((this.margin && this.margin.top) || 0);
 
         ctx.save();
         if (this.background) {
+            let width = this.width + ((this.margin && this.margin.width) || 0);
+            let height = this.height + ((this.margin && this.margin.height) || 0);
+
             ctx.fillStyle = this.background;
-            ctx.fillRect(0, 0, this.width, this.height);
+            ctx.fillRect(0, 0, width, height);
         }
         ctx.restore();
 
-        ctx.fillStyle = this.color;
-
-        //ctx.drawImage();
+        if (this._loaded) {
+            ctx.drawImage(this._image, left, top, this.width, this.height);
+        }
     }
 
 }
