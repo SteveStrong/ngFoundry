@@ -97,16 +97,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     })
   }
 
-
-  ngOnInit() {
-    this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubCommand("parent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
-    }
-
-    this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
-    }
-
+  addEventHooks() {
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
 
       this.message = [];
@@ -214,9 +205,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(handle);
 
     }
+  }
 
+  ngOnInit() {
 
-    Pallet.define(foGlyph);
+    this.addEventHooks();
+
+    this.onItemChangedParent = (shape: foGlyph): void => {
+      this.signalR.pubCommand("parent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
+    }
+
+    this.onItemChangedPosition = (shape: foGlyph): void => {
+      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+    }
 
     let compute = {
       height: function () {
