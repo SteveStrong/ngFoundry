@@ -84,11 +84,11 @@ export class foObject implements iObject {
         return this;
     }
 
-    getChildAt(i: number): iObject {
+    public getChildAt(i: number): iObject {
         return undefined;
     }
 
-    override(properties?: any) {
+    public override(properties?: any) {
         const self = this;
 
         properties && Tools.forEachKeyValue(properties, function (key, value) {
@@ -102,7 +102,7 @@ export class foObject implements iObject {
         return self;
     }
 
-    extend(properties?: any) {
+    public extend(properties?: any) {
         const self = this;
 
         properties && Tools.forEachKeyValue(properties, function (key, value) {

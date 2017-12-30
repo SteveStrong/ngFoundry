@@ -8,6 +8,7 @@ import { foCollection } from './foCollection.model'
 
 export class foNode extends foObject implements iNode {
     private _index: number = 0;
+    private _childDepth: number = 0;
 
 
     protected _subcomponents: foCollection<foNode>;
@@ -55,6 +56,7 @@ export class foNode extends foObject implements iNode {
             properties && obj.override(properties);
         }
         obj._index = this._subcomponents.length;
+        obj._childDepth = this._childDepth + 1;
         this._subcomponents.addMember(obj);
         return obj;
     }
@@ -66,12 +68,17 @@ export class foNode extends foObject implements iNode {
             obj.myParent = undefined;    
         }
         obj._index = -1;
+        obj._childDepth = 0;
         this._subcomponents.removeMember(obj);
         return obj;
     }
 
     get index(): number {
         return this._index;
+    }
+
+    get childDepth(): number {
+        return this._childDepth;
     }
 
     getChildAt(i: number): iObject {

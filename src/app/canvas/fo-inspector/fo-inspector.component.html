@@ -1,0 +1,5 @@
+
+<p >{{rootPage.myName}}: {{rootPage.myType}}</p>
+<ng-container *ngFor="let node of rootPage.nodes.members; let i = index; let isOdd = odd">
+  <fo-panel [node]="node"></fo-panel>
+</ng-container>

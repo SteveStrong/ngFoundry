@@ -20,10 +20,7 @@ export class ModelJsonPipe {
         }
 
         function resolveCircular(key, value) {
-            // switch (key) {
-            //     case 'parent':
-            //         return;
-            // }
+
             if (key.startsWith('_')) return;
 
             return value;

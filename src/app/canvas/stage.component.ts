@@ -25,6 +25,7 @@ import { foGlyph, Pallet } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
+import { foImage } from "../foundry/foImage.model";
 import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
@@ -103,7 +104,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
     }
 
-    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?:any): void => {
+    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
@@ -119,7 +120,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?:any): void => {
+    this.onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
@@ -131,7 +132,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?:any): void => {
+    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Enter`);
@@ -150,7 +151,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?:any): void => {
+    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Exit`);
@@ -296,6 +297,47 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       body.wait(10, () => body.layoutSubcomponentsVertical(true, 10));
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
+
+  }
+  doImage() {
+    // let image = Concept.define<foImage>('blocks::block2d', foImage, {
+    //   background: 'green',
+    //   width: 100,
+    //   height: 50
+    // });
+
+    let image = new foImage({
+      background: 'blue',
+      margin: new cMargin(10, 10, 10, 10),
+      width: 80,
+      height: 80,
+      imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
+      angle: Tools.randomInt(-30, 30)
+    }).drop(330, 330).addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: image.myGuid }, image.asJson);
+
+    let size = {
+      width: 400,
+      height: 400,
+    }
+
+    image.easeTween(size, 2.8, Back['easeInOut']);
+
+    this.signalR.pubCommand("easeTween", { guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
+
+
+    // TweenLite.to(image, 2.8, {
+    //   width: 400,
+    //   height: 400,
+    //   ease: Back.easeInOut
+    // }).eventCallback("onComplete", () => {
+    //   let sync = {
+    //     width: 400,
+    //     height: 400,
+    //   }
+    //   image.override(sync)
+    //   this.signalR.pubCommand("syncShape", { guid: image.myGuid }, sync);
+    // });
 
   }
 
@@ -839,7 +881,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("moveShape", (cmd, data) => {
         this.found(cmd.guid, shape => {
-          shape.easeTo(data.x, data.y, Back.easeInOut, .8);
+          shape.easeTo(data.x, data.y, .8, Back.easeInOut);
         });
       });
 
@@ -916,7 +958,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this.addSubcomponent(shape); }
           );
+        }, found => {
+          found.override(data);
         });
+      });
+
+      this.signalR.subCommand("easeTween", (cmd, data) => {
+        this.found(cmd.guid, item => {
+          item.easeTween(data, cmd.time, Back[cmd.ease]);
+        })
       });
 
 

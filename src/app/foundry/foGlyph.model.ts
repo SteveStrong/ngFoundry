@@ -173,7 +173,7 @@ export class foGlyph extends foNode implements iShape {
         return this._subcomponents;
     }
 
-    public easeTo(x: number, y: number, ease: any = Back.ease, time: number = .5) {
+    public easeTo(x: number, y: number, time: number = .5, ease: any = Back.ease ) {
 
         TweenLite.to(this, time, {
             x: x,
@@ -184,6 +184,13 @@ export class foGlyph extends foNode implements iShape {
         }).eventCallback("onComplete", () => {
             this.drop(x, y);
         });
+        return this;
+    }
+
+    public easeTween(to: any, time: number = .5, ease: any = Back.ease) {
+        let from = Tools.union(to, { ease: ease });
+
+        TweenLite.to(this, time, from).eventCallback("onComplete", () => this.override(to));
         return this;
     }
 
