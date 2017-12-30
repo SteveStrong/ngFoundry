@@ -88,6 +88,19 @@ export class foGlyph extends foNode implements iShape {
         this._invMatrix = undefined;
     }
 
+    private _layout: () => void;
+    public setLayout(func: () => void) {
+        this._layout = func;
+        return this;
+    };
+    public doLayout(deep: boolean = true) {
+        if (deep) {
+            this.nodes.forEach(item => item.doLayout());
+        }
+
+        this._layout && this.wait(1000, this._layout);
+        return this;
+    };
 
 
     private _boundry: cFrame = new cFrame(this);
@@ -350,7 +363,7 @@ export class foGlyph extends foNode implements iShape {
         let children = this.nodes;
         for (let i: number = 0; i < children.length; i++) {
             let child: foGlyph = children.getMember(i);
-            if ( source.hasAncestor(child)) continue;
+            if (source.hasAncestor(child)) continue;
             let found = child.findChildObjectUnderFrame(source, hit, ctx);
             if (found) return found;
 
