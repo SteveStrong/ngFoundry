@@ -91,7 +91,7 @@ export class cRect implements iRect {
     localContains(x: number, y: number): boolean {
         return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
     }
-    
+
     draw(ctx: CanvasRenderingContext2D, fill?: boolean) {
         if (fill) {
             ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -109,7 +109,12 @@ export class cFrame implements iFrame {
     public x2: number;
     public y2: number;
 
-    public point:cPoint = new cPoint()
+    public point:cPoint = new cPoint();
+    public source:any;
+
+    constructor(source?:any){
+        this.source = source;
+    }
 
     set(x1: number, y1: number, x2: number, y2: number): iFrame {
         this.x1 = x1;

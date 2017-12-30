@@ -19,6 +19,7 @@ export interface iObject {
     asReference(): string;
     getChildAt(i: number): iObject;
     override(properties?: any);
+    hasAncestor(member?: iObject):boolean;
 }
 
 export interface iNode {
@@ -96,7 +97,7 @@ export interface iShape extends iRect, iNode {
     drawHover(ctx: CanvasRenderingContext2D): void;
     hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
     overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
-    
+
     getOffset(loc: iPoint): iPoint;
     getLocation(): iPoint;
     moveTo(loc: iPoint, offset?: iPoint);

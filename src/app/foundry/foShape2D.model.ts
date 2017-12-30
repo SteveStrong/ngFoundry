@@ -105,10 +105,10 @@ export class foShape2D extends foGlyph {
     public overlapTest = (hit: iFrame, ctx: CanvasRenderingContext2D): boolean => {
         let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
-        if (this.contains(frame.x1, frame.y1)) return true;
-        if (this.contains(frame.x1, frame.y2)) return true;
-        if (this.contains(frame.x2, frame.y1)) return true;
-        if (this.contains(frame.x2, frame.y2)) return true;
+        if (this.localContains(frame.x1, frame.y1)) return true;
+        if (this.localContains(frame.x1, frame.y2)) return true;
+        if (this.localContains(frame.x2, frame.y1)) return true;
+        if (this.localContains(frame.x2, frame.y2)) return true;
         return false;
     }
 
