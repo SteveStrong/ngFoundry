@@ -1,0 +1,8 @@
+<div class="panel panel-default">
+  <div class="panel-body">{{node.childDepth}} {{node.myName}}: {{node.myType}} - {{node.color}}</div>
+
+  <p *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
+    <fo-panel [node]="node"></fo-panel>
+  </p>
+
+</div>

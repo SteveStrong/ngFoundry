@@ -19,7 +19,7 @@
       <button (click)="doClear()" type="button" class="btn btn-danger">Clear</button>
       <button (click)="doVert()" type="button" class="btn btn-warning">Vert</button>
       <button (click)="doHorz()" type="button" class="btn btn-warning">Horz</button>
-        </div>
+    </div>
     <div class="btn-group mr-2" role="group" aria-label="Creating Glyphs">
       <button (click)="doAddGlyph()" type="button" class="btn btn-info">add Glyph</button>
       <button (click)="doAddSubGlyph()" type="button" class="btn btn-info">add SubGlyph</button>
@@ -44,8 +44,8 @@
     </div>
 
     <div class="btn-group" role="group" aria-label="Creating Display">
-        <button (click)="doBlocks()" type="button" class="btn btn-success">Blocks</button>
-        <button (click)="doBoundry()" type="button" class="btn btn-info">Boundry</button>
+      <button (click)="doBlocks()" type="button" class="btn btn-success">Blocks</button>
+      <button (click)="doBoundry()" type="button" class="btn btn-info">Boundry</button>
       <button (click)="doText()" type="button" class="btn btn-success">Text</button>
       <button (click)="doDocker()" type="button" class="btn btn-success">Docker</button>
       <button (click)="doObjRect()" type="button" class="btn btn-info">Rect</button>
@@ -63,7 +63,10 @@
   </div>
 
   <div class="col-md-4">
+    <fo-inspector [rootPage]="this"></fo-inspector>
     <pre class="well">{{mouseLoc | json}}</pre>
+
+
     <!-- <pre class="well">{{this.asJson | json}}</pre> -->
     <pre class="well">{{message | json}}</pre>
 
