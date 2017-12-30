@@ -56,6 +56,14 @@ export class foObject implements iObject {
         return `${this.myName}.${parent.asReference()}`;
     }
 
+    hasAncestor(member: iObject):boolean {
+        if ( member === this ) return true;
+
+        let parent = this.myParent && this.myParent();
+        if ( member === parent ) return true;
+        return parent && parent.hasAncestor(member)
+    }
+
     get hasParent() {
         let parent = this.myParent && this.myParent();
         return parent ? true : false;

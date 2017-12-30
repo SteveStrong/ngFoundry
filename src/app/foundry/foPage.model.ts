@@ -15,8 +15,6 @@ import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph } from '../foundry/foGlyph.model'
 import { foShape2D } from '../foundry/foShape2D.model'
-//https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foHandle } from 'app/foundry/foHandle';
 
 
@@ -26,7 +24,7 @@ export class foPage extends foShape2D {
 
     gridSizeX: number = 50;
     gridSizeY: number = 50;
-    showBoundry:boolean = true;
+    showBoundry: boolean = false;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -45,8 +43,6 @@ export class foPage extends foShape2D {
     set scaleY(value: number) { this._scaleY = value; }
 
     mouseLoc: any = {};
-    sitOnShape: any = {};
-
 
     _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
     _ctx: CanvasRenderingContext2D;
@@ -73,25 +69,25 @@ export class foPage extends foShape2D {
         return this._matrix;
     };
 
-    findHitShape(loc: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
         let found: foGlyph = undefined;
-        for (var i: number = 0; i < this._subcomponents.length; i++) {
-            let shape: foGlyph = this._subcomponents.getMember(i);
+        for (var i: number = 0; i < this.nodes.length; i++) {
+            let shape: foGlyph = this.nodes.getMember(i);
             if (shape == exclude) continue;
-            found = <foGlyph>shape.findObjectUnderPoint(loc, deep, this._ctx);
-            if (found) break;
+            found = shape.findObjectUnderPoint(hit, deep, this._ctx);
+            if (found) return found;
         }
-        return found;
     }
 
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
-        for (var i: number = 0; i < this.Subcomponents.length; i++) {
-            let shape: foGlyph = this._subcomponents.getMember(i);
-            if (shape != source && source.findObjectUnderShape(shape, deep, this._ctx)) {
+        let frame = source.boundryFrame;
+        for (var i: number = 0; i < this.nodes.length; i++) {
+            let shape: foGlyph = this.nodes.getMember(i);
+            if (source.hasAncestor(shape) || shape == exclude) continue;
+            if (shape.findObjectUnderFrame(source, frame, deep, this._ctx)) {
                 return shape;
             }
         }
-        return null;
     }
 
 
@@ -130,7 +126,7 @@ export class foPage extends foShape2D {
 
     setupMouseEvents() {
         let shape: foGlyph = null;
-        let overshape: foGlyph = null;
+        let shapeUnder: foGlyph = null;
         let hovershape: foGlyph = null;
         let offset: iPoint = null;
         let handles: foCollection<foHandle> = new foCollection<foHandle>()
@@ -192,32 +188,16 @@ export class foPage extends foShape2D {
                 this.onMouseLocationChanged(loc, "move", keys);
                 shape.moveTo(loc, offset);
 
-                if (!overshape) {
-                    overshape = this.findShapeUnder(shape);
-                    if (overshape && shape.myParent && shape.myParent() != overshape) {
-                        overshape['saveColor'] = overshape.color;
-                        //overshape['hold'] = overshape.getSize(1);
-                        //let size = overshape.getSize(1.1);
-                        //let target = overshape.getSize(1.1);
-                        //size['ease'] = Power0.easeNone;
-                        //size['onComplete'] = () => {
-                        overshape.setColor('orange');
-                        //overshape.override(target);
-                        //}
-                        //TweenMax.to(overshape, 0.3, size);
-                    }
-                } else if (!overshape.overlapTest(shape, this._ctx)) {
-                    //let target = overshape['hold'];
-                    //let size = overshape['hold'];
-                    //size['ease'] = Power0.easeNone;
-                    //size['onComplete'] = () => {
-                    overshape.setColor(overshape['saveColor']);
-                    delete overshape['saveColor'];
-                    //overshape.override(target);
-                    //delete overshape['hold'];
-                    overshape = null;
-                    //}
-                    //TweenMax.to(overshape, 0.3, size);
+                let found = this.findShapeUnder(shape);
+                if (found && found == shapeUnder) {
+                    this.onItemOverlapEnter(loc, shape, shapeUnder, keys);
+                } else if (found) {
+                    shapeUnder && this.onItemOverlapExit(loc, shape, shapeUnder, keys);
+                    shapeUnder = found;
+                    this.onItemOverlapEnter(loc, shape, shapeUnder, keys);
+                } else if (shapeUnder) {
+                    this.onItemOverlapExit(loc, shape, shapeUnder, keys);
+                    shapeUnder = null;
                 }
 
             } else {
@@ -252,7 +232,6 @@ export class foPage extends foShape2D {
                     float = null;
                 }
             }
-            this.sitOnShape = overshape || {};
         });
 
         PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
@@ -262,18 +241,29 @@ export class foPage extends foShape2D {
 
             this._subcomponents.moveToTop(shape);
 
-            if (overshape) {
-                this.removeSubcomponent(shape);
-                overshape.addSubcomponent(shape, {
-                    x: 0,
-                    y: 0
-                });
+            if (shapeUnder) {
+                //foObject.beep();
+                let { x, y } = shape.getLocation();
+                let drop = shapeUnder.globalToLocal(x, y);
+                shapeUnder.addSubcomponent(shape.removeFromParent());
+                shape.easeTo(drop.x, drop.y);
+                //shape.easeTo(0, 0);
+                shapeUnder = null;
                 this.onItemChangedParent(shape)
             } else {
                 this.onItemChangedPosition(shape)
             }
 
-            shape = null;
+            if ( shape.myParent() != this && keys.ctrl) {
+                //foObject.beep();
+                let { x, y } = shape.pinLocation();
+                let drop = shape.localToGlobal(x,y);
+                this.addSubcomponent(shape.removeFromParent());
+                shape.easeTo(drop.x, drop.y);
+                this.onItemChangedParent(shape)             
+            }
+
+            shape = shapeUnder = null;
 
         });
 
@@ -289,6 +279,12 @@ export class foPage extends foShape2D {
     }
 
     public onItemChangedPosition = (shape: foGlyph): void => {
+    }
+
+    public onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    }
+
+    public onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
     }
 
     public onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
@@ -331,12 +327,12 @@ export class foPage extends foShape2D {
         ctx.restore();
     }
 
-    get boundryFrame(): cFrame { 
+    get boundryFrame(): cFrame {
         let frame = this.nodes.first().boundryFrame;
         this.nodes.forEach(item => {
             frame.merge(item.boundryFrame);
         });
-        return frame; 
+        return frame;
     }
 
     public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {

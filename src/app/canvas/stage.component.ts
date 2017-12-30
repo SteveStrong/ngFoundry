@@ -103,7 +103,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
     }
 
-    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph): void => {
+    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?:any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
@@ -119,7 +119,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemHoverExit = (loc: cPoint, shape: foGlyph): void => {
+    this.onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?:any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
@@ -128,6 +128,37 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       if (shape) {
         shape.drawHover = undefined;
+      }
+    }
+
+    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?:any): void => {
+
+      this.message = [];
+      this.message.push(`Overlap (${loc.x},${loc.y}) Enter`);
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
+      this.message.push(shape);
+
+      if (shapeUnder) {
+        shapeUnder.drawHover = function (ctx: CanvasRenderingContext2D) {
+          ctx.strokeStyle = "green";
+          ctx.lineWidth = 8;
+          shapeUnder.drawOutline(ctx);
+          ctx.strokeStyle = "yellow";
+          ctx.lineWidth = 4;
+          shapeUnder.drawOutline(ctx);
+        }
+      }
+    }
+
+    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?:any): void => {
+
+      this.message = [];
+      this.message.push(`Overlap (${loc.x},${loc.y}) Exit`);
+      shape && this.message.push(shape.globalToLocal(loc.x, loc.y));
+      this.message.push(shape);
+
+      if (shapeUnder) {
+        shapeUnder.drawHover = undefined;
       }
     }
 
@@ -223,11 +254,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doBoundry() {
 
-    let text = Concept.define<foText2D>('words::text2d', foText2D, {
-      color: 'black',
-      background: 'yellow',
-      context: 'HELLO',
-      fontSize: 30,
+    // let text = Concept.define<foText2D>('words::text2d', foText2D, {
+    //   color: 'black',
+    //   background: 'grey',
+    //   context: 'HELLO',
+    //   fontSize: 30,
+    // });
+
+    let text = Concept.define<foShape2D>('blocks::text2d', foShape2D, {
+      color: 'gray',
+      width: 50,
+      height: 25
     });
 
     let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
@@ -802,15 +839,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("moveShape", (cmd, data) => {
         this.found(cmd.guid, shape => {
-          TweenLite.to(shape, .8, {
-            x: data.x,
-            y: data.y,
-            ease: Back.easeInOut
-          }).eventCallback("onUpdate", () => {
-            shape.drop();
-          }).eventCallback("onComplete", () => {
-            shape.moveTo(data.x, data.y);
-          });
+          shape.easeTo(data.x, data.y, Back.easeInOut, .8);
         });
       });
 

@@ -1148,7 +1148,7 @@ this.createjs = this.createjs||{};
 		var cacheCanvas = this.cacheCanvas;
 		if (cacheCanvas) {
 			var scale = this._cacheScale;
-			return this._rectangle.setValues(this._cacheOffsetX, this._cacheOffsetY, cacheCanvas.width/scale, cacheCanvas.height/scale);
+			return this._rectangle.set(this._cacheOffsetX, this._cacheOffsetY, cacheCanvas.width/scale, cacheCanvas.height/scale);
 		}
 		return null;
 	};

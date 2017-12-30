@@ -59,7 +59,7 @@ this.createjs = this.createjs||{};
 	 * @constructor
 	 **/
 	function Matrix2D(a, b, c, d, tx, ty) {
-		this.setValues(a,b,c,d,tx,ty);
+		this.set(a,b,c,d,tx,ty);
 		
 	// public properties:
 		// assigned in the setValues method.
@@ -136,7 +136,7 @@ this.createjs = this.createjs||{};
 	 * @param {Number} [ty=0] Specifies the ty property for the new matrix.
 	 * @return {Matrix2D} This instance. Useful for chaining method calls.
 	*/
-	p.setValues = function(a, b, c, d, tx, ty) {
+	p.set = function(a, b, c, d, tx, ty) {
 		// don't forget to update docs in the constructor if these change:
 		this.a = (a == null) ? 1 : a;
 		this.b = b || 0;

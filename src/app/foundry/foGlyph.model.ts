@@ -1,11 +1,11 @@
 
 import { Tools } from './foTools';
-import { cPoint, cFrame } from './foGeometry';
+import { cPoint, cFrame, cRect } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 
 
-import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
+import { iObject, iNode, iShape, iPoint, iSize, iRect, iFrame, Action } from './foInterface';
 
 import { foHandle } from './foHandle';
 import { foObject } from './foObject.model';
@@ -88,10 +88,23 @@ export class foGlyph extends foNode implements iShape {
         this._invMatrix = undefined;
     }
 
+    private _layout: () => void;
+    public setLayout(func: () => void) {
+        this._layout = func;
+        return this;
+    };
+    public doLayout(deep: boolean = true) {
+        if (deep) {
+            this.nodes.forEach(item => item.doLayout());
+        }
 
-    
-    private _boundry:cFrame = new cFrame()
-    get boundryFrame(): cFrame { 
+        this._layout && this.wait(1000, this._layout);
+        return this;
+    };
+
+
+    private _boundry: cFrame = new cFrame(this);
+    get boundryFrame(): cFrame {
         let mtx = this.getGlobalMatrix();
         //this is a buffer so we create less garbage
         let pt = this._boundry.point;
@@ -103,18 +116,34 @@ export class foGlyph extends foNode implements iShape {
         this.nodes.forEach(item => {
             this._boundry.merge(item.boundryFrame);
         });
-        return this._boundry; 
+        return this._boundry;
     }
 
     public drawBoundry(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()
         ctx.setLineDash([5, 5]);
-        this.boundryFrame.draw(ctx,false);
+        this.boundryFrame.draw(ctx, false);
         ctx.stroke();
     }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+    }
+
+    set(x: number, y: number, width: number, height: number): iRect {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        return this;
+    }
+
+    contains(x: number, y: number): boolean {
+        return this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height;
+    }
+
+    localContains(x: number, y: number): boolean {
+        return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
     }
 
     protected toJson(): any {
@@ -144,12 +173,12 @@ export class foGlyph extends foNode implements iShape {
         return this._subcomponents;
     }
 
-    public easeTo(x: number, y: number, time: number = .5, force: boolean = false) {
+    public easeTo(x: number, y: number, ease: any = Back.ease, time: number = .5) {
 
-        TweenLite.to(this, force ? 0 : time, {
+        TweenLite.to(this, time, {
             x: x,
             y: y,
-            ease: Back.ease
+            ease: ease
         }).eventCallback("onUpdate", () => {
             this.drop();
         }).eventCallback("onComplete", () => {
@@ -205,22 +234,33 @@ export class foGlyph extends foNode implements iShape {
         return mtx.transformPoint(x, y, pt);
     };
 
-    localToGlobalPoint(pt: cPoint) {
+    localToGlobalPoint(pt: cPoint): cPoint {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(pt.x, pt.y, pt);
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint) {
+    globalToLocal(x: number, y: number, pt?: cPoint): cPoint {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt);
     };
 
-    globalToLocalPoint(pt: cPoint) {
+    globalToLocalPoint(pt: cPoint): cPoint {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(pt.x, pt.y, pt);
     };
 
-    localToLocal(x: number, y: number, target: foGlyph, pt?: cPoint) {
+    globalToLocalFrame(x1: number, y1: number, x2: number, y2: number, frame?: cFrame): cFrame {
+        frame = frame || new cFrame();
+        let inv = this.getGlobalMatrix().invertCopy();
+
+        frame.init(inv.transformPoint(x1, y1, frame.point));
+        frame.minmax(inv.transformPoint(x1, y2, frame.point));
+        frame.minmax(inv.transformPoint(x2, y1, frame.point));
+        frame.minmax(inv.transformPoint(x2, y2, frame.point))
+        return frame;
+    };
+
+    localToLocal(x: number, y: number, target: foGlyph, pt?: cPoint): cPoint {
         pt = this.localToGlobal(x, y, pt);
         return target.globalToLocal(pt.x, pt.y, pt);
     };
@@ -242,30 +282,30 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    public getSize = (scale: number = 1): iSize => {
-        //structual type
-        return {
-            width: this.width * scale,
-            height: this.height * scale
-        }
-    }
+    // public getSize = (scale: number = 1): iSize => {
+    //     //structual type
+    //     return {
+    //         width: this.width * scale,
+    //         height: this.height * scale
+    //     }
+    // }
 
-    public scaleSize = (scale: number): iSize => {
-        this.x -= (this.width * (scale - 1)) / 2.0;
-        this.y -= (this.height * (scale - 1)) / 2.0;
-        this.width *= scale;
-        this.height *= scale;
-        return this.getSize();
-    }
+    // public scaleSize = (scale: number): iSize => {
+    //     this.x -= (this.width * (scale - 1)) / 2.0;
+    //     this.y -= (this.height * (scale - 1)) / 2.0;
+    //     this.width *= scale;
+    //     this.height *= scale;
+    //     return this.getSize();
+    // }
 
-    public growSize = (dx: number, dy: number): iSize => {
-        try {
-            this.width += dx;
-            this.height += dy;
-        } catch (ex) {
-        }
-        return this.getSize();
-    }
+    // public growSize = (dx: number, dy: number): iSize => {
+    //     try {
+    //         this.width += dx;
+    //         this.height += dy;
+    //     } catch (ex) {
+    //     }
+    //     return this.getSize();
+    // }
 
     public setColor(color: string): string {
         this.color = color;
@@ -285,49 +325,55 @@ export class foGlyph extends foNode implements iShape {
         })
     }
 
-    protected childObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph {
-        let children = this.Subcomponents;
-        let total = children.length;
-        for (let i: number = 0; i < total; i++) {
-            let child: foGlyph = <foGlyph>children[i];
-            if (child.hitTest(hit, ctx)) {
-                return child;
-            }
-        }
-        return undefined;
-    }
-
     findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
         let found: foGlyph = this.hitTest(hit, ctx) ? this : undefined;
 
         if (deep) {
-            let child = this.childObjectUnderPoint(hit, ctx);
+            let child = this.findChildObjectUnderPoint(hit, ctx);
             found = child ? child : found;
         }
         return found;
     }
 
-    protected childObjectUnderShape(hit: iShape, ctx: CanvasRenderingContext2D): foGlyph {
-        let children = this.Subcomponents;
-        let total = children.length;
-        for (let i: number = 0; i < total; i++) {
-            let child: foGlyph = <foGlyph>children[i];
-            if (child.overlapTest(hit, ctx)) {
-                return child;
-            }
+    protected findChildObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph {
+        let children = this.nodes;
+        for (let i: number = 0; i < children.length; i++) {
+            let child: foGlyph = children.getMember(i);
+            let found = child.findChildObjectUnderPoint(hit, ctx);
+            if (found) return found;
         }
-        return undefined;
+        if (this.hitTest(hit, ctx)) {
+            return this;
+        }
     }
 
-    findObjectUnderShape(hit: iShape, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
-        let found: foGlyph = this.overlapTest(hit, ctx) && this;
+
+
+    findObjectUnderFrame(source: foGlyph, hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
+        let found: foGlyph = this.overlapTest(hit, ctx) ? this : undefined;
 
         if (deep) {
-            let child = this.childObjectUnderShape(hit, ctx);
+            let child = this.findChildObjectUnderFrame(source, hit, ctx);
             found = child ? child : found;
         }
         return found;
     }
+
+    protected findChildObjectUnderFrame(source: foGlyph, hit: iFrame, ctx: CanvasRenderingContext2D): foGlyph {
+        let children = this.nodes;
+        for (let i: number = 0; i < children.length; i++) {
+            let child: foGlyph = children.getMember(i);
+            if (source.hasAncestor(child)) continue;
+            let found = child.findChildObjectUnderFrame(source, hit, ctx);
+            if (found) return found;
+
+        }
+        if (this.overlapTest(hit, ctx)) {
+            return this;
+        }
+    }
+
+
 
     protected localHitTest = (hit: iPoint): boolean => {
 
@@ -347,22 +393,17 @@ export class foGlyph extends foNode implements iShape {
 
 
 
-    public overlapTest = (hit: iShape, ctx: CanvasRenderingContext2D): boolean => {
-        let x = this.x;
-        let y = this.y;
-        let width = this.width;
-        let height = this.height;
+    public overlapTest = (hit: iFrame, ctx: CanvasRenderingContext2D): boolean => {
+        let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
-        let loc = hit.getLocation();
-        let size = hit.getSize(1.0);
-        if (loc.x > x + width) return false;
-        if (loc.x + size.width < x) return false;
-        if (loc.y > y + height) return false;
-        if (loc.y + size.height < y) return false;
-        return true;
+        if (this.localContains(frame.x1, frame.y1)) return true;
+        if (this.localContains(frame.x1, frame.y2)) return true;
+        if (this.localContains(frame.x2, frame.y1)) return true;
+        if (this.localContains(frame.x2, frame.y2)) return true;
+        return false;
     }
 
-    protected pinLocation() {
+    public pinLocation() {
         return {
             x: 0,
             y: 0,
@@ -381,7 +422,7 @@ export class foGlyph extends foNode implements iShape {
         });
     }
 
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {       
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
         //this.drawOrigin(ctx);

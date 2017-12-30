@@ -76,7 +76,7 @@ export class cRect implements iRect {
         return this;
     }
 
-    setValue(x: number, y: number, width: number, height: number): iRect {
+    set(x: number, y: number, width: number, height: number): iRect {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -86,6 +86,10 @@ export class cRect implements iRect {
 
     contains(x: number, y: number) {
         return this.x <= x && x <= this.x + this.width && this.y <= y && y <= this.y + this.height;
+    }
+
+    localContains(x: number, y: number): boolean {
+        return 0 <= x && x <= this.width && 0 <= y && y <= this.height;
     }
 
     draw(ctx: CanvasRenderingContext2D, fill?: boolean) {
@@ -105,9 +109,14 @@ export class cFrame implements iFrame {
     public x2: number;
     public y2: number;
 
-    public point:cPoint = new cPoint()
+    public point:cPoint = new cPoint();
+    public source:any;
 
-    setValue(x1: number, y1: number, x2: number, y2: number): iFrame {
+    constructor(source?:any){
+        this.source = source;
+    }
+
+    set(x1: number, y1: number, x2: number, y2: number): iFrame {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;

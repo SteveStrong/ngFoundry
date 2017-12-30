@@ -148,7 +148,7 @@ export class foDisplay2D extends foShape2D {
         if ((y = x_b + y_d + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
         if ((y = y_d + ty) < minY) { minY = y; } else if (y > maxY) { maxY = y; }
 
-        return bounds.setValue(minX, minY, maxX - minX, maxY - minY);
+        return bounds.set(minX, minY, maxX - minX, maxY - minY);
     };
 
 
