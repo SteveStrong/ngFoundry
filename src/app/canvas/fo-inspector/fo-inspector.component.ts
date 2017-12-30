@@ -1,6 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { StageComponent } from "../stage.component";
+
 import { foPage } from "../../foundry/foPage.model";
+
+
+//https://valor-software.com/ngx-bootstrap/#/tabs
+
 
 @Component({
   selector: 'fo-inspector',
@@ -8,12 +14,16 @@ import { foPage } from "../../foundry/foPage.model";
   styleUrls: ['./fo-inspector.component.css']
 })
 export class foInspectorComponent implements OnInit {
-
-  @Input() public rootPage:foPage;
+  oneAtATime: boolean = true;
+  @Input() 
+  public stage:StageComponent;
+  
+  public rootPage:foPage;
 
   constructor() { }
 
   ngOnInit() {
+    this.rootPage = this.stage
   }
 
 }

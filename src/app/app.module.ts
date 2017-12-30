@@ -33,6 +33,9 @@ import { TestSvgCircleComponent } from './networkview/test-svg-circle.component'
 import { SignalRService } from "./common/signalr.service";
 import { StageComponent } from './canvas/stage.component';
 import { CanvasTestComponent } from './canvas/canvastest.component';
+
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { foInspectorComponent } from './canvas/fo-inspector/fo-inspector.component';
 import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
 
@@ -66,6 +69,8 @@ import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
   ],
   imports: [
     BrowserAnimationsModule,
+    AccordionModule.forRoot(),
+    TabsModule.forRoot(),
     ToastModule.forRoot(),
 
     BrowserModule,

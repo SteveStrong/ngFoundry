@@ -47,9 +47,12 @@ import { foObject } from 'app/foundry/foObject.model';
 })
 export class StageComponent extends foPage implements OnInit, AfterViewInit {
   // a reference to the canvas element from our template
-  @ViewChild('canvas') public canvasRef: ElementRef;
-  @Input() public pageWidth = 1000;
-  @Input() public pageHeight = 800;
+  @ViewChild('canvas') 
+  public canvasRef: ElementRef;
+  @Input() 
+  public pageWidth = 1200;
+  @Input() 
+  public pageHeight = 1000;
 
   message: Array<any> = [];
   screen2D: Sceen2D = new Sceen2D();
@@ -300,11 +303,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
   doImage() {
-    // let image = Concept.define<foImage>('blocks::block2d', foImage, {
-    //   background: 'green',
-    //   width: 100,
-    //   height: 50
-    // });
+    let def = Concept.define<foImage>('blocks::block2d', foImage, {
+      background: 'green',
+      imageURL: "https://lorempixel.com/900/500?r=2",
+      width: 100,
+      height: 50
+    });
+
+    let picture = def.newInstance().addAsSubcomponent(this);
+    this.signalR.pubCommand("syncShape", { guid: picture.myGuid }, picture.asJson);
+    let place = { x: 800, y: 200 }
+    picture.easeTween(place, 1.5);
+    this.signalR.pubCommand("easeTween", { guid: picture.myGuid, }, place);
 
     let image = new foImage({
       background: 'blue',
@@ -317,8 +327,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: image.myGuid }, image.asJson);
 
     let size = {
-      width: 400,
-      height: 400,
+      width: 200,
+      height: 200,
     }
 
     image.easeTween(size, 2.8, Back['easeInOut']);
