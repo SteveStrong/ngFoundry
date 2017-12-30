@@ -255,7 +255,7 @@ export class foPage extends foShape2D {
             }
 
             if ( shape.myParent() != this && keys.ctrl) {
-                foObject.beep();
+                //foObject.beep();
                 let drop = shape.localToGlobal(0,0);
                 this.addSubcomponent(shape.removeFromParent());
                 shape.easeTo(drop.x, drop.y);
