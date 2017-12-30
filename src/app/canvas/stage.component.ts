@@ -47,11 +47,11 @@ import { foObject } from 'app/foundry/foObject.model';
 })
 export class StageComponent extends foPage implements OnInit, AfterViewInit {
   // a reference to the canvas element from our template
-  @ViewChild('canvas') 
+  @ViewChild('canvas')
   public canvasRef: ElementRef;
-  @Input() 
+  @Input()
   public pageWidth = 1200;
-  @Input() 
+  @Input()
   public pageHeight = 1000;
 
   message: Array<any> = [];
@@ -219,6 +219,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
     }
 
+    this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
+      this.mouseLoc = loc;
+      this.mouseLoc.state = state; 212
+      this.mouseLoc.keys = keys;
+    }
+
     let compute = {
       height: function () {
         let size = parseInt(this.size.split(':')[1]);
@@ -239,50 +245,43 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     Stencil.define(TenByTen, { width: 250, height: 250 });
   }
 
-  onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
-    this.mouseLoc = loc;
-    this.mouseLoc.state = state; 212
-    this.mouseLoc.keys = keys;
-  }
-
-  doDynamicCreate() {
-
-    let shape = Pallet.create(foGlyph, {
-      x: 150,
-      y: 100,
-      height: 50,
-      width: 20,
-    });
-    this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
-  }
-
-  doBoundry() {
-
-    // let text = Concept.define<foText2D>('words::text2d', foText2D, {
-    //   color: 'black',
-    //   background: 'grey',
-    //   context: 'HELLO',
-    //   fontSize: 30,
-    // });
-
-    let text = Concept.define<foShape2D>('blocks::text2d', foShape2D, {
+  doLoadStencil() {
+    Concept.define<foShape2D>('boundry::shape1', foShape2D, {
       color: 'gray',
       width: 50,
       height: 25
     });
 
-    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+    Concept.define<foShape2D>('boundry::block', foShape2D, {
       color: 'green',
       width: 100,
       height: 50
     });
 
-    let boundry = Concept.define<foShape2D>('blocks::boundry2d', foShape2D, {
+    Concept.define<foText2D>('boundry::text', foText2D, {
+      color: 'black',
+      background: 'grey',
+      context: 'HELLO',
+      fontSize: 30,
+    });
+
+    Concept.define<foShape2D>('boundry::boundry', foShape2D, {
       color: 'cyan',
       width: 100,
       height: 50
     });
+  }
+
+
+  doBoundry() {
+
+
+
+    let text = Concept.find<foShape2D>('boundry::text');
+
+    let block = Concept.find<foShape2D>('boundry::block');
+
+    let boundry = Concept.find<foShape2D>('boundry::boundry');
 
     let box = boundry.newInstance().drop(200, 100).addAsSubcomponent(this);
 

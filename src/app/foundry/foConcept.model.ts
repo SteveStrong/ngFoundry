@@ -32,7 +32,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
-    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T ) => T, init?:Action<T>) {
+    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T) => T, init?: Action<T>) {
         super(properties);
         this._spec = properties || {};
         this._init = init;
@@ -40,7 +40,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         if (create) {
             this._create = create;
         } else {
-            this._create = (p?: any, s?: Array<T>, r?: T) => { return new foNode(p,s,r) as T; };
+            this._create = (p?: any, s?: Array<T>, r?: T) => { return new foNode(p, s, r) as T; };
         }
 
     }
@@ -161,8 +161,10 @@ export class Concept {
     }
 
     static registerConcept<T extends foNode>(namespace: string, name: string, concept: foConcept<T>): foConcept<T> {
-        let space = this.lookup[namespace] ? this.lookup[namespace] : {}
-        space[name] = concept;
+        if (!this.lookup[namespace]) {
+            this.lookup[namespace] = {};
+        }
+        this.lookup[namespace][name] = concept;
         return concept;
     }
 
@@ -175,8 +177,8 @@ export class Concept {
     static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, func?: Action<T>): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
 
-        let create = (p?: any, s?: Array<T>, r?: T) => { 
-            return new type(p, s, r); 
+        let create = (p?: any, s?: Array<T>, r?: T) => {
+            return new type(p, s, r);
         };
 
         let concept = new foConcept<T>(properties, create, func);
