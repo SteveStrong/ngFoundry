@@ -246,8 +246,8 @@ export class foPage extends foShape2D {
                 let { x, y } = shape.getLocation();
                 let drop = shapeUnder.globalToLocal(x, y);
                 shapeUnder.addSubcomponent(shape.removeFromParent());
-                shape.drop(drop.x, drop.y);
-                shape.easeTo(0, 0);
+                shape.easeTo(drop.x, drop.y);
+                //shape.easeTo(0, 0);
                 shapeUnder = null;
                 this.onItemChangedParent(shape)
             } else {
@@ -256,7 +256,8 @@ export class foPage extends foShape2D {
 
             if ( shape.myParent() != this && keys.ctrl) {
                 //foObject.beep();
-                let drop = shape.localToGlobal(0,0);
+                let { x, y } = shape.pinLocation();
+                let drop = shape.localToGlobal(x,y);
                 this.addSubcomponent(shape.removeFromParent());
                 shape.easeTo(drop.x, drop.y);
                 this.onItemChangedParent(shape)             

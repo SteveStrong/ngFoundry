@@ -403,7 +403,7 @@ export class foGlyph extends foNode implements iShape {
         return false;
     }
 
-    protected pinLocation() {
+    public pinLocation() {
         return {
             x: 0,
             y: 0,
