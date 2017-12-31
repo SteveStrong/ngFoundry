@@ -10,14 +10,9 @@ import { foCollection } from './foCollection.model'
 
 export class foKnowledge extends foObject {
 
-
-    constructor(spec: any = undefined) {
-        super();
-        this.myName = spec && spec['myName'] ? spec['myName'] : 'unknown';
-        this.override(spec);
+    constructor(properties?: any) {
+        super(properties);
     }
-
-
 }
 
 import { RuntimeType } from './foRuntimeType';

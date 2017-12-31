@@ -31,23 +31,19 @@ export class foConcept<T extends foNode> extends foKnowledge {
     private _projections: foDictionary<foProjection<T>> = new foDictionary<foProjection<T>>({ myName: 'projections' });
 
 
-    createType(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+
+
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+    defineCore(id:string, core: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+        this.myName = id;
+        this.core = core;
         this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
             return new type(properties, subcomponents, parent);
         }
         return this;
-    }
-
-    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T) => T) {
-        super();
-        this.specification = properties || {};
-
-        if (create) {
-            this._create = create;
-        } else {
-            this._create = (p?: any, s?: Array<T>, r?: T) => { return new foNode(p, s, r) as T; };
-        }
-
     }
 
 
@@ -92,7 +88,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = {
             base: this,
             spec: this._specification,
-            type: this._type,
+            core: this._core,
             attributes: this._attributes,
             projections: this._projections,
         }
@@ -105,14 +101,12 @@ export class foConcept<T extends foNode> extends foKnowledge {
         result.specification = this._specification;
         result.attributes = Tools.asArray(this.attributes.asJson);
         result.projections = Tools.asArray(this.projections.asJson);
-        //let result = this.jsonMerge(this._attributes.values);
         return result;
     }
 
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
-        let spec = Tools.union(this._spec, properties);
+        let spec = Tools.union(this.specification, properties);
         let result = this._create(spec, subcomponents, parent) as T;
-        result.myName = this.myName;
         result.initialize();
         return result;
     }
@@ -201,13 +195,8 @@ export class Concept {
     static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
 
-        let create = (p?: any, s?: Array<T>, r?: T) => {
-            return new type(p, s, r);
-        };
-
-        let concept = new foConcept<T>(properties, create);
-        concept.core = type.name;
-        concept.myName = id;
+        let concept = new foConcept<T>(properties);
+        concept.defineCore(id, type.name, type);
 
         return this.registerConcept(namespace, name, concept);
     }
