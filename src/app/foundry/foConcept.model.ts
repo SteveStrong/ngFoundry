@@ -18,9 +18,9 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return <T>new foNode(properties, subcomponents, parent);
     }
 
-    private _core: string;
-    get core(): string { return this._core; }
-    set core(value: string) { this._core = value; }
+    private _primitive: string;
+    get primitive(): string { return this._primitive; }
+    set primitive(value: string) { this._primitive = value; }
 
     private _specification: any;
     get specification(): any { return this._specification; }
@@ -51,9 +51,9 @@ export class foConcept<T extends foNode> extends foKnowledge {
         super(properties);
     }
 
-    defineCore(id:string, core: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
-        this.myName = id;
-        this.core = core;
+
+    definePrimitive(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+        this.primitive = type.name;
         this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
             return new type(properties, subcomponents, parent);
         }
@@ -89,7 +89,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = {
             base: this,
             spec: this._specification,
-            core: this._core,
+            primitive: this._primitive,
             attributes: this._attributes,
             projections: this._projections,
         }
@@ -98,7 +98,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
     get asJson() {
         let result = Tools.asJson(this);
-        result.core = this._core;
+        result.primitive = this._primitive;
         result.specification = this._specification;
         result.attributes = Tools.asArray(this.attributes.asJson);
         result.projections = Tools.asArray(this.projections.asJson);
@@ -151,6 +151,13 @@ RuntimeType.knowledge(foProjection);
 export class Concept {
     static lookup: any = {}
 
+    static namespaces(): Array<string> {
+        return Object.keys(this.lookup);
+    }
+    static names(namespace:string): Array<string> {
+        return Object.keys(this.lookup[namespace]);
+    }
+
     static allConcepts(): Array<any> {
         let list: Array<any> = new Array<any>();
         Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
@@ -160,7 +167,10 @@ export class Concept {
                     id: id,
                     namespace: namespace,
                     name: name,
-                    concept: concept
+                    concept: concept,
+                    create: () => {
+                        return concept.makeInstance()
+                    }
                 });
             })
         })
@@ -196,23 +206,24 @@ export class Concept {
     static define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(myName);
 
-        let concept = new foConcept<T>();
-        concept.defineCore(myName, type.name, type);
+        let concept = new foConcept<T>({myName});
+        concept.definePrimitive(type);
         concept.specification = specification || {};
        
         return this.registerConcept(namespace, name, concept);
     }
 
     static override<T extends foNode>(json: any): foConcept<T> {
-        let { myName, core } = json;
-        let { namespace, name } = Tools.splitNamespaceType(myName);
+        let { specification, primitive } = json;
 
         let concept = new foConcept<T>(json);
+        //alert(JSON.stringify(concept, undefined, 3));
 
-        let type = RuntimeType.modelTypes[core];
-        concept.defineCore(myName, type.name, type);
-        concept.specification = json.specification;
+        let type = RuntimeType.modelTypes[primitive];
+        concept.definePrimitive(type);
+        concept.specification = specification;
   
+        let { namespace, name } = Tools.splitNamespaceType(concept.myName);
         return this.registerConcept(namespace, name, concept);
     }
 

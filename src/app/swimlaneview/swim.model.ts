@@ -14,7 +14,7 @@ export class svgConcept extends foConcept<foNode> {
     constructor(properties?: any) {
         super(properties);
 
-        this.createType(svgShapeView);
+        this.definePrimitive(svgShapeView);
     }
 }
 

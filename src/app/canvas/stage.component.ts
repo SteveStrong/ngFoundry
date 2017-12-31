@@ -284,8 +284,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doBoundry() {
 
-
-
     let text = Concept.find<foShape2D>('boundry::text');
 
     let block = Concept.find<foShape2D>('boundry::block');
@@ -310,7 +308,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
 
+    this.signalR.pubCommand("syncShape", { guid: box.myGuid }, box.asJson);
   }
+
   doImage() {
     let def = Concept.define<foImage>('blocks::block2d', foImage, {
       background: 'green',
@@ -931,7 +931,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
-        alert(JSON.stringify(data, undefined, 3));
+        //alert(JSON.stringify(data, undefined, 3));
         let found = Concept.override(data);
         PubSub.Pub('refreshStencil',found);
       });
