@@ -1,10 +1,9 @@
-
-import { foShape2D, Stencil } from "../foundry/foShape2D.model";
+import { foShape2D } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { cPoint, cRect } from "../foundry/foGeometry";
 import { foHandle } from '../foundry/foHandle';
 import { foCollection } from '../foundry/foCollection.model';
-import { RuntimeType } from '../foundry/foRuntimeType';
+//import { RuntimeType } from '../foundry/foRuntimeType';
 
 
 export class legoCore extends foShape2D {
@@ -88,7 +87,6 @@ export class TenByTen extends legoCore {
     this.size = '10:10';
   }
 }
-RuntimeType.define(TenByTen);
 
 export class ThreeByThreeCircle extends legoCore {
 

@@ -44,6 +44,7 @@ import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
 import { foRuntimeComponent } from './canvas/fo-inspector/fo-runtime.component';
 import { foPaletteComponent } from './canvas/fo-inspector/fo-palette.component';
 import { foCommandComponent } from './canvas/fo-inspector/fo-command.component';
+import { foConceptComponent } from './canvas/fo-inspector/fo-concept.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import { foCommandComponent } from './canvas/fo-inspector/fo-command.component';
     foDrawingComponent,
     foRuntimeComponent,
     foPaletteComponent,
-    foCommandComponent
+    foCommandComponent,
+    foConceptComponent
   ],
   imports: [
     BrowserAnimationsModule,

@@ -20,10 +20,11 @@ import { Concept } from "../foundry/foConcept.model";
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
+import { Stencil } from "../foundry/foStencil";
 
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph } from "../foundry/foGlyph.model";
-import { foShape2D, Stencil } from "../foundry/foShape2D.model";
+import { foShape2D } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
 import { foImage } from "../foundry/foImage.model";
@@ -821,7 +822,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       item.doAnimation = item.Animation;
       item.isSelected = true;
     }).addAsSubcomponent(this);
-    
+
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
   }
 
