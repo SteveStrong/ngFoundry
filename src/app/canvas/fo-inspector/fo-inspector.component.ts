@@ -29,4 +29,8 @@ export class foInspectorComponent implements OnInit {
   doRefreshStencil() {
     PubSub.Pub('refreshStencil');
   }
+
+  doRefreshConcepts() {
+    PubSub.Pub('refreshConcepts');
+  }
 }

@@ -1,5 +1,5 @@
 <tabset type="pills">
-  <tab heading='Live Debug'>
+  <tab heading='Live'>
     <pre class="well">{{stage.mouseLoc | json}}</pre>
     <!-- <pre class="well">{{stage.message | json}}</pre> -->
 
@@ -7,6 +7,9 @@
 
     <!-- <pre class="well">{{_dictionary | json}}</pre> -->
     <!-- <pre class="well">{{Subcomponents | json}}</pre> -->
+  </tab>
+  <tab heading='Runtime'>
+    <fo-runtime ></fo-runtime>
   </tab>
   <tab heading='Page'>
     <fo-drawing [rootPage]="rootPage"></fo-drawing>
@@ -16,6 +19,9 @@
   </tab>
   <tab heading='Stencil' (select)="doRefreshStencil()">
     <fo-stencil [rootPage]="rootPage"></fo-stencil>
+  </tab>
+  <tab heading='Concepts' (select)="doRefreshStencil()">
+    <fo-stencil ></fo-stencil>
   </tab>
   <tab heading='Testing'>
 

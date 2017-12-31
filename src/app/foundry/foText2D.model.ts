@@ -12,7 +12,7 @@ import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foShape2D, Stencil } from '../foundry/foShape2D.model'
+import { foShape2D } from '../foundry/foShape2D.model'
 
 
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
