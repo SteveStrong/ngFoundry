@@ -53,6 +53,11 @@ export class foPage extends foShape2D {
         this.setupMouseEvents();
     }
 
+    //this is used to drop shapes
+    get centerX(): number { return this.width / 2; }
+    get centerY(): number { return this.height / 2; }
+ 
+
     findItem(key: string, onMissing?: Action<foGlyph>, onFound?: Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing, onFound);
     }

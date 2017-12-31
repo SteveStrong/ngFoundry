@@ -38,6 +38,9 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { foInspectorComponent } from './canvas/fo-inspector/fo-inspector.component';
 import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
+import { foStencilComponent } from './canvas/fo-inspector/fo-stencil.component';
+import { foModelComponent } from './canvas/fo-inspector/fo-model.component';
+import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +68,13 @@ import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
 
     foInspectorComponent,
 
-    foPanelComponent
+    foPanelComponent,
+
+    foStencilComponent,
+
+    foModelComponent,
+
+    foDrawingComponent
   ],
   imports: [
     BrowserAnimationsModule,

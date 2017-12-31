@@ -146,7 +146,23 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 }
 
 export class Concept {
-    static lookup = {}
+    static lookup: any = {}
+
+    static allConcepts(): Array<any> {
+        let list: Array<any> = new Array<any>();
+        Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
+            Tools.forEachKeyValue(obj, (name, concept) => {
+                let id = `${namespace}::${name}`;
+                list.push({
+                    id: id,
+                    namespace: namespace,
+                    name: name,
+                    concept: concept
+                });
+            })
+        })
+        return list;
+    }
 
     static find<T extends foNode>(id: string): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);

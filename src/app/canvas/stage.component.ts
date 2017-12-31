@@ -283,7 +283,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let boundry = Concept.find<foShape2D>('boundry::boundry');
 
-    let box = boundry.newInstance().drop(200, 100).addAsSubcomponent(this);
+    let box = boundry.newInstance().drop(this.centerX, this.centerY).addAsSubcomponent(this);
 
 
     for (var i = 0; i < 3; i++) {
