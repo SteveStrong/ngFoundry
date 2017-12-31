@@ -550,7 +550,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
-
+  doAddThreeByThree() {
+    let shape = RuntimeType.create(ThreeByThreeCircle, {
+      color: 'coral',
+      x: 400,
+      y: 400,
+    });
+    this.addSubcomponent(shape);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+  }
 
 
   doAddOneByOne() {

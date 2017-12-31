@@ -2,6 +2,8 @@
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { cPoint, cRect } from "../foundry/foGeometry";
+import { foHandle } from '../foundry/foHandle';
+import { foCollection } from '../foundry/foCollection.model';
 import { RuntimeType } from '../foundry/foRuntimeType';
 
 
@@ -95,19 +97,45 @@ export class ThreeByThreeCircle extends legoCore {
     this.size = '3:3';
   }
 
+  public createHandles(): foCollection<foHandle> {
+    let DEG_TO_RAD = Math.PI / 180;
+    let cx = this.width / 2;
+    let cy = this.height / 2;
+    let w = cx * Math.cos(45 * DEG_TO_RAD);
+    let h = cy * Math.cos(45 * DEG_TO_RAD);
+
+    let spec = [
+      { x: cx - w, y: cy - h, myName: "0:0" },
+      { x: cx + w, y: cy - h, myName: "W:0" },
+      { x: cx + w, y: cy + h, myName: "W:H" },
+      { x: cx - w, y: cy + h, myName: "0:H" },
+    ];
+
+    return this.generateHandles(spec);
+  }
+
   public draw = (ctx: CanvasRenderingContext2D): void => {
 
+    let center = this.pinLocation();
     ctx.save();
-    ctx.fillStyle = this.color;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = .8;
-    ctx.setLineDash([])
+
     ctx.beginPath();
-    ctx.arc(0, 0, this.width / 2, 0, 2 * Math.PI);
-    ctx.stroke();
+    ctx.arc(center.x, center.y, this.width / 2, 0, 2 * Math.PI);
+    ctx.fillStyle = this.color;
+    ctx.fill();
 
     ctx.restore();
   }
+
+  public drawOutline(ctx: CanvasRenderingContext2D) {
+    let center = this.pinLocation();
+    ctx.beginPath()
+    ctx.setLineDash([15, 5]);
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, this.width / 2, 0, 2 * Math.PI);
+    ctx.stroke();
+  }
+
 }
 
 

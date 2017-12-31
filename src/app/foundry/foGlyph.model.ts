@@ -290,31 +290,6 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    // public getSize = (scale: number = 1): iSize => {
-    //     //structual type
-    //     return {
-    //         width: this.width * scale,
-    //         height: this.height * scale
-    //     }
-    // }
-
-    // public scaleSize = (scale: number): iSize => {
-    //     this.x -= (this.width * (scale - 1)) / 2.0;
-    //     this.y -= (this.height * (scale - 1)) / 2.0;
-    //     this.width *= scale;
-    //     this.height *= scale;
-    //     return this.getSize();
-    // }
-
-    // public growSize = (dx: number, dy: number): iSize => {
-    //     try {
-    //         this.width += dx;
-    //         this.height += dy;
-    //     } catch (ex) {
-    //     }
-    //     return this.getSize();
-    // }
-
     public setColor(color: string): string {
         this.color = color;
         return this.color;
@@ -464,7 +439,6 @@ export class foGlyph extends foNode implements iShape {
     };
 
 
-
     public drawPin(ctx: CanvasRenderingContext2D) {
         let { x, y } = this.pinLocation();
 
@@ -518,7 +492,6 @@ export class foGlyph extends foNode implements iShape {
         ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
     }
-
 
 
     protected generateHandles(spec: any): foCollection<foHandle> {
@@ -587,17 +560,11 @@ export class foGlyph extends foNode implements iShape {
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
-        ctx.globalAlpha = this.opacity;
         ctx.fillRect(0, 0, this.width, this.height);
-
-        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-
-        let text = `x1=${this.x} y1=${this.y}|x2=${this.x + this.width} y2=${this.y + this.height}|`;
-        this.drawText(ctx, text);
     }
 
     toggleSelected() {
-        this._isSelected = !this._isSelected;
+        this.isSelected = !this.isSelected;
     }
 
     layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
