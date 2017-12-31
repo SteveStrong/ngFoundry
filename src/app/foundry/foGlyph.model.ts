@@ -148,16 +148,14 @@ export class foGlyph extends foNode implements iShape {
     }
 
     protected toJson(): any {
-        return {
-            myGuid: this.myGuid,
-            myType: this.myType,
+        return Tools.mixin(super.toJson(), {
             x: this.x,
             y: this.y,
             width: this.width,
             height: this.height,
             opacity: this.opacity,
             color: this.color,
-        }
+        });
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {

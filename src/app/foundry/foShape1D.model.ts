@@ -78,12 +78,12 @@ export class foShape1D extends foShape2D {
     }
 
     protected toJson():any {
-        let result = super.toJson();
-        result.startX = this.startX;
-        result.startY = this.startY;
-        result.finishX = this.finishX;
-        result.finishY = this.finishY;
-        return result;
+        return Tools.mixin(super.toJson(), {
+            startX: this.startX,
+            startY: this.startY,
+            finishX: this.finishX,
+            finishY: this.finishY,
+        });
     }
 
     private setStart(point: iPoint) {

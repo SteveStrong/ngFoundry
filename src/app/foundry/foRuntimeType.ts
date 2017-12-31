@@ -21,7 +21,7 @@ export class RuntimeType {
     static define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         let name = type.name;
         this.modelPrimitives[name] = type;
-        return name;
+        return type;
     }
 
     static create<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any) {
@@ -38,7 +38,7 @@ export class RuntimeType {
     static knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
         let name = type.name;
         this.knowledgePrimitives[name] = type;
-        return name;
+        return type;
     }
 
 }

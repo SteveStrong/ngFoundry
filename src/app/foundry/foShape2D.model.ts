@@ -39,9 +39,9 @@ export class foShape2D extends foGlyph {
     }
 
     protected toJson(): any {
-        let result = super.toJson();
-        result.angle = this.angle;
-        return result;
+        return Tools.mixin(super.toJson(), {
+            angle:this.angle
+        });
     }
 
     public notifyOnChange(source: any, channel: string, ...args: any[]) {

@@ -64,9 +64,9 @@ export class foText2D extends foShape2D {
     }
 
     protected toJson(): any {
-        let result = super.toJson();
-        result.text = this.text;
-        return result;
+        return Tools.mixin(super.toJson(), {
+            text:this.text
+        });
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {

@@ -633,8 +633,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTenByTen() {
     let shape = RuntimeType.create(TenByTen, {
-      color: 'gray',
-      name: TenByTen.typeName()
+      color: 'gray'
     }).drop(600, 300);
 
     this.addSubcomponent(shape);
@@ -949,6 +948,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
+        alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;

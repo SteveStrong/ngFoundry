@@ -39,15 +39,14 @@ export class foGlue extends foNode {
     }
 
     protected toJson():any {
-        return {
+        return Tools.mixin(super.toJson(), {
             guid: this.myGuid,
             myType: this.myType,
             sourceGuid: this.mySource() && this.mySource().myGuid,
             sourceHandle: this.sourceHandle,
             targetGuid: this.myTarget() && this.myTarget().myGuid,
-            targetHandle: this.targetHandle,
-
-        }
+            targetHandle: this.targetHandle
+        });
     }
 
 
