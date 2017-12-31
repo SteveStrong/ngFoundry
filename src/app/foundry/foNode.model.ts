@@ -116,3 +116,6 @@ export class foNode extends foObject implements iNode {
         return list && list.hasMembers;
     }
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.model<foNode>(foNode);

@@ -16,6 +16,7 @@ import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
 
+
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
 
@@ -703,6 +704,9 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.model(foGlyph);
 
 export class Pallet {
     static lookup = {}

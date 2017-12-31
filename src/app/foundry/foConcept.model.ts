@@ -113,6 +113,9 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 }
 
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.knowledge(foConcept);
+
 export class foProjection<T extends foNode> extends foConcept<T> {
 
     private _mySource: foConcept<T> = undefined;
@@ -140,10 +143,9 @@ export class foProjection<T extends foNode> extends foConcept<T> {
         }
         return view;
     }
-
-
-
 }
+
+RuntimeType.knowledge(foProjection);
 
 export class Concept {
     static lookup: any = {}

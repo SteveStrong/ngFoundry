@@ -255,4 +255,6 @@ export class Stencil {
 }
 
 Stencil.define(foShape2D);
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.model(foShape2D);
 

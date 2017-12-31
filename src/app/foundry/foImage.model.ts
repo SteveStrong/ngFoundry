@@ -126,3 +126,5 @@ export class foImage extends foShape2D {
 }
 
 Stencil.define(foImage);
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.model(foImage);

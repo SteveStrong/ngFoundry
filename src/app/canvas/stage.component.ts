@@ -270,6 +270,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 100,
       height: 50
     });
+
+    PubSub.Pub('refreshStencil');
+
+    Concept.allConcepts().forEach(item => {
+      let concept = item.concept;
+      this.signalR.pubCommand("syncConcept", { guid: concept.myGuid }, concept.asJson);
+    })
+  
   }
 
 
@@ -947,7 +955,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
-        //alert(JSON.stringify(data, undefined, 3));
+        alert(JSON.stringify(data, undefined, 3));
       });
 
       this.signalR.subCommand("syncGlyph", (cmd, data) => {

@@ -343,5 +343,8 @@ export class foShape1D extends foShape2D {
 
 Stencil.define(foShape1D);
 
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.model(foShape1D);
+
 
 

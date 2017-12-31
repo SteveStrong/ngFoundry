@@ -19,3 +19,6 @@ export class foKnowledge extends foObject {
 
 
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.knowledge(foKnowledge);

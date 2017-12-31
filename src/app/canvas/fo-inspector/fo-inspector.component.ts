@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { StageComponent } from "../stage.component";
 
 import { foPage } from "../../foundry/foPage.model";
-
+import { PubSub } from "../../foundry/foPubSub";
 
 //https://valor-software.com/ngx-bootstrap/#/tabs
 
@@ -15,10 +15,10 @@ import { foPage } from "../../foundry/foPage.model";
 })
 export class foInspectorComponent implements OnInit {
   oneAtATime: boolean = true;
-  @Input() 
-  public stage:StageComponent;
-  
-  public rootPage:foPage;
+  @Input()
+  public stage: StageComponent;
+
+  public rootPage: foPage;
 
   constructor() { }
 
@@ -26,4 +26,7 @@ export class foInspectorComponent implements OnInit {
     this.rootPage = this.stage
   }
 
+  doRefreshStencil() {
+    PubSub.Pub('refreshStencil');
+  }
 }
