@@ -274,7 +274,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let concept = item.concept;
       this.signalR.pubCommand("syncConcept", { guid: concept.myGuid }, concept.asJson);
     })
-  
+
   }
 
 
@@ -315,11 +315,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 50
     });
 
-    let picture = def.newInstance().addAsSubcomponent(this);
-    this.signalR.pubCommand("syncShape", { guid: picture.myGuid }, picture.asJson);
-    let place = { x: 800, y: 200 }
-    picture.easeTween(place, 1.5);
-    this.signalR.pubCommand("easeTween", { guid: picture.myGuid, }, place);
+    for (let i = 0; i < 15; i++) {
+      this.wait(500, () => {
+      let picture = def.newInstance().addAsSubcomponent(this);
+        picture.angle = Tools.randomInt(0,300)
+        this.signalR.pubCommand("syncShape", { guid: picture.myGuid }, picture.asJson);
+        let place = { x: 800+ Tools.randomInt(-70,70), y: 200 + Tools.randomInt(-70,70) }
+        picture.easeTween(place, 1.5);
+        this.signalR.pubCommand("easeTween", { guid: picture.myGuid, }, place);
+      })
+
+    }
+
 
     let image = new foImage({
       background: 'blue',
@@ -404,7 +411,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
       fontSize: 30,
     });
-    
+
     // , (parent) => {
     //   parent.context.forEach(item => {
     //     block.newInstance({
@@ -552,10 +559,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddThreeByThree() {
-    let shape = RuntimeType.create(ThreeByThreeCircle, {
+    let def = Stencil.define('my', ThreeByThreeCircle, {
       color: 'coral',
       x: 400,
       y: 400,
+    });
+
+    let shape = def.newInstance({
+      color: 'coral',
     });
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
@@ -788,8 +799,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
 
-
-
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
 
@@ -818,7 +827,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'blue',
       width: 150,
       height: 100,
-    }).drop(300, 300, 0).then( item => {
+    }).drop(300, 300, 0).then(item => {
       item.doAnimation = item.Animation;
       item.isSelected = true;
     }).addAsSubcomponent(this);
@@ -891,10 +900,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         });
       });
 
-
-
-
-
       this.signalR.subCommand("deleteShape", (cmd, data) => {
         //console.log(json);
         this.found(cmd.guid, shape => {
@@ -926,7 +931,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.subCommand("syncConcept", (cmd, data) => {
         //alert(JSON.stringify(data, undefined, 3));
         let found = Concept.override(data);
-        PubSub.Pub('refreshStencil',found);
+        PubSub.Pub('refreshStencil', found);
       });
 
 
@@ -939,7 +944,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
-        //alert(JSON.stringify(data, undefined, 3));
+        alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
@@ -981,6 +986,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
+        alert(JSON.stringify(cmd, undefined, 3));
         this.found(cmd.sourceGuid, (source) => {
           this.found(cmd.targetGuid, (target) => {
             let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
