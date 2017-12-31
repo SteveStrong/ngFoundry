@@ -27,9 +27,23 @@ export class foConcept<T extends foNode> extends foKnowledge {
     set specification(value: any) { this._specification = value; }
 
 
-    private _attributes: foDictionary<foAttribute> = new foDictionary<foAttribute>({ myName: 'attributes' });
-    private _projections: foDictionary<foProjection<T>> = new foDictionary<foProjection<T>>({ myName: 'projections' });
+    private _attributes: foDictionary<foAttribute>;
+    get attributes() {
+        if (!this._attributes) {
+            this._attributes = new foDictionary<foAttribute>({ myName: 'attributes' });
+        }
+        return this._attributes;
+    }
+    set attributes(value: any) { this._attributes = value; }
 
+    private _projections: foDictionary<foProjection<T>>;
+    get projections() {
+        if (!this._projections) {
+            this._projections = new foDictionary<foProjection<T>>({ myName: 'projections' });
+        }
+        return this._projections;
+    }
+    set projections(value: any) { this._projections = value; }
 
 
 
@@ -47,14 +61,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
 
 
-    get attributes() {
-        if (!this._attributes) {
-            this._attributes = new foDictionary<foAttribute>({ myName: 'attributes' });
-        }
-        return this._attributes;
-    }
-
-    establishAttribute(key: string, spec: any = undefined) {
+    establishAttribute(key: string, spec?: any) {
         let attributes = this.attributes;
         let attribute = attributes.getItem(key);
         if (!attribute) {
@@ -66,14 +73,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return attribute;
     }
 
-    get projections() {
-        if (!this._projections) {
-            this._projections = new foDictionary<foProjection<T>>({ myName: 'projections' });
-        }
-        return this._projections;
-    }
 
-    establishProjection(key: string, spec: any = undefined) {
+    establishProjection(key: string, spec?: any) {
         let projections = this.projections;
         let projection = projections.getItem(key);
         if (!projection) {
@@ -192,12 +193,26 @@ export class Concept {
         return concept;
     }
 
-    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any): foConcept<T> {
-        let { namespace, name } = Tools.splitNamespaceType(id);
+    static define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
+        let { namespace, name } = Tools.splitNamespaceType(myName);
 
-        let concept = new foConcept<T>(properties);
-        concept.defineCore(id, type.name, type);
+        let concept = new foConcept<T>();
+        concept.defineCore(myName, type.name, type);
+        concept.specification = specification || {};
+       
+        return this.registerConcept(namespace, name, concept);
+    }
 
+    static override<T extends foNode>(json: any): foConcept<T> {
+        let { myName, core } = json;
+        let { namespace, name } = Tools.splitNamespaceType(myName);
+
+        let concept = new foConcept<T>(json);
+
+        let type = RuntimeType.modelTypes[core];
+        concept.defineCore(myName, type.name, type);
+        concept.specification = json.specification;
+  
         return this.registerConcept(namespace, name, concept);
     }
 

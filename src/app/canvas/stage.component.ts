@@ -407,13 +407,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let body = Concept.define<foShape2D>('text::body', foShape2D, {
       color: 'cyan',
       fontSize: 30,
-    }, (parent) => {
-      parent.context.forEach(item => {
-        block.newInstance({
-          context: item,
-        }).addAsSubcomponent(parent);
-      });
     });
+    
+    // , (parent) => {
+    //   parent.context.forEach(item => {
+    //     block.newInstance({
+    //       context: item,
+    //     }).addAsSubcomponent(parent);
+    //   });
+    // });
 
 
 
@@ -930,6 +932,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
         alert(JSON.stringify(data, undefined, 3));
+        let found = Concept.override(data);
+        PubSub.Pub('refreshStencil',found);
       });
 
 

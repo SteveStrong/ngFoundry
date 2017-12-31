@@ -35,7 +35,7 @@ export class foObject implements iObject {
     set myType(ignore: string) {
     }
 
-    get myGuid():string {
+    get myGuid(): string {
         if (!this._myGuid) {
             this._myGuid = Tools.generateUUID();
         }
@@ -56,11 +56,11 @@ export class foObject implements iObject {
         return `${this.myName}.${parent.asReference()}`;
     }
 
-    hasAncestor(member: iObject):boolean {
-        if ( member === this ) return true;
+    hasAncestor(member: iObject): boolean {
+        if (member === this) return true;
 
         let parent = this.myParent && this.myParent();
-        if ( member === parent ) return true;
+        if (member === parent) return true;
         return parent && parent.hasAncestor(member)
     }
 
@@ -76,11 +76,11 @@ export class foObject implements iObject {
         return this.hasParent;
     }
 
-    public notifyOnChange(source:any, channel: string, ...args: any[]) {
+    public notifyOnChange(source: any, channel: string, ...args: any[]) {
     }
 
-    public wait(time:number, func:()=> void){
-        setTimeout( func, time);
+    public wait(time: number, func: () => void) {
+        setTimeout(func, time);
         return this;
     }
 
@@ -92,11 +92,16 @@ export class foObject implements iObject {
         const self = this;
 
         properties && Tools.forEachKeyValue(properties, function (key, value) {
-            if (Tools.isFunction(value)) {
-                Tools.defineCalculatedProperty(self, key, value);
-            } else {
-                self[key] = value;
+            try {
+                if (Tools.isFunction(value)) {
+                    Tools.defineCalculatedProperty(self, key, value);
+                } else {
+                    self[key] = value;
+                }
+            } catch (ex) {
+                console.log(ex);
             }
+
         });
 
         return self;
