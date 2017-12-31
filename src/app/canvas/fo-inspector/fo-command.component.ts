@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { StageComponent } from "../stage.component";
 
 @Component({
   selector: 'fo-command',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./fo-command.component.css']
 })
 export class foCommandComponent implements OnInit {
+  @Input()
+  public stage: StageComponent;
 
   constructor() { }
 

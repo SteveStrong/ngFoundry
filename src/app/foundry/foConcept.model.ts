@@ -206,8 +206,10 @@ export class Concept {
         let concept = new foConcept<T>({myName});
         concept.definePrimitive(type);
         concept.specification = specification || {};
-       
-        return this.registerConcept(namespace, name, concept);
+
+        let result = this.registerConcept(namespace, name, concept);
+        PubSub.Pub('onKnowledgeChanged', result);
+        return result;
     }
 
     static override<T extends foNode>(json: any): foConcept<T> {

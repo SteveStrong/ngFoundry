@@ -14,7 +14,7 @@ import { PubSub } from "../../foundry/foPubSub";
   styleUrls: ['./fo-inspector.component.css']
 })
 export class foInspectorComponent implements OnInit {
-  oneAtATime: boolean = true;
+
   @Input()
   public stage: StageComponent;
 
@@ -26,11 +26,15 @@ export class foInspectorComponent implements OnInit {
     this.rootPage = this.stage
   }
 
+  doRefreshRuntimeTypes() {
+    PubSub.Pub('onRuntimeTypeChanged');
+  }
+
   doRefreshStencil() {
-    PubSub.Pub('refreshStencil');
+    PubSub.Pub('onStencilChanged');
   }
 
   doRefreshConcepts() {
-    PubSub.Pub('refreshConcepts');
+    PubSub.Pub('onKnowledgeChanged');
   }
 }

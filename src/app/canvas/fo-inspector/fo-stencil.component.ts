@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
-import { Concept } from "../../foundry/foConcept.model";
+import { Stencil } from "../../foundry/foStencil";
 import { PubSub } from "../../foundry/foPubSub";
 
 @Component({
@@ -20,19 +20,24 @@ export class foStencilComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-    PubSub.Sub('refreshStencil', () => {
-      this.list = Concept.allConcepts();
+  initViewModel() {
+    this.list = Stencil.allSpecifications();
 
-      this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
-      this.headings = Concept.namespaces();
+    this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
+    this.headings = Stencil.namespaces();
+  }
+
+  ngOnInit() {
+    this.initViewModel();
+    PubSub.Sub('onStencilChanged', () => {
+      this.initViewModel();
     });
    
   }
 
   doCreate(item){
-    let concept = item.concept;
-    let box = concept.newInstance()
+    let spec = item.spec;
+    let box = spec.newInstance()
       .drop(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
 

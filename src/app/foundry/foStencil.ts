@@ -2,6 +2,7 @@ import { Tools } from '../foundry/foTools'
 import { Action } from '../foundry/foInterface'
 import { foNode } from '../foundry/foNode.model'
 
+import { PubSub } from "./foPubSub";
 import { RuntimeType } from './foRuntimeType';
 
 class Spec<T extends foNode> {
@@ -36,6 +37,22 @@ export class Stencil {
         return Object.keys(this.lookup[namespace]);
     }
 
+    static allSpecifications(): Array<any> {
+        let list: Array<any> = new Array<any>();
+        Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
+            Tools.forEachKeyValue(obj, (name, spec) => {
+                let id = `${namespace}::${name}`;
+                list.push({
+                    id: id,
+                    namespace: namespace,
+                    name: name,
+                    spec: spec,
+                });
+            })
+        })
+        return list;
+    }
+
     static register<T extends foNode>(id: string, item: Spec<T>): Spec<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
         if (!this.lookup[namespace]) {
@@ -61,7 +78,10 @@ export class Stencil {
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
         let spec = new Spec(Tools.namespace(namespace, name), type, properties, subcomponents);
-        return this.register(spec.myName, spec);
+        
+        let result = this.register(spec.myName, spec);
+        PubSub.Pub('onStencilChanged', result);
+        return result;
     }
 
     static create<T extends foNode>(id:string, type: { new(p?: any, s?: Array<T>, r?: T): T; },  properties?: any, subcomponents?: Array<T>, func?: Action<T>) {
