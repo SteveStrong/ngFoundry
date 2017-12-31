@@ -53,6 +53,11 @@ export class foObject implements iObject {
         return `${this.myName}.${parent.asReference()}`;
     }
 
+    then(next: (obj) => void) {
+        next(this);
+        return this;
+    }
+
     hasAncestor(member: iObject): boolean {
         if (member === this) return true;
 

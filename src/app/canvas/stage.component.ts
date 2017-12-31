@@ -801,14 +801,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
-  doDropGlue() {
-    let subShape = RuntimeType.create(dGlue, {
-    }).drop(500, 300, 30);
-    this.addSubcomponent(subShape);
-
-    // this.signalR.pubChannel("syncDisp", subShape.asJson);
-  }
-
   doObjRect() {
     class objRect extends dRectangle {
       pinX = (): number => { return 0.0 * this.width; }
@@ -821,18 +813,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    let subShape = RuntimeType.create(objRect, {
+    let shape = RuntimeType.create(objRect, {
       color: 'blue',
       width: 150,
       height: 100,
-    }).drop(300, 300, 0);
-    subShape.doAnimation = subShape.Animation;
-
-    subShape.isSelected = true;
-
-    this.addSubcomponent(subShape);
-
-    // this.signalR.pubChannel("syncDisp", subShape.asJson);
+    }).drop(300, 300, 0).then( item => {
+      item.doAnimation = item.Animation;
+      item.isSelected = true;
+    }).addAsSubcomponent(this);
+    
+    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
   }
 
   doObjGroup() {
@@ -948,7 +938,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
-        alert(JSON.stringify(data, undefined, 3));
+        //alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
@@ -976,6 +966,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncDisp", (cmd, data) => {
+        alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
@@ -989,7 +980,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
-        let cmdx = cmd;
         this.found(cmd.sourceGuid, (source) => {
           this.found(cmd.targetGuid, (target) => {
             let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));

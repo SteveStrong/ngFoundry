@@ -95,9 +95,10 @@ export class foTools {
         return myType;
     };
 
-    computeNamespace(space: string, obj) {
-        return `${space}::{this.getType(obj)}`;
+    namespace(namespace: string, name: string) {
+        return `${namespace}::${name}`;
     };
+
 
     randomInt(low: number, high: number) {
         return low + Math.floor(Math.random() * (high - low + 1));

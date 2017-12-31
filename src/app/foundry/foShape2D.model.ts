@@ -212,19 +212,23 @@ export class foShape2D extends foGlyph {
 }
 
 class Spec<T extends foNode> {
+    myName:string;
     primitive: { new(p?: any, s?: Array<T>, r?: T): T; };
     properties: any; 
     subcomponents: Array<T>;  
 
-    constructor(type:{ new(p?: any, s?: Array<T>, r?: T): T; }, inits: any, subs:Array<T>) {
+    constructor(name:string,type:{ new(p?: any, s?: Array<T>, r?: T): T; }, inits: any, subs:Array<T>) {
+        this.myName = name;
         this.primitive = type;
         this.properties = inits;
         this.subcomponents = subs;
     }
     
-    newInstance<T extends foNode>(id:string, properties?: any, subcomponents?: Array<T>) {
+    newInstance<T extends foNode>(properties?: any, subcomponents?: Array<T>) {
         let spec = Tools.union(properties, this.properties);
-        return new this.primitive(spec);
+        let instance = new this.primitive(spec);
+        instance.myClass =this.myName;
+        return instance
     }
 }
 
@@ -239,7 +243,8 @@ export class Stencil {
         return Object.keys(this.lookup[namespace]);
     }
 
-    static register<T extends foNode>(namespace: string, name: string, item: Spec<T>): Spec<T> {
+    static register<T extends foNode>(id: string, item: Spec<T>): Spec<T> {
+        let { namespace, name } = Tools.splitNamespaceType(id);
         if (!this.lookup[namespace]) {
             this.lookup[namespace] = {};
         }
@@ -259,12 +264,16 @@ export class Stencil {
     }
 
     static define<T extends foNode>(id:string, type: { new(p?: any, s?: Array<T>, r?: T): T; },  properties?: any, subcomponents?: Array<T>) {
+        RuntimeType.define(type);
+
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
-        let spec = new Spec(type, properties, subcomponents);
-        return this.register(namespace, name, spec);
+        let spec = new Spec(Tools.namespace(namespace, name), type, properties, subcomponents);
+        return this.register(spec.myName, spec);
     }
 
     static create<T extends foNode>(id:string, type: { new(p?: any, s?: Array<T>, r?: T): T; },  properties?: any, subcomponents?: Array<T>, func?: Action<T>) {
+        RuntimeType.define(type);
+        
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
         let spec = this.findSpec(namespace,name);
         let instance = spec && spec.newInstance(properties, subcomponents) as T;
