@@ -211,50 +211,96 @@ export class foShape2D extends foGlyph {
 
 }
 
-export class Stencil {
-    static lookup = {}
+class Spec<T extends foNode> {
+    primitive: { new(p?: any, s?: Array<T>, r?: T): T; };
+    properties: any; 
+    subcomponents: Array<T>;  
 
-    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
-        let instance = new type(properties);
-        let { defaults = undefined } = this.lookup[instance.myType] || {};
-
-        defaults && instance.extend(defaults);
-        instance.initialize();
-
-        return instance;
+    constructor(type:{ new(p?: any, s?: Array<T>, r?: T): T; }, inits: any, subs:Array<T>) {
+        this.primitive = type;
+        this.properties = inits;
+        this.subcomponents = subs;
     }
-
-    static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type();
-        this.lookup[instance.myType] = { create: type, defaults: properties };
-        return instance.myType;
-    }
-
-
-    //create foConcepts so you can build things
-    static extends<T extends foGlyph>(name: string, type: { new(p?: any): T; }, properties?: any) {
-        this.lookup[name] = { type: name, create: type, defaults: properties };
-        return this.lookup[name]
-    }
-
-    static spec<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type();
-        let { create, defaults } = this.lookup[instance.myType];
-        return defaults;
-    }
-
-    static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
-        if (!this.lookup[type]) return;
-
-        let { create, defaults } = this.lookup[type];
-        let spec = Tools.union(properties, defaults);
-        let instance = new create(spec);
-        func && func(instance);
-        return instance;
+    
+    newInstance<T extends foNode>(id:string, properties?: any, subcomponents?: Array<T>) {
+        let spec = Tools.union(properties, this.properties);
+        return new this.primitive(spec);
     }
 }
 
-Stencil.define(foShape2D);
+export class Stencil {
+
+    static lookup: any = {};
+
+    static namespaces(): Array<string> {
+        return Object.keys(this.lookup);
+    }
+    static names(namespace:string): Array<string> {
+        return Object.keys(this.lookup[namespace]);
+    }
+
+    static register<T extends foNode>(namespace: string, name: string, item: Spec<T>): Spec<T> {
+        if (!this.lookup[namespace]) {
+            this.lookup[namespace] = {};
+        }
+        this.lookup[namespace][name] = item;
+        return item;
+    }
+
+    static find<T extends foNode>(id: string): Spec<T> {
+        let { namespace, name } = Tools.splitNamespaceType(id);
+        return this.findSpec(namespace, name);
+    }
+
+    static findSpec<T extends foNode>(namespace: string, name: string): Spec<T> {
+        let space = this.lookup[namespace];
+        let spec = space && space[name];
+        return spec;
+    }
+
+    static define<T extends foNode>(id:string, type: { new(p?: any, s?: Array<T>, r?: T): T; },  properties?: any, subcomponents?: Array<T>) {
+        let { namespace, name } = Tools.splitNamespaceType(id, type.name);
+        let spec = new Spec(type, properties, subcomponents);
+        return this.register(namespace, name, spec);
+    }
+
+    static create<T extends foNode>(id:string, type: { new(p?: any, s?: Array<T>, r?: T): T; },  properties?: any, subcomponents?: Array<T>, func?: Action<T>) {
+        let { namespace, name } = Tools.splitNamespaceType(id, type.name);
+        let spec = this.findSpec(namespace,name);
+        let instance = spec && spec.newInstance(properties, subcomponents) as T;
+        func && func(instance);
+        return instance;
+    }
+
+    static newInstance<T extends foNode>(id:string, properties?: any, subcomponents?: Array<T>, func?: Action<T>) {
+        let spec = this.find(id);
+        let instance = spec && spec.newInstance(properties, subcomponents) as T;
+        func && func(instance);
+        return instance;
+    }
+
+    // static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
+    //     let instance = new type(properties);
+    //     let { defaults = undefined } = this.lookup[instance.myType] || {};
+
+    //     defaults && instance.extend(defaults);
+    //     instance.initialize();
+
+    //     return instance;
+    // }
+
+
+    // static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
+    //     if (!this.lookup[type]) return;
+
+    //     let { create, defaults } = this.lookup[type];
+    //     let spec = Tools.union(properties, defaults);
+    //     let instance = new create(spec);
+    //     func && func(instance);
+    //     return instance;
+    // }
+}
+
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.model(foShape2D);
+RuntimeType.define(foShape2D);
 

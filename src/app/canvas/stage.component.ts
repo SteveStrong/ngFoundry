@@ -27,7 +27,7 @@ import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
 import { foImage } from "../foundry/foImage.model";
-import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
+import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
 import { dRectangle, dGlue } from "./displayshapes.model";
@@ -39,6 +39,10 @@ import { SignalRService } from "../common/signalr.service";
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 
+
+class Line extends foShape1D {
+}
+RuntimeType.define(Line);
 
 
 
@@ -226,24 +230,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.mouseLoc.keys = keys;
     }
 
-    let compute = {
-      height: function () {
-        let size = parseInt(this.size.split(':')[1]);
-        return 25 * size;
-      },
-      width: function () {
-        let size = parseInt(this.size.split(':')[0]);
-        return 25 * size;
-      }
-    }
-    Stencil.define(OneByOne, compute);
 
-    Stencil.define(OneByOne, compute);
-    Stencil.define(TwoByOne, compute);
-    Stencil.define(TwoByTwo, { width: 50, height: 50 });
-    Stencil.define(TwoByFour, compute);
-    Stencil.define(OneByTen, compute);
-    Stencil.define(TenByTen, { width: 250, height: 250 });
+    Stencil.define<foShape2D>('lego', ThreeByThreeCircle);
+
+    Stencil.define('lego', OneByOne);
+    Stencil.define('lego', TwoByOne);
+    Stencil.define('lego', TwoByTwo, { width: 50, height: 50 });
+    Stencil.define('lego', TwoByFour);
+    Stencil.define('lego', OneByTen);
+    Stencil.define('lego', TenByTen, { width: 250, height: 250 });
   }
 
   doLoadStencil() {
@@ -559,7 +554,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   doAddOneByOne() {
-    let shape = Stencil.create(OneByOne, {
+    let shape = RuntimeType.create(OneByOne, {
       color: 'red',
       x: 200,
       y: 200,
@@ -569,7 +564,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByOne() {
-    let shape = Stencil.create(TwoByOne, {
+    let shape = RuntimeType.create(TwoByOne, {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
@@ -578,7 +573,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTwoByTwo() {
 
-    let shape = Stencil.create(TwoByTwo, {
+    let shape = RuntimeType.create(TwoByTwo, {
       color: 'pink',
       myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
@@ -596,7 +591,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinY = (): number => { return 0.5 * this.height; }
     }
 
-    Stencil.define(localTwoByFour, Stencil.spec(TwoByFour));
+    RuntimeType.define(localTwoByFour);
 
     let spec = {
       color: 'green',
@@ -604,16 +599,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     if (!properties) {
-      let shape = Stencil.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
+      let shape = RuntimeType.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
       this.signalR.pubCommand("callMethod", { func: 'doAddTwoByFour' }, shape.asJson);
     } else {
-      Stencil.create(localTwoByFour, properties).addAsSubcomponent(this);
+      RuntimeType.create(localTwoByFour, properties).addAsSubcomponent(this);
     }
 
   }
 
   doAddOneByTen() {
-    let shape = Stencil.create(OneByTen, {
+    let shape = RuntimeType.create(OneByTen, {
       color: 'yellow',
       // height: 10,
       // width: function (): number { return this.height / 4; },
@@ -629,7 +624,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTenByTen() {
-    let shape = Stencil.create(TenByTen, {
+    let shape = RuntimeType.create(TenByTen, {
       color: 'gray',
       name: TenByTen.typeName()
     }).drop(600, 300);
@@ -640,14 +635,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddStack(properties?: any) {
 
-    let shape = Stencil.create(TenByTen, {
+    let shape = RuntimeType.create(TenByTen, {
       myGuid: properties && properties.shape,
       opacity: .5,
       color: 'gray',
       angle: 10
     }).drop(600, 300).addAsSubcomponent(this);
 
-    let subShape = Stencil.create(TwoByFour, {
+    let subShape = RuntimeType.create(TwoByFour, {
       myGuid: properties && properties.subShape,
       color: 'red',
     }).addAsSubcomponent(shape, {
@@ -696,7 +691,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       cY: (y2 + y1) / 2,
     }
 
-    let fake = Stencil.create(foShape2D, {
+    let fake = RuntimeType.create<foShape2D>(foShape2D, {
       opacity: .5,
       color: 'gray',
       angle: spec.angle,
@@ -705,7 +700,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(400, 400).addAsSubcomponent(this);
     this.signalR.pubCommand("syncShape", { guid: fake.myGuid }, fake.asJson);
 
-    let shape = Stencil.create(Line, {
+    let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
       color: 'gray',
       startX: x1,
@@ -719,7 +714,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doShapeGlue() {
-    let shape1 = Stencil.create(TwoByOne, {
+    let shape1 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
 
@@ -727,7 +722,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
 
 
-    let shape2 = Stencil.create(TwoByOne, {
+    let shape2 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
     }).drop(300, 400).addAsSubcomponent(this);
@@ -739,7 +734,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let pc = pt1.midpoint(pt2);
 
 
-    let shape = Stencil.create(Line, {
+    let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
       color: 'gray',
       height: 30,
@@ -750,7 +745,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(600, 350).addAsSubcomponent(this);
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
 
-    let wire = Stencil.create(Line, {
+    let wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
       height: 30,
       startX: pt1.x,
@@ -769,7 +764,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doObjGlue() {
 
-    let wire = Stencil.create(Line, {
+    let wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
       height: 20,
       color: 'black',
@@ -777,9 +772,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
-    let shape1 = Stencil.create(dGlue).addAsSubcomponent(this);
+    let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
-    let shape2 = Stencil.create(dGlue).addAsSubcomponent(this);
+    let shape2 = RuntimeType.create(dGlue).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
     wire.createGlue('begin', shape1);
@@ -800,7 +795,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDropGlue() {
-    let subShape = Stencil.create(dGlue, {
+    let subShape = RuntimeType.create(dGlue, {
     }).drop(500, 300, 30);
     this.addSubcomponent(subShape);
 
@@ -819,7 +814,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    let subShape = Stencil.create(objRect, {
+    let subShape = RuntimeType.create(objRect, {
       color: 'blue',
       width: 150,
       height: 100,
@@ -839,7 +834,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinX = (): number => { return 50; }
     }
 
-    let shape = Stencil.create(myRect, {
+    let shape = RuntimeType.create(myRect, {
       color: 'purple',
       myName: 'root  dRectangle',
       width: 300,
@@ -849,7 +844,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
-    let subShape = Stencil.create(dRectangle, {
+    let subShape = RuntimeType.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
       width: 50,
@@ -949,7 +944,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
-          let shape = Stencil.makeInstance(type, data);
+          let shape = RuntimeType.newInstance(type, data);
           this.found(cmd.parentGuid,
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this.addSubcomponent(shape); }
@@ -976,7 +971,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
-          let shape = Stencil.makeInstance(type, data);
+          let shape = RuntimeType.newInstance(type, data);
           this.found(cmd.parentGuid,
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this.addSubcomponent(shape); }

@@ -208,6 +208,5 @@ export class foText2D extends foShape2D {
     }
 }
 
-Stencil.define(foText2D);
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.model(foText2D);
+RuntimeType.define(foText2D);

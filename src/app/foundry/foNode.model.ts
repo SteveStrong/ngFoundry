@@ -118,4 +118,4 @@ export class foNode extends foObject implements iNode {
 }
 
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.model<foNode>(foNode);
+RuntimeType.define<foNode>(foNode);

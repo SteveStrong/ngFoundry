@@ -9,25 +9,26 @@ import { foKnowledge } from './foKnowledge.model';
 
 
 export class RuntimeType {
-    static modelTypes = {}
-    static knowledgeTypes = {}
+    static modelPrimitives = {}
+    static knowledgePrimitives = {}
 
     static newInstance(type: string, properties?: any) {
-        let create = this.modelTypes[type];
+        let create = this.modelPrimitives[type];
         let instance = this.create(create,properties);
         return instance;
     }
 
+    static define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+        let name = type.name;
+        this.modelPrimitives[name] = type;
+        return name;
+    }
+
     static create<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any) {
-        let instance = new type(properties);
+        let instance = new type(properties) as T;
         return instance;
     }
 
-    static model<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
-        let name = type.name;
-        this.modelTypes[name] = type;
-        return name;
-    }
 
     static establish<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type(properties);
@@ -36,7 +37,7 @@ export class RuntimeType {
 
     static knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
         let name = type.name;
-        this.knowledgeTypes[name] = type;
+        this.knowledgePrimitives[name] = type;
         return name;
     }
 

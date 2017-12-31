@@ -14,4 +14,4 @@ export class foModel extends foComponent {
 }
 
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.model(foModel);
+RuntimeType.define(foModel);

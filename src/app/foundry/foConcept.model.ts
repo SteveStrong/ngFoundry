@@ -168,9 +168,6 @@ export class Concept {
                     namespace: namespace,
                     name: name,
                     concept: concept,
-                    create: () => {
-                        return concept.makeInstance()
-                    }
                 });
             })
         })
@@ -219,7 +216,7 @@ export class Concept {
         let concept = new foConcept<T>(json);
         //alert(JSON.stringify(concept, undefined, 3));
 
-        let type = RuntimeType.modelTypes[primitive];
+        let type = RuntimeType.modelPrimitives[primitive];
         concept.definePrimitive(type);
         concept.specification = specification;
   
@@ -228,7 +225,7 @@ export class Concept {
     }
 
 
-    static makeInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
+    static newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
         let { namespace, name } = Tools.splitNamespaceType(id);
         let concept = this.findConcept(namespace, name);
 

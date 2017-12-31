@@ -706,6 +706,6 @@ export class foGlyph extends foNode implements iShape {
 }
 
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.model(foGlyph);
+RuntimeType.define(foGlyph);
 
 

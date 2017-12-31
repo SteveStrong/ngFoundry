@@ -67,13 +67,9 @@ import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
     CanvasTestComponent,
 
     foInspectorComponent,
-
     foPanelComponent,
-
     foStencilComponent,
-
     foModelComponent,
-
     foDrawingComponent
   ],
   imports: [

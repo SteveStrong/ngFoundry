@@ -38,4 +38,4 @@ export class foComponent extends foNode {
 }
 
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.model(foComponent);
+RuntimeType.define(foComponent);

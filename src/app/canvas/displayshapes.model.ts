@@ -45,5 +45,4 @@ export class dGlue extends dRectangle {
 
 }
 
-Stencil.define(dGlue);
 
