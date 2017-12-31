@@ -1,6 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { StageComponent } from "../stage.component";
+
 import { foPage } from "../../foundry/foPage.model";
+import { PubSub } from "../../foundry/foPubSub";
+
+//https://valor-software.com/ngx-bootstrap/#/tabs
+
 
 @Component({
   selector: 'fo-inspector',
@@ -9,11 +15,26 @@ import { foPage } from "../../foundry/foPage.model";
 })
 export class foInspectorComponent implements OnInit {
 
-  @Input() public rootPage:foPage;
+  @Input()
+  public stage: StageComponent;
+
+  public rootPage: foPage;
 
   constructor() { }
 
   ngOnInit() {
+    this.rootPage = this.stage
   }
 
+  doRefreshRuntimeTypes() {
+    PubSub.Pub('onRuntimeTypeChanged');
+  }
+
+  doRefreshStencil() {
+    PubSub.Pub('onStencilChanged');
+  }
+
+  doRefreshConcepts() {
+    PubSub.Pub('onKnowledgeChanged');
+  }
 }

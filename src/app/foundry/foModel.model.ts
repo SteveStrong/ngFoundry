@@ -12,3 +12,6 @@ export class foModel extends foComponent {
         super(spec,subcomponents,parent); 
     }
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foModel);

@@ -33,8 +33,18 @@ import { TestSvgCircleComponent } from './networkview/test-svg-circle.component'
 import { SignalRService } from "./common/signalr.service";
 import { StageComponent } from './canvas/stage.component';
 import { CanvasTestComponent } from './canvas/canvastest.component';
+
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { foInspectorComponent } from './canvas/fo-inspector/fo-inspector.component';
 import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
+import { foStencilComponent } from './canvas/fo-inspector/fo-stencil.component';
+import { foModelComponent } from './canvas/fo-inspector/fo-model.component';
+import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
+import { foRuntimeComponent } from './canvas/fo-inspector/fo-runtime.component';
+import { foPaletteComponent } from './canvas/fo-inspector/fo-palette.component';
+import { foCommandComponent } from './canvas/fo-inspector/fo-command.component';
+import { foConceptComponent } from './canvas/fo-inspector/fo-concept.component';
 
 @NgModule({
   declarations: [
@@ -61,11 +71,19 @@ import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
     CanvasTestComponent,
 
     foInspectorComponent,
-
-    foPanelComponent
+    foPanelComponent,
+    foStencilComponent,
+    foModelComponent,
+    foDrawingComponent,
+    foRuntimeComponent,
+    foPaletteComponent,
+    foCommandComponent,
+    foConceptComponent
   ],
   imports: [
     BrowserAnimationsModule,
+    AccordionModule.forRoot(),
+    TabsModule.forRoot(),
     ToastModule.forRoot(),
 
     BrowserModule,

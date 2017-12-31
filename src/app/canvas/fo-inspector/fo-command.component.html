@@ -1,0 +1,41 @@
+<accordion [closeOthers]="true">
+  <accordion-group heading="Glyph">
+    <button (click)="stage.doAddGlyph()" type="button" class="btn btn-info">add Glyph</button>
+    <button (click)="stage.doAddSubGlyph()" type="button" class="btn btn-info">add SubGlyph</button>
+  </accordion-group>
+
+  <accordion-group heading="Shape">
+    <button (click)="stage.doAddOneByOne()" type="button" class="btn btn-success">1x1</button>
+    <button (click)="stage.doAddTwoByOne()" type="button" class="btn btn-success">2x1</button>
+    <button (click)="stage.doAddTwoByTwo()" type="button" class="btn btn-success">2x2</button>
+    <button (click)="stage.doAddTwoByFour()" type="button" class="btn btn-success">2x4</button>
+    <button (click)="stage.doAddTenByTen()" type="button" class="btn btn-success">10x10</button>
+    <button (click)="stage.doAddThreeByThree()" type="button" class="btn btn-success">3x3 Circle</button>
+  </accordion-group>
+
+  <accordion-group heading="Animation">
+    <button (click)="stage.doBoundry()" type="button" class="btn btn-info">Boundry</button>
+
+    <button (click)="stage.doAddOneByTen()" type="button" class="btn btn-success">Spin</button>
+    <button (click)="stage.doAddStack()" type="button" class="btn btn-success">Box inside</button>
+    <button (click)="stage.doObjRect()" type="button" class="btn btn-info">Rect</button>
+    <button (click)="stage.doObjGroup()" type="button" class="btn btn-info">Group</button>
+  </accordion-group>
+
+  <accordion-group heading="Glue">
+    <button (click)="stage.doShape1D()" type="button" class="btn btn-success">Shape 1D</button>
+
+    <button (click)="stage.doShapeGlue()" type="button" class="btn btn-success">Glue 1D</button>
+    <button (click)="stage.doObjGlue()" type="button" class="btn btn-warning">Glue 1D</button>
+  </accordion-group>
+
+  <accordion-group heading="Sets">
+    <button (click)="stage.doBlocks()" type="button" class="btn btn-success">Blocks</button>
+    <button (click)="stage.doText()" type="button" class="btn btn-success">Text</button>
+    <button (click)="stage.doImage()" type="button" class="btn btn-success">Image</button>
+  </accordion-group>
+
+  <accordion-group heading="Knowledge">
+    <button (click)="stage.doDocker()" type="button" class="btn btn-success">Blocks</button>
+  </accordion-group>
+</accordion>

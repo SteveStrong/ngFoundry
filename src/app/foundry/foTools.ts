@@ -66,12 +66,21 @@ export class foTools {
         return JSON.stringify(target, resolveCircular, deep);
     };
 
-    splitNamespaceType(id: string) {
-        var typeId = id.split('::');
-        return {
-            namespace: typeId.length == 2 ? typeId[0] : '',
-            name: typeId.length == 2 ? typeId[1] : typeId[0],
+    splitNamespaceType(id: string, primitive?: string) {
+        let typeId = id.split('::');
+        let result = { namespace: '', name: id }
+        if (typeId.length == 2) {
+            result = {
+                namespace: typeId[0],
+                name: typeId[1]
+            }
+        } else if (primitive) {
+            result = {
+                namespace: typeId[0],
+                name: primitive
+            }
         }
+        return result;
     };
 
     getNamespace(obj) {
@@ -86,11 +95,12 @@ export class foTools {
         return myType;
     };
 
-    computeNamespace(space: string, obj) {
-        return `${space}::{this.getType(obj)}`;
+    namespace(namespace: string, name: string) {
+        return `${namespace}::${name}`;
     };
 
-    randomInt(low:number, high:number) {
+
+    randomInt(low: number, high: number) {
         return low + Math.floor(Math.random() * (high - low + 1));
     };
 
@@ -156,19 +166,19 @@ export class foTools {
 
     };
 
-    removeDQ(str:string):string {
+    removeDQ(str: string): string {
         return str.replace(/^"(.*)"$/, '$1');
     }
 
-    unwrap(str:string):string {
-        return str.substring(1,str.length-1)
+    unwrap(str: string): string {
+        return str.substring(1, str.length - 1)
     }
 
-    wrapDQ(str:string):string {
+    wrapDQ(str: string): string {
         return `"${str}"`;
     }
 
-    wrapSQ(str:string):string {
+    wrapSQ(str: string): string {
         return `'${str}'`;
     }
 

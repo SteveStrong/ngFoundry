@@ -9,10 +9,9 @@ import { foHandle } from '../foundry/foHandle'
 import { foGlue } from '../foundry/foGlue'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
-import { foConcept } from '../foundry/foConcept.model'
-import { foComponent } from '../foundry/foComponent.model'
 
-import { foShape2D, Stencil } from '../foundry/foShape2D.model'
+
+import { foShape2D } from '../foundry/foShape2D.model'
 
 
 export class foImage extends foShape2D {
@@ -51,14 +50,14 @@ export class foImage extends foShape2D {
     }
 
     protected toJson(): any {
-        let result = super.toJson();
-        result.background = this.background;
-        result.imageURL = this.imageURL;
-        result.margin = this.margin;
-        return result;
+        return Tools.mixin(super.toJson(), {
+            background: this.background,
+            imageURL: this.imageURL,
+            margin: this.margin,
+        })
     }
     public override(properties?: any) {
-        if ( properties && properties.margin ) {
+        if (properties && properties.margin) {
             let m = properties.margin;
             properties.margin = new cMargin(m.left, m.top, m.right, m.bottom);
         }
@@ -125,4 +124,6 @@ export class foImage extends foShape2D {
 
 }
 
-Stencil.define(foImage);
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foImage);

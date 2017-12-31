@@ -13,6 +13,15 @@ export class foNode extends foObject implements iNode {
 
     protected _subcomponents: foCollection<foNode>;
 
+    private _class: string;
+    get myClass(): string {
+        let comp: any = this.constructor;
+        return this._class || comp.name;
+    }
+    set myClass(value: string) {
+        this._class = value;
+    }
+
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, parent);
 
@@ -27,6 +36,7 @@ export class foNode extends foObject implements iNode {
         return {
             myGuid: this.myGuid,
             myType: this.myType,
+            myClass: this.myClass
         }
     }
 
@@ -116,3 +126,6 @@ export class foNode extends foObject implements iNode {
         return list && list.hasMembers;
     }
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define<foNode>(foNode);

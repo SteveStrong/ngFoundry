@@ -39,9 +39,9 @@ export class foShape2D extends foGlyph {
     }
 
     protected toJson(): any {
-        let result = super.toJson();
-        result.angle = this.angle;
-        return result;
+        return Tools.mixin(super.toJson(), {
+            angle:this.angle
+        });
     }
 
     public notifyOnChange(source: any, channel: string, ...args: any[]) {
@@ -211,48 +211,6 @@ export class foShape2D extends foGlyph {
 
 }
 
-export class Stencil {
-    static lookup = {}
-
-    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any): T {
-        let instance = new type(properties);
-        let { defaults = undefined } = this.lookup[instance.myType] || {};
-
-        defaults && instance.extend(defaults);
-        instance.initialize();
-
-        return instance;
-    }
-
-    static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type();
-        this.lookup[instance.myType] = { create: type, defaults: properties };
-        return instance.myType;
-    }
-
-
-    //create foConcepts so you can build things
-    static extends<T extends foGlyph>(name: string, type: { new(p?: any): T; }, properties?: any) {
-        this.lookup[name] = { type: name, create: type, defaults: properties };
-        return this.lookup[name]
-    }
-
-    static spec<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type();
-        let { create, defaults } = this.lookup[instance.myType];
-        return defaults;
-    }
-
-    static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
-        if (!this.lookup[type]) return;
-
-        let { create, defaults } = this.lookup[type];
-        let spec = Tools.union(properties, defaults);
-        let instance = new create(spec);
-        func && func(instance);
-        return instance;
-    }
-}
-
-Stencil.define(foShape2D);
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foShape2D);
 

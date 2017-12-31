@@ -16,6 +16,7 @@ import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
 
+
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
 
@@ -147,16 +148,14 @@ export class foGlyph extends foNode implements iShape {
     }
 
     protected toJson(): any {
-        return {
-            myGuid: this.myGuid,
-            myType: this.myType,
+        return Tools.mixin(super.toJson(), {
             x: this.x,
             y: this.y,
             width: this.width,
             height: this.height,
             opacity: this.opacity,
             color: this.color,
-        }
+        });
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
@@ -288,31 +287,6 @@ export class foGlyph extends foNode implements iShape {
         this.y = loc ? loc.y : 0;
     }
 
-
-    // public getSize = (scale: number = 1): iSize => {
-    //     //structual type
-    //     return {
-    //         width: this.width * scale,
-    //         height: this.height * scale
-    //     }
-    // }
-
-    // public scaleSize = (scale: number): iSize => {
-    //     this.x -= (this.width * (scale - 1)) / 2.0;
-    //     this.y -= (this.height * (scale - 1)) / 2.0;
-    //     this.width *= scale;
-    //     this.height *= scale;
-    //     return this.getSize();
-    // }
-
-    // public growSize = (dx: number, dy: number): iSize => {
-    //     try {
-    //         this.width += dx;
-    //         this.height += dy;
-    //     } catch (ex) {
-    //     }
-    //     return this.getSize();
-    // }
 
     public setColor(color: string): string {
         this.color = color;
@@ -463,7 +437,6 @@ export class foGlyph extends foNode implements iShape {
     };
 
 
-
     public drawPin(ctx: CanvasRenderingContext2D) {
         let { x, y } = this.pinLocation();
 
@@ -517,7 +490,6 @@ export class foGlyph extends foNode implements iShape {
         ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
     }
-
 
 
     protected generateHandles(spec: any): foCollection<foHandle> {
@@ -586,17 +558,11 @@ export class foGlyph extends foNode implements iShape {
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;
         ctx.lineWidth = 1;
-        ctx.globalAlpha = this.opacity;
         ctx.fillRect(0, 0, this.width, this.height);
-
-        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-
-        let text = `x1=${this.x} y1=${this.y}|x2=${this.x + this.width} y2=${this.y + this.height}|`;
-        this.drawText(ctx, text);
     }
 
     toggleSelected() {
-        this._isSelected = !this._isSelected;
+        this.isSelected = !this.isSelected;
     }
 
     layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
@@ -704,28 +670,7 @@ export class foGlyph extends foNode implements iShape {
     }
 }
 
-export class Pallet {
-    static lookup = {}
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foGlyph);
 
-    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any, func?: Action<T>): T {
-        let instance = new type(properties);
-        func && func(instance);
-        return instance;
-    }
-
-    static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type();
-        this.lookup[instance.myType] = { create: type, defaults: properties };
-        return type;
-    }
-
-    static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
-        let { create, defaults } = this.lookup[type];
-        let instance = new create(Tools.union(properties, defaults));
-        func && func(instance);
-        return instance;
-    }
-}
-
-Pallet.define(foGlyph);
 

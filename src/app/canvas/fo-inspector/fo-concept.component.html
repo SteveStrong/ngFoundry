@@ -1,0 +1,7 @@
+<accordion>
+  <accordion-group *ngFor="let key of headings" [heading]="key" [isOpen]="true">
+      <button *ngFor="let item of groups[key]" (click)="doCreate(item)" type="button" class="btn btn-info">{{item.name}}</button>
+  </accordion-group>
+</accordion>
+
+<!-- <pre>{{list | json}}</pre> -->

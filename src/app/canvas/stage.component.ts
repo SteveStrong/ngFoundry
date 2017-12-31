@@ -7,6 +7,7 @@ import { EmitterService } from '../common/emitter.service';
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
+import { RuntimeType } from '../foundry/foRuntimeType';
 import { PubSub } from "../foundry/foPubSub";
 import { Matrix2D } from "../foundry/foMatrix2D";
 import { cPoint, cRect, cMargin } from "../foundry/foGeometry";
@@ -19,14 +20,15 @@ import { Concept } from "../foundry/foConcept.model";
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
+import { Stencil } from "../foundry/foStencil";
 
 import { foGlue } from "../foundry/foGlue";
-import { foGlyph, Pallet } from "../foundry/foGlyph.model";
-import { foShape2D, Stencil } from "../foundry/foShape2D.model";
+import { foGlyph } from "../foundry/foGlyph.model";
+import { foShape2D } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
 import { foImage } from "../foundry/foImage.model";
-import { legoCore, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen, Line } from "./legoshapes.model";
+import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
 import { dRectangle, dGlue } from "./displayshapes.model";
@@ -39,6 +41,10 @@ import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 
 
+class Line extends foShape1D {
+}
+RuntimeType.define(Line);
+
 
 
 @Component({
@@ -47,9 +53,12 @@ import { foObject } from 'app/foundry/foObject.model';
 })
 export class StageComponent extends foPage implements OnInit, AfterViewInit {
   // a reference to the canvas element from our template
-  @ViewChild('canvas') public canvasRef: ElementRef;
-  @Input() public pageWidth = 1000;
-  @Input() public pageHeight = 800;
+  @ViewChild('canvas')
+  public canvasRef: ElementRef;
+  @Input()
+  public pageWidth = 1200;
+  @Input()
+  public pageHeight = 1000;
 
   message: Array<any> = [];
   screen2D: Sceen2D = new Sceen2D();
@@ -94,16 +103,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     })
   }
 
-
-  ngOnInit() {
-    this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubCommand("parent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
-    }
-
-    this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
-    }
-
+  addEventHooks() {
     this.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
 
       this.message = [];
@@ -211,76 +211,82 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(handle);
 
     }
+  }
 
+  ngOnInit() {
 
-    Pallet.define(foGlyph);
+    this.addEventHooks();
 
-    let compute = {
-      height: function () {
-        let size = parseInt(this.size.split(':')[1]);
-        return 25 * size;
-      },
-      width: function () {
-        let size = parseInt(this.size.split(':')[0]);
-        return 25 * size;
-      }
+    this.onItemChangedParent = (shape: foGlyph): void => {
+      this.signalR.pubCommand("syncParent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
     }
-    Stencil.define(OneByOne, compute);
 
-    Stencil.define(OneByOne, compute);
-    Stencil.define(TwoByOne, compute);
-    Stencil.define(TwoByTwo, { width: 50, height: 50 });
-    Stencil.define(TwoByFour, compute);
-    Stencil.define(OneByTen, compute);
-    Stencil.define(TenByTen, { width: 250, height: 250 });
+    this.onItemChangedPosition = (shape: foGlyph): void => {
+      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+    }
+
+    this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
+      this.mouseLoc = loc;
+      this.mouseLoc.state = state; 212
+      this.mouseLoc.keys = keys;
+    }
+
+
+    Stencil.define<foShape2D>('lego', ThreeByThreeCircle);
+
+    Stencil.define('lego', OneByOne);
+    Stencil.define('lego', TwoByOne);
+    Stencil.define('lego', TwoByTwo, { width: 50, height: 50 });
+    Stencil.define('lego', TwoByFour);
+    Stencil.define('lego', OneByTen);
+    Stencil.define('lego', TenByTen, { width: 250, height: 250 });
   }
 
-  onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
-    this.mouseLoc = loc;
-    this.mouseLoc.state = state; 212
-    this.mouseLoc.keys = keys;
-  }
-
-  doDynamicCreate() {
-
-    let shape = Pallet.create(foGlyph, {
-      x: 150,
-      y: 100,
-      height: 50,
-      width: 20,
-    });
-    this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
-  }
-
-  doBoundry() {
-
-    // let text = Concept.define<foText2D>('words::text2d', foText2D, {
-    //   color: 'black',
-    //   background: 'grey',
-    //   context: 'HELLO',
-    //   fontSize: 30,
-    // });
-
-    let text = Concept.define<foShape2D>('blocks::text2d', foShape2D, {
+  doLoadStencil() {
+    Concept.define<foShape2D>('boundry::shape1', foShape2D, {
       color: 'gray',
       width: 50,
       height: 25
     });
 
-    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+    Concept.define<foShape2D>('boundry::block', foShape2D, {
       color: 'green',
       width: 100,
       height: 50
     });
 
-    let boundry = Concept.define<foShape2D>('blocks::boundry2d', foShape2D, {
+    Concept.define<foText2D>('boundry::text', foText2D, {
+      color: 'black',
+      background: 'grey',
+      context: 'HELLO',
+      fontSize: 30,
+    });
+
+    Concept.define<foShape2D>('boundry::boundry', foShape2D, {
       color: 'cyan',
       width: 100,
       height: 50
     });
 
-    let box = boundry.newInstance().drop(200, 100).addAsSubcomponent(this);
+    PubSub.Pub('refreshStencil');
+
+    Concept.allConcepts().forEach(item => {
+      let concept = item.concept;
+      this.signalR.pubCommand("syncConcept", { guid: concept.myGuid }, concept.asJson);
+    })
+
+  }
+
+
+  doBoundry() {
+
+    let text = Concept.find<foShape2D>('boundry::text');
+
+    let block = Concept.find<foShape2D>('boundry::block');
+
+    let boundry = Concept.find<foShape2D>('boundry::boundry');
+
+    let box = boundry.newInstance().drop(this.centerX, this.centerY).addAsSubcomponent(this);
 
 
     for (var i = 0; i < 3; i++) {
@@ -298,13 +304,29 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
 
+    this.signalR.pubCommand("syncShape", { guid: box.myGuid }, box.asJson);
   }
+
   doImage() {
-    // let image = Concept.define<foImage>('blocks::block2d', foImage, {
-    //   background: 'green',
-    //   width: 100,
-    //   height: 50
-    // });
+    let def = Concept.define<foImage>('blocks::block2d', foImage, {
+      background: 'green',
+      imageURL: "https://lorempixel.com/900/500?r=2",
+      width: 100,
+      height: 50
+    });
+
+    for (let i = 0; i < 15; i++) {
+      this.wait(500, () => {
+      let picture = def.newInstance().addAsSubcomponent(this);
+        picture.angle = Tools.randomInt(0,300)
+        this.signalR.pubCommand("syncShape", { guid: picture.myGuid }, picture.asJson);
+        let place = { x: 800+ Tools.randomInt(-70,70), y: 200 + Tools.randomInt(-70,70) }
+        picture.easeTween(place, 1.5);
+        this.signalR.pubCommand("easeTween", { guid: picture.myGuid, }, place);
+      })
+
+    }
+
 
     let image = new foImage({
       background: 'blue',
@@ -317,27 +339,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: image.myGuid }, image.asJson);
 
     let size = {
-      width: 400,
-      height: 400,
+      width: 200,
+      height: 200,
     }
 
     image.easeTween(size, 2.8, Back['easeInOut']);
 
     this.signalR.pubCommand("easeTween", { guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
 
-
-    // TweenLite.to(image, 2.8, {
-    //   width: 400,
-    //   height: 400,
-    //   ease: Back.easeInOut
-    // }).eventCallback("onComplete", () => {
-    //   let sync = {
-    //     width: 400,
-    //     height: 400,
-    //   }
-    //   image.override(sync)
-    //   this.signalR.pubCommand("syncShape", { guid: image.myGuid }, sync);
-    // });
 
   }
 
@@ -401,13 +410,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let body = Concept.define<foShape2D>('text::body', foShape2D, {
       color: 'cyan',
       fontSize: 30,
-    }, (parent) => {
-      parent.context.forEach(item => {
-        block.newInstance({
-          context: item,
-        }).addAsSubcomponent(parent);
-      });
     });
+
+    // , (parent) => {
+    //   parent.context.forEach(item => {
+    //     block.newInstance({
+    //       context: item,
+    //     }).addAsSubcomponent(parent);
+    //   });
+    // });
 
 
 
@@ -514,24 +525,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddGlyph() {
-    let shape = Pallet.create(foGlyph, {
+    let shape = RuntimeType.create(foGlyph, {
       color: 'cyan',
       x: 150,
       y: 100,
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.signalR.pubCommand("Glyph", { guid: shape.myGuid }, shape.asJson);
+    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddSubGlyph() {
-    let shape = Pallet.create(foGlyph, {
+    let shape = RuntimeType.create(foGlyph, {
       color: 'purple',
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
 
-    Pallet.create(foGlyph, {
+    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+
+    let subShape = RuntimeType.create(foGlyph, {
       color: 'blue',
       x: 25,
       y: 25,
@@ -539,14 +552,29 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 300,
     }).addAsSubcomponent(shape);
 
-    this.signalR.pubCommand("addGlyph", { guid: shape.myGuid }, shape.asJson);
+    this.signalR.pubCommand("syncGlyph", { guid: subShape.myGuid }, subShape.asJson);
+
+    this.signalR.pubCommand("syncParent", { guid: subShape.myGuid, parentGuid: subShape.myParent().myGuid });
+
+  }
+
+  doAddThreeByThree() {
+    let def = Stencil.define('my', ThreeByThreeCircle, {
+      color: 'coral',
+      x: 400,
+      y: 400,
+    });
+
+    let shape = def.newInstance({
+      color: 'coral',
+    });
+    this.addSubcomponent(shape);
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
 
-
-
   doAddOneByOne() {
-    let shape = Stencil.create(OneByOne, {
+    let shape = RuntimeType.create(OneByOne, {
       color: 'red',
       x: 200,
       y: 200,
@@ -556,7 +584,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByOne() {
-    let shape = Stencil.create(TwoByOne, {
+    let shape = RuntimeType.create(TwoByOne, {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
@@ -565,7 +593,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTwoByTwo() {
 
-    let shape = Stencil.create(TwoByTwo, {
+    let shape = RuntimeType.create(TwoByTwo, {
       color: 'pink',
       myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
@@ -583,7 +611,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinY = (): number => { return 0.5 * this.height; }
     }
 
-    Stencil.define(localTwoByFour, Stencil.spec(TwoByFour));
+    RuntimeType.define(localTwoByFour);
 
     let spec = {
       color: 'green',
@@ -591,16 +619,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     if (!properties) {
-      let shape = Stencil.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
+      let shape = RuntimeType.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
       this.signalR.pubCommand("callMethod", { func: 'doAddTwoByFour' }, shape.asJson);
     } else {
-      Stencil.create(localTwoByFour, properties).addAsSubcomponent(this);
+      RuntimeType.create(localTwoByFour, properties).addAsSubcomponent(this);
     }
 
   }
 
   doAddOneByTen() {
-    let shape = Stencil.create(OneByTen, {
+    let shape = RuntimeType.create(OneByTen, {
       color: 'yellow',
       // height: 10,
       // width: function (): number { return this.height / 4; },
@@ -616,9 +644,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTenByTen() {
-    let shape = Stencil.create(TenByTen, {
-      color: 'gray',
-      name: TenByTen.typeName()
+    let shape = RuntimeType.create(TenByTen, {
+      color: 'gray'
     }).drop(600, 300);
 
     this.addSubcomponent(shape);
@@ -627,14 +654,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddStack(properties?: any) {
 
-    let shape = Stencil.create(TenByTen, {
+    let shape = RuntimeType.create(TenByTen, {
       myGuid: properties && properties.shape,
       opacity: .5,
       color: 'gray',
       angle: 10
     }).drop(600, 300).addAsSubcomponent(this);
 
-    let subShape = Stencil.create(TwoByFour, {
+    let subShape = RuntimeType.create(TwoByFour, {
       myGuid: properties && properties.subShape,
       color: 'red',
     }).addAsSubcomponent(shape, {
@@ -683,7 +710,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       cY: (y2 + y1) / 2,
     }
 
-    let fake = Stencil.create(foShape2D, {
+    let fake = RuntimeType.create<foShape2D>(foShape2D, {
       opacity: .5,
       color: 'gray',
       angle: spec.angle,
@@ -692,7 +719,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(400, 400).addAsSubcomponent(this);
     this.signalR.pubCommand("syncShape", { guid: fake.myGuid }, fake.asJson);
 
-    let shape = Stencil.create(Line, {
+    let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
       color: 'gray',
       startX: x1,
@@ -706,7 +733,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doShapeGlue() {
-    let shape1 = Stencil.create(TwoByOne, {
+    let shape1 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
 
@@ -714,7 +741,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
 
 
-    let shape2 = Stencil.create(TwoByOne, {
+    let shape2 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
     }).drop(300, 400).addAsSubcomponent(this);
@@ -726,7 +753,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let pc = pt1.midpoint(pt2);
 
 
-    let shape = Stencil.create(Line, {
+    let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
       color: 'gray',
       height: 30,
@@ -737,7 +764,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(600, 350).addAsSubcomponent(this);
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
 
-    let wire = Stencil.create(Line, {
+    let wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
       height: 30,
       startX: pt1.x,
@@ -756,7 +783,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doObjGlue() {
 
-    let wire = Stencil.create(Line, {
+    let wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
       height: 20,
       color: 'black',
@@ -764,15 +791,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
 
-    let shape1 = Stencil.create(dGlue).addAsSubcomponent(this);
+    let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
-    let shape2 = Stencil.create(dGlue).addAsSubcomponent(this);
+    let shape2 = RuntimeType.create(dGlue).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
-
-
 
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
@@ -784,14 +809,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.pubCommand("syncGlue", glue.asJson);
     })
 
-  }
-
-  doDropGlue() {
-    let subShape = Stencil.create(dGlue, {
-    }).drop(500, 300, 30);
-    this.addSubcomponent(subShape);
-
-    // this.signalR.pubChannel("syncDisp", subShape.asJson);
   }
 
   doObjRect() {
@@ -806,18 +823,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    let subShape = Stencil.create(objRect, {
+    let shape = RuntimeType.create(objRect, {
       color: 'blue',
       width: 150,
       height: 100,
-    }).drop(300, 300, 0);
-    subShape.doAnimation = subShape.Animation;
+    }).drop(300, 300, 0).then(item => {
+      item.doAnimation = item.Animation;
+      item.isSelected = true;
+    }).addAsSubcomponent(this);
 
-    subShape.isSelected = true;
-
-    this.addSubcomponent(subShape);
-
-    // this.signalR.pubChannel("syncDisp", subShape.asJson);
+    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
   }
 
   doObjGroup() {
@@ -826,7 +841,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       public pinX = (): number => { return 50; }
     }
 
-    let shape = Stencil.create(myRect, {
+    let shape = RuntimeType.create(myRect, {
       color: 'purple',
       myName: 'root  dRectangle',
       width: 300,
@@ -836,7 +851,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addSubcomponent(shape);
     this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
 
-    let subShape = Stencil.create(dRectangle, {
+    let subShape = RuntimeType.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
       width: 50,
@@ -885,22 +900,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         });
       });
 
-      this.signalR.subCommand("addGlyph", (cmd, data) => {
-        //console.log(json);
-        this.findItem(cmd.guid, () => {
-          Pallet.create(foGlyph, data).addAsSubcomponent(this);
-        });
-      });
-
-      this.signalR.subCommand("Glyph", (cmd, data) => {
-        //console.log(json);
-        this.findItem(cmd.guid, () => {
-          Pallet.create(foGlyph, data).addAsSubcomponent(this);
-        });
-      });
-
-
-
       this.signalR.subCommand("deleteShape", (cmd, data) => {
         //console.log(json);
         this.found(cmd.guid, shape => {
@@ -914,22 +913,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
 
-      this.signalR.subCommand("parent", (cmd, data) => {
+      this.signalR.subCommand("syncParent", (cmd, data) => {
         this.found(cmd.guid, (shape) => {
-          this.message.push(data);
-          this.removeSubcomponent(shape);
-          shape.removeFromParent();
           if (cmd.parentGuid) {
             this.found(cmd.parentGuid, (item) => {
-              item.addSubcomponent(shape, { x: data.x, y: data.y });
-              // TweenLite.to(shape, .8, {
-              //   x: json.x,
-              //   y: json.y,
-              //   ease: Back.easeInOut
-              // }).eventCallback("onComplete", () => { shape.override({ x: json.x, y: json.y }) });
-
+              shape.removeFromParent();
+              item.addSubcomponent(shape);
             });
           } else {
+            shape.removeFromParent();
             this.addSubcomponent(shape);
           }
 
@@ -938,22 +930,25 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
         //alert(JSON.stringify(data, undefined, 3));
+        let found = Concept.override(data);
+        PubSub.Pub('refreshStencil', found);
       });
 
+
       this.signalR.subCommand("syncGlyph", (cmd, data) => {
+        //alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
-          let type = data.myType;
-          let shape = Pallet.makeInstance(type, data)
-          this.addSubcomponent(shape);
+          RuntimeType.create(foGlyph, data).addAsSubcomponent(this);
         });
       });
 
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
+        alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
-          let shape = Stencil.makeInstance(type, data);
+          let shape = RuntimeType.newInstance(type, data);
           this.found(cmd.parentGuid,
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this.addSubcomponent(shape); }
@@ -977,10 +972,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncDisp", (cmd, data) => {
+        alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
-          let shape = Stencil.makeInstance(type, data);
+          let shape = RuntimeType.newInstance(type, data);
           this.found(cmd.parentGuid,
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this.addSubcomponent(shape); }
@@ -990,7 +986,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
-        let cmdx = cmd;
+        alert(JSON.stringify(cmd, undefined, 3));
         this.found(cmd.sourceGuid, (source) => {
           this.found(cmd.targetGuid, (target) => {
             let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));

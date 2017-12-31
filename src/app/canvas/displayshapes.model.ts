@@ -3,7 +3,6 @@ import { cPoint } from '../foundry/foGeometry';
 
 import { iObject, iNode, iShape, iPoint, iSize, Action } from '../foundry/foInterface';
 
-import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
 
 //https://github.com/CreateJS/EaselJS
@@ -45,5 +44,4 @@ export class dGlue extends dRectangle {
 
 }
 
-Stencil.define(dGlue);
 

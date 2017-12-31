@@ -12,7 +12,7 @@ import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foShape2D, Stencil } from '../foundry/foShape2D.model'
+import { foShape2D } from '../foundry/foShape2D.model'
 
 
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
@@ -64,9 +64,9 @@ export class foText2D extends foShape2D {
     }
 
     protected toJson(): any {
-        let result = super.toJson();
-        result.text = this.text;
-        return result;
+        return Tools.mixin(super.toJson(), {
+            text:this.text
+        });
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
@@ -208,4 +208,5 @@ export class foText2D extends foShape2D {
     }
 }
 
-Stencil.define(foText2D);
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foText2D);
