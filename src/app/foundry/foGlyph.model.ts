@@ -708,28 +708,4 @@ export class foGlyph extends foNode implements iShape {
 import { RuntimeType } from './foRuntimeType';
 RuntimeType.model(foGlyph);
 
-export class Pallet {
-    static lookup = {}
-
-    static create<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any, func?: Action<T>): T {
-        let instance = new type(properties);
-        func && func(instance);
-        return instance;
-    }
-
-    static define<T extends foGlyph>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type();
-        this.lookup[instance.myType] = { create: type, defaults: properties };
-        return type;
-    }
-
-    static makeInstance<T extends foGlyph>(type: string, properties?: any, func?: Action<T>) {
-        let { create, defaults } = this.lookup[type];
-        let instance = new create(Tools.union(properties, defaults));
-        func && func(instance);
-        return instance;
-    }
-}
-
-Pallet.define(foGlyph);
 

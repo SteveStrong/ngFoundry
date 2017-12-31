@@ -7,6 +7,7 @@ import { EmitterService } from '../common/emitter.service';
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
+import { RuntimeType } from '../foundry/foRuntimeType';
 import { PubSub } from "../foundry/foPubSub";
 import { Matrix2D } from "../foundry/foMatrix2D";
 import { cPoint, cRect, cMargin } from "../foundry/foGeometry";
@@ -21,7 +22,7 @@ import { foPage } from "../foundry/foPage.model";
 import { foHandle } from "../foundry/foHandle";
 
 import { foGlue } from "../foundry/foGlue";
-import { foGlyph, Pallet } from "../foundry/foGlyph.model";
+import { foGlyph } from "../foundry/foGlyph.model";
 import { foShape2D, Stencil } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
@@ -212,7 +213,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addEventHooks();
 
     this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubCommand("parent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
+      this.signalR.pubCommand("syncParent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
     }
 
     this.onItemChangedPosition = (shape: foGlyph): void => {
@@ -343,19 +344,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.signalR.pubCommand("easeTween", { guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
 
-
-    // TweenLite.to(image, 2.8, {
-    //   width: 400,
-    //   height: 400,
-    //   ease: Back.easeInOut
-    // }).eventCallback("onComplete", () => {
-    //   let sync = {
-    //     width: 400,
-    //     height: 400,
-    //   }
-    //   image.override(sync)
-    //   this.signalR.pubCommand("syncShape", { guid: image.myGuid }, sync);
-    // });
 
   }
 
@@ -532,24 +520,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddGlyph() {
-    let shape = Pallet.create(foGlyph, {
+    let shape = RuntimeType.create(foGlyph, {
       color: 'cyan',
       x: 150,
       y: 100,
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.signalR.pubCommand("Glyph", { guid: shape.myGuid }, shape.asJson);
+    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
   }
 
   doAddSubGlyph() {
-    let shape = Pallet.create(foGlyph, {
+    let shape = RuntimeType.create(foGlyph, {
       color: 'purple',
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
 
-    Pallet.create(foGlyph, {
+    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+
+    let subShape = RuntimeType.create(foGlyph, {
       color: 'blue',
       x: 25,
       y: 25,
@@ -557,7 +547,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 300,
     }).addAsSubcomponent(shape);
 
-    this.signalR.pubCommand("addGlyph", { guid: shape.myGuid }, shape.asJson);
+    this.signalR.pubCommand("syncGlyph", { guid: subShape.myGuid }, subShape.asJson);
+
+    this.signalR.pubCommand("syncParent", { guid: subShape.myGuid, parentGuid: subShape.myParent().myGuid });
+
   }
 
 
@@ -903,19 +896,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         });
       });
 
-      this.signalR.subCommand("addGlyph", (cmd, data) => {
-        //console.log(json);
-        this.findItem(cmd.guid, () => {
-          Pallet.create(foGlyph, data).addAsSubcomponent(this);
-        });
-      });
 
-      this.signalR.subCommand("Glyph", (cmd, data) => {
-        //console.log(json);
-        this.findItem(cmd.guid, () => {
-          Pallet.create(foGlyph, data).addAsSubcomponent(this);
-        });
-      });
 
 
 
@@ -932,22 +913,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
 
-      this.signalR.subCommand("parent", (cmd, data) => {
+      this.signalR.subCommand("syncParent", (cmd, data) => {
         this.found(cmd.guid, (shape) => {
-          this.message.push(data);
-          this.removeSubcomponent(shape);
-          shape.removeFromParent();
           if (cmd.parentGuid) {
             this.found(cmd.parentGuid, (item) => {
-              item.addSubcomponent(shape, { x: data.x, y: data.y });
-              // TweenLite.to(shape, .8, {
-              //   x: json.x,
-              //   y: json.y,
-              //   ease: Back.easeInOut
-              // }).eventCallback("onComplete", () => { shape.override({ x: json.x, y: json.y }) });
-
+              shape.removeFromParent();
+              item.addSubcomponent(shape);
             });
           } else {
+            shape.removeFromParent();
             this.addSubcomponent(shape);
           }
 
@@ -958,11 +932,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         alert(JSON.stringify(data, undefined, 3));
       });
 
+
       this.signalR.subCommand("syncGlyph", (cmd, data) => {
+        //alert(JSON.stringify(data, undefined, 3));
         this.findItem(cmd.guid, () => {
-          let type = data.myType;
-          let shape = Pallet.makeInstance(type, data)
-          this.addSubcomponent(shape);
+          RuntimeType.create(foGlyph, data).addAsSubcomponent(this);
         });
       });
 

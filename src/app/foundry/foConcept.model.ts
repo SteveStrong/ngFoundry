@@ -10,7 +10,7 @@ import { foObject } from './foObject.model'
 import { foComponent } from './foComponent.model'
 import { foNode } from './foNode.model'
 
-
+import { RuntimeType } from './foRuntimeType';
 
 export class foConcept<T extends foNode> extends foKnowledge {
 
@@ -18,8 +18,14 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return <T>new foNode(properties, subcomponents, parent);
     }
 
-    private _spec: any;
-    private _init: Action<T>;
+    private _core: string;
+    get core(): string { return this._core; }
+    set core(value: string) { this._core = value; }
+
+    private _specification: any;
+    get specification(): any { return this._specification; }
+    set specification(value: any) { this._specification = value; }
+
 
     private _attributes: foDictionary<foAttribute> = new foDictionary<foAttribute>({ myName: 'attributes' });
     private _projections: foDictionary<foProjection<T>> = new foDictionary<foProjection<T>>({ myName: 'projections' });
@@ -32,10 +38,9 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
-    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T) => T, init?: Action<T>) {
-        super(properties);
-        this._spec = properties || {};
-        this._init = init;
+    constructor(properties?: any, create?: (properties?: any, subcomponents?: Array<T>, parent?: T) => T) {
+        super();
+        this.specification = properties || {};
 
         if (create) {
             this._create = create;
@@ -86,7 +91,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
     get debug() {
         let result = {
             base: this,
-            spec: this._spec,
+            spec: this._specification,
+            type: this._type,
             attributes: this._attributes,
             projections: this._projections,
         }
@@ -95,7 +101,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
     get asJson() {
         let result = Tools.asJson(this);
-        result.spec = this._spec;
+        result.core = this._core;
+        result.specification = this._specification;
         result.attributes = Tools.asArray(this.attributes.asJson);
         result.projections = Tools.asArray(this.projections.asJson);
         //let result = this.jsonMerge(this._attributes.values);
@@ -107,13 +114,12 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = this._create(spec, subcomponents, parent) as T;
         result.myName = this.myName;
         result.initialize();
-        this._init && this._init(result);
         return result;
     }
 
 }
 
-import { RuntimeType } from './foRuntimeType';
+
 RuntimeType.knowledge(foConcept);
 
 export class foProjection<T extends foNode> extends foConcept<T> {
@@ -192,14 +198,15 @@ export class Concept {
         return concept;
     }
 
-    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, func?: Action<T>): foConcept<T> {
+    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
 
         let create = (p?: any, s?: Array<T>, r?: T) => {
             return new type(p, s, r);
         };
 
-        let concept = new foConcept<T>(properties, create, func);
+        let concept = new foConcept<T>(properties, create);
+        concept.core = type.name;
         concept.myName = id;
 
         return this.registerConcept(namespace, name, concept);
