@@ -579,11 +579,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       x: 400,
       y: 400,
     });
+    this.signalR.pubCommand("syncStencil", def);
 
-    let shape = def.newInstance({
-      color: 'coral',
-    });
-    this.addSubcomponent(shape);
+    let shape = def.newInstance()
+      .addAsSubcomponent(this);
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
@@ -895,14 +894,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
       ctx.save();
       this.render(ctx);
-
       ctx.restore();
     }
-
-    // this.preDraw = (ctx: CanvasRenderingContext2D): void => {
-    //   ctx.fillStyle = this.color;
-    //   ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
-    // }
 
 
     this.screen2D.go();
@@ -941,6 +934,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           }
 
         });
+      });
+
+      this.signalR.subCommand("syncStencil", (cmd, data) => {
+        alert(JSON.stringify(cmd, undefined, 3));
+        let found = Stencil.override(data);
+        PubSub.Pub('onStencilChanged', found);
       });
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
