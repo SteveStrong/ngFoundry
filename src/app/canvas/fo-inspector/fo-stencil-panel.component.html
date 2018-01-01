@@ -1,0 +1,10 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+  <button (click)="doCreate()" type="button" class="btn btn-info">{{stencilItem.name}}</button>
+
+  <ng-container *ngFor="let cmd of stencilItem.spec.getCommands(); let i = index; let isOdd = odd">
+    <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
+  </ng-container>
+</div>
+
+</div>

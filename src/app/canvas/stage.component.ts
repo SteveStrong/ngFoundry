@@ -233,7 +233,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    Stencil.define<foShape2D>('lego', ThreeByThreeCircle);
+    Stencil.define('lego', ThreeByThreeCircle);
 
     Stencil.define('lego', OneByOne);
     Stencil.define('lego', TwoByOne, { color: 'coral' });
@@ -244,7 +244,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doParticleEngine() {
-    new particleEngine({
+    let engine = new particleEngine({
       color:'white',
       particleCount: 100,
       opacity: .1,
@@ -252,7 +252,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 700,
     }).drop(500,500).addAsSubcomponent(this)
     .then(item => {
-      item.doCreate();
+      item.doStart();
     });
 
     let def = Stencil.define('particle', particleEngine, {
@@ -261,7 +261,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .1,
       width: 700,
       height: 700,
-    });
+    }).addCommands("doStart","doStop").addCommands("doRotate");
     this.signalR.pubCommand("syncStencil", {myName: def.myName}, def);
    
   }
@@ -947,7 +947,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncStencil", (cmd, data) => {
-        //alert(JSON.stringify(data, undefined, 3));
+        alert(JSON.stringify(data, undefined, 3));
         Stencil.override(data);
       });
 

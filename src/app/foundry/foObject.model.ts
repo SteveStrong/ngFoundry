@@ -91,38 +91,13 @@ export class foObject implements iObject {
     }
 
     public override(properties?: any) {
-        const self = this;
-
-        properties && Tools.forEachKeyValue(properties, function (key, value) {
-            try {
-                if (Tools.isFunction(value)) {
-                    Tools.defineCalculatedProperty(self, key, value);
-                } else {
-                    self[key] = value;
-                }
-            } catch (ex) {
-                console.log(ex);
-            }
-
-        });
-
-        return self;
+        properties && Tools.overrideComputed(this,properties);
+        return this;
     }
 
     public extend(properties?: any) {
-        const self = this;
-
-        properties && Tools.forEachKeyValue(properties, function (key, value) {
-            if (!self[key]) {
-                if (Tools.isFunction(value)) {
-                    Tools.defineCalculatedProperty(self, key, value);
-                } else {
-                    self[key] = value;
-                }
-            }
-        });
-
-        return self;
+        properties && Tools.extendComputed(this,properties);
+        return this;
     }
 
     getMethodList() {
