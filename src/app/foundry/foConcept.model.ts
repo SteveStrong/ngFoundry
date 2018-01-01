@@ -219,11 +219,16 @@ export class Concept {
         //alert(JSON.stringify(concept, undefined, 3));
 
         let type = RuntimeType.modelPrimitives[primitive];
+        if ( !type ) {
+            throw Error('runtimeType not found ' + type)
+        }
         concept.definePrimitive(type);
         concept.specification = specification;
   
         let { namespace, name } = Tools.splitNamespaceType(concept.myName);
-        return this.registerConcept(namespace, name, concept);
+        let result = this.registerConcept(namespace, name, concept);
+        PubSub.Pub('onKnowledgeChanged', result);
+        return result;
     }
 
 

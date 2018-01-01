@@ -108,9 +108,12 @@ export class Stencil {
         let { myName, myType, properties, subcomponents } = json;
 
         let type = RuntimeType.modelPrimitives[myType];
+        if ( !type ) {
+            throw Error('runtimeType not found ' + type)
+        }
         let spec = new Spec<T>(myName, type, properties, subcomponents);
 
-        let result = this.register(spec.myName, spec);
+        let result = this.register(myName, spec);
         PubSub.Pub('onStencilChanged', result);
         return result;
     }
