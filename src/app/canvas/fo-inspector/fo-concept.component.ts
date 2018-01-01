@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
-import { Concept } from "../../foundry/foConcept.model";
+import { Concept, foConceptItem } from "../../foundry/foConcept.model";
 import { PubSub } from "../../foundry/foPubSub";
 
 @Component({
@@ -14,14 +14,14 @@ export class foConceptComponent implements OnInit {
   @Input()
   public rootPage: foPage;
 
-  list:Array<any> = new Array<any>();
+  list:Array<foConceptItem> = new Array<foConceptItem>();
   headings:Array<string> = new Array<string>();
   groups:any = {};
 
   constructor() { }
 
   initViewModel() {
-    this.list = Concept.allConcepts();
+    this.list = Concept.allConceptItems();
 
     this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
     this.headings = Concept.namespaces();

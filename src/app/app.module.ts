@@ -37,7 +37,6 @@ import { CanvasTestComponent } from './canvas/canvastest.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { foInspectorComponent } from './canvas/fo-inspector/fo-inspector.component';
-import { foPanelComponent } from './canvas/fo-inspector/fo-panel.component';
 import { foStencilComponent } from './canvas/fo-inspector/fo-stencil.component';
 import { foModelComponent } from './canvas/fo-inspector/fo-model.component';
 import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
@@ -47,6 +46,7 @@ import { foConceptComponent } from './canvas/fo-inspector/fo-concept.component';
 import { foStencilPanelComponent } from './canvas/fo-inspector/fo-stencil-panel.component';
 import { foPagePanelComponent } from './canvas/fo-inspector/fo-page-panel.component';
 import { foModelPanelComponent } from './canvas/fo-inspector/fo-model-panel.component';
+import { foConceptPanelComponent } from './canvas/fo-inspector/fo-concept-panel.component';
 
 @NgModule({
   declarations: [
@@ -73,7 +73,6 @@ import { foModelPanelComponent } from './canvas/fo-inspector/fo-model-panel.comp
     CanvasTestComponent,
 
     foInspectorComponent,
-    foPanelComponent,
     foStencilComponent,
     foModelComponent,
     foDrawingComponent,
@@ -82,7 +81,8 @@ import { foModelPanelComponent } from './canvas/fo-inspector/fo-model-panel.comp
     foConceptComponent,
     foStencilPanelComponent,
     foPagePanelComponent,
-    foModelPanelComponent
+    foModelPanelComponent,
+    foConceptPanelComponent
   ],
   imports: [
     BrowserAnimationsModule,

@@ -1,3 +1,8 @@
-<p>
-  fo-page-panel works!
-</p>
+<div class="panel panel-default">
+  <div class="panel-body">{{node.childDepth}} {{node.myName}}: {{node.myType}} - {{node.color}}</div>
+  <span>{{node.x}}  {{node.y}}</span>
+  <p *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
+    <fo-page-panel [node]="node"></fo-page-panel>
+  </p>
+
+</div>
