@@ -29,6 +29,7 @@ import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
 import { foImage } from "../foundry/foImage.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
+import { particleEngine } from "./particle.model";
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
 import { dRectangle, dGlue } from "./displayshapes.model";
@@ -242,7 +243,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     Stencil.define('lego', TenByTen, { width: 250, height: 250 });
   }
 
-  doLoadStencil() {
+  doParticleEngine() {
+    new particleEngine({
+      color:'white',
+      particleCount: 100,
+      opacity: .1,
+      width: 700,
+      height: 700,
+    }).drop(500,500).addAsSubcomponent(this)
+    .then(item => {
+      item.doCreate();
+    });
+   
+  }
+
+  doLoadConcept() {
     Concept.define<foShape2D>('boundry::shape1', foShape2D, {
       color: 'gray',
       width: 50,
@@ -268,7 +283,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 50
     });
 
-    PubSub.Pub('refreshStencil');
+    PubSub.Pub('onKnowledgeChanged');
 
     Concept.allConcepts().forEach(item => {
       let concept = item.concept;
@@ -931,7 +946,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.signalR.subCommand("syncConcept", (cmd, data) => {
         //alert(JSON.stringify(data, undefined, 3));
         let found = Concept.override(data);
-        PubSub.Pub('refreshStencil', found);
+        PubSub.Pub('onKnowledgeChanged', found);
       });
 
 

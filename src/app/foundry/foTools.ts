@@ -104,6 +104,17 @@ export class foTools {
         return low + Math.floor(Math.random() * (high - low + 1));
     };
 
+    random(low: number, high: number) {
+        return low + Math.random() * (high - low);
+    };
+
+    randomRGBColor() {
+        var r = 255 * Math.random() | 0,
+            g = 255 * Math.random() | 0,
+            b = 255 * Math.random() | 0;
+        return `rgb(${r},${g},${b})`;
+    }
+
     isSelf(ref) {
         return ref.matches('@') || ref.matches('this') || ref.matches('self')
     };

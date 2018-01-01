@@ -8,7 +8,7 @@
     <!-- <pre class="well">{{_dictionary | json}}</pre> -->
     <!-- <pre class="well">{{Subcomponents | json}}</pre> -->
   </tab>
-  <tab heading='Runtime'>
+  <tab heading='Runtime' (select)="doRefreshRuntimeTypes()">
     <fo-runtime ></fo-runtime>
   </tab>
   <tab heading='Page'>
@@ -20,8 +20,8 @@
   <tab heading='Stencil' (select)="doRefreshStencil()">
     <fo-stencil [rootPage]="rootPage"></fo-stencil>
   </tab>
-  <tab heading='Concepts' (select)="doRefreshStencil()">
-    <fo-concept ></fo-concept>
+  <tab heading='Concepts' (select)="doRefreshConcepts()">
+    <fo-concept [rootPage]="rootPage"></fo-concept>
   </tab>
   <tab heading='Commands'>
     <fo-command [stage]="stage"></fo-command>  
