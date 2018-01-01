@@ -1,16 +1,17 @@
 import { Tools } from '../foundry/foTools'
 import { Action } from '../foundry/foInterface'
-import { foNode } from '../foundry/foNode.model'
+import { foGlyph } from '../foundry/foGlyph.model'
 
 import { PubSub } from "./foPubSub";
 import { RuntimeType } from './foRuntimeType';
 
-class Spec<T extends foNode> {
+export class foStencilSpec<T extends foGlyph> {
     myName: string;
     myType: string;
     primitive: { new(p?: any, s?: Array<T>, r?: T): T; };
     properties: any;
     subcomponents: Array<T>;
+    commands: Array<string> = new Array<string>();
 
     constructor(name: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, inits?: any, subs?: Array<T>) {
         this.myName = name;
@@ -20,11 +21,32 @@ class Spec<T extends foNode> {
         this.subcomponents = subs;
     }
 
-    newInstance<T extends foNode>(properties?: any, subcomponents?: Array<T>) {
+    newInstance<T extends foGlyph>(properties?: any, subcomponents?: Array<T>) {
         let spec = Tools.union(properties, this.properties);
         let instance = new this.primitive(spec);
         instance.myClass = this.myName;
-        return instance
+        return instance;
+    }
+
+
+    addCommands(...cmds: string[]) {
+        this.commands && this.commands.push(...cmds)
+        return this;
+    }
+
+    getCommands(): Array<string> {
+        return this.commands;
+    }
+}
+
+export class foStencilItem {
+    id: string;
+    namespace: string;
+    name: string;
+    spec: foStencilSpec<foGlyph>;
+
+    constructor(props?:any){
+        props && Tools.mixin(this, props)
     }
 }
 
@@ -39,23 +61,24 @@ export class Stencil {
         return Object.keys(this.lookup[namespace]);
     }
 
-    static allSpecifications(): Array<any> {
-        let list: Array<any> = new Array<any>();
+    static allStencilItem(): Array<foStencilItem> {
+        let list: Array<foStencilItem> = new Array<foStencilItem>();
         Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
             Tools.forEachKeyValue(obj, (name, spec) => {
                 let id = `${namespace}::${name}`;
-                list.push({
+                let item = new foStencilItem({
                     id: id,
                     namespace: namespace,
                     name: name,
                     spec: spec,
                 });
+                list.push(item);
             })
         })
         return list;
     }
 
-    static register<T extends foNode>(id: string, item: Spec<T>): Spec<T> {
+    static register<T extends foGlyph>(id: string, item: foStencilSpec<T>): foStencilSpec<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
         if (!this.lookup[namespace]) {
             this.lookup[namespace] = {};
@@ -64,29 +87,29 @@ export class Stencil {
         return item;
     }
 
-    static find<T extends foNode>(id: string): Spec<T> {
+    static find<T extends foGlyph>(id: string): foStencilSpec<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
         return this.findSpec(namespace, name);
     }
 
-    static findSpec<T extends foNode>(namespace: string, name: string): Spec<T> {
+    static findSpec<T extends foGlyph>(namespace: string, name: string): foStencilSpec<T> {
         let space = this.lookup[namespace];
         let spec = space && space[name];
         return spec;
     }
 
-    static define<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>): Spec<T> {
+    static define<T extends foGlyph>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>): foStencilSpec<T> {
         RuntimeType.define(type);
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
-        let spec = new Spec(Tools.namespace(namespace, name), type, properties, subcomponents);
+        let spec = new foStencilSpec(Tools.namespace(namespace, name), type, properties, subcomponents);
 
         let result = this.register(spec.myName, spec);
         PubSub.Pub('onStencilChanged', result);
         return result;
     }
 
-    static create<T extends foNode>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
+    static create<T extends foGlyph>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
         RuntimeType.define(type);
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
@@ -96,7 +119,7 @@ export class Stencil {
         return instance;
     }
 
-    static newInstance<T extends foNode>(id: string, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
+    static newInstance<T extends foGlyph>(id: string, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
         let spec = this.find(id);
         let instance = spec && spec.newInstance(properties, subcomponents) as T;
         func && func(instance);
@@ -104,15 +127,16 @@ export class Stencil {
     }
 
 
-    static override<T extends foNode>(json: any): Spec<T> {
-        let { myName, myType, properties, subcomponents } = json;
+    static override<T extends foGlyph>(json: any): foStencilSpec<T> {
+        let { myName, myType, properties, subcomponents, commands } = json;
 
         let type = RuntimeType.modelPrimitives[myType];
-        if ( !type ) {
+        if (!type) {
             throw Error('runtimeType not found ' + type)
         }
-        let spec = new Spec<T>(myName, type, properties, subcomponents);
-
+        let spec = new foStencilSpec<T>(myName, type, properties, subcomponents);
+        spec.addCommands(...commands);
+        
         let result = this.register(myName, spec);
         PubSub.Pub('onStencilChanged', result);
         return result;

@@ -87,8 +87,8 @@ export class particle extends foShape2D {
 export class particleEngine extends foShape2D {
   particleCount: number;
 
-  doCreate() {
-    var particleType = Stencil.define('test', particle);
+  doStart() {
+    var particleType = Stencil.define('particle', particle);
     let count = this.particleCount || 100;
     for (var i = 0; i < this.particleCount; i++) {
       particleType.newInstance()
@@ -97,8 +97,12 @@ export class particleEngine extends foShape2D {
     }
   }
 
-  doDelete() {
+  doStop() {
     this.nodes.clearAll();
+  }
+
+  doRotate() {
+    this.angle += 30;
   }
 }
 

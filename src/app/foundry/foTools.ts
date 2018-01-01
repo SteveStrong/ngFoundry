@@ -297,12 +297,12 @@ export class foTools {
         return target;
     };
 
-    getMethods(obj){
+    getMethods(obj) {
         var list = [];
         for (var m in obj.prototype) {
-          if (typeof obj[m] == "function") {
-            list.push(m)
-          }
+            if (typeof obj[m] == "function") {
+                list.push(m)
+            }
         }
         return list;
     }
@@ -356,6 +356,36 @@ export class foTools {
         }
         return obj;
     };
+
+    overrideComputed(obj: any, properties: any) {
+        Tools.forEachKeyValue(properties, function (key, value) {
+            try {
+                if (Tools.isFunction(value)) {
+                    Tools.defineCalculatedProperty(obj, key, value);
+                } else {
+                    obj[key] = value;
+                }
+            } catch (ex) {
+                console.log(ex);
+            }
+        });
+    }
+
+    extendComputed(obj: any, properties: any) {
+        Tools.forEachKeyValue(properties, function (key, value) {
+            try {
+                if (!obj[key]) {
+                    if (Tools.isFunction(value)) {
+                        Tools.defineCalculatedProperty(obj, key, value);
+                    } else {
+                        obj[key] = value;
+                    }
+                }
+            } catch (ex) {
+                console.log(ex);
+            }
+        });
+    }
 
     pluck(name) {
         return function (x) { return x[name] }

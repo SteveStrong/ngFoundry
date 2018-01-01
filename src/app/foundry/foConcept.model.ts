@@ -148,27 +148,39 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
 RuntimeType.knowledge(foProjection);
 
+export class foConceptItem {
+    id: string;
+    namespace: string;
+    name: string;
+    concept: foConcept<foNode>;
+
+    constructor(props?: any) {
+        props && Tools.mixin(this, props)
+    }
+}
+
 export class Concept {
     static lookup: any = {}
 
     static namespaces(): Array<string> {
         return Object.keys(this.lookup);
     }
-    static names(namespace:string): Array<string> {
+    static names(namespace: string): Array<string> {
         return Object.keys(this.lookup[namespace]);
     }
 
-    static allConcepts(): Array<any> {
-        let list: Array<any> = new Array<any>();
+    static allConceptItems(): Array<foConceptItem> {
+        let list: Array<foConceptItem> = new Array<foConceptItem>();
         Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
             Tools.forEachKeyValue(obj, (name, concept) => {
                 let id = `${namespace}::${name}`;
-                list.push({
+                let item = new foConceptItem({
                     id: id,
                     namespace: namespace,
                     name: name,
                     concept: concept,
                 });
+                list.push(item);
             })
         })
         return list;
@@ -203,7 +215,7 @@ export class Concept {
     static define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(myName);
 
-        let concept = new foConcept<T>({myName});
+        let concept = new foConcept<T>({ myName });
         concept.definePrimitive(type);
         concept.specification = specification || {};
 
@@ -216,15 +228,15 @@ export class Concept {
         let { specification, primitive } = json;
 
         let concept = new foConcept<T>(json);
-        //alert(JSON.stringify(concept, undefined, 3));
+        //foObject.jsonAlert(data);
 
         let type = RuntimeType.modelPrimitives[primitive];
-        if ( !type ) {
+        if (!type) {
             throw Error('runtimeType not found ' + type)
         }
         concept.definePrimitive(type);
         concept.specification = specification;
-  
+
         let { namespace, name } = Tools.splitNamespaceType(concept.myName);
         let result = this.registerConcept(namespace, name, concept);
         PubSub.Pub('onKnowledgeChanged', result);

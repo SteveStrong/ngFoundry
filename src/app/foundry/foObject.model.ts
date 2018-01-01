@@ -22,6 +22,10 @@ export class foObject implements iObject {
         snd.play();
     }
 
+    static jsonAlert(obj) {
+        alert(JSON.stringify(obj, undefined, 3));
+    }
+
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
     
@@ -91,38 +95,13 @@ export class foObject implements iObject {
     }
 
     public override(properties?: any) {
-        const self = this;
-
-        properties && Tools.forEachKeyValue(properties, function (key, value) {
-            try {
-                if (Tools.isFunction(value)) {
-                    Tools.defineCalculatedProperty(self, key, value);
-                } else {
-                    self[key] = value;
-                }
-            } catch (ex) {
-                console.log(ex);
-            }
-
-        });
-
-        return self;
+        properties && Tools.overrideComputed(this,properties);
+        return this;
     }
 
     public extend(properties?: any) {
-        const self = this;
-
-        properties && Tools.forEachKeyValue(properties, function (key, value) {
-            if (!self[key]) {
-                if (Tools.isFunction(value)) {
-                    Tools.defineCalculatedProperty(self, key, value);
-                } else {
-                    self[key] = value;
-                }
-            }
-        });
-
-        return self;
+        properties && Tools.extendComputed(this,properties);
+        return this;
     }
 
     getMethodList() {
