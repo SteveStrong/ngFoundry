@@ -28,16 +28,16 @@ export class foPage extends foShape2D {
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
-    set marginX(value: number) { 
+    set marginX(value: number) {
         this.smash();
-        this._marginX = value; 
+        this._marginX = value;
     }
 
     protected _marginY: number;
     get marginY(): number { return this._marginY || 0.0; }
-    set marginY(value: number) { 
+    set marginY(value: number) {
         this.smash();
-        this._marginY = value; 
+        this._marginY = value;
     }
 
     protected _scaleX: number;
@@ -66,6 +66,7 @@ export class foPage extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.color = 'Linen';
+        this.x = this.y = 100;
         this.setupMouseEvents();
     }
 
@@ -85,7 +86,7 @@ export class foPage extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.marginX, this.marginY, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.marginX + this.x, this.marginY + this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
@@ -368,8 +369,8 @@ export class foPage extends foShape2D {
         ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
 
-        let left = this.marginX;
-        let top = this.marginY;
+        let left = this.marginX - this.x;
+        let top = this.marginY - this.y;
         let width = this.width / this.scaleX;
         let height = this.height / this.scaleY;
         let right = left + width;
@@ -379,20 +380,33 @@ export class foPage extends foShape2D {
         //ctx.fillRect(left,top, width, height);
 
         //draw vertical...
-        let x = left;
+        let x = this.gridSizeX; //left;
         while (x < right) {
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, height);
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
             x += this.gridSizeX
+        }
+        x = -this.gridSizeX; //left;
+        while (x > left) {
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
+            x -= this.gridSizeX;
         }
 
 
         //draw horizontal...
-        let y = top;
+        let y = this.gridSizeY; //top;
         while (y < bottom) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(width, y);
-            y += this.gridSizeY
+            ctx.moveTo(left, y);
+            ctx.lineTo(right, y);
+            y += this.gridSizeY;
+        }
+
+        y = -this.gridSizeY; //top;
+        while (y > top) {
+            ctx.moveTo(left, y);
+            ctx.lineTo(right, y);
+            y -= this.gridSizeY;
         }
 
         ctx.stroke();
@@ -406,15 +420,43 @@ export class foPage extends foShape2D {
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 3;
 
+        let left = this.marginX - this.x;
+        let top = this.marginY - this.y;
+        let width = this.width / this.scaleX;
+        let height = this.height / this.scaleY;
+        let right = left + width;
+        let bottom = top + height;
+
         //draw vertical...
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, this.height);
+        ctx.moveTo(0, top);
+        ctx.lineTo(0, bottom);
 
 
         //draw horizontal...
 
-        ctx.moveTo(0, 0);
-        ctx.lineTo(this.width, 0);
+        ctx.moveTo(left, 0);
+        ctx.lineTo(right, 0);
+
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    drawPage(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 5;
+
+        let left = this.marginX - this.x;
+        let top = this.marginY - this.y;
+        let width = this.width / this.scaleX;
+        let height = this.height / this.scaleY;
+        let right = left + width;
+        let bottom = top + height;
+
+        //draw vertical...
+        ctx.rect(0, 0, this.width, this.height);
 
         ctx.stroke();
         ctx.restore();
@@ -438,6 +480,7 @@ export class foPage extends foShape2D {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this._ctx = ctx;
+        ctx.clearRect(0, 0, this.width, this.height);
 
         ctx.save();
         this.updateContext(ctx);
@@ -459,6 +502,8 @@ export class foPage extends foShape2D {
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
         this.drawAxis(ctx);
+        this.drawPage(ctx);
+        this.drawPin(ctx);
     }
 }
 
