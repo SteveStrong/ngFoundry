@@ -36,11 +36,17 @@ export class foPage extends foShape2D {
 
     protected _scaleX: number;
     get scaleX(): number { return this._scaleX || 1.0; }
-    set scaleX(value: number) { this._scaleX = value; }
+    set scaleX(value: number) {
+        this.smash();
+        this._scaleX = value;
+    }
 
     protected _scaleY: number;
     get scaleY(): number { return this._scaleY || 1.0; }
-    set scaleY(value: number) { this._scaleY = value; }
+    set scaleY(value: number) {
+        this.smash();
+        this._scaleY = value;
+    }
 
     mouseLoc: any = {};
 
@@ -56,7 +62,7 @@ export class foPage extends foShape2D {
     //this is used to drop shapes
     get centerX(): number { return this.width / 2; }
     get centerY(): number { return this.height / 2; }
- 
+
 
     findItem(key: string, onMissing?: Action<foGlyph>, onFound?: Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing, onFound);
@@ -129,6 +135,31 @@ export class foPage extends foShape2D {
         }
     }
 
+    zoomBy(zoom: number) {
+        this.scaleX *= zoom;
+        this.scaleY *= zoom;
+        console.log(this.scaleX, this.scaleY)
+    }
+
+    zoomToCenter(g: cPoint, zoom: number, e: WheelEvent) {
+
+        //you need to track this position in global space
+        //so you can return it to the same location on the screen
+        var pt1 = this.globalToLocalPoint(g);
+
+        this.zoomBy(zoom);
+        //page.updatePIP();
+
+        //once the zoom is applied, measure where the global point has moved to
+        //then pan back so it is in the center...
+        let pt2 = this.localToGlobal(pt1.x, pt1.y);
+        pt2.x = pt1.x - pt2.x;
+        pt2.x = pt1.y - pt2.y;
+        this.moveBy(pt2);
+
+        //page.updatePIP();
+    }
+
     setupMouseEvents() {
         let shape: foGlyph = null;
         let shapeUnder: foGlyph = null;
@@ -147,7 +178,7 @@ export class foPage extends foShape2D {
             }
         }
 
-        PubSub.Sub('mousedown', (loc: cPoint, e, keys) => {
+        PubSub.Sub('mousedown', (loc: cPoint, e: MouseEvent, keys) => {
             loc.add(this.marginX, this.marginY);
             this.onMouseLocationChanged(loc, "down", keys);
 
@@ -175,7 +206,7 @@ export class foPage extends foShape2D {
 
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e, keys) => {
+        PubSub.Sub('mousemove', (loc: cPoint, e: MouseEvent, keys) => {
             if (findHandle(loc) && handles.length) {
                 //this.onHandleMoving(loc, handles.first(), keys);
                 this.onTrackHandles(loc, handles, keys);
@@ -245,7 +276,7 @@ export class foPage extends foShape2D {
             }
         });
 
-        PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
+        PubSub.Sub('mouseup', (loc: cPoint, e: MouseEvent, keys) => {
             grab = null;
             this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
@@ -278,6 +309,9 @@ export class foPage extends foShape2D {
 
         });
 
+        PubSub.Sub('wheel', (loc: cPoint, g: cPoint, zoom: number, e: WheelEvent, keys) => {
+            this.zoomToCenter(g, zoom, e);
+        });
     }
 
     public onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {

@@ -95,6 +95,33 @@ export class Sceen2D {
             PubSub.Pub('mousemove', loc, e, keys);
         });
 
+        canvas.addEventListener('wheel', (e: WheelEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+
+            let scale = 1.1;
+            let zoom = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail))) > 0 ? scale : 1 / scale;
+
+            let g = new cPoint(e.offsetX, e.offsetY)
+
+            PubSub.Pub('wheel', loc, g,  zoom, keys);
+        });
+
+        canvas.addEventListener('dblclick', (e: MouseEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('dblclick', loc, e, keys);
+        });
+
+        canvas.addEventListener('click', (e: MouseEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('click', loc, e, keys);
+        });
+
         canvas.addEventListener('mouseup', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
