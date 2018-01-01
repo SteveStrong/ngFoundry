@@ -15,7 +15,7 @@ import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
-import { Concept } from "../foundry/foConcept.model";
+import { Concept, foConceptItem } from "../foundry/foConcept.model";
 
 import { foPage } from "../foundry/foPage.model";
 
@@ -294,7 +294,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     PubSub.Pub('onKnowledgeChanged');
 
-    Concept.allConcepts().forEach(item => {
+    Concept.allConceptItems().forEach(item => {
       let concept = item.concept;
       this.signalR.pubCommand("syncConcept", { guid: concept.myGuid }, concept.asJson);
     })
