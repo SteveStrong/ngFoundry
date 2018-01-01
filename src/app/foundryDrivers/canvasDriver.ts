@@ -102,7 +102,7 @@ export class Sceen2D {
 
             let g = new cPoint(e.offsetX, e.offsetY)
 
-            PubSub.Pub('wheel', loc, g, zoom, keys);
+            PubSub.Pub('wheel', loc, g, zoom, e, keys);
         });
 
         canvas.addEventListener('dblclick', (e: MouseEvent) => {

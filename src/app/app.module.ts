@@ -42,7 +42,6 @@ import { foStencilComponent } from './canvas/fo-inspector/fo-stencil.component';
 import { foModelComponent } from './canvas/fo-inspector/fo-model.component';
 import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
 import { foRuntimeComponent } from './canvas/fo-inspector/fo-runtime.component';
-import { foPaletteComponent } from './canvas/fo-inspector/fo-palette.component';
 import { foCommandComponent } from './canvas/fo-inspector/fo-command.component';
 import { foConceptComponent } from './canvas/fo-inspector/fo-concept.component';
 
@@ -76,7 +75,6 @@ import { foConceptComponent } from './canvas/fo-inspector/fo-concept.component';
     foModelComponent,
     foDrawingComponent,
     foRuntimeComponent,
-    foPaletteComponent,
     foCommandComponent,
     foConceptComponent
   ],

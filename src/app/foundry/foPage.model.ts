@@ -167,7 +167,7 @@ export class foPage extends foShape2D {
 
         this.x += pt1.x - pt2.x;
         this.y += pt1.y - pt2.y;
-        console.log(pt2.x, pt2.y)
+        //console.log(pt2.x, pt2.y)
 
         //page.updatePIP();
     }
@@ -322,7 +322,10 @@ export class foPage extends foShape2D {
         });
 
         PubSub.Sub('wheel', (loc: cPoint, g: cPoint, zoom: number, e: WheelEvent, keys) => {
-            this.zoomToCenter(g, zoom, e);
+            this.onMouseLocationChanged(loc, "wheel", keys);
+            if ( keys.shift && keys.ctrl) {
+                this.zoomToCenter(g, zoom, e);
+            }
         });
     }
 
@@ -498,6 +501,11 @@ export class foPage extends foShape2D {
         this.showBoundry && this.afterRender(ctx);
     }
 
+
+   public preDraw = (ctx: CanvasRenderingContext2D): void => {
+      //ctx.fillStyle = this.color;
+      //ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
+    }    
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);

@@ -102,5 +102,6 @@ export class particleEngine extends foShape2D {
   }
 }
 
-
+import { RuntimeType } from '../foundry/foRuntimeType';
+RuntimeType.define(particleEngine);
 

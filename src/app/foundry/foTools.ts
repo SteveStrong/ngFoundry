@@ -297,6 +297,15 @@ export class foTools {
         return target;
     };
 
+    getMethods(obj){
+        var list = [];
+        for (var m in obj.prototype) {
+          if (typeof obj[m] == "function") {
+            list.push(m)
+          }
+        }
+        return list;
+    }
 
     asArray(obj, funct?) {
         if (this.isArray(obj)) return obj;

@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { Tools } from "../../foundry/foTools";
+
 import { foGlyph } from "../../foundry/foGlyph.model";
 
 @Component({
@@ -9,11 +11,13 @@ import { foGlyph } from "../../foundry/foGlyph.model";
 })
 export class foPanelComponent implements OnInit {
 
-  @Input() public node:foGlyph;
+  @Input()
+  public node: foGlyph;
 
   constructor() { }
 
   ngOnInit() {
+
   }
 
 }
