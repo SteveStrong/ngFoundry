@@ -487,7 +487,7 @@ export class foPage extends foShape2D {
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
-        this.drawHover && this.drawHover(ctx);
+        //this.drawHover && this.drawHover(ctx);
         this.postDraw && this.postDraw(ctx);
 
         deep && this._subcomponents.forEach(item => {
