@@ -28,11 +28,17 @@ export class foPage extends foShape2D {
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
-    set marginX(value: number) { this._marginX = value; }
+    set marginX(value: number) { 
+        this.smash();
+        this._marginX = value; 
+    }
 
     protected _marginY: number;
     get marginY(): number { return this._marginY || 0.0; }
-    set marginY(value: number) { this._marginY = value; }
+    set marginY(value: number) { 
+        this.smash();
+        this._marginY = value; 
+    }
 
     protected _scaleX: number;
     get scaleX(): number { return this._scaleX || 1.0; }
@@ -47,6 +53,10 @@ export class foPage extends foShape2D {
         this.smash();
         this._scaleY = value;
     }
+
+    public pinX = (): number => { return 0 * this.width; }
+    public pinY = (): number => { return 0 * this.height; }
+    public rotation = (): number => { return this.angle; }
 
     mouseLoc: any = {};
 
@@ -75,7 +85,7 @@ export class foPage extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.marginX, this.marginY, this.scaleX, this.scaleY, this.rotation(), 0, 0, 0, 0);
+            this._matrix.appendTransform(this.marginX, this.marginY, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
@@ -138,7 +148,7 @@ export class foPage extends foShape2D {
     zoomBy(zoom: number) {
         this.scaleX *= zoom;
         this.scaleY *= zoom;
-        console.log(this.scaleX, this.scaleY)
+
     }
 
     zoomToCenter(g: cPoint, zoom: number, e: WheelEvent) {
@@ -153,9 +163,10 @@ export class foPage extends foShape2D {
         //once the zoom is applied, measure where the global point has moved to
         //then pan back so it is in the center...
         let pt2 = this.localToGlobal(pt1.x, pt1.y);
-        pt2.x = pt1.x - pt2.x;
-        pt2.x = pt1.y - pt2.y;
-        this.moveBy(pt2);
+
+        this.x += pt1.x - pt2.x;
+        this.y += pt1.y - pt2.y;
+        console.log(pt2.x, pt2.y)
 
         //page.updatePIP();
     }
@@ -357,17 +368,54 @@ export class foPage extends foShape2D {
         ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
 
+        let left = this.marginX;
+        let top = this.marginY;
+        let width = this.width / this.scaleX;
+        let height = this.height / this.scaleY;
+        let right = left + width;
+        let bottom = top + height;
+
+        //ctx.fillStyle = 'yellow';
+        //ctx.fillRect(left,top, width, height);
+
         //draw vertical...
-        for (var i = 0; i < this.width; i += this.gridSizeX) {
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, this.height);
+        let x = left;
+        while (x < right) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            x += this.gridSizeX
         }
 
+
         //draw horizontal...
-        for (var i = 0; i < this.height; i += this.gridSizeY) {
-            ctx.moveTo(0, i);
-            ctx.lineTo(this.width, i);
+        let y = top;
+        while (y < bottom) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            y += this.gridSizeY
         }
+
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    drawAxis(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;
+
+        //draw vertical...
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, this.height);
+
+
+        //draw horizontal...
+
+        ctx.moveTo(0, 0);
+        ctx.lineTo(this.width, 0);
+
         ctx.stroke();
         ctx.restore();
     }
@@ -410,6 +458,7 @@ export class foPage extends foShape2D {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
+        this.drawAxis(ctx);
     }
 }
 
