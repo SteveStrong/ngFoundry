@@ -5,8 +5,6 @@ import { iObject, iNode, iShape, iPoint, iSize, Action } from '../foundry/foInte
 
 import { foDisplay2D } from "../foundry/foDisplay2D.model";
 
-//https://github.com/CreateJS/EaselJS
-
 
 export class dRectangle extends foDisplay2D {
 

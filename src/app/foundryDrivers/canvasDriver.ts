@@ -47,72 +47,96 @@ export class Sceen2D {
         var body = canvas.ownerDocument.body;
         var pt = new cPoint();
 
-        function getMousePos(evt: MouseEvent): cPoint {
+        function getMousePos(event: MouseEvent): cPoint {
+            let px = event.pageX;
+            let py = event.pageY;
+
             let x = rect.left;
             let y = rect.top;
-            return pt.set(evt.clientX - x, evt.clientY - y);
-
-            //let left = doc.scrollingElement.scrollLeft;
-            //let top = doc.scrollingElement.scrollTop;
-
-            //return new cPoint(evt.pageX - canvas.offsetLeft, evt.pageY - canvas.offsetHeight);
-            //return new cPoint(evt.pageX - left - rect.left, evt.pageY - top - rect.top);
+            return pt.set(event.clientX - x, event.clientY - y);
         }
 
         //http://jsfiddle.net/jy5yQ/1/
         function getMousePosition(event: MouseEvent): cPoint {
-            let x:number;
-            let y:number;
-           
+            let x: number;
+            let y: number;
+
             if (event.pageX != undefined && event.pageY != undefined) {
-               x = event.pageX;
-               y = event.pageY;
-            } else 
-            {
-               x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-               y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                x = event.pageX;
+                y = event.pageY;
             }
-           
+            else {
+                x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
+
             x -= canvas.offsetLeft;
             y -= canvas.offsetTop;
 
-           
-            return pt.set(x,y);
-           }
+
+            return pt.set(x, y);
+        }
 
 
         canvas.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
             PubSub.Pub('mousedown', loc, e, keys);
         });
 
         canvas.addEventListener('mousemove', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
             PubSub.Pub('mousemove', loc, e, keys);
+        });
+
+        canvas.addEventListener('wheel', (e: WheelEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+
+            let scale = 1.1;
+            let zoom = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail))) > 0 ? scale : 1 / scale;
+
+            let g = new cPoint(e.offsetX, e.offsetY)
+
+            PubSub.Pub('wheel', loc, g, zoom, keys);
+        });
+
+        canvas.addEventListener('dblclick', (e: MouseEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            PubSub.Pub('dblclick', loc, e, keys);
+        });
+
+        canvas.addEventListener('click', (e: MouseEvent) => {
+            e.preventDefault()
+            let loc = getMousePos(e);
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            PubSub.Pub('click', loc, e, keys);
         });
 
         canvas.addEventListener('mouseup', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
             PubSub.Pub('mouseup', loc, e, keys);
         });
 
         canvas.addEventListener('mouseover', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
             PubSub.Pub('mouseover', loc, e, keys);
         });
 
         canvas.addEventListener('mouseout', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = {shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
             PubSub.Pub('mouseout', loc, e, keys);
         });
 

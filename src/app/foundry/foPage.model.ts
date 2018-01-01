@@ -28,19 +28,35 @@ export class foPage extends foShape2D {
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
-    set marginX(value: number) { this._marginX = value; }
+    set marginX(value: number) {
+        this.smash();
+        this._marginX = value;
+    }
 
     protected _marginY: number;
     get marginY(): number { return this._marginY || 0.0; }
-    set marginY(value: number) { this._marginY = value; }
+    set marginY(value: number) {
+        this.smash();
+        this._marginY = value;
+    }
 
     protected _scaleX: number;
     get scaleX(): number { return this._scaleX || 1.0; }
-    set scaleX(value: number) { this._scaleX = value; }
+    set scaleX(value: number) {
+        this.smash();
+        this._scaleX = value;
+    }
 
     protected _scaleY: number;
     get scaleY(): number { return this._scaleY || 1.0; }
-    set scaleY(value: number) { this._scaleY = value; }
+    set scaleY(value: number) {
+        this.smash();
+        this._scaleY = value;
+    }
+
+    public pinX = (): number => { return 0 * this.width; }
+    public pinY = (): number => { return 0 * this.height; }
+    public rotation = (): number => { return this.angle; }
 
     mouseLoc: any = {};
 
@@ -50,13 +66,14 @@ export class foPage extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.color = 'Linen';
+        this.x = this.y = 100;
         this.setupMouseEvents();
     }
 
     //this is used to drop shapes
     get centerX(): number { return this.width / 2; }
     get centerY(): number { return this.height / 2; }
- 
+
 
     findItem(key: string, onMissing?: Action<foGlyph>, onFound?: Action<foGlyph>) {
         return this._dictionary.findItem(key, onMissing, onFound);
@@ -69,7 +86,7 @@ export class foPage extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.marginX, this.marginY, this.scaleX, this.scaleY, this.rotation(), 0, 0, 0, 0);
+            this._matrix.appendTransform(this.marginX + this.x, this.marginY + this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
@@ -129,6 +146,32 @@ export class foPage extends foShape2D {
         }
     }
 
+    zoomBy(zoom: number) {
+        this.scaleX *= zoom;
+        this.scaleY *= zoom;
+
+    }
+
+    zoomToCenter(g: cPoint, zoom: number, e: WheelEvent) {
+
+        //you need to track this position in global space
+        //so you can return it to the same location on the screen
+        var pt1 = this.globalToLocalPoint(g);
+
+        this.zoomBy(zoom);
+        //page.updatePIP();
+
+        //once the zoom is applied, measure where the global point has moved to
+        //then pan back so it is in the center...
+        let pt2 = this.localToGlobal(pt1.x, pt1.y);
+
+        this.x += pt1.x - pt2.x;
+        this.y += pt1.y - pt2.y;
+        console.log(pt2.x, pt2.y)
+
+        //page.updatePIP();
+    }
+
     setupMouseEvents() {
         let shape: foGlyph = null;
         let shapeUnder: foGlyph = null;
@@ -147,7 +190,7 @@ export class foPage extends foShape2D {
             }
         }
 
-        PubSub.Sub('mousedown', (loc: cPoint, e, keys) => {
+        PubSub.Sub('mousedown', (loc: cPoint, e: MouseEvent, keys) => {
             loc.add(this.marginX, this.marginY);
             this.onMouseLocationChanged(loc, "down", keys);
 
@@ -175,7 +218,7 @@ export class foPage extends foShape2D {
 
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e, keys) => {
+        PubSub.Sub('mousemove', (loc: cPoint, e: MouseEvent, keys) => {
             if (findHandle(loc) && handles.length) {
                 //this.onHandleMoving(loc, handles.first(), keys);
                 this.onTrackHandles(loc, handles, keys);
@@ -245,7 +288,7 @@ export class foPage extends foShape2D {
             }
         });
 
-        PubSub.Sub('mouseup', (loc: cPoint, e, keys) => {
+        PubSub.Sub('mouseup', (loc: cPoint, e: MouseEvent, keys) => {
             grab = null;
             this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
@@ -278,6 +321,9 @@ export class foPage extends foShape2D {
 
         });
 
+        PubSub.Sub('wheel', (loc: cPoint, g: cPoint, zoom: number, e: WheelEvent, keys) => {
+            this.zoomToCenter(g, zoom, e);
+        });
     }
 
     public onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
@@ -323,17 +369,95 @@ export class foPage extends foShape2D {
         ctx.setLineDash([5, 1]);
         ctx.strokeStyle = 'gray';
 
+        let left = this.marginX - this.x;
+        let top = this.marginY - this.y;
+        let width = this.width / this.scaleX;
+        let height = this.height / this.scaleY;
+        let right = left + width;
+        let bottom = top + height;
+
+        //ctx.fillStyle = 'yellow';
+        //ctx.fillRect(left,top, width, height);
+
         //draw vertical...
-        for (var i = 0; i < this.width; i += this.gridSizeX) {
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, this.height);
+        let x = this.gridSizeX; //left;
+        while (x < right) {
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
+            x += this.gridSizeX
+        }
+        x = -this.gridSizeX; //left;
+        while (x > left) {
+            ctx.moveTo(x, top);
+            ctx.lineTo(x, bottom);
+            x -= this.gridSizeX;
         }
 
+
         //draw horizontal...
-        for (var i = 0; i < this.height; i += this.gridSizeY) {
-            ctx.moveTo(0, i);
-            ctx.lineTo(this.width, i);
+        let y = this.gridSizeY; //top;
+        while (y < bottom) {
+            ctx.moveTo(left, y);
+            ctx.lineTo(right, y);
+            y += this.gridSizeY;
         }
+
+        y = -this.gridSizeY; //top;
+        while (y > top) {
+            ctx.moveTo(left, y);
+            ctx.lineTo(right, y);
+            y -= this.gridSizeY;
+        }
+
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    drawAxis(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 3;
+
+        let left = this.marginX - this.x;
+        let top = this.marginY - this.y;
+        let width = this.width / this.scaleX;
+        let height = this.height / this.scaleY;
+        let right = left + width;
+        let bottom = top + height;
+
+        //draw vertical...
+        ctx.moveTo(0, top);
+        ctx.lineTo(0, bottom);
+
+
+        //draw horizontal...
+
+        ctx.moveTo(left, 0);
+        ctx.lineTo(right, 0);
+
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    drawPage(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 5;
+
+        let left = this.marginX - this.x;
+        let top = this.marginY - this.y;
+        let width = this.width / this.scaleX;
+        let height = this.height / this.scaleY;
+        let right = left + width;
+        let bottom = top + height;
+
+        //draw vertical...
+        ctx.rect(0, 0, this.width, this.height);
+
         ctx.stroke();
         ctx.restore();
     }
@@ -356,13 +480,14 @@ export class foPage extends foShape2D {
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         this._ctx = ctx;
+        ctx.clearRect(0, 0, this.width, this.height);
 
         ctx.save();
         this.updateContext(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
-        this.drawHover && this.drawHover(ctx);
+        //this.drawHover && this.drawHover(ctx);
         this.postDraw && this.postDraw(ctx);
 
         deep && this._subcomponents.forEach(item => {
@@ -376,6 +501,9 @@ export class foPage extends foShape2D {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);
+        this.drawAxis(ctx);
+        this.drawPage(ctx);
+        this.drawPin(ctx);
     }
 }
 
