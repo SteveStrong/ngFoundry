@@ -245,12 +245,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doParticleEngine() {
     let engine = new particleEngine({
-      color:'white',
-      particleCount: 100,
+      color:'coral',
+      particleCount: 10,
       opacity: .1,
-      width: 700,
-      height: 700,
-    }).drop(500,500).addAsSubcomponent(this)
+      width: 100,
+      height: 200,
+    }).drop(300,300).addAsSubcomponent(this)
     .then(item => {
       item.doStart();
     });
@@ -262,8 +262,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 700,
       height: 700,
     }).addCommands("doStart","doStop").addCommands("doRotate");
+
     this.signalR.pubCommand("syncStencil", {myName: def.myName}, def);
-   
+
+    let shape = def.newInstance().drop(500,500).addAsSubcomponent(this)
+    .then(item => {
+      item.doStart();
+    });
+    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
   }
 
   doLoadConcept() {
@@ -947,18 +953,18 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncStencil", (cmd, data) => {
-        alert(JSON.stringify(data, undefined, 3));
+        //foObject.jsonAlert(data);
         Stencil.override(data);
       });
 
       this.signalR.subCommand("syncConcept", (cmd, data) => {
-        //alert(JSON.stringify(data, undefined, 3));
+        //foObject.jsonAlert(data);
         Concept.override(data);
       });
 
 
       this.signalR.subCommand("syncGlyph", (cmd, data) => {
-        //alert(JSON.stringify(data, undefined, 3));
+        //foObject.jsonAlert(data);
         this.findItem(cmd.guid, () => {
           RuntimeType.create(foGlyph, data).addAsSubcomponent(this);
         });
@@ -966,7 +972,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
-        //alert(JSON.stringify(data, undefined, 3));
+        //foObject.jsonAlert(data);
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let shape = data.myClass ? Stencil.newInstance(data.myClass, data):  RuntimeType.newInstance(data.myType, data);
@@ -993,7 +999,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
       this.signalR.subCommand("syncDisp", (cmd, data) => {
-        alert(JSON.stringify(data, undefined, 3));
+        //foObject.jsonAlert(data);
         this.findItem(cmd.guid, () => {
           //this.message.push(json);
           let type = data.myType;
@@ -1007,7 +1013,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
-        alert(JSON.stringify(cmd, undefined, 3));
+        //foObject.jsonAlert(data);
         this.found(cmd.sourceGuid, (source) => {
           this.found(cmd.targetGuid, (target) => {
             let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));

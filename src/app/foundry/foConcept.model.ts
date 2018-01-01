@@ -228,7 +228,7 @@ export class Concept {
         let { specification, primitive } = json;
 
         let concept = new foConcept<T>(json);
-        //alert(JSON.stringify(concept, undefined, 3));
+        //foObject.jsonAlert(data);
 
         let type = RuntimeType.modelPrimitives[primitive];
         if (!type) {

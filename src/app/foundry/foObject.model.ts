@@ -22,6 +22,10 @@ export class foObject implements iObject {
         snd.play();
     }
 
+    static jsonAlert(obj) {
+        alert(JSON.stringify(obj, undefined, 3));
+    }
+
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
     
