@@ -27,6 +27,14 @@ export class foStencilComponent implements OnInit {
 
     this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
     this.headings = Stencil.namespaces();
+
+    // this.list.forEach(item => {
+    //   let list = Tools.getMethods(item.pr).filter( method => {
+    //     return method.name.startsWith("do");
+    //   });
+    // })
+
+   // alert(JSON.stringify(list,undefined,3))
   }
 
   ngOnInit() {
