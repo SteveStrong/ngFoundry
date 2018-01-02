@@ -62,10 +62,11 @@ export class SharingService {
     return this;
   }
 
-  public syncGlyph(shape:foNode){
-    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
-    return this;
-  }
+  // public syncGlyph(shape:foNode){
+  //   //this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+  //   this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+  //  return this;
+  // }
 
   public syncGlue(target:foObject){
     this.signalR.pubCommand("syncGlue", target.asJson);
@@ -120,6 +121,16 @@ export class SharingService {
         this._page.clearAll();
       });
 
+      this.signalR.subCommand("syncStencil", (cmd, data) => {
+        foObject.jsonAlert(data);
+        Stencil.override(data);
+      });
+
+      this.signalR.subCommand("syncConcept", (cmd, data) => {
+        foObject.jsonAlert(data);
+        Concept.override(data);
+      });
+
       this.signalR.subCommand("syncParent", (cmd, data) => {
         this._page.found(cmd.guid, (shape) => {
           if (cmd.parentGuid) {
@@ -135,28 +146,21 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("syncStencil", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        Stencil.override(data);
-      });
 
-      this.signalR.subCommand("syncConcept", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        Concept.override(data);
-      });
 
-      this.signalR.subCommand("syncGlyph", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        this._page.findItem(cmd.guid, () => {
-          RuntimeType.create(foGlyph, data).addAsSubcomponent(this._page);
-        });
-      });
+      // this.signalR.subCommand("syncGlyph", (cmd, data) => {
+      //   foObject.jsonAlert(data);
+      //   this._page.findItem(cmd.guid, () => {
+      //     RuntimeType.newInstance(data.myType, data).addAsSubcomponent(this._page);
+      //   });
+      // });
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
-        //foObject.jsonAlert(data);
+        foObject.jsonAlert(data);
         this._page.findItem(cmd.guid, () => {
           //this.message.push(json);
-          let shape = data.myClass ? Stencil.newInstance(data.myClass, data) : RuntimeType.newInstance(data.myType, data);
+          let spec = Stencil.find(data.myClass);
+          let shape = spec ? spec.newInstance(data) : RuntimeType.newInstance(data.myType, data);
           this._page.found(cmd.parentGuid,
             (item) => { item.addSubcomponent(shape); },
             (miss) => { this._page.addSubcomponent(shape); }
