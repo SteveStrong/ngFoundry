@@ -265,7 +265,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 700,
     }).addCommands("doStart", "doStop", "doRotate");
 
-    this.sharing.syncKnowledge(def);
+    this.sharing.syncStencil(def);
 
     let shape = def.newInstance().drop(500, 500).addAsSubcomponent(this)
       .then(item => {
@@ -592,7 +592,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       x: 400,
       y: 400,
     });
-    this.sharing.syncKnowledge(def);
+    this.sharing.syncStencil(def);
 
     let shape = def.newInstance()
       .addAsSubcomponent(this);

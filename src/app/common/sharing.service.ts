@@ -42,7 +42,7 @@ export class SharingService {
     return this;
   }
 
-  public syncKnowledge(know:foObject){
+  public syncStencil(know:foObject){
     this.signalR.pubCommand("syncStencil", { guid: know.myGuid }, know.asJson);
     return this;
   }

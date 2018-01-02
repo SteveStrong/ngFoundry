@@ -145,7 +145,7 @@ export class foObject implements iObject {
         }
     }
 
-    jsonMerge(source: any) {
+    protected jsonMerge(source: any) {
         let result = Tools.asJson(this);
         if (!Tools.isEmpty(source)) {
             Tools.forEachKeyValue(source, (key, value) => {
