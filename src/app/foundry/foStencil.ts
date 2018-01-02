@@ -1,19 +1,26 @@
 import { Tools } from '../foundry/foTools'
 import { Action } from '../foundry/foInterface'
+
+import { foObject } from '../foundry/foObject.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
 import { PubSub } from "./foPubSub";
 import { RuntimeType } from './foRuntimeType';
 
-export class foStencilSpec<T extends foGlyph> {
-    myName: string;
+export class foStencilSpec<T extends foGlyph> extends foObject {
+
     myType: string;
     primitive: { new(p?: any, s?: Array<T>, r?: T): T; };
     properties: any;
     subcomponents: Array<T>;
     commands: Array<string> = new Array<string>();
 
-    constructor(name: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, inits?: any, subs?: Array<T>) {
+    constructor(props?:any){
+        super()
+        props && Tools.mixin(this, props)
+    }
+
+    set(name: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, inits?: any, subs?: Array<T>) {
         this.myName = name;
         this.myType = type.name;
         this.primitive = type;
@@ -39,14 +46,24 @@ export class foStencilSpec<T extends foGlyph> {
     }
 }
 
-export class foStencilItem {
+export class foStencilItem extends foObject {
     id: string;
     namespace: string;
     name: string;
     spec: foStencilSpec<foGlyph>;
 
     constructor(props?:any){
+        super()
         props && Tools.mixin(this, props)
+    }
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            id: this.id,
+            namespace: this.namespace,
+            name: this.name,
+            spec: this.spec,
+        });
     }
 }
 
@@ -102,7 +119,8 @@ export class Stencil {
         RuntimeType.define(type);
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
-        let spec = new foStencilSpec(Tools.namespace(namespace, name), type, properties, subcomponents);
+        let spec = new foStencilSpec<T>();
+        spec.set(Tools.namespace(namespace, name), type, properties, subcomponents);
 
         let result = this.register(spec.myName, spec);
         PubSub.Pub('onStencilChanged', result);
@@ -134,7 +152,8 @@ export class Stencil {
         if (!type) {
             throw Error('runtimeType not found ' + type)
         }
-        let spec = new foStencilSpec<T>(myName, type, properties, subcomponents);
+        let spec = new foStencilSpec<T>();
+        spec.set(myName, type, properties, subcomponents);
         spec.addCommands(...commands);
         
         let result = this.register(myName, spec);

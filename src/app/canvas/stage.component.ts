@@ -35,7 +35,7 @@ import { foDisplay2D } from "../foundry/foDisplay2D.model";
 import { dRectangle, dGlue } from "./displayshapes.model";
 
 import { Toast } from '../common/emitter.service';
-import { SignalRService } from "../common/signalr.service";
+import { SharingService } from "../common/sharing.service";
 
 //https://greensock.com/docs/TweenMax
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
@@ -66,7 +66,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   constructor(
-    private signalR: SignalRService,
+    private sharing: SharingService,
     private http: Http) {
     super();
   }
@@ -74,7 +74,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doClear() {
     this.clearAll();
     this.message = [];
-    this.signalR.pubCommand("clearAll", {});
+    this.sharing.clearAll();
   }
 
   doUndo() {
@@ -82,7 +82,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doDelete() {
     this.deleteSelected(shape => {
-      this.signalR.pubCommand("deleteShape", { guid: shape.myGuid });
+      this.sharing.deleteShape(shape);
     });
 
   }
@@ -216,14 +216,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+    this.sharing.startSharing(this);
+
     this.addEventHooks();
 
     this.onItemChangedParent = (shape: foGlyph): void => {
-      this.signalR.pubCommand("syncParent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
+      this.sharing.syncParent(shape);
     }
 
     this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+      this.sharing.moveTo(shape, shape.getLocation());
     }
 
     this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
@@ -245,31 +247,31 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doParticleEngine() {
     let engine = new particleEngine({
-      color:'coral',
+      color: 'coral',
       particleCount: 10,
       opacity: .1,
       width: 100,
       height: 200,
-    }).drop(300,300).addAsSubcomponent(this)
-    .then(item => {
-      item.doStart();
-    });
+    }).drop(300, 300).addAsSubcomponent(this)
+      .then(item => {
+        item.doStart();
+      });
 
     let def = Stencil.define('particle', particleEngine, {
-      color:'white',
+      color: 'white',
       particleCount: 100,
       opacity: .1,
       width: 700,
       height: 700,
-    }).addCommands("doStart","doStop").addCommands("doRotate");
+    }).addCommands("doStart", "doStop", "doRotate");
 
-    this.signalR.pubCommand("syncStencil", {myName: def.myName}, def);
+    this.sharing.syncKnowledge(def);
 
-    let shape = def.newInstance().drop(500,500).addAsSubcomponent(this)
-    .then(item => {
-      item.doStart();
-    });
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    let shape = def.newInstance().drop(500, 500).addAsSubcomponent(this)
+      .then(item => {
+        item.doStart();
+      });
+    this.sharing.syncShape(shape);
   }
 
   doLoadConcept() {
@@ -302,7 +304,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     Concept.allConceptItems().forEach(item => {
       let concept = item.concept;
-      this.signalR.pubCommand("syncConcept", { guid: concept.myGuid }, concept.asJson);
+      this.sharing.syncConcept(concept);
     })
 
   }
@@ -334,7 +336,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
 
-    this.signalR.pubCommand("syncShape", { guid: box.myGuid }, box.asJson);
+    this.sharing.syncShape(box);
   }
 
   doImage() {
@@ -347,12 +349,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     for (let i = 0; i < 15; i++) {
       this.wait(500, () => {
-      let picture = def.newInstance().addAsSubcomponent(this);
-        picture.angle = Tools.randomInt(0,300)
-        this.signalR.pubCommand("syncShape", { guid: picture.myGuid }, picture.asJson);
-        let place = { x: 800+ Tools.randomInt(-70,70), y: 200 + Tools.randomInt(-70,70) }
+        let picture = def.newInstance().addAsSubcomponent(this);
+        picture.angle = Tools.randomInt(0, 300)
+
+        let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
         picture.easeTween(place, 1.5);
-        this.signalR.pubCommand("easeTween", { guid: picture.myGuid, }, place);
+
+        this.sharing.syncShape(picture).syncEaseTo(picture, place);
       })
 
     }
@@ -366,7 +369,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
       angle: Tools.randomInt(-30, 30)
     }).drop(330, 330).addAsSubcomponent(this);
-    this.signalR.pubCommand("syncShape", { guid: image.myGuid }, image.asJson);
+    this.sharing.syncShape(image);
 
     let size = {
       width: 200,
@@ -375,7 +378,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     image.easeTween(size, 2.8, Back['easeInOut']);
 
-    this.signalR.pubCommand("easeTween", { guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
+    this.sharing.syncEase({ guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
 
 
   }
@@ -510,7 +513,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       margin: new cMargin(0, 0, 0, 0)
     });
 
-    this.signalR.pubCommand("syncConcept", { guid: textBlock.myGuid }, textBlock.asJson);
+    this.sharing.syncConcept(textBlock);
 
     let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
       color: 'green',
@@ -530,7 +533,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         fontSize: size,
       }).drop(350, y).addAsSubcomponent(this);
       y += 50;
-      this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+      this.sharing.syncShape(shape);
 
       objects.push(shape)
 
@@ -539,8 +542,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       // } else {
       //   let wire = wireConcept.newInstance().addAsSubcomponent(this);
 
-      //   this.signalR.pubCommand("syncGlue", wire.glueStart(last).asJson);
-      //   this.signalR.pubCommand("syncGlue", wire.glueFinish(shape).asJson);
+      //   this.sharing.syncGlue(wire.glueStart(last));
+      //   this.sharing.syncGlue(wire.glueFinish(shape));
       //   last = shape;
       // }
     })
@@ -548,7 +551,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     objects.forEach(shape => {
       //shape.drop(shape.x + Tools.randomInt(-100, 100));
-      this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+      this.sharing.moveTo(shape, shape.getLocation());
     })
 
 
@@ -562,7 +565,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncGlyph(shape);
   }
 
   doAddSubGlyph() {
@@ -571,8 +574,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-
-    this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncGlyph(shape);
 
     let subShape = RuntimeType.create(foGlyph, {
       color: 'blue',
@@ -581,11 +583,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 50,
       width: 300,
     }).addAsSubcomponent(shape);
-
-    this.signalR.pubCommand("syncGlyph", { guid: subShape.myGuid }, subShape.asJson);
-
-    this.signalR.pubCommand("syncParent", { guid: subShape.myGuid, parentGuid: subShape.myParent().myGuid });
-
+    this.sharing.syncGlyph(subShape).syncParent(subShape);
   }
 
   doAddThreeByThree() {
@@ -594,12 +592,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       x: 400,
       y: 400,
     });
-    this.signalR.pubCommand("syncStencil", {myName: def.myName}, def);
+    this.sharing.syncKnowledge(def);
 
     let shape = def.newInstance()
       .addAsSubcomponent(this);
 
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
 
@@ -610,7 +608,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 200,
     });
     this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
   doAddTwoByOne() {
@@ -618,7 +616,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
   doAddTwoByTwo() {
@@ -628,7 +626,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
 
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
 
@@ -650,7 +648,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     if (!properties) {
       let shape = RuntimeType.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
-      this.signalR.pubCommand("callMethod", { func: 'doAddTwoByFour' }, shape.asJson);
+      this.sharing.callMethod('doAddTwoByFour', shape);
     } else {
       RuntimeType.create(localTwoByFour, properties).addAsSubcomponent(this);
     }
@@ -670,7 +668,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }).drop(500, 500);
     this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
   doAddTenByTen() {
@@ -679,7 +677,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(600, 300);
 
     this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
   doAddStack(properties?: any) {
@@ -716,7 +714,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    !properties && this.signalR.pubCommand("callMethod", { func: 'doAddStack' }, {
+    !properties && this.sharing.broadcast('doAddStack', {
       shape: shape.myGuid,
       subShape: subShape.myGuid
     });
@@ -747,7 +745,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: spec.length,
       height: height,
     }).drop(400, 400).addAsSubcomponent(this);
-    this.signalR.pubCommand("syncShape", { guid: fake.myGuid }, fake.asJson);
+    this.sharing.syncShape(fake);
 
     let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
@@ -758,8 +756,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: y2,
       height: height,
     }).drop(400, 300).addAsSubcomponent(this);
-
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
   doShapeGlue() {
@@ -768,7 +765,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
 
     }).drop(100, 300, 45).addAsSubcomponent(this);
-    this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
+    this.sharing.syncShape(shape1);
 
 
     let shape2 = RuntimeType.create(TwoByOne, {
@@ -776,7 +773,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
     }).drop(300, 400).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
-    this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
+    this.sharing.syncShape(shape2);
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
@@ -792,7 +789,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
     }).drop(600, 350).addAsSubcomponent(this);
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
+
 
     let wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
@@ -803,12 +801,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: pt2.y,
       color: 'black',
     }).addAsSubcomponent(this);
-    this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
+    this.sharing.syncShape(wire);
 
 
-
-    this.signalR.pubCommand("syncGlue", wire.createGlue('begin', shape1).asJson);
-    this.signalR.pubCommand("syncGlue", wire.createGlue('end', shape2).asJson);
+    this.sharing.syncGlue(wire.createGlue('begin', shape1));
+    this.sharing.syncGlue(wire.createGlue('end', shape2));
   }
 
   doObjGlue() {
@@ -818,8 +815,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 20,
       color: 'black',
     }).drop(400, 400).addAsSubcomponent(this);
-
-    this.signalR.pubCommand("syncShape", { guid: wire.myGuid }, wire.asJson);
+    this.sharing.syncShape(wire);
 
     let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
@@ -832,11 +828,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
 
-    this.signalR.pubCommand("syncShape", { guid: shape1.myGuid }, shape1.asJson);
-    this.signalR.pubCommand("syncShape", { guid: shape2.myGuid }, shape2.asJson);
+    this.sharing.syncShape(shape1);
+    this.sharing.syncShape(shape2);
 
     wire.glue.forEach(glue => {
-      this.signalR.pubCommand("syncGlue", glue.asJson);
+      this.sharing.syncGlue(glue);
     })
 
   }
@@ -862,7 +858,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       item.isSelected = true;
     }).addAsSubcomponent(this);
 
-    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
   }
 
   doObjGroup() {
@@ -879,7 +875,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(150, 150, 0);
 
     this.addSubcomponent(shape);
-    this.signalR.pubCommand("syncDisp", { guid: shape.myGuid }, shape.asJson);
+    this.sharing.syncShape(shape);
 
     let subShape = RuntimeType.create(dRectangle, {
       color: 'blue',
@@ -896,8 +892,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     shape.doAnimation = subShape.doAnimation;
-
-    // this.signalR.pubChannel("syncDisp", subShape.asJson);
+    //this.sharing.syncShape(subShape);
   }
 
 
@@ -916,113 +911,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.screen2D.go();
 
-    this.signalR.start().then(() => {
-
-      this.signalR.subCommand("moveShape", (cmd, data) => {
-        this.found(cmd.guid, shape => {
-          shape.easeTo(data.x, data.y, .8, Back.easeInOut);
-        });
-      });
-
-      this.signalR.subCommand("deleteShape", (cmd, data) => {
-        //console.log(json);
-        this.found(cmd.guid, shape => {
-          this.removeSubcomponent(shape)
-        });
-      });
-
-      this.signalR.subCommand("clearAll", (cmd, data) => {
-        this.clearAll();
-        this.message = [];
-      });
-
-
-      this.signalR.subCommand("syncParent", (cmd, data) => {
-        this.found(cmd.guid, (shape) => {
-          if (cmd.parentGuid) {
-            this.found(cmd.parentGuid, (item) => {
-              shape.removeFromParent();
-              item.addSubcomponent(shape);
-            });
-          } else {
-            shape.removeFromParent();
-            this.addSubcomponent(shape);
-          }
-
-        });
-      });
-
-      this.signalR.subCommand("syncStencil", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        Stencil.override(data);
-      });
-
-      this.signalR.subCommand("syncConcept", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        Concept.override(data);
-      });
-
-
-      this.signalR.subCommand("syncGlyph", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        this.findItem(cmd.guid, () => {
-          RuntimeType.create(foGlyph, data).addAsSubcomponent(this);
-        });
-      });
-
-
-      this.signalR.subCommand("syncShape", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        this.findItem(cmd.guid, () => {
-          //this.message.push(json);
-          let shape = data.myClass ? Stencil.newInstance(data.myClass, data):  RuntimeType.newInstance(data.myType, data);
-          this.found(cmd.parentGuid,
-            (item) => { item.addSubcomponent(shape); },
-            (miss) => { this.addSubcomponent(shape); }
-          );
-        }, found => {
-          found.override(data);
-        });
-      });
-
-      this.signalR.subCommand("easeTween", (cmd, data) => {
-        this.found(cmd.guid, item => {
-          item.easeTween(data, cmd.time, Back[cmd.ease]);
-        })
-      });
-
-
-      this.signalR.subCommand("callMethod", (cmd, data) => {
-        let func = cmd.func;
-        func && this[func](data);
-      });
-
-
-      this.signalR.subCommand("syncDisp", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        this.findItem(cmd.guid, () => {
-          //this.message.push(json);
-          let type = data.myType;
-          let shape = RuntimeType.newInstance(type, data);
-          this.found(cmd.parentGuid,
-            (item) => { item.addSubcomponent(shape); },
-            (miss) => { this.addSubcomponent(shape); }
-          );
-
-        });
-      });
-
-      this.signalR.subCommand("syncGlue", (cmd, data) => {
-        //foObject.jsonAlert(data);
-        this.found(cmd.sourceGuid, (source) => {
-          this.found(cmd.targetGuid, (target) => {
-            let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
-            (<foShape2D>target).drop();
-          });
-        });
-      })
-
-    });
   }
 }
 

@@ -148,14 +148,25 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
 RuntimeType.knowledge(foProjection);
 
-export class foConceptItem {
+
+export class foConceptItem extends foObject {
     id: string;
     namespace: string;
     name: string;
     concept: foConcept<foNode>;
 
-    constructor(props?: any) {
+    constructor(props?:any){
+        super()
         props && Tools.mixin(this, props)
+    }
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            id: this.id,
+            namespace: this.namespace,
+            name: this.name,
+            concept: this.concept,
+        });
     }
 }
 
