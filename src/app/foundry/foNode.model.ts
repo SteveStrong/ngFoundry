@@ -31,13 +31,11 @@ export class foNode extends foObject implements iNode {
         return this;
     }
 
-    get asJson() { return this.toJson() }
-    protected toJson():any {
-        return {
-            myGuid: this.myGuid,
-            myType: this.myType,
+    //get asJson() { return this.toJson() }
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
             myClass: this.myClass
-        }
+        });
     }
 
     //deep hook for syncing matrix2d with geometry 
@@ -45,24 +43,24 @@ export class foNode extends foObject implements iNode {
         return this;
     }
 
-    addAsSubcomponent(parent: foNode, properties?:any) {
+    addAsSubcomponent(parent: foNode, properties?: any) {
         parent.addSubcomponent(this, properties);
         return this;
     }
 
     removeFromParent() {
-        let parent:foNode = <foNode>(this.myParent && this.myParent());
+        let parent: foNode = <foNode>(this.myParent && this.myParent());
         parent && parent.removeSubcomponent(this);
         this.myParent = undefined;
         return this;
     }
 
     //todo modify api to take both item and array
-    addSubcomponent(obj: foNode, properties?:any) {
+    addSubcomponent(obj: foNode, properties?: any) {
         if (!obj) return;
         let parent = obj.myParent && obj.myParent();
         if (!parent) {
-            obj.myParent = () => { return this; };   
+            obj.myParent = () => { return this; };
             properties && obj.override(properties);
         }
         obj._index = this._subcomponents.length;
@@ -75,7 +73,7 @@ export class foNode extends foObject implements iNode {
         if (!obj) return;
         let parent = this.myParent && this.myParent();
         if (parent == this) {
-            obj.myParent = undefined;    
+            obj.myParent = undefined;
         }
         obj._index = -1;
         obj._childDepth = 0;

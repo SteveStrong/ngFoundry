@@ -1,29 +1,44 @@
 import { Tools } from '../foundry/foTools'
 import { Action } from '../foundry/foInterface'
+
+import { foObject } from '../foundry/foObject.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
 import { PubSub } from "./foPubSub";
 import { RuntimeType } from './foRuntimeType';
 
-export class foStencilSpec<T extends foGlyph> {
-    myName: string;
-    myType: string;
-    primitive: { new(p?: any, s?: Array<T>, r?: T): T; };
+export class foStencilSpec<T extends foGlyph> extends foObject {
+
+    primitive: string;
+    create: { new(p?: any, s?: Array<T>, r?: T): T; };
     properties: any;
     subcomponents: Array<T>;
     commands: Array<string> = new Array<string>();
 
-    constructor(name: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, inits?: any, subs?: Array<T>) {
+    constructor(props?:any){
+        super()
+        props && Tools.mixin(this, props)
+    }
+
+    set(name: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, inits?: any, subs?: Array<T>) {
         this.myName = name;
-        this.myType = type.name;
-        this.primitive = type;
+        this.primitive = type.name;
+        this.create = type;
         this.properties = inits;
         this.subcomponents = subs;
     }
 
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            primitive: this.primitive,
+            properties: this.properties,
+            subcomponents: this.subcomponents,
+        });
+    }
+
     newInstance<T extends foGlyph>(properties?: any, subcomponents?: Array<T>) {
         let spec = Tools.union(properties, this.properties);
-        let instance = new this.primitive(spec);
+        let instance = new this.create(spec);
         instance.myClass = this.myName;
         return instance;
     }
@@ -39,14 +54,26 @@ export class foStencilSpec<T extends foGlyph> {
     }
 }
 
-export class foStencilItem {
+export class foStencilItem extends foObject {
     id: string;
     namespace: string;
     name: string;
+    primitive: string;
     spec: foStencilSpec<foGlyph>;
 
     constructor(props?:any){
+        super()
         props && Tools.mixin(this, props)
+    }
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            id: this.id,
+            namespace: this.namespace,
+            name: this.name,
+            primitive: this.primitive,
+            spec: this.spec,
+        });
     }
 }
 
@@ -70,6 +97,7 @@ export class Stencil {
                     id: id,
                     namespace: namespace,
                     name: name,
+                    primitive: spec.primitive,
                     spec: spec,
                 });
                 list.push(item);
@@ -102,7 +130,8 @@ export class Stencil {
         RuntimeType.define(type);
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
-        let spec = new foStencilSpec(Tools.namespace(namespace, name), type, properties, subcomponents);
+        let spec = new foStencilSpec<T>();
+        spec.set(Tools.namespace(namespace, name), type, properties, subcomponents);
 
         let result = this.register(spec.myName, spec);
         PubSub.Pub('onStencilChanged', result);
@@ -134,7 +163,8 @@ export class Stencil {
         if (!type) {
             throw Error('runtimeType not found ' + type)
         }
-        let spec = new foStencilSpec<T>(myName, type, properties, subcomponents);
+        let spec = new foStencilSpec<T>();
+        spec.set(myName, type, properties, subcomponents);
         spec.addCommands(...commands);
         
         let result = this.register(myName, spec);

@@ -26,6 +26,8 @@ export class foObject implements iObject {
         alert(JSON.stringify(obj, undefined, 3));
     }
 
+
+
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
     
@@ -129,12 +131,21 @@ export class foObject implements iObject {
         //return JSON.stringify(this,undefined,3);
     }
 
-    get asJson() {
+    get asJsonRaw() {
         let data = Tools.stringify(this);
         return JSON.parse(data);
     }
 
-    jsonMerge(source: any) {
+    get asJson() { return this.toJson(); }
+    protected toJson():any {
+        return {
+            myName: this.myName,
+            myGuid: this.myGuid,
+            myType: this.myType,
+        }
+    }
+
+    protected jsonMerge(source: any) {
         let result = Tools.asJson(this);
         if (!Tools.isEmpty(source)) {
             Tools.forEachKeyValue(source, (key, value) => {

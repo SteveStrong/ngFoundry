@@ -27,12 +27,11 @@ export class foLibrary<T extends foNode> extends foKnowledge {
         return Tools.stringify(result);
     }
 
-    get asJson() {
-        let result = Tools.asJson(this);
-
-        result.concepts = Tools.asArray(this.concepts.asJson);
-        result.properties = Tools.asArray(this.properties.asJson);
-        return result;
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            concepts: Tools.asArray(this.concepts.asJson),
+            properties: Tools.asArray(this.properties.asJson)
+        });
     }
 
     get concepts() {

@@ -89,21 +89,8 @@ export class foDictionary<T extends foKnowledge> extends foKnowledge {
         };
     };
 
-    get asJson() {
-        let result = this.jsonMerge(this._lookup);
-        return result;
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), this.jsonMerge(this._lookup) );
     }
 
-    jsonMerge(source: any) {
-        let result = {};
-        if (!Tools.isEmpty(source)) {
-            Tools.forEachKeyValue(source, (key, value) => {
-                if (!result[key] && !Tools.isEmpty(value)) {
-                    let json = value && value.asJson;
-                    result[key] = json ? json : value;
-                }
-            });
-        }
-        return result;
-    }
 }
