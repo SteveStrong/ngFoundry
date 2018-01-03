@@ -8,45 +8,45 @@ import { foKnowledge } from './foKnowledge.model';
 
 
 
-export class RuntimeType {
-    static modelPrimitives = {}
-    static knowledgePrimitives = {}
+export class foRuntimeType {
+    public modelPrimitives = {}
+    public knowledgePrimitives = {}
 
-    static primitives(): Array<string> {
+    public primitives(): Array<string> {
         return Object.keys(this.modelPrimitives);
     }
 
-    static metaPrimitives(): Array<string> {
+    public metaPrimitives(): Array<string> {
         return Object.keys(this.knowledgePrimitives);
     }
 
-    static newInstance(type: string, properties?: any) {
+    public newInstance(type: string, properties?: any) {
         let create = this.modelPrimitives[type];
         let instance = this.create(create,properties);
         return instance;
     }
 
-    static define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+    public define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         let name = type.name;
         this.modelPrimitives[name] = type;
         PubSub.Pub('onRuntimeTypeChanged', name);
         return type;
     }
 
-    static create<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any) {
+    public create<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any) {
         let instance = new type(properties) as T;
         instance.initialize();
         return instance;
     }
 
 
-    static establish<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
+    public establish<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type(properties);
         instance.initialize();
         return instance;
     }
 
-    static knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
+    public knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
         let name = type.name;
         this.knowledgePrimitives[name] = type;
         PubSub.Pub('onKnowledgeChanged', name);
@@ -54,6 +54,8 @@ export class RuntimeType {
     }
 
 }
+
+export let RuntimeType: foRuntimeType = new foRuntimeType();
 
 
 

@@ -77,18 +77,18 @@ export class foStencilItem extends foObject {
     }
 }
 
-export class Stencil {
+export class foStencil {
 
-    static lookup: any = {};
+    public lookup: any = {};
 
-    static namespaces(): Array<string> {
+    public namespaces(): Array<string> {
         return Object.keys(this.lookup);
     }
-    static names(namespace: string): Array<string> {
+    public names(namespace: string): Array<string> {
         return Object.keys(this.lookup[namespace]);
     }
 
-    static allStencilItem(): Array<foStencilItem> {
+    public allStencilItem(): Array<foStencilItem> {
         let list: Array<foStencilItem> = new Array<foStencilItem>();
         Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
             Tools.forEachKeyValue(obj, (name, spec) => {
@@ -106,7 +106,7 @@ export class Stencil {
         return list;
     }
 
-    static register<T extends foGlyph>(id: string, item: foStencilSpec<T>): foStencilSpec<T> {
+    public register<T extends foGlyph>(id: string, item: foStencilSpec<T>): foStencilSpec<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
         if (!this.lookup[namespace]) {
             this.lookup[namespace] = {};
@@ -115,18 +115,18 @@ export class Stencil {
         return item;
     }
 
-    static find<T extends foGlyph>(id: string): foStencilSpec<T> {
+    public find<T extends foGlyph>(id: string): foStencilSpec<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
         return this.findSpec(namespace, name);
     }
 
-    static findSpec<T extends foGlyph>(namespace: string, name: string): foStencilSpec<T> {
+    public findSpec<T extends foGlyph>(namespace: string, name: string): foStencilSpec<T> {
         let space = this.lookup[namespace];
         let spec = space && space[name];
         return spec;
     }
 
-    static define<T extends foGlyph>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>): foStencilSpec<T> {
+    public define<T extends foGlyph>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>): foStencilSpec<T> {
         RuntimeType.define(type);
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
@@ -138,7 +138,7 @@ export class Stencil {
         return result;
     }
 
-    static create<T extends foGlyph>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
+    public create<T extends foGlyph>(id: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
         RuntimeType.define(type);
 
         let { namespace, name } = Tools.splitNamespaceType(id, type.name);
@@ -148,7 +148,7 @@ export class Stencil {
         return instance;
     }
 
-    static newInstance<T extends foGlyph>(id: string, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
+    public newInstance<T extends foGlyph>(id: string, properties?: any, subcomponents?: Array<T>, func?: Action<T>): T {
         let spec = this.find(id);
         let instance = spec && spec.newInstance(properties, subcomponents) as T;
         func && func(instance);
@@ -156,7 +156,7 @@ export class Stencil {
     }
 
 
-    static override<T extends foGlyph>(json: any): foStencilSpec<T> {
+    public override<T extends foGlyph>(json: any): foStencilSpec<T> {
         let { myName, myType, properties, subcomponents, commands } = json;
 
         let type = RuntimeType.modelPrimitives[myType];
@@ -173,5 +173,7 @@ export class Stencil {
     }
 
 }
+
+export let Stencil: foStencil = new foStencil();
 
 
