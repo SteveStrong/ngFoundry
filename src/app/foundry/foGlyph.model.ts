@@ -15,7 +15,7 @@ import { foNode } from './foNode.model';
 import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
-
+import { Lifecycle } from './foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
@@ -159,13 +159,27 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        Lifecycle.created(this);
         return this;
     }
 
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
+        Lifecycle.dropped(this);
         return this;
+    }
+
+    removeSubcomponent(obj: foNode) {
+        super.removeSubcomponent(obj);
+        Lifecycle.unparent(obj);
+        return obj;
+    }
+
+    addSubcomponent(obj: foNode,properties?:any) {
+        super.addSubcomponent(obj,properties);
+        Lifecycle.reparent(obj);
+        return obj;
     }
 
     get nodes(): foCollection<foGlyph> {

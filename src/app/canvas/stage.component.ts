@@ -41,6 +41,7 @@ import { SignalRService } from "../common/signalr.service";
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 
+import { Lifecycle } from '../foundry/foLifecycle';
 
 class Line extends foShape1D {
 }
@@ -217,6 +218,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   ngOnInit() {
 
     this.addEventHooks();
+
+    Lifecycle.observable.subscribe(event => {
+      
+    })
 
     this.onItemChangedParent = (shape: foGlyph): void => {
       this.signalR.pubCommand("syncParent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
