@@ -96,14 +96,15 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return Tools.stringify(result);
     }
 
-    get asJson() {
-        let result = Tools.asJson(this);
-        result.primitive = this._primitive;
-        result.specification = this._specification;
-        result.attributes = Tools.asArray(this.attributes.asJson);
-        result.projections = Tools.asArray(this.projections.asJson);
-        return result;
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            primitive: this.primitive,
+            specification: this._specification,
+            attributes: Tools.asArray(this.attributes.asJson),
+            projections: Tools.asArray(this.projections.asJson),
+        });
     }
+
 
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
         let spec = Tools.union(this.specification, properties);
@@ -148,14 +149,25 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
 RuntimeType.knowledge(foProjection);
 
-export class foConceptItem {
+
+export class foConceptItem extends foObject {
     id: string;
     namespace: string;
     name: string;
     concept: foConcept<foNode>;
 
-    constructor(props?: any) {
+    constructor(props?:any){
+        super()
         props && Tools.mixin(this, props)
+    }
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            id: this.id,
+            namespace: this.namespace,
+            name: this.name,
+            concept: this.concept,
+        });
     }
 }
 
