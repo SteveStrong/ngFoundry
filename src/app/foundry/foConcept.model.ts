@@ -171,17 +171,17 @@ export class foConceptItem extends foObject {
     }
 }
 
-export class Concept {
-    static lookup: any = {}
+export class foConceptDictionary {
+    public lookup: any = {}
 
-    static namespaces(): Array<string> {
+    public namespaces(): Array<string> {
         return Object.keys(this.lookup);
     }
-    static names(namespace: string): Array<string> {
+    public names(namespace: string): Array<string> {
         return Object.keys(this.lookup[namespace]);
     }
 
-    static allConceptItems(): Array<foConceptItem> {
+    public allConceptItems(): Array<foConceptItem> {
         let list: Array<foConceptItem> = new Array<foConceptItem>();
         Tools.forEachKeyValue(this.lookup, (namespace, obj) => {
             Tools.forEachKeyValue(obj, (name, concept) => {
@@ -198,19 +198,19 @@ export class Concept {
         return list;
     }
 
-    static find<T extends foNode>(id: string): foConcept<T> {
+    public find<T extends foNode>(id: string): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
         let concept = this.findConcept(namespace, name) as foConcept<T>;
         return concept;
     }
 
-    static register<T extends foNode>(id: string, concept: foConcept<T>): foConcept<T> {
+    public register<T extends foNode>(id: string, concept: foConcept<T>): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(id);
 
         return this.registerConcept(namespace, name, concept);
     }
 
-    static registerConcept<T extends foNode>(namespace: string, name: string, concept: foConcept<T>): foConcept<T> {
+    public registerConcept<T extends foNode>(namespace: string, name: string, concept: foConcept<T>): foConcept<T> {
         if (!this.lookup[namespace]) {
             this.lookup[namespace] = {};
         }
@@ -218,13 +218,13 @@ export class Concept {
         return concept;
     }
 
-    static findConcept<T extends foNode>(namespace: string, name: string): foConcept<T> {
+    public findConcept<T extends foNode>(namespace: string, name: string): foConcept<T> {
         let space = this.lookup[namespace];
         let concept = space && space[name];
         return concept;
     }
 
-    static define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
+    public define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
         let { namespace, name } = Tools.splitNamespaceType(myName);
 
         let concept = new foConcept<T>({ myName });
@@ -236,7 +236,7 @@ export class Concept {
         return result;
     }
 
-    static override<T extends foNode>(json: any): foConcept<T> {
+    public override<T extends foNode>(json: any): foConcept<T> {
         let { specification, primitive } = json;
 
         let concept = new foConcept<T>(json);
@@ -256,7 +256,7 @@ export class Concept {
     }
 
 
-    static newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
+    public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
         let { namespace, name } = Tools.splitNamespaceType(id);
         let concept = this.findConcept(namespace, name);
 
@@ -265,3 +265,6 @@ export class Concept {
         return instance;
     }
 }
+
+
+export let Concept: foConceptDictionary = new foConceptDictionary();
