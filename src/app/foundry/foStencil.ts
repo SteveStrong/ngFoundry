@@ -77,7 +77,7 @@ export class foStencilItem extends foObject {
     }
 }
 
-export class foStencil {
+export class foGlyphDictionary {
 
     public lookup: any = {};
 
@@ -174,6 +174,6 @@ export class foStencil {
 
 }
 
-export let Stencil: foStencil = new foStencil();
+export let Stencil: foGlyphDictionary = new foGlyphDictionary();
 
 
