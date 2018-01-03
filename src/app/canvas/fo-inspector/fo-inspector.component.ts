@@ -5,6 +5,8 @@ import { StageComponent } from "../stage.component";
 import { foPage } from "../../foundry/foPage.model";
 import { PubSub } from "../../foundry/foPubSub";
 
+import { Lifecycle, foLifecycleEvent } from "../../foundry/foLifecycle";
+
 //https://valor-software.com/ngx-bootstrap/#/tabs
 
 
@@ -14,6 +16,7 @@ import { PubSub } from "../../foundry/foPubSub";
   styleUrls: ['./fo-inspector.component.css']
 })
 export class foInspectorComponent implements OnInit {
+  lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
 
   @Input()
   public stage: StageComponent;
@@ -23,7 +26,19 @@ export class foInspectorComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.rootPage = this.stage
+    this.rootPage = this.stage;
+
+    Lifecycle.observable.subscribe(event => {
+      this.pushMax(event, 10);
+    });
+  }
+
+  pushMax(value, max) {
+    let length = this.lifecycleEvent.length;
+    if (length >= max) {
+      this.lifecycleEvent.splice(0, length - max + 1);
+    }
+    this.lifecycleEvent.push(value);
   }
 
   doRefreshRuntimeTypes() {

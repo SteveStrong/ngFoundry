@@ -133,6 +133,7 @@ export class foPage extends foShape2D {
         return obj;
     }
 
+
     clearAll() {
         this._subcomponents.clearAll();
         this._dictionary.clearAll();
@@ -141,7 +142,7 @@ export class foPage extends foShape2D {
     deleteSelected(onComplete?: Action<foGlyph>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
-            this.removeSubcomponent(found);
+            this.destroyed(found);
             onComplete && onComplete(found);
         }
     }

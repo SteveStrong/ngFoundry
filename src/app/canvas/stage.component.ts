@@ -222,7 +222,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addEventHooks();
 
     Lifecycle.observable.subscribe(event => {
-      
+      console.log(event.cmd, event.myGuid);
+      //Toast.info(event.cmd, event.myGuid )
     })
 
     this.onItemChangedParent = (shape: foGlyph): void => {

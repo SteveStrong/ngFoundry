@@ -13,6 +13,10 @@ export class foKnowledge extends foObject {
     constructor(properties?: any) {
         super(properties);
     }
+       
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        return this;
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';

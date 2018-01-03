@@ -1,6 +1,10 @@
 <tabset type="pills">
   <tab heading='Live'>
     <pre class="well">{{stage.mouseLoc | json}}</pre>
+
+    <div *ngFor="let event of lifecycleEvent" >
+      <div>{{event.id}} - {{event.cmd}}  {{event.myGuid}}</div>
+    </div>
     <!-- <pre class="well">{{stage.message | json}}</pre> -->
 
     <!-- <pre class="well">{{sitOnShape | json}}</pre> -->

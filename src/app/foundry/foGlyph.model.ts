@@ -166,8 +166,14 @@ export class foGlyph extends foNode implements iShape {
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
-        Lifecycle.dropped(this);
+        Lifecycle.moved(this);
         return this;
+    }
+
+    destroyed(obj: foNode) {
+        this.removeSubcomponent(obj);
+        Lifecycle.destroyed(obj);
+        return obj;
     }
 
     removeSubcomponent(obj: foNode) {

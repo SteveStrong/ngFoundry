@@ -35,12 +35,14 @@ export class RuntimeType {
 
     static create<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any) {
         let instance = new type(properties) as T;
+        instance.initialize();
         return instance;
     }
 
 
     static establish<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type(properties);
+        instance.initialize();
         return instance;
     }
 
