@@ -10,6 +10,7 @@ import { foShape2D } from './foShape2D.model';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { debounce, debounceTime, } from 'rxjs/operators';
+import { StringifyOptions } from 'querystring';
 
 let counter = 0;
 
@@ -31,6 +32,35 @@ export class foLifecycleEvent {
         this.object = obj;
     }
 }
+
+//this is needed to prevent circular communiation
+// create => create => create across browsers
+export class foLifecycleEventLock{
+    private _processLock = {};
+    
+    isLocked(guid:string ) {
+        return this._processLock[guid] ? true : false;
+    }
+    
+    addLock(guid:string ) {
+        if ( !this.isLocked(guid)){
+            this._processLock[guid] = 0;
+        }
+        this._processLock[guid] += 1;
+    }
+
+    unLock(guid:string ) {
+        if ( this.isLocked(guid)){
+            this._processLock[guid] -= 1;
+            if ( this._processLock[guid] <= 0){
+                delete this._processLock[guid];
+            }
+        }
+    }
+}
+
+export let LifecycleLock: foLifecycleEventLock = new foLifecycleEventLock();
+
 
 export class foLifecycle {
 

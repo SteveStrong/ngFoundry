@@ -571,7 +571,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
+    //this.sharing.syncShape(shape);
   }
 
   doAddSubGlyph() {
@@ -580,7 +580,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
+    //this.sharing.syncShape(shape);
 
     let subShape = RuntimeType.create(foGlyph, {
       color: 'blue',
