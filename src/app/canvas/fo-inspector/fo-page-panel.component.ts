@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { Tools } from "../../foundry/foTools";
-import { Concept } from "../../foundry/foConcept.model";
+import { foKnowledge } from "../../foundry/foKnowledge.model";
+import { Stencil } from "../../foundry/foStencil";
 import { foGlyph } from "../../foundry/foGlyph.model";
 
 @Component({
@@ -20,7 +21,7 @@ export class foPagePanelComponent implements OnInit {
 
   ngOnInit() {
     let myClass = this.node.myClass;
-    let spec = Concept.find(myClass);
+    let spec = Stencil.find(myClass);
     if (spec) {
       this.commands = spec.commands;
     }

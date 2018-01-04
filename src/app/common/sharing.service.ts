@@ -9,7 +9,8 @@ import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
-import { Concept } from "../foundry/foConcept.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
 import { foGlyph } from "../foundry/foGlyph.model";
@@ -187,7 +188,7 @@ export class SharingService {
       this.signalR.subCommand("syncKnow", (cmd, data) => {
         //foObject.jsonAlert(data);
         KnowcycleLock.protected(cmd.guid, this, _ => {
-            Concept.hydrate(data);
+            Stencil.hydrate(data);
         });
 
       });
@@ -213,7 +214,7 @@ export class SharingService {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.findItem(cmd.guid, () => {
             //this.message.push(json);            
-            let concept =  Concept.find(data.myClass);
+            let concept =  Stencil.find(data.myClass);
             let shape =  concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
             this._page.found(cmd.parentGuid,
               (item) => { item.addSubcomponent(shape); },

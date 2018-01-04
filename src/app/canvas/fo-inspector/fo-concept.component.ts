@@ -3,8 +3,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
+import { Stencil } from "../../foundry/foStencil";
 
-import { Concept, foConcept } from "../../foundry/foConcept.model";
 import { Knowcycle } from "../../foundry/foLifecycle";
 
 @Component({
@@ -23,10 +23,10 @@ export class foConceptComponent implements OnInit {
   constructor() { }
 
   initViewModel() {
-    this.list = Concept.concepts.members;
+    this.list = Stencil.concepts.members;
 
     this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
-    this.headings = Concept.namespaces();
+    this.headings = Stencil.namespaces();
   }
 
   ngOnInit() {
@@ -36,8 +36,7 @@ export class foConceptComponent implements OnInit {
     });
   }
 
-  doCreate(item){
-    let concept = item.concept;
+  doCreate(concept){
     let box = concept.newInstance()
       .drop(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);

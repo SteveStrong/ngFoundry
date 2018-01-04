@@ -1,7 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
-import { Concept, foConcept } from "../../foundry/foConcept.model";
+import { foKnowledge } from "../../foundry/foKnowledge.model";
+import { Stencil } from "../../foundry/foStencil";
 import { foGlyph } from "../../foundry/foGlyph.model";
 
 import { SignalRService } from "../../common/signalr.service";
@@ -14,7 +15,7 @@ import { SignalRService } from "../../common/signalr.service";
 export class foStencilPanelComponent implements OnInit {
 
   @Input()
-  public stencilItem:foConcept<foGlyph>;
+  public stencilItem:foKnowledge;
 
   @Input()
   public rootPage: foPage;

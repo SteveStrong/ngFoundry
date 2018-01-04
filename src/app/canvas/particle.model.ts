@@ -2,7 +2,8 @@ import { Tools } from '../foundry/foTools';
 
 
 import { foShape2D } from "../foundry/foShape2D.model";
-import { Concept } from "../foundry/foConcept.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Stencil } from "../foundry/foStencil";
 
 
 export class particle extends foShape2D {
@@ -88,7 +89,7 @@ export class particleEngine extends foShape2D {
   particleCount: number;
 
   doStart() {
-    var particleType = Concept.define('particle', particle);
+    var particleType = Stencil.define('particle', particle);
     let count = this.particleCount || 100;
     for (var i = 0; i < this.particleCount; i++) {
       particleType.newInstance()

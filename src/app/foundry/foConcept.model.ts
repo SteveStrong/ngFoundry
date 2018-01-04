@@ -7,14 +7,13 @@ import { foDictionary } from './foDictionary.model'
 import { foAttribute, foViewAttribute } from './foAttribute.model'
 
 import { foObject } from './foObject.model'
-import { foComponent } from './foComponent.model'
+//import { foComponent } from './foComponent.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
 import { Knowcycle } from './foLifecycle';
 
-import { foLibrary } from 'app/foundry/foLibrary.model';
-import { foGlyph } from 'app/foundry/foGlyph.model';
+
 
 export class foConcept<T extends foNode> extends foKnowledge {
 
@@ -166,64 +165,3 @@ RuntimeType.knowledge(foProjection);
 
  
 
-export class foShapeLibrary extends foLibrary {
-
-    public namespaces(): Array<string> {
-        let lookup = {}
-        this.concepts.members.forEach( concept => {
-            let { namespace, name } = Tools.splitNamespaceType(concept.name);
-            lookup[namespace] = concept;
-        })
-        return Object.keys(lookup);
-    }
-
-
-
-    public find<T extends foNode>(id: string): foConcept<T> {
-        let concept = this.concepts.getItem(id) as foConcept<T>;
-        return concept;
-    }
-
-
-    public define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
- 
-        let concept = new foConcept<T>({ myName });
-        concept.definePrimitive(type);
-        concept.specification = specification || {};
-
-        this.concepts.addItem(myName, concept);
-        Knowcycle.defined(concept);
-        return concept;
-    }
-
-    public hydrate<T extends foNode>(json: any): foConcept<T> {
-        let { specification, primitive } = json;
-
-        let concept = new foConcept<T>(json);
-        //foObject.jsonAlert(data);
-
-        let type = RuntimeType.modelPrimitives[primitive];
-        if (!type) {
-            throw Error('runtimeType not found ' + type)
-        }
-        concept.definePrimitive(type);
-        concept.specification = specification;
-
-        this.concepts.addItem(concept.myName, concept);
-        Knowcycle.defined(concept);
-        return concept;
-    }
-
-
-    public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
-        let { namespace, name } = Tools.splitNamespaceType(id);
-        let concept = this.find(id);
-
-        let instance = concept.newInstance(properties) as T;
-        func && func(instance);
-        return instance;
-    }
-}
-
-
-export let Concept: foShapeLibrary = new foShapeLibrary();

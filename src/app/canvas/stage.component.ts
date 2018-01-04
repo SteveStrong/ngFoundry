@@ -15,7 +15,8 @@ import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
-import { Concept, foConcept } from "../foundry/foConcept.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Stencil } from "../foundry/foStencil";
 
 import { foPage } from "../foundry/foPage.model";
 
@@ -237,14 +238,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    Concept.define('lego', ThreeByThreeCircle);
+    Stencil.define('lego', ThreeByThreeCircle);
 
-    Concept.define('lego', OneByOne);
-    Concept.define('lego', TwoByOne, { color: 'coral' });
-    Concept.define('lego', TwoByTwo, { width: 50, height: 50 });
-    Concept.define('lego', TwoByFour);
-    Concept.define('lego', OneByTen);
-    Concept.define('lego', TenByTen, { width: 250, height: 250 });
+    Stencil.define('lego', OneByOne);
+    Stencil.define('lego', TwoByOne, { color: 'coral' });
+    Stencil.define('lego', TwoByTwo, { width: 50, height: 50 });
+    Stencil.define('lego', TwoByFour);
+    Stencil.define('lego', OneByTen);
+    Stencil.define('lego', TenByTen, { width: 250, height: 250 });
   }
 
   doParticleEngine() {
@@ -259,7 +260,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         item.doStart();
       });
 
-    let def = Concept.define('particle', particleEngine, {
+    let def = Stencil.define('particle', particleEngine, {
       color: 'white',
       particleCount: 100,
       opacity: .1,
@@ -277,26 +278,26 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doLoadConcept() {
-    Concept.define<foShape2D>('boundry::shape1', foShape2D, {
+    Stencil.define<foShape2D>('boundry::shape1', foShape2D, {
       color: 'gray',
       width: 50,
       height: 25
     });
 
-    Concept.define<foShape2D>('boundry::block', foShape2D, {
+    Stencil.define<foShape2D>('boundry::block', foShape2D, {
       color: 'green',
       width: 100,
       height: 50
     });
 
-    Concept.define<foText2D>('boundry::text', foText2D, {
+    Stencil.define<foText2D>('boundry::text', foText2D, {
       color: 'black',
       background: 'grey',
       context: 'HELLO',
       fontSize: 30,
     });
 
-    Concept.define<foShape2D>('boundry::boundry', foShape2D, {
+    Stencil.define<foShape2D>('boundry::boundry', foShape2D, {
       color: 'cyan',
       width: 100,
       height: 50
@@ -307,11 +308,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doBoundry() {
 
-    let text = Concept.find<foShape2D>('boundry::text');
+    let text = Stencil.find<foShape2D>('boundry::text');
 
-    let block = Concept.find<foShape2D>('boundry::block');
+    let block = Stencil.find<foShape2D>('boundry::block');
 
-    let boundry = Concept.find<foShape2D>('boundry::boundry');
+    let boundry = Stencil.find<foShape2D>('boundry::boundry');
 
     let box = boundry.newInstance().drop(this.centerX, this.centerY).addAsSubcomponent(this);
 
@@ -334,7 +335,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doImage() {
-    let def = Concept.define<foImage>('blocks::block2d', foImage, {
+    let def = Stencil.define<foImage>('blocks::block2d', foImage, {
       background: 'green',
       imageURL: "https://lorempixel.com/900/500?r=2",
       width: 100,
@@ -384,7 +385,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doBlocks() {
-    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+    let block = Stencil.define<foShape2D>('blocks::block2d', foShape2D, {
       color: 'green',
       width: 100,
       height: 50
@@ -392,7 +393,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
 
-    let text = Concept.define<foText2D>('words::text2d', foText2D, {
+    let text = Stencil.define<foText2D>('words::text2d', foText2D, {
       color: 'black',
       background: 'yellow',
       context: 'HELLO',
@@ -417,30 +418,30 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDocker() {
-    let block = Concept.define<foText2D>('text::block', foText2D, {
+    let block = Stencil.define<foText2D>('text::block', foText2D, {
       color: 'green',
       fontSize: 20,
     });
 
-    let attribute = Concept.define<foText2D>('text::attribute', foText2D, {
+    let attribute = Stencil.define<foText2D>('text::attribute', foText2D, {
       color: 'red',
       background: 'white',
       fontSize: 20,
     });
 
-    let formula = Concept.define<foText2D>('text::formula', foText2D, {
+    let formula = Stencil.define<foText2D>('text::formula', foText2D, {
       color: 'gray',
       background: 'white',
       fontSize: 20,
     });
 
-    let concept = Concept.define<foText2D>('text::concept', foText2D, {
+    let concept = Stencil.define<foText2D>('text::concept', foText2D, {
       color: 'blue',
       background: 'yellow',
       fontSize: 20,
     });
 
-    let body = Concept.define<foShape2D>('text::body', foShape2D, {
+    let body = Stencil.define<foShape2D>('text::body', foShape2D, {
       color: 'cyan',
       fontSize: 30,
     });
@@ -506,14 +507,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doText() {
-    let textBlock = Concept.define<foText2D>('text::block', foText2D, {
+    let textBlock = Stencil.define<foText2D>('text::block', foText2D, {
       color: 'black',
       text: 'Hello',
       background: 'yellow',
       margin: new cMargin(0, 0, 0, 0)
     });
 
-    let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
+    let wireConcept = Stencil.define<foShape1D>('text::wire', foShape1D, {
       color: 'green',
       thickness: 1,
     });
@@ -582,7 +583,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddThreeByThree() {
-    let def = Concept.define('my', ThreeByThreeCircle, {
+    let def = Stencil.define('my', ThreeByThreeCircle, {
       color: 'coral',
       x: 400,
       y: 400,
