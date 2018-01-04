@@ -111,12 +111,12 @@ export class foStencilLibrary extends foLibrary {
     }
 
 
-    public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
-        let concept = this.find(id);
-        let instance = concept.newInstance(properties) as T;
-        func && func(instance);
-        return instance;
-    }
+    // public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
+    //     let concept = this.find(id);
+    //     let instance = concept.newInstance(properties) as T;
+    //     func && func(instance);
+    //     return instance;
+    // }
 }
 
 
