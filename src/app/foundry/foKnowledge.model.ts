@@ -17,6 +17,10 @@ export class foKnowledge extends foObject {
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         return this;
     }
+
+    newInstance(properties?: any) {
+        return undefined;
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';
