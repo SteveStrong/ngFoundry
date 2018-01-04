@@ -6,7 +6,7 @@ import { PubSub } from "./foPubSub";
 import { foNode } from './foNode.model';
 import { foKnowledge } from './foKnowledge.model';
 
-
+import { Knowcycle } from "./foLifecycle";
 
 export class foRuntimeType {
     public modelPrimitives = {}
@@ -29,7 +29,7 @@ export class foRuntimeType {
     public define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         let name = type.name;
         this.modelPrimitives[name] = type;
-        PubSub.Pub('onRuntimeTypeChanged', name);
+        Knowcycle.primitive(name);
         return type;
     }
 
@@ -49,7 +49,7 @@ export class foRuntimeType {
     public knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
         let name = type.name;
         this.knowledgePrimitives[name] = type;
-        PubSub.Pub('onKnowledgeChanged', name);
+        Knowcycle.primitive(name);
         return type;
     }
 

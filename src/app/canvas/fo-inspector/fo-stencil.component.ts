@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
 import { Stencil, foStencilItem } from "../../foundry/foStencil";
-import { PubSub } from "../../foundry/foPubSub";
+import { Knowcycle } from "../../foundry/foLifecycle";
 
 
 
@@ -31,7 +31,7 @@ export class foStencilComponent implements OnInit {
 
   ngOnInit() {
     this.initViewModel();
-    PubSub.Sub('onStencilChanged', () => {
+    Knowcycle.observable.subscribe(item => {
       this.initViewModel();
     });
 

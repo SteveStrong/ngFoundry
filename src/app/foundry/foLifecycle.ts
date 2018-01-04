@@ -108,6 +108,11 @@ export class foLifecycle {
         });
     }
 
+    primitive(name?: string) {
+        this.emit.next(new foLifecycleEvent('primitive', undefined, counter++, name))
+        return this;
+    }
+
     defined(obj?: foObject) {
         this.emit.next(new foLifecycleEvent('defined', obj, counter++))
         return this;

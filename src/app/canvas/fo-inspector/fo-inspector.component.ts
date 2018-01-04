@@ -47,11 +47,11 @@ export class foInspectorComponent implements OnInit {
   }
 
   doRefreshRuntimeTypes() {
-    PubSub.Pub('onRuntimeTypeChanged');
+    Knowcycle.primitive()
   }
 
   doRefreshStencil() {
-    PubSub.Pub('onStencilChanged');
+    Knowcycle.defined()
   }
 
   doRefreshConcepts() {
