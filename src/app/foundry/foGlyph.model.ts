@@ -25,7 +25,13 @@ export class foGlyph extends foNode implements iShape {
 
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) { this._isSelected = value; }
+    set isSelected(value: boolean) { 
+        if ( this._isSelected != value ) {
+            this._isSelected = value;
+            Lifecycle.selected(this, value);
+        };
+       
+    }
 
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
@@ -209,7 +215,9 @@ export class foGlyph extends foNode implements iShape {
             this.drop();
         }).eventCallback("onComplete", () => {
             this.drop(x, y);
+            Lifecycle.easeTo(this);
         });
+       
         return this;
     }
 
@@ -325,11 +333,11 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
-    unSelect(deep: boolean = true) {
-        this.isSelected = false;
+    unSelect(deep: boolean = true, exclude: foGlyph = null) {
+        this.isSelected = this == exclude ? this.isSelected : false;
         this._handles && this._handles.forEach(item => item.color = 'black')
         deep && this.Subcomponents.forEach(item => {
-            (<foGlyph>item).unSelect(deep);
+            (<foGlyph>item).unSelect(deep, exclude);
         })
     }
 

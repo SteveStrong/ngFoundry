@@ -82,10 +82,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDelete() {
-    this.deleteSelected(shape => {
-      this.sharing.deleteShape(shape);
-    });
-
+    this.deleteSelected();
   }
 
   doDuplicate() {
@@ -231,7 +228,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.sharing.moveTo(shape, shape.getLocation());
+      //this.sharing.moveTo(shape, shape.getLocation());
     }
 
     this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
@@ -277,7 +274,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       .then(item => {
         item.doStart();
       });
-    this.sharing.syncShape(shape);
   }
 
   doLoadConcept() {
@@ -342,7 +338,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
 
-    this.sharing.syncShape(box);
   }
 
   doImage() {
@@ -361,7 +356,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
         picture.easeTween(place, 1.5);
 
-        this.sharing.syncShape(picture).syncEaseTo(picture, place);
+        this.sharing.syncEaseTo(picture, place);
       })
 
     }
@@ -375,7 +370,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
       angle: Tools.randomInt(-30, 30)
     }).drop(330, 330).addAsSubcomponent(this);
-    this.sharing.syncShape(image);
+ 
 
     let size = {
       width: 200,
@@ -539,7 +534,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         fontSize: size,
       }).drop(350, y).addAsSubcomponent(this);
       y += 50;
-      this.sharing.syncShape(shape);
 
       objects.push(shape)
 
@@ -555,10 +549,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     })
 
 
-    objects.forEach(shape => {
-      //shape.drop(shape.x + Tools.randomInt(-100, 100));
-      this.sharing.moveTo(shape, shape.getLocation());
-    })
+    // objects.forEach(shape => {
+    //   shape.easeTo(shape.x + Tools.randomInt(-100, 100));
+    // })
 
 
   }
@@ -600,8 +593,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let shape = def.newInstance()
       .addAsSubcomponent(this);
-
-    this.sharing.syncShape(shape);
   }
 
 
@@ -612,7 +603,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 200,
     });
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddTwoByOne() {
@@ -620,7 +610,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddTwoByTwo() {
@@ -629,8 +618,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'pink',
       myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
-
-    this.sharing.syncShape(shape);
   }
 
 
@@ -672,7 +659,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }).drop(500, 500);
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddTenByTen() {
@@ -681,7 +667,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(600, 300);
 
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddStack(properties?: any) {
@@ -749,7 +734,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: spec.length,
       height: height,
     }).drop(400, 400).addAsSubcomponent(this);
-    this.sharing.syncShape(fake);
 
     let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
@@ -760,7 +744,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: y2,
       height: height,
     }).drop(400, 300).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
   }
 
   doShapeGlue() {
@@ -769,15 +752,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
 
     }).drop(100, 300, 45).addAsSubcomponent(this);
-    this.sharing.syncShape(shape1);
-
 
     let shape2 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
     }).drop(300, 400).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
-    this.sharing.syncShape(shape2);
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
@@ -793,7 +773,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
     }).drop(600, 350).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
 
 
     let wire = RuntimeType.create<Line>(Line, {
@@ -805,7 +784,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: pt2.y,
       color: 'black',
     }).addAsSubcomponent(this);
-    this.sharing.syncShape(wire);
 
 
     this.sharing.syncGlue(wire.createGlue('begin', shape1));
@@ -819,7 +797,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 20,
       color: 'black',
     }).drop(400, 400).addAsSubcomponent(this);
-    this.sharing.syncShape(wire);
 
     let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
@@ -831,9 +808,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
-
-    this.sharing.syncShape(shape1);
-    this.sharing.syncShape(shape2);
 
     wire.glue.forEach(glue => {
       this.sharing.syncGlue(glue);
@@ -862,7 +836,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       item.isSelected = true;
     }).addAsSubcomponent(this);
 
-    this.sharing.syncShape(shape);
   }
 
   doObjGroup() {
@@ -879,7 +852,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(150, 150, 0);
 
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
 
     let subShape = RuntimeType.create(dRectangle, {
       color: 'blue',
@@ -896,7 +868,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     shape.doAnimation = subShape.doAnimation;
-    //this.sharing.syncShape(subShape);
+
   }
 
 

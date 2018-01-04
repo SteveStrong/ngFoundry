@@ -16,6 +16,7 @@ import { foComponent } from '../foundry/foComponent.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 import { foShape2D } from '../foundry/foShape2D.model'
 import { foHandle } from 'app/foundry/foHandle';
+import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -135,6 +136,11 @@ export class foPage extends foShape2D {
 
 
     clearAll() {
+        //simulate delete lifecycle in bulk via events
+        this.nodes.forEach(item => {
+            Lifecycle.unparent(item);
+            Lifecycle.destroyed(item);
+        })
         this._subcomponents.clearAll();
         this._dictionary.clearAll();
     }
@@ -177,6 +183,7 @@ export class foPage extends foShape2D {
         let shape: foGlyph = null;
         let shapeUnder: foGlyph = null;
         let hovershape: foGlyph = null;
+        let lastSelected: foGlyph = null;
         let offset: iPoint = null;
         let handles: foCollection<foHandle> = new foCollection<foHandle>()
         let grab: foHandle = null;
@@ -201,16 +208,18 @@ export class foPage extends foShape2D {
                 return;
             }
 
+            let found = this.findHitShape(loc);
+
             if (!keys.shift) {
                 grab = null;
                 handles.clearAll();
                 this._subcomponents.forEach(item => {
-                    item.unSelect();
+                    item.unSelect(true,found);
                 });
             }
 
-            shape = this.findHitShape(loc);
-            if (shape) {
+            if (found) {
+                shape = found;
                 this._subcomponents.moveToTop(shape);
                 shape.isSelected = true;
                 offset = shape.getOffset(loc);

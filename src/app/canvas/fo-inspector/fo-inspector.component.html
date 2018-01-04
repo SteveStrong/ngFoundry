@@ -3,7 +3,7 @@
     <pre class="well">{{stage.mouseLoc | json}}</pre>
 
     <div *ngFor="let event of lifecycleEvent" >
-      <div>{{event.id}} - {{event.cmd}}  {{event.myGuid}}</div>
+      <div>{{event.id}} - {{event.cmd}}  {{event.guid}} : {{event.value}}</div>
     </div>
     <!-- <pre class="well">{{stage.message | json}}</pre> -->
 

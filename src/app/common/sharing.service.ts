@@ -61,8 +61,9 @@ export class SharingService {
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
     return this;
   }
+
   public reparent(shape: foNode) {
-    this.signalR.pubCommand("syncParent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
+    this.signalR.pubCommand("syncParent", { guid: shape.myGuid}, shape.myParent().myGuid);
     return this;
   }
 
@@ -71,15 +72,22 @@ export class SharingService {
     return this;
   }
 
+  public moved(shape: foGlyph) {
+    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+    return this;
+  }
+
+  public selected(shape: foGlyph) {
+    this.signalR.pubCommand("selectShape", { guid: shape.myGuid }, shape.isSelected);
+    return this;
+  }
+
   public clearAll() {
     this.signalR.pubCommand("clearAll", {});
     return this;
   }
 
-  // public deleteShape(shape: foGlyph) {
-  //   this.signalR.pubCommand("deleteShape", { guid: shape.myGuid });
-  //   return this;
-  // }
+
 
   public syncStencil(know: foObject) {
     this.signalR.pubCommand("syncStencil", { guid: know.myGuid }, know.asJson);
@@ -88,16 +96,6 @@ export class SharingService {
 
   public syncConcept(know: foObject) {
     this.signalR.pubCommand("syncConcept", { guid: know.myGuid }, know.asJson);
-    return this;
-  }
-
-  // public syncParent(shape: foNode) {
-  //   this.signalR.pubCommand("syncParent", { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
-  //   return this;
-  // }
-
-  public syncShape(shape: foNode) {
-    this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
     return this;
   }
 
@@ -127,10 +125,6 @@ export class SharingService {
     return this;
   }
 
-  public moveTo(shape: foGlyph, data: any) {
-    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, data);
-    return this;
-  }
 
   public startSharing(page: foPage) {
 
@@ -142,6 +136,15 @@ export class SharingService {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.found(cmd.guid, shape => {
             shape.easeTo(data.x, data.y, .8, Back.easeInOut);
+          });
+        });
+      });
+
+
+      this.signalR.subCommand("selectShape", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.isSelected = data;
           });
         });
       });
@@ -168,12 +171,12 @@ export class SharingService {
         Concept.override(data);
       });
 
-      this.signalR.subCommand("syncParent", (cmd) => {
+      this.signalR.subCommand("syncParent", (cmd, parentGuid) => {
         //foObject.jsonAlert(cmd);
 
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.found(cmd.guid, (shape) => {
-            this._page.found(cmd.parentGuid,
+            this._page.found(parentGuid,
               (item) => { shape.reParent(item) },
               (miss) => { shape.reParent(this._page) })
           });
