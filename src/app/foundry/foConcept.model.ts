@@ -164,79 +164,36 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
 RuntimeType.knowledge(foProjection);
 
-
-// export class foConceptItem extends foObject {
-//     id: string;
-//     namespace: string;
-//     name: string;
-//     concept: foConcept<foNode>;
-
-//     constructor(props?:any){
-//         super()
-//         props && Tools.mixin(this, props)
-//     }
-
-//     protected toJson(): any {
-//         return Tools.mixin(super.toJson(), {
-//             id: this.id,
-//             namespace: this.namespace,
-//             name: this.name,
-//             concept: this.concept,
-//         });
-//     }
-// }
-
-export class Master extends foConcept<foGlyph> {
-
-} 
+ 
 
 export class foShapeLibrary extends foLibrary {
-    public lookup: any = {}
 
     public namespaces(): Array<string> {
-        return Object.keys(this.lookup);
+        let lookup = {}
+        this.concepts.members.forEach( concept => {
+            let { namespace, name } = Tools.splitNamespaceType(concept.name);
+            lookup[namespace] = concept;
+        })
+        return Object.keys(lookup);
     }
-    public names(namespace: string): Array<string> {
-        return Object.keys(this.lookup[namespace]);
-    }
+
 
 
     public find<T extends foNode>(id: string): foConcept<T> {
-        let { namespace, name } = Tools.splitNamespaceType(id);
-        let concept = this.findConcept(namespace, name) as foConcept<T>;
+        let concept = this.concepts.getItem(id) as foConcept<T>;
         return concept;
     }
 
-    public register<T extends foNode>(id: string, concept: foConcept<T>): foConcept<T> {
-        let { namespace, name } = Tools.splitNamespaceType(id);
-
-        return this.registerConcept(namespace, name, concept);
-    }
-
-    public registerConcept<T extends foNode>(namespace: string, name: string, concept: foConcept<T>): foConcept<T> {
-        if (!this.lookup[namespace]) {
-            this.lookup[namespace] = {};
-        }
-        this.lookup[namespace][name] = concept;
-        return concept;
-    }
-
-    public findConcept<T extends foNode>(namespace: string, name: string): foConcept<T> {
-        let space = this.lookup[namespace];
-        let concept = space && space[name];
-        return concept;
-    }
 
     public define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
-        let { namespace, name } = Tools.splitNamespaceType(myName);
-
+ 
         let concept = new foConcept<T>({ myName });
         concept.definePrimitive(type);
         concept.specification = specification || {};
 
-        let result = this.registerConcept(namespace, name, concept);
-        Knowcycle.defined(result);
-        return result;
+        this.concepts.addItem(myName, concept);
+        Knowcycle.defined(concept);
+        return concept;
     }
 
     public hydrate<T extends foNode>(json: any): foConcept<T> {
@@ -252,16 +209,15 @@ export class foShapeLibrary extends foLibrary {
         concept.definePrimitive(type);
         concept.specification = specification;
 
-        let { namespace, name } = Tools.splitNamespaceType(concept.myName);
-        let result = this.registerConcept(namespace, name, concept);
-        Knowcycle.defined(result);
-        return result;
+        this.concepts.addItem(concept.myName, concept);
+        Knowcycle.defined(concept);
+        return concept;
     }
 
 
     public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
         let { namespace, name } = Tools.splitNamespaceType(id);
-        let concept = this.findConcept(namespace, name);
+        let concept = this.find(id);
 
         let instance = concept.newInstance(properties) as T;
         func && func(instance);

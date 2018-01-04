@@ -18,14 +18,14 @@ export class foStencilComponent implements OnInit {
   @Input()
   public rootPage: foPage;
 
-  list: Array<foKnowledge>;
+  list:Array<foKnowledge> = new Array<foKnowledge>();
   headings: Array<string> = new Array<string>();
   groups: any = {};
 
   constructor() { }
 
   initViewModel() {
-    this.list = Concept.concepts.members; //.as;
+    this.list = Concept.concepts.members;
 
     this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
     this.headings = Concept.namespaces();
