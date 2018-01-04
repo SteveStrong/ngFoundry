@@ -22,13 +22,6 @@ export class foNode extends foObject implements iNode {
         this._class = value;
     }
 
-    private _concept: string;
-    get myConcept(): string {
-        return this._concept;
-    }
-    set myConcept(value: string) {
-        this._concept = value;
-    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, parent);
@@ -42,8 +35,7 @@ export class foNode extends foObject implements iNode {
     //get asJson() { return this.toJson() }
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
-            myClass: this.myClass,
-            myConcept: this.myConcept,
+            myClass: this.myClass
         });
     }
 

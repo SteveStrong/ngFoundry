@@ -174,6 +174,6 @@ export class foGlyphDictionary {
 
 }
 
-export let Stencil: foGlyphDictionary = new foGlyphDictionary();
+export let StencilOld: foGlyphDictionary = new foGlyphDictionary();
 
 

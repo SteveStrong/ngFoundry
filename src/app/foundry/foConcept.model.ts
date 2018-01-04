@@ -19,6 +19,16 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return <T>new foNode(properties, subcomponents, parent);
     }
 
+    private _commands: Array<string> = new Array<string>();
+    addCommands(...cmds: string[]) {
+        this._commands && this._commands.push(...cmds)
+        return this;
+    }
+
+    get commands(): Array<string> {
+        return this._commands;
+    }
+
     private _primitive: string;
     get primitive(): string { return this._primitive; }
     set primitive(value: string) { this._primitive = value; }
@@ -89,7 +99,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     get debug() {
         let result = {
             base: this,
-            spec: this._specification,
+            specification: this._specification,
             primitive: this._primitive,
             attributes: this._attributes,
             projections: this._projections,
@@ -110,7 +120,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
         let spec = Tools.union(this.specification, properties);
         let result = this._create(spec, subcomponents, parent) as T;
-        result.myConcept = this.myName;
+        result.myClass = this.myName;
         result.initialize();
         return result;
     }

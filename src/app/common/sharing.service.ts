@@ -10,7 +10,7 @@ import { SignalRService } from "../common/signalr.service";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 import { Concept } from "../foundry/foConcept.model";
-import { Stencil } from "../foundry/foStencil";
+//import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
 import { foGlyph } from "../foundry/foGlyph.model";
@@ -188,11 +188,7 @@ export class SharingService {
       this.signalR.subCommand("syncKnow", (cmd, data) => {
         //foObject.jsonAlert(data);
         KnowcycleLock.protected(cmd.guid, this, _ => {
-          if ( cmd.type == "foConcept" ) {
             Concept.hydrate(data);
-          } else {
-            Stencil.hydrate(data)
-          }
         });
 
       });
@@ -217,13 +213,9 @@ export class SharingService {
 
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.findItem(cmd.guid, () => {
-            //this.message.push(json);
-            let concept = Concept.find(data.myConcept);
-            let spec =  Stencil.find(data.myClass);
-
-            let shape =  concept && concept.newInstance(data);
-            shape =  shape ? shape : spec.newInstance(data);
-            shape = shape ? shape : RuntimeType.newInstance(data.myType, data);
+            //this.message.push(json);            
+            let concept =  Concept.find(data.myClass);
+            let shape =  concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
             this._page.found(cmd.parentGuid,
               (item) => { item.addSubcomponent(shape); },
               (miss) => { this._page.addSubcomponent(shape); }
