@@ -28,7 +28,7 @@ export class SharingService {
 
   private _page: foPage;
 
- 
+
 
   constructor(
     private signalR: SignalRService,
@@ -39,21 +39,21 @@ export class SharingService {
 
   initLifecycle() {
 
+    //might be able to use a filter on events
     Lifecycle.observable.subscribe(event => {
-      if ( LifecycleLock.isLocked(event.myGuid)) {
-        console.log('LifecycleLock.isLocked:', event.cmd, event);
-        return;
-      }
 
-      let cmd = this[event.cmd];
-      let obj = event.object
-      if (cmd) {
-        cmd = cmd.bind(this);
-        cmd(event.object);
-      } else {
-        this.signalR.pubCommand(event.cmd, { guid: obj.myGuid }, obj.asJson);
-        console.log('pubCommand:', event.cmd, event);
-      }
+      LifecycleLock.whenUnprotected(event.myGuid, this, _=>{
+        let cmd = this[event.cmd];
+        let obj = event.object
+        if (cmd) {
+          cmd = cmd.bind(this);
+          cmd(event.object);
+        } else {
+          this.signalR.pubCommand(event.cmd, { guid: obj.myGuid }, obj.asJson);
+          console.log('pubCommand:', event.cmd, event);
+        }
+      })
+
     });
   }
 
@@ -175,19 +175,21 @@ export class SharingService {
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
         foObject.jsonAlert(data);
-        LifecycleLock.addLock(cmd.guid);
-        this._page.findItem(cmd.guid, () => {
-          //this.message.push(json);
-          let spec = Stencil.find(data.myClass);
-          let shape = spec ? spec.newInstance(data) : RuntimeType.newInstance(data.myType, data);
-          this._page.found(cmd.parentGuid,
-            (item) => { item.addSubcomponent(shape); },
-            (miss) => { this._page.addSubcomponent(shape); }
-          );
-        }, found => {
-          found.override(data);
+
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.findItem(cmd.guid, () => {
+            //this.message.push(json);
+            let spec = Stencil.find(data.myClass);
+            let shape = spec ? spec.newInstance(data) : RuntimeType.newInstance(data.myType, data);
+            this._page.found(cmd.parentGuid,
+              (item) => { item.addSubcomponent(shape); },
+              (miss) => { this._page.addSubcomponent(shape); }
+            );
+          }, found => {
+            found.override(data);
+          });
         });
-        LifecycleLock.unLock(cmd.guid);
+
       });
 
       this.signalR.subCommand("easeTween", (cmd, data) => {

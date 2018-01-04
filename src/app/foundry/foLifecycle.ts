@@ -19,6 +19,9 @@ export class foLifecycleEvent {
     cmd: string = '';
     object: foObject;
 
+    get guid() {
+        return this.object.myGuid;
+    }
     get myGuid() {
         return this.object.myGuid;
     }
@@ -35,28 +38,49 @@ export class foLifecycleEvent {
 
 //this is needed to prevent circular communiation
 // create => create => create across browsers
-export class foLifecycleEventLock{
+export class foLifecycleEventLock {
     private _processLock = {};
-    
-    isLocked(guid:string ) {
+
+    isLocked(guid: string) {
         return this._processLock[guid] ? true : false;
     }
-    
-    addLock(guid:string ) {
-        if ( !this.isLocked(guid)){
+
+    addLock(guid: string) {
+        if (!this.isLocked(guid)) {
             this._processLock[guid] = 0;
         }
         this._processLock[guid] += 1;
     }
 
-    unLock(guid:string ) {
-        if ( this.isLocked(guid)){
+    unLock(guid: string) {
+        if (this.isLocked(guid)) {
             this._processLock[guid] -= 1;
-            if ( this._processLock[guid] <= 0){
+            if (this._processLock[guid] <= 0) {
                 delete this._processLock[guid];
             }
         }
     }
+
+    protected(guid: string, context: any, func: Action<any>) {
+        this.addLock(guid)
+        try {
+            func(context);
+        } catch (ex) {
+            console.error('protected', ex);
+        }
+        this.unLock(guid);
+    }
+
+    whenUnprotected(guid: string, context: any, func: Action<any>) {
+        if (!this.isLocked(guid)) {
+            try {
+                func(context);
+            } catch (ex) {
+                console.error('whenUnprotected ', ex);
+            }
+        }
+    }
+
 }
 
 export let LifecycleLock: foLifecycleEventLock = new foLifecycleEventLock();
