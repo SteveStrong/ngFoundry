@@ -10,7 +10,6 @@ import { SignalRService } from "../common/signalr.service";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 import { Concept } from "../foundry/foConcept.model";
-//import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
 import { foGlyph } from "../foundry/foGlyph.model";

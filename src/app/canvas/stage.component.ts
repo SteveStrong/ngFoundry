@@ -15,12 +15,11 @@ import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
-import { Concept, foConceptItem } from "../foundry/foConcept.model";
+import { Concept, foConcept } from "../foundry/foConcept.model";
 
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
-import { Stencil } from "../foundry/foStencil";
 
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph } from "../foundry/foGlyph.model";
@@ -238,14 +237,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    Stencil.define('lego', ThreeByThreeCircle);
+    Concept.define('lego', ThreeByThreeCircle);
 
-    Stencil.define('lego', OneByOne);
-    Stencil.define('lego', TwoByOne, { color: 'coral' });
-    Stencil.define('lego', TwoByTwo, { width: 50, height: 50 });
-    Stencil.define('lego', TwoByFour);
-    Stencil.define('lego', OneByTen);
-    Stencil.define('lego', TenByTen, { width: 250, height: 250 });
+    Concept.define('lego', OneByOne);
+    Concept.define('lego', TwoByOne, { color: 'coral' });
+    Concept.define('lego', TwoByTwo, { width: 50, height: 50 });
+    Concept.define('lego', TwoByFour);
+    Concept.define('lego', OneByTen);
+    Concept.define('lego', TenByTen, { width: 250, height: 250 });
   }
 
   doParticleEngine() {
@@ -260,7 +259,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         item.doStart();
       });
 
-    let def = Stencil.define('particle', particleEngine, {
+    let def = Concept.define('particle', particleEngine, {
       color: 'white',
       particleCount: 100,
       opacity: .1,
@@ -269,7 +268,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addCommands("doStart", "doStop", "doRotate");
 
 
-    let shape = def.newInstance().drop(500, 500).addAsSubcomponent(this)
+    let shape = <foGlyph>def.newInstance();
+    
+    shape.drop(500, 500).addAsSubcomponent(this)
       .then(item => {
         item.doStart();
       });
@@ -581,7 +582,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddThreeByThree() {
-    let def = Stencil.define('my', ThreeByThreeCircle, {
+    let def = Concept.define('my', ThreeByThreeCircle, {
       color: 'coral',
       x: 400,
       y: 400,
