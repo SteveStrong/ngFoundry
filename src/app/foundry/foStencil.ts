@@ -67,7 +67,7 @@ export class foStencilLibrary extends foLibrary {
     public namespaces(): Array<string> {
         let lookup = {}
         this.concepts.members.forEach( concept => {
-            let { namespace, name } = Tools.splitNamespaceType(concept.name);
+            let { namespace, name } = Tools.splitNamespaceType(concept.myName);
             lookup[namespace] = concept;
         })
         return Object.keys(lookup);
@@ -112,9 +112,7 @@ export class foStencilLibrary extends foLibrary {
 
 
     public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
-        let { namespace, name } = Tools.splitNamespaceType(id);
         let concept = this.find(id);
-
         let instance = concept.newInstance(properties) as T;
         func && func(instance);
         return instance;

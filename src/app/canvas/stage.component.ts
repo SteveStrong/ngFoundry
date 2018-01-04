@@ -277,7 +277,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       });
   }
 
-  doLoadConcept() {
+  doLoadStencil() {
     Stencil.define<foShape2D>('boundry::shape1', foShape2D, {
       color: 'gray',
       width: 50,
