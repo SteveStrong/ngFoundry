@@ -47,7 +47,7 @@ export class SharingService {
         let obj = event.object
         if (cmd) {
           cmd = cmd.bind(this);
-          cmd(event.object);
+          cmd(event.object, event.value);
         } else {
           this.signalR.pubCommand(event.cmd, { guid: obj.myGuid }, obj.asJson);
           console.log('pubCommand:', event.cmd, event);
@@ -63,7 +63,7 @@ export class SharingService {
   }
 
   public reparent(shape: foNode) {
-    this.signalR.pubCommand("syncParent", { guid: shape.myGuid}, shape.myParent().myGuid);
+    this.signalR.pubCommand("syncParent", { guid: shape.myGuid }, shape.myParent().myGuid);
     return this;
   }
 
@@ -73,17 +73,28 @@ export class SharingService {
   }
 
   public moved(shape: foGlyph) {
-    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+    this.signalR.pubCommand("dropShape", { guid: shape.myGuid }, shape.getLocation());
     return this;
   }
+
+  public easeTo(shape: foGlyph) {
+    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, shape.getLocation());
+  }
+
+  public easeTween(shape: foGlyph, value?: any) {
+    this.signalR.pubCommand("easeTween", { guid: shape.myGuid }, value);
+  }
+
 
   public selected(shape: foGlyph) {
     this.signalR.pubCommand("selectShape", { guid: shape.myGuid }, shape.isSelected);
     return this;
   }
 
-  public clearAll() {
-    this.signalR.pubCommand("clearAll", {});
+
+  //--------------------------------
+  public clearPage() {
+    this.signalR.pubCommand("clearPage", {});
     return this;
   }
 
@@ -105,16 +116,6 @@ export class SharingService {
     return this;
   }
 
-  public syncEaseTo(target: foObject, data: any) {
-    this.signalR.pubCommand("easeTween", { guid: target.myGuid }, data);
-    return this;
-  }
-
-  public syncEase(cmd: any, data: any) {
-    this.signalR.pubCommand("easeTween", cmd, data);
-    return this;
-  }
-
   public callMethod(cmd: string, target: foObject) {
     this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
     return this;
@@ -126,13 +127,22 @@ export class SharingService {
   }
 
 
+  //------------------------------------------------
   public startSharing(page: foPage) {
 
     this._page = page;
 
     this.signalR.start().then(() => {
 
-      this.signalR.subCommand("moveShape", (cmd, data) => {
+      this.signalR.subCommand("dropShape", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.drop(data.x, data.y, data.angle);
+          });
+        });
+      });
+
+      this.signalR.subCommand("easeTo", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.found(cmd.guid, shape => {
             shape.easeTo(data.x, data.y, .8, Back.easeInOut);
@@ -157,8 +167,8 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("clearAll", (cmd, data) => {
-        this._page.clearAll();
+      this.signalR.subCommand("clearPage", (cmd, data) => {
+        this._page.clearPage();
       });
 
       this.signalR.subCommand("syncStencil", (cmd, data) => {
@@ -205,10 +215,15 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("easeTween", (cmd, data) => {
-        this._page.found(cmd.guid, item => {
-          item.easeTween(data, cmd.time, Back[cmd.ease]);
-        })
+      this.signalR.subCommand("easeTween", (cmd, value) => {
+        //foObject.jsonAlert(value);
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          let { time, ease, to } = value;
+          this._page.found(cmd.guid, item => {
+            item.easeTween(to, time, Back[ease]);
+          });
+        });
+
       });
 
       this.signalR.subCommand("callMethod", (cmd, data) => {

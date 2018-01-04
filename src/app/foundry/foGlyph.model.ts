@@ -169,6 +169,10 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
+    public created() {
+        Lifecycle.created(this)
+        return this;
+    }
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         let moved = false;
         if (!Number.isNaN(x) && this.x != x) {
@@ -221,10 +225,11 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
-    public easeTween(to: any, time: number = .5, ease: any = Back.ease) {
-        let from = Tools.union(to, { ease: ease });
+    public easeTween(to: any, time: number = .5, ease: any = 'ease') {
+        let from = Tools.union(to, { ease: Back[ease] });
 
         TweenLite.to(this, time, from).eventCallback("onComplete", () => this.override(to));
+        Lifecycle.easeTween(this, {time, ease, to});
         return this;
     }
 

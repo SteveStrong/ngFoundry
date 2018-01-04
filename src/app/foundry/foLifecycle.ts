@@ -30,7 +30,7 @@ export class foLifecycleEvent {
         return this.object.myType;
     }
 
-    constructor(cmd: string, obj: foObject, count: number = 0, value?:any) {
+    constructor(cmd: string, obj: foObject, count: number = 0, value?: any) {
         this.id = count;
         this.cmd = cmd;
         this.object = obj;
@@ -127,7 +127,7 @@ export class foLifecycle {
         return this;
     }
 
-    selected(obj: foObject, value:any) {
+    selected(obj: foObject, value: any) {
         this.emit.next(new foLifecycleEvent('selected', obj, counter++, value))
         return this;
     }
@@ -143,12 +143,17 @@ export class foLifecycle {
     }
 
     moved(obj: foObject) {
-        this.debounced.next(new foLifecycleEvent('moved', obj))
+        this.debounced.next(new foLifecycleEvent('moved', obj, counter++))
         return this;
     }
 
     easeTo(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('easeTo', obj))
+        this.emit.next(new foLifecycleEvent('easeTo', obj, counter++))
+        return this;
+    }
+
+    easeTween(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('easeTween', obj, counter++, value))
         return this;
     }
 }

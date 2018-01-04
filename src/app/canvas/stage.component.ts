@@ -73,9 +73,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doClear() {
-    this.clearAll();
+    this.clearPage();
     this.message = [];
-    this.sharing.clearAll();
+    this.sharing.clearPage();
   }
 
   doUndo() {
@@ -341,25 +341,22 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doImage() {
-    let def = Concept.define<foImage>('blocks::block2d', foImage, {
-      background: 'green',
-      imageURL: "https://lorempixel.com/900/500?r=2",
-      width: 100,
-      height: 50
-    });
+    // let def = Concept.define<foImage>('blocks::block2d', foImage, {
+    //   background: 'green',
+    //   imageURL: "https://lorempixel.com/900/500?r=2",
+    //   width: 100,
+    //   height: 50
+    // });
 
-    for (let i = 0; i < 15; i++) {
-      this.wait(500, () => {
-        let picture = def.newInstance().addAsSubcomponent(this);
-        picture.angle = Tools.randomInt(0, 300)
+    // for (let i = 0; i < 15; i++) {
+    //   this.wait(500, () => {
+    //     let picture = def.newInstance().addAsSubcomponent(this);
+    //     picture.angle = Tools.randomInt(0, 300)
 
-        let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
-        picture.easeTween(place, 1.5);
-
-        this.sharing.syncEaseTo(picture, place);
-      })
-
-    }
+    //     let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
+    //     picture.easeTween(place, 1.5);
+    //   })
+    // }
 
 
     let image = new foImage({
@@ -369,7 +366,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 80,
       imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
       angle: Tools.randomInt(-30, 30)
-    }).drop(330, 330).addAsSubcomponent(this);
+    }).created().drop(330, 330).addAsSubcomponent(this);
  
 
     let size = {
@@ -377,10 +374,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 200,
     }
 
-    image.easeTween(size, 2.8, Back['easeInOut']);
-
-    this.sharing.syncEase({ guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
-
+    image.easeTween(size, 2.8, 'easeInOut');
 
   }
 

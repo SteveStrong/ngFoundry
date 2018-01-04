@@ -135,7 +135,7 @@ export class foPage extends foShape2D {
     }
 
 
-    clearAll() {
+    clearPage() {
         //simulate delete lifecycle in bulk via events
         this.nodes.forEach(item => {
             Lifecycle.unparent(item);
