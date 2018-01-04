@@ -109,7 +109,7 @@ export class foLifecycle {
     }
 
     primitive(name?: string) {
-        this.emit.next(new foLifecycleEvent('primitive', undefined, counter++, name))
+        this.emit.next(new foLifecycleEvent('primitive', new foObject({myName:name}), counter++))
         return this;
     }
 

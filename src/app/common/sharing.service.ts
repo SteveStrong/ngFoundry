@@ -19,7 +19,7 @@ import { foPage } from "../foundry/foPage.model";
 
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+import { Back } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
 
@@ -122,9 +122,6 @@ export class SharingService {
     this.signalR.pubCommand("clearPage", {});
     return this;
   }
-
-
-
 
 
   public syncGlue(target: foObject) {
