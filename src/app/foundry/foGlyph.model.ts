@@ -164,9 +164,16 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x)) this.x = x;
-        if (!Number.isNaN(y)) this.y = y;
-        Lifecycle.moved(this);
+        let moved = false;
+        if (!Number.isNaN(x) && this.x != x) {
+            this.x = x;
+            moved = true;
+        }
+        if (!Number.isNaN(y) && this.y != y) {
+            this.y = y;
+            moved = true;
+        }
+        moved && Lifecycle.moved(this);
         return this;
     }
 
@@ -182,8 +189,8 @@ export class foGlyph extends foNode implements iShape {
         return obj;
     }
 
-    addSubcomponent(obj: foNode,properties?:any) {
-        super.addSubcomponent(obj,properties);
+    addSubcomponent(obj: foNode, properties?: any) {
+        super.addSubcomponent(obj, properties);
         Lifecycle.reparent(obj);
         return obj;
     }
@@ -192,7 +199,7 @@ export class foGlyph extends foNode implements iShape {
         return this._subcomponents;
     }
 
-    public easeTo(x: number, y: number, time: number = .5, ease: any = Back.ease ) {
+    public easeTo(x: number, y: number, time: number = .5, ease: any = Back.ease) {
 
         TweenLite.to(this, time, {
             x: x,

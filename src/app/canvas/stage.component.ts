@@ -227,7 +227,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     })
 
     this.onItemChangedParent = (shape: foGlyph): void => {
-      this.sharing.syncParent(shape);
+      //this.sharing.syncParent(shape);
     }
 
     this.onItemChangedPosition = (shape: foGlyph): void => {
@@ -571,7 +571,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    //this.sharing.syncShape(shape);
+
   }
 
   doAddSubGlyph() {
@@ -580,7 +580,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    //this.sharing.syncShape(shape);
 
     let subShape = RuntimeType.create(foGlyph, {
       color: 'blue',
@@ -589,7 +588,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 50,
       width: 300,
     }).addAsSubcomponent(shape);
-    this.sharing.syncShape(subShape).syncParent(subShape);
   }
 
   doAddThreeByThree() {
