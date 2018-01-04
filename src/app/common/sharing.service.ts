@@ -9,7 +9,7 @@ import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
-import { Concept } from "../foundry/foConcept.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
 import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
@@ -19,161 +19,223 @@ import { foPage } from "../foundry/foPage.model";
 
 
 //https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+import { Back } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
+import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
 
 @Injectable()
 export class SharingService {
 
   private _page: foPage;
 
+
+
   constructor(
     private signalR: SignalRService,
     private http: Http) {
+
+    this.initLifecycle();
+    this.initKnowcycle();
   }
 
-  public clearAll(){
-    this.signalR.pubCommand("clearAll", {});
-    return this;
+  initLifecycle() {
+
+    //might be able to use a filter on events
+    Lifecycle.observable.subscribe(event => {
+
+      LifecycleLock.whenUnprotected(event.myGuid, this, _ => {
+        let cmd = this[event.cmd];
+        let obj = event.object
+        if (cmd) {
+          cmd = cmd.bind(this);
+          cmd(event.object, event.value);
+        } else {
+          this.signalR.pubCommand(event.cmd, { guid: obj.myGuid }, obj.asJson);
+          console.log('pubCommand:', event.cmd, event);
+        }
+      })
+
+    });
   }
 
-  public deleteShape(shape:foGlyph){
-    this.signalR.pubCommand("deleteShape", { guid: shape.myGuid });
-    return this;
+  initKnowcycle() {
+
+    //might be able to use a filter on events
+    Knowcycle.observable.subscribe(event => {
+
+      KnowcycleLock.whenUnprotected(event.myGuid, this, _ => {
+        let cmd = this[event.cmd];
+        let obj = event.object
+        if (cmd) {
+          cmd = cmd.bind(this);
+          cmd(event.object, event.value);
+        } else {
+          this.signalR.pubCommand(event.cmd, { guid: obj.myGuid }, obj.asJson);
+          console.log('pubCommand:', event.cmd, event);
+        }
+      })
+
+    });
   }
 
-  public syncStencil(know:foObject){
-    this.signalR.pubCommand("syncStencil", { guid: know.myGuid }, know.asJson);
-    return this;
-  }
-
-  public syncConcept(know:foObject){
-    this.signalR.pubCommand("syncConcept", { guid: know.myGuid }, know.asJson);
-    return this;
-  }
-
-  public syncParent(shape:foNode){
-    this.signalR.pubCommand("syncParent",  { guid: shape.myGuid, parentGuid: shape.myParent().myGuid });
-    return this;
-  }
-
-  public syncShape(shape:foNode){
+  public created(shape: foNode) {
     this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
     return this;
   }
 
-  // public syncGlyph(shape:foNode){
-  //   //this.signalR.pubCommand("syncGlyph", { guid: shape.myGuid }, shape.asJson);
-  //   this.signalR.pubCommand("syncShape", { guid: shape.myGuid }, shape.asJson);
-  //  return this;
-  // }
+  public reparent(shape: foNode) {
+    this.signalR.pubCommand("syncParent", { guid: shape.myGuid }, shape.myParent().myGuid);
+    return this;
+  }
 
-  public syncGlue(target:foObject){
+  public destroyed(shape: foGlyph) {
+    this.signalR.pubCommand("destroyed", { guid: shape.myGuid });
+    return this;
+  }
+
+  public moved(shape: foGlyph) {
+    this.signalR.pubCommand("dropShape", { guid: shape.myGuid }, shape.getLocation());
+    return this;
+  }
+
+  public easeTo(shape: foGlyph) {
+    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, shape.getLocation());
+  }
+
+  public easeTween(shape: foGlyph, value?: any) {
+    this.signalR.pubCommand("easeTween", { guid: shape.myGuid }, value);
+  }
+
+
+  public selected(shape: foGlyph) {
+    this.signalR.pubCommand("selectShape", { guid: shape.myGuid }, shape.isSelected);
+    return this;
+  }
+
+  public defined(know: foObject) {
+    this.signalR.pubCommand("syncKnow", { guid: know.myGuid, type: know.myType }, know.asJson);
+    return this;
+  }
+
+  //--------------------------------
+  public clearPage() {
+    this.signalR.pubCommand("clearPage", {});
+    return this;
+  }
+
+
+  public syncGlue(target: foObject) {
     this.signalR.pubCommand("syncGlue", target.asJson);
     return this;
   }
 
-  public syncEaseTo(target:foObject, data:any){
-    this.signalR.pubCommand("easeTween", { guid: target.myGuid }, data);
-    return this;
-  }
-
-  public syncEase(cmd:any, data:any){
-    this.signalR.pubCommand("easeTween", cmd, data);
-    return this;
-  }
-
-  public callMethod(cmd:string, target:foObject){
+  public callMethod(cmd: string, target: foObject) {
     this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
     return this;
   }
 
-  public broadcast(cmd:string, data:any){
+  public broadcast(cmd: string, data: any) {
     this.signalR.pubCommand("callMethod", { func: cmd }, data);
     return this;
   }
 
-  public moveTo(shape:foGlyph, data:any){
-    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, data);
-    return this;
-  }
 
-  public startSharing(page:foPage){
+  //------------------------------------------------
+  public startSharing(page: foPage) {
 
     this._page = page;
 
     this.signalR.start().then(() => {
 
-      this.signalR.subCommand("moveShape", (cmd, data) => {
-        this._page.found(cmd.guid, shape => {
-          shape.easeTo(data.x, data.y, .8, Back.easeInOut);
+      this.signalR.subCommand("dropShape", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.drop(data.x, data.y, data.angle);
+          });
         });
       });
 
-      this.signalR.subCommand("deleteShape", (cmd, data) => {
-        //console.log(json);
-        this._page.found(cmd.guid, shape => {
-          this._page.removeSubcomponent(shape)
-        });
-      });
-
-      this.signalR.subCommand("clearAll", (cmd, data) => {
-        this._page.clearAll();
-      });
-
-      this.signalR.subCommand("syncStencil", (cmd, data) => {
-        foObject.jsonAlert(data);
-        Stencil.override(data);
-      });
-
-      this.signalR.subCommand("syncConcept", (cmd, data) => {
-        foObject.jsonAlert(data);
-        Concept.override(data);
-      });
-
-      this.signalR.subCommand("syncParent", (cmd, data) => {
-        this._page.found(cmd.guid, (shape) => {
-          if (cmd.parentGuid) {
-            this._page.found(cmd.parentGuid, (item) => {
-              shape.removeFromParent();
-              item.addSubcomponent(shape);
-            });
-          } else {
-            shape.removeFromParent();
-            this._page.addSubcomponent(shape);
-          }
-
+      this.signalR.subCommand("easeTo", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.easeTo(data.x, data.y, .8, Back.easeInOut);
+          });
         });
       });
 
 
+      this.signalR.subCommand("selectShape", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.isSelected = data;
+          });
+        });
+      });
 
-      // this.signalR.subCommand("syncGlyph", (cmd, data) => {
-      //   foObject.jsonAlert(data);
-      //   this._page.findItem(cmd.guid, () => {
-      //     RuntimeType.newInstance(data.myType, data).addAsSubcomponent(this._page);
-      //   });
-      // });
+      this.signalR.subCommand("destroyed", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            this._page.destroyed(shape);
+          });
+        });
+      });
+
+      this.signalR.subCommand("clearPage", (cmd, data) => {
+        this._page.clearPage();
+      });
+
+
+      this.signalR.subCommand("syncKnow", (cmd, data) => {
+        //foObject.jsonAlert(data);
+        KnowcycleLock.protected(cmd.guid, this, _ => {
+            Stencil.hydrate(data);
+        });
+
+      });
+
+      this.signalR.subCommand("syncParent", (cmd, parentGuid) => {
+        //foObject.jsonAlert(cmd);
+
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, (shape) => {
+            this._page.found(parentGuid,
+              (item) => { shape.reParent(item) },
+              (miss) => { shape.reParent(this._page) })
+          });
+        });
+
+      });
+
+
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
-        foObject.jsonAlert(data);
-        this._page.findItem(cmd.guid, () => {
-          //this.message.push(json);
-          let spec = Stencil.find(data.myClass);
-          let shape = spec ? spec.newInstance(data) : RuntimeType.newInstance(data.myType, data);
-          this._page.found(cmd.parentGuid,
-            (item) => { item.addSubcomponent(shape); },
-            (miss) => { this._page.addSubcomponent(shape); }
-          );
-        }, found => {
-          found.override(data);
+        //foObject.jsonAlert(data);
+
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.findItem(cmd.guid, () => {
+            //this.message.push(json);            
+            let concept =  Stencil.find(data.myClass);
+            let shape =  concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
+            this._page.found(cmd.parentGuid,
+              (item) => { item.addSubcomponent(shape); },
+              (miss) => { this._page.addSubcomponent(shape); }
+            );
+          }, found => {
+            found.override(data);
+          });
         });
+
       });
 
-      this.signalR.subCommand("easeTween", (cmd, data) => {
-        this._page.found(cmd.guid, item => {
-          item.easeTween(data, cmd.time, Back[cmd.ease]);
-        })
+      this.signalR.subCommand("easeTween", (cmd, value) => {
+        //foObject.jsonAlert(value);
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          let { time, ease, to } = value;
+          this._page.found(cmd.guid, item => {
+            item.easeTween(to, time, Back[ease]);
+          });
+        });
+
       });
 
       this.signalR.subCommand("callMethod", (cmd, data) => {

@@ -411,6 +411,34 @@ export class foTools {
         return dictionary;
     }
 
+    //add this to new service to dynamicaly load javascript,  maybe over signalR
+
+    // xmlHttpGet(url:string, onComplete, onFailure) {
+    //     let xmlHttp = new window.XMLHttpRequest();
+    //     xmlHttp.onload = function () {
+    //         var result = xmlHttp.responseText;
+    //         onComplete && onComplete(result, xmlHttp);
+    //     };
+    //     try {
+    //         xmlHttp.open("GET", url, false);  //this may give chrome some problems
+    //         xmlHttp.send(null);
+    //     }
+    //     catch (ex) {
+    //         onFailure && onFailure(ex, xmlHttp);
+    //     }
+    // }
+    // loadAsScript(url:string, onComplete) {
+    //     this.xmlHttpGet(url, function (text, xhr) {
+    //         if (xhr.status == 200 || xhr.status == 304) {
+    //             var head = document.getElementsByTagName("head")[0];
+    //             var script = document.createElement('script');
+    //             script.innerHTML = text;
+    //             head.appendChild(script);
+    //             onComplete && onComplete(script);
+    //         }
+    //     });
+    //}
+
 }
 
 

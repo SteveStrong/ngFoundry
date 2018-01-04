@@ -8,9 +8,9 @@ import { foMethod } from './foMethod.model'
 
 import { foNode } from './foNode.model'
 
-export class foLibrary<T extends foNode> extends foKnowledge {
+export class foLibrary extends foKnowledge {
 
-    private _concepts: foDictionary<foConcept<T>> = new foDictionary<foConcept<T>>({ myName: 'concepts' });
+    private _concepts: foDictionary<foKnowledge> = new foDictionary<foKnowledge>({ myName: 'concepts' });
     private _properties: foDictionary<foProperty> = new foDictionary<foProperty>({ myName: 'properties' });
     //private _projection: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'projections' });
 

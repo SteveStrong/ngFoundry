@@ -15,12 +15,12 @@ import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
 import { foDictionary } from "../foundry/foDictionary.model";
-import { Concept, foConceptItem } from "../foundry/foConcept.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Stencil } from "../foundry/foStencil";
 
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
-import { Stencil } from "../foundry/foStencil";
 
 import { foGlue } from "../foundry/foGlue";
 import { foGlyph } from "../foundry/foGlyph.model";
@@ -41,6 +41,7 @@ import { SharingService } from "../common/sharing.service";
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 
+import { Lifecycle } from '../foundry/foLifecycle';
 
 class Line extends foShape1D {
 }
@@ -72,19 +73,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doClear() {
-    this.clearAll();
+    this.clearPage();
     this.message = [];
-    this.sharing.clearAll();
+    this.sharing.clearPage();
   }
 
   doUndo() {
   }
 
   doDelete() {
-    this.deleteSelected(shape => {
-      this.sharing.deleteShape(shape);
-    });
-
+    this.deleteSelected();
   }
 
   doDuplicate() {
@@ -220,12 +218,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.addEventHooks();
 
+    Lifecycle.observable.subscribe(event => {
+      console.log(event.cmd, event.myGuid);
+      //Toast.info(event.cmd, event.myGuid )
+    })
+
     this.onItemChangedParent = (shape: foGlyph): void => {
-      this.sharing.syncParent(shape);
+      //this.sharing.syncParent(shape);
     }
 
     this.onItemChangedPosition = (shape: foGlyph): void => {
-      this.sharing.moveTo(shape, shape.getLocation());
+      //this.sharing.moveTo(shape, shape.getLocation());
     }
 
     this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
@@ -265,58 +268,51 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 700,
     }).addCommands("doStart", "doStop", "doRotate");
 
-    this.sharing.syncStencil(def);
 
-    let shape = def.newInstance().drop(500, 500).addAsSubcomponent(this)
+    let shape = <foGlyph>def.newInstance();
+    
+    shape.drop(500, 500).addAsSubcomponent(this)
       .then(item => {
         item.doStart();
       });
-    this.sharing.syncShape(shape);
   }
 
-  doLoadConcept() {
-    Concept.define<foShape2D>('boundry::shape1', foShape2D, {
+  doLoadStencil() {
+    Stencil.define<foShape2D>('boundry::shape1', foShape2D, {
       color: 'gray',
       width: 50,
       height: 25
     });
 
-    Concept.define<foShape2D>('boundry::block', foShape2D, {
+    Stencil.define<foShape2D>('boundry::block', foShape2D, {
       color: 'green',
       width: 100,
       height: 50
     });
 
-    Concept.define<foText2D>('boundry::text', foText2D, {
+    Stencil.define<foText2D>('boundry::text', foText2D, {
       color: 'black',
       background: 'grey',
       context: 'HELLO',
       fontSize: 30,
     });
 
-    Concept.define<foShape2D>('boundry::boundry', foShape2D, {
+    Stencil.define<foShape2D>('boundry::boundry', foShape2D, {
       color: 'cyan',
       width: 100,
       height: 50
     });
-
-    PubSub.Pub('onKnowledgeChanged');
-
-    Concept.allConceptItems().forEach(item => {
-      let concept = item.concept;
-      this.sharing.syncConcept(concept);
-    })
 
   }
 
 
   doBoundry() {
 
-    let text = Concept.find<foShape2D>('boundry::text');
+    let text = Stencil.find<foShape2D>('boundry::text');
 
-    let block = Concept.find<foShape2D>('boundry::block');
+    let block = Stencil.find<foShape2D>('boundry::block');
 
-    let boundry = Concept.find<foShape2D>('boundry::boundry');
+    let boundry = Stencil.find<foShape2D>('boundry::boundry');
 
     let box = boundry.newInstance().drop(this.centerX, this.centerY).addAsSubcomponent(this);
 
@@ -336,28 +332,36 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
 
-    this.sharing.syncShape(box);
   }
 
   doImage() {
-    let def = Concept.define<foImage>('blocks::block2d', foImage, {
+    let def = Stencil.define<foImage>('blocks::block2d', foImage, {
       background: 'green',
       imageURL: "https://lorempixel.com/900/500?r=2",
       width: 100,
       height: 50
     });
 
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 8; i++) {
       this.wait(500, () => {
-        let picture = def.newInstance().addAsSubcomponent(this);
-        picture.angle = Tools.randomInt(0, 300)
+        let picture = def.newInstance({
+          angle: Tools.randomInt(0, 300)
+        }).addAsSubcomponent(this);
 
         let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
         picture.easeTween(place, 1.5);
-
-        this.sharing.syncShape(picture).syncEaseTo(picture, place);
       })
+    }
 
+    for (let i = 0; i < 8; i++) {
+      this.wait(1500, () => {
+        let picture = def.newInstance().addAsSubcomponent(this);
+        picture.angle = Tools.randomInt(0, 300);
+
+        //created forces a broadast of latest state
+        let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
+        picture.created().easeTween(place, 2.5);
+      })
     }
 
 
@@ -368,23 +372,20 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 80,
       imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
       angle: Tools.randomInt(-30, 30)
-    }).drop(330, 330).addAsSubcomponent(this);
-    this.sharing.syncShape(image);
+    }).created().drop(330, 330).addAsSubcomponent(this);
+ 
 
     let size = {
       width: 200,
       height: 200,
     }
 
-    image.easeTween(size, 2.8, Back['easeInOut']);
-
-    this.sharing.syncEase({ guid: image.myGuid, ease: 'easeInOut', time: 2.8 }, size);
-
+    image.easeTween(size, 2.8, 'easeInOut');
 
   }
 
   doBlocks() {
-    let block = Concept.define<foShape2D>('blocks::block2d', foShape2D, {
+    let block = Stencil.define<foShape2D>('blocks::block2d', foShape2D, {
       color: 'green',
       width: 100,
       height: 50
@@ -392,7 +393,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
 
-    let text = Concept.define<foText2D>('words::text2d', foText2D, {
+    let text = Stencil.define<foText2D>('words::text2d', foText2D, {
       color: 'black',
       background: 'yellow',
       context: 'HELLO',
@@ -417,30 +418,30 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDocker() {
-    let block = Concept.define<foText2D>('text::block', foText2D, {
+    let block = Stencil.define<foText2D>('text::block', foText2D, {
       color: 'green',
       fontSize: 20,
     });
 
-    let attribute = Concept.define<foText2D>('text::attribute', foText2D, {
+    let attribute = Stencil.define<foText2D>('text::attribute', foText2D, {
       color: 'red',
       background: 'white',
       fontSize: 20,
     });
 
-    let formula = Concept.define<foText2D>('text::formula', foText2D, {
+    let formula = Stencil.define<foText2D>('text::formula', foText2D, {
       color: 'gray',
       background: 'white',
       fontSize: 20,
     });
 
-    let concept = Concept.define<foText2D>('text::concept', foText2D, {
+    let concept = Stencil.define<foText2D>('text::concept', foText2D, {
       color: 'blue',
       background: 'yellow',
       fontSize: 20,
     });
 
-    let body = Concept.define<foShape2D>('text::body', foShape2D, {
+    let body = Stencil.define<foShape2D>('text::body', foShape2D, {
       color: 'cyan',
       fontSize: 30,
     });
@@ -506,16 +507,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doText() {
-    let textBlock = Concept.define<foText2D>('text::block', foText2D, {
+    let textBlock = Stencil.define<foText2D>('text::block', foText2D, {
       color: 'black',
       text: 'Hello',
       background: 'yellow',
       margin: new cMargin(0, 0, 0, 0)
     });
 
-    this.sharing.syncConcept(textBlock);
-
-    let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
+    let wireConcept = Stencil.define<foShape1D>('text::wire', foShape1D, {
       color: 'green',
       thickness: 1,
     });
@@ -533,9 +532,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         fontSize: size,
       }).drop(350, y).addAsSubcomponent(this);
       y += 50;
-      this.sharing.syncShape(shape);
 
       objects.push(shape)
+      //foObject.jsonAlert(shape.asJson);
 
       // if (!last) {
       //   last = shape;
@@ -549,10 +548,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     })
 
 
-    objects.forEach(shape => {
-      //shape.drop(shape.x + Tools.randomInt(-100, 100));
-      this.sharing.moveTo(shape, shape.getLocation());
-    })
+    // objects.forEach(shape => {
+    //   shape.easeTo(shape.x + Tools.randomInt(-100, 100));
+    // })
 
 
   }
@@ -565,7 +563,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
+
   }
 
   doAddSubGlyph() {
@@ -574,7 +572,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
 
     let subShape = RuntimeType.create(foGlyph, {
       color: 'blue',
@@ -583,7 +580,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 50,
       width: 300,
     }).addAsSubcomponent(shape);
-    this.sharing.syncShape(subShape).syncParent(subShape);
   }
 
   doAddThreeByThree() {
@@ -592,12 +588,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       x: 400,
       y: 400,
     });
-    this.sharing.syncStencil(def);
 
     let shape = def.newInstance()
       .addAsSubcomponent(this);
-
-    this.sharing.syncShape(shape);
   }
 
 
@@ -608,7 +601,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 200,
     });
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddTwoByOne() {
@@ -616,7 +608,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddTwoByTwo() {
@@ -625,8 +616,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'pink',
       myName: "main shape"
     }).drop(200, 200).addAsSubcomponent(this);
-
-    this.sharing.syncShape(shape);
   }
 
 
@@ -668,7 +657,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }).drop(500, 500);
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddTenByTen() {
@@ -677,7 +665,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(600, 300);
 
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
   }
 
   doAddStack(properties?: any) {
@@ -745,7 +732,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: spec.length,
       height: height,
     }).drop(400, 400).addAsSubcomponent(this);
-    this.sharing.syncShape(fake);
 
     let shape = RuntimeType.create<Line>(Line, {
       opacity: .5,
@@ -756,7 +742,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: y2,
       height: height,
     }).drop(400, 300).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
   }
 
   doShapeGlue() {
@@ -765,15 +750,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
 
     }).drop(100, 300, 45).addAsSubcomponent(this);
-    this.sharing.syncShape(shape1);
-
 
     let shape2 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
     }).drop(300, 400).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
-    this.sharing.syncShape(shape2);
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
@@ -789,7 +771,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: pt2.x,
       finishY: pt2.y,
     }).drop(600, 350).addAsSubcomponent(this);
-    this.sharing.syncShape(shape);
 
 
     let wire = RuntimeType.create<Line>(Line, {
@@ -801,7 +782,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishY: pt2.y,
       color: 'black',
     }).addAsSubcomponent(this);
-    this.sharing.syncShape(wire);
 
 
     this.sharing.syncGlue(wire.createGlue('begin', shape1));
@@ -815,7 +795,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 20,
       color: 'black',
     }).drop(400, 400).addAsSubcomponent(this);
-    this.sharing.syncShape(wire);
 
     let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
@@ -827,9 +806,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     shape1.drop(100, 200, 30);
     shape2.drop(400, 250);
-
-    this.sharing.syncShape(shape1);
-    this.sharing.syncShape(shape2);
 
     wire.glue.forEach(glue => {
       this.sharing.syncGlue(glue);
@@ -858,7 +834,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       item.isSelected = true;
     }).addAsSubcomponent(this);
 
-    this.sharing.syncShape(shape);
   }
 
   doObjGroup() {
@@ -875,7 +850,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).drop(150, 150, 0);
 
     this.addSubcomponent(shape);
-    this.sharing.syncShape(shape);
 
     let subShape = RuntimeType.create(dRectangle, {
       color: 'blue',
@@ -892,7 +866,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     shape.doAnimation = subShape.doAnimation;
-    //this.sharing.syncShape(subShape);
+
   }
 
 

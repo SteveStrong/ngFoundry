@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { Tools } from "../../foundry/foTools";
+import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Stencil } from "../../foundry/foStencil";
 import { foGlyph } from "../../foundry/foGlyph.model";
 

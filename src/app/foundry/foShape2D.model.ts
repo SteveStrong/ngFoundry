@@ -14,6 +14,7 @@ import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph } from '../foundry/foGlyph.model'
 
+import { Lifecycle } from './foLifecycle';
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -60,10 +61,15 @@ export class foShape2D extends foGlyph {
     }
 
     public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x)) this.x = x;
-        if (!Number.isNaN(y)) this.y = y;
-        if (!Number.isNaN(angle)) this.angle = angle;
-        this.notifySource('drop', this.getLocation());
+        let moved = false;
+        if (!Number.isNaN(x) && this.x != x) moved = true;
+        if (!Number.isNaN(y) && this.y != y) moved = true;
+        if (!Number.isNaN(angle) && this.angle != angle) {
+            this.angle = angle;
+            moved = true;
+        }
+        moved && super.drop(x, y);
+        moved && this.notifySource('drop', this.getLocation());
         return this;
     }
 
@@ -136,7 +142,6 @@ export class foShape2D extends foGlyph {
 
 
 
-
     createGlue(name: string, target: foShape2D, handle?: string) {
         let glue = this.addGlue(new foGlue({ myName: name }));
         glue.glueTo(target, handle);
@@ -153,6 +158,8 @@ export class foShape2D extends foGlyph {
         if (!glue.hasParent) {
             glue.myParent = () => { return this; }
         }
+
+        Lifecycle.glued(glue);
         return glue;
     }
 
@@ -161,6 +168,7 @@ export class foShape2D extends foGlyph {
         if (this._glue) {
             this._glue.removeMember(glue);
             glue.removeParent(this);
+            Lifecycle.unglued(glue);
         }
         return glue;
     }

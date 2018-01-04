@@ -2,6 +2,7 @@ import { Tools } from '../foundry/foTools';
 
 
 import { foShape2D } from "../foundry/foShape2D.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
 import { Stencil } from "../foundry/foStencil";
 
 

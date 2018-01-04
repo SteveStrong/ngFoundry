@@ -15,7 +15,7 @@ import { foNode } from './foNode.model';
 import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
-
+import { Lifecycle } from './foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode implements iShape {
@@ -25,7 +25,13 @@ export class foGlyph extends foNode implements iShape {
 
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) { this._isSelected = value; }
+    set isSelected(value: boolean) { 
+        if ( this._isSelected != value ) {
+            this._isSelected = value;
+            Lifecycle.selected(this, value);
+        };
+       
+    }
 
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
@@ -159,20 +165,51 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        Lifecycle.created(this);
         return this;
     }
 
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x)) this.x = x;
-        if (!Number.isNaN(y)) this.y = y;
+    public created() {
+        Lifecycle.created(this)
         return this;
+    }
+    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        let moved = false;
+        if (!Number.isNaN(x) && this.x != x) {
+            this.x = x;
+            moved = true;
+        }
+        if (!Number.isNaN(y) && this.y != y) {
+            this.y = y;
+            moved = true;
+        }
+        moved && Lifecycle.moved(this);
+        return this;
+    }
+
+    destroyed(obj: foNode) {
+        this.removeSubcomponent(obj);
+        Lifecycle.destroyed(obj);
+        return obj;
+    }
+
+    removeSubcomponent(obj: foNode) {
+        super.removeSubcomponent(obj);
+        Lifecycle.unparent(obj);
+        return obj;
+    }
+
+    addSubcomponent(obj: foNode, properties?: any) {
+        super.addSubcomponent(obj, properties);
+        Lifecycle.reparent(obj);
+        return obj;
     }
 
     get nodes(): foCollection<foGlyph> {
         return this._subcomponents;
     }
 
-    public easeTo(x: number, y: number, time: number = .5, ease: any = Back.ease ) {
+    public easeTo(x: number, y: number, time: number = .5, ease: any = Back.ease) {
 
         TweenLite.to(this, time, {
             x: x,
@@ -182,14 +219,17 @@ export class foGlyph extends foNode implements iShape {
             this.drop();
         }).eventCallback("onComplete", () => {
             this.drop(x, y);
+            Lifecycle.easeTo(this);
         });
+       
         return this;
     }
 
-    public easeTween(to: any, time: number = .5, ease: any = Back.ease) {
-        let from = Tools.union(to, { ease: ease });
+    public easeTween(to: any, time: number = .5, ease: any = 'ease') {
+        let from = Tools.union(to, { ease: Back[ease] });
 
         TweenLite.to(this, time, from).eventCallback("onComplete", () => this.override(to));
+        Lifecycle.easeTween(this, {time, ease, to});
         return this;
     }
 
@@ -298,11 +338,11 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
-    unSelect(deep: boolean = true) {
-        this.isSelected = false;
+    unSelect(deep: boolean = true, exclude: foGlyph = null) {
+        this.isSelected = this == exclude ? this.isSelected : false;
         this._handles && this._handles.forEach(item => item.color = 'black')
         deep && this.Subcomponents.forEach(item => {
-            (<foGlyph>item).unSelect(deep);
+            (<foGlyph>item).unSelect(deep, exclude);
         })
     }
 

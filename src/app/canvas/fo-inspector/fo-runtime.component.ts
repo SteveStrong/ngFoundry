@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { Tools } from "../../foundry/foTools";
 import { RuntimeType } from "../../foundry/foRuntimeType";
-import { PubSub } from "../../foundry/foPubSub";
+import { Knowcycle } from "../../foundry/foLifecycle";
 
 @Component({
   selector: 'fo-runtime',
@@ -14,10 +14,15 @@ export class foRuntimeComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  initViewModel() {
     this.primitives = RuntimeType.primitives();
-    PubSub.Sub('onRuntimeTypeChanged', (name) => {
-      this.primitives = RuntimeType.primitives();
+  }
+
+  ngOnInit() {
+    this.initViewModel();
+
+    Knowcycle.observable.subscribe(item => {
+      this.initViewModel();
     });
 
 

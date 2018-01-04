@@ -1,8 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
-import { foStencilItem } from "../../foundry/foStencil";
-//import { foGlyph } from "../../foundry/foGlyph.model";
+import { foKnowledge } from "../../foundry/foKnowledge.model";
+import { Stencil } from "../../foundry/foStencil";
+import { foGlyph } from "../../foundry/foGlyph.model";
 
 import { SignalRService } from "../../common/signalr.service";
 
@@ -14,7 +15,7 @@ import { SignalRService } from "../../common/signalr.service";
 export class foStencilPanelComponent implements OnInit {
 
   @Input()
-  public stencilItem:foStencilItem;
+  public stencilItem:foKnowledge;
 
   @Input()
   public rootPage: foPage;
@@ -26,7 +27,7 @@ export class foStencilPanelComponent implements OnInit {
   }
 
   doCreate() {
-    let spec = this.stencilItem.spec;
+    let spec = this.stencilItem;
     let shape = spec.newInstance()
       .drop(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
