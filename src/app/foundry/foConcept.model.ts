@@ -11,6 +11,7 @@ import { foComponent } from './foComponent.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
+import { Knowcycle } from './foLifecycle';
 
 export class foConcept<T extends foNode> extends foKnowledge {
 
@@ -232,11 +233,11 @@ export class foConceptDictionary {
         concept.specification = specification || {};
 
         let result = this.registerConcept(namespace, name, concept);
-        PubSub.Pub('onKnowledgeChanged', result);
+        Knowcycle.defined(result);
         return result;
     }
 
-    public override<T extends foNode>(json: any): foConcept<T> {
+    public hydrate<T extends foNode>(json: any): foConcept<T> {
         let { specification, primitive } = json;
 
         let concept = new foConcept<T>(json);
@@ -251,7 +252,7 @@ export class foConceptDictionary {
 
         let { namespace, name } = Tools.splitNamespaceType(concept.myName);
         let result = this.registerConcept(namespace, name, concept);
-        PubSub.Pub('onKnowledgeChanged', result);
+        Knowcycle.defined(result);
         return result;
     }
 

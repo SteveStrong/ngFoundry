@@ -21,7 +21,7 @@ import { foPage } from "../foundry/foPage.model";
 //https://greensock.com/docs/TweenMax
 import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
-import { LifecycleLock, Lifecycle } from 'app/foundry/foLifecycle';
+import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
 
 @Injectable()
 export class SharingService {
@@ -35,6 +35,7 @@ export class SharingService {
     private http: Http) {
 
     this.initLifecycle();
+    this.initKnowcycle();
   }
 
   initLifecycle() {
@@ -43,6 +44,26 @@ export class SharingService {
     Lifecycle.observable.subscribe(event => {
 
       LifecycleLock.whenUnprotected(event.myGuid, this, _ => {
+        let cmd = this[event.cmd];
+        let obj = event.object
+        if (cmd) {
+          cmd = cmd.bind(this);
+          cmd(event.object, event.value);
+        } else {
+          this.signalR.pubCommand(event.cmd, { guid: obj.myGuid }, obj.asJson);
+          console.log('pubCommand:', event.cmd, event);
+        }
+      })
+
+    });
+  }
+
+  initKnowcycle() {
+
+    //might be able to use a filter on events
+    Knowcycle.observable.subscribe(event => {
+
+      KnowcycleLock.whenUnprotected(event.myGuid, this, _ => {
         let cmd = this[event.cmd];
         let obj = event.object
         if (cmd) {
@@ -91,6 +112,10 @@ export class SharingService {
     return this;
   }
 
+  public defined(know: foObject) {
+    this.signalR.pubCommand("syncKnow", { guid: know.myGuid, type: know.myType }, know.asJson);
+    return this;
+  }
 
   //--------------------------------
   public clearPage() {
@@ -100,15 +125,6 @@ export class SharingService {
 
 
 
-  public syncStencil(know: foObject) {
-    this.signalR.pubCommand("syncStencil", { guid: know.myGuid }, know.asJson);
-    return this;
-  }
-
-  public syncConcept(know: foObject) {
-    this.signalR.pubCommand("syncConcept", { guid: know.myGuid }, know.asJson);
-    return this;
-  }
 
 
   public syncGlue(target: foObject) {
@@ -171,14 +187,17 @@ export class SharingService {
         this._page.clearPage();
       });
 
-      this.signalR.subCommand("syncStencil", (cmd, data) => {
-        foObject.jsonAlert(data);
-        Stencil.override(data);
-      });
 
-      this.signalR.subCommand("syncConcept", (cmd, data) => {
-        foObject.jsonAlert(data);
-        Concept.override(data);
+      this.signalR.subCommand("syncKnow", (cmd, data) => {
+        //foObject.jsonAlert(data);
+        KnowcycleLock.protected(cmd.guid, this, _ => {
+          if ( cmd.type == "foConcept" ) {
+            Concept.hydrate(data);
+          } else {
+            Stencil.hydrate(data)
+          }
+        });
+
       });
 
       this.signalR.subCommand("syncParent", (cmd, parentGuid) => {

@@ -4,8 +4,8 @@ import { Action } from '../foundry/foInterface'
 import { foObject } from '../foundry/foObject.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
-import { PubSub } from "./foPubSub";
 import { RuntimeType } from './foRuntimeType';
+import { Knowcycle } from './foLifecycle';
 
 export class foStencilSpec<T extends foGlyph> extends foObject {
 
@@ -134,7 +134,7 @@ export class foGlyphDictionary {
         spec.set(Tools.namespace(namespace, name), type, properties, subcomponents);
 
         let result = this.register(spec.myName, spec);
-        PubSub.Pub('onStencilChanged', result);
+        Knowcycle.defined(result);
         return result;
     }
 
@@ -156,7 +156,7 @@ export class foGlyphDictionary {
     }
 
 
-    public override<T extends foGlyph>(json: any): foStencilSpec<T> {
+    public hydrate<T extends foGlyph>(json: any): foStencilSpec<T> {
         let { myName, myType, properties, subcomponents, commands } = json;
 
         let type = RuntimeType.modelPrimitives[myType];
@@ -168,7 +168,7 @@ export class foGlyphDictionary {
         spec.addCommands(...commands);
         
         let result = this.register(myName, spec);
-        PubSub.Pub('onStencilChanged', result);
+        Knowcycle.defined(result);
         return result;
     }
 

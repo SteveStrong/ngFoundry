@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
 import { Concept, foConceptItem } from "../../foundry/foConcept.model";
-import { PubSub } from "../../foundry/foPubSub";
+import { Knowcycle } from "../../foundry/foLifecycle";
 
 @Component({
   selector: 'fo-concept',
@@ -29,7 +29,7 @@ export class foConceptComponent implements OnInit {
 
   ngOnInit() {
     this.initViewModel();
-    PubSub.Sub('onKnowledgeChanged', (concept) => {
+    Knowcycle.observable.subscribe(item => {
       this.initViewModel();
     });
   }

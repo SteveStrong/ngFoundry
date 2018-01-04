@@ -268,7 +268,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 700,
     }).addCommands("doStart", "doStop", "doRotate");
 
-    this.sharing.syncStencil(def);
 
     let shape = def.newInstance().drop(500, 500).addAsSubcomponent(this)
       .then(item => {
@@ -302,13 +301,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 50
     });
 
-    PubSub.Pub('onKnowledgeChanged');
-
-    Concept.allConceptItems().forEach(item => {
-      let concept = item.concept;
-      this.sharing.syncConcept(concept);
-    })
-
   }
 
 
@@ -341,22 +333,34 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doImage() {
-    // let def = Concept.define<foImage>('blocks::block2d', foImage, {
-    //   background: 'green',
-    //   imageURL: "https://lorempixel.com/900/500?r=2",
-    //   width: 100,
-    //   height: 50
-    // });
+    let def = Concept.define<foImage>('blocks::block2d', foImage, {
+      background: 'green',
+      imageURL: "https://lorempixel.com/900/500?r=2",
+      width: 100,
+      height: 50
+    });
 
-    // for (let i = 0; i < 15; i++) {
-    //   this.wait(500, () => {
-    //     let picture = def.newInstance().addAsSubcomponent(this);
-    //     picture.angle = Tools.randomInt(0, 300)
+    for (let i = 0; i < 8; i++) {
+      this.wait(500, () => {
+        let picture = def.newInstance({
+          angle: Tools.randomInt(0, 300)
+        }).addAsSubcomponent(this);
 
-    //     let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
-    //     picture.easeTween(place, 1.5);
-    //   })
-    // }
+        let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
+        picture.easeTween(place, 1.5);
+      })
+    }
+
+    for (let i = 0; i < 8; i++) {
+      this.wait(1500, () => {
+        let picture = def.newInstance().addAsSubcomponent(this);
+        picture.angle = Tools.randomInt(0, 300);
+
+        //created forces a broadast of latest state
+        let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
+        picture.created().easeTween(place, 2.5);
+      })
+    }
 
 
     let image = new foImage({
@@ -508,8 +512,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       margin: new cMargin(0, 0, 0, 0)
     });
 
-    this.sharing.syncConcept(textBlock);
-
     let wireConcept = Concept.define<foShape1D>('text::wire', foShape1D, {
       color: 'green',
       thickness: 1,
@@ -583,7 +585,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       x: 400,
       y: 400,
     });
-    this.sharing.syncStencil(def);
 
     let shape = def.newInstance()
       .addAsSubcomponent(this);

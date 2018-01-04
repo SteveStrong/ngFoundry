@@ -5,7 +5,7 @@ import { StageComponent } from "../stage.component";
 import { foPage } from "../../foundry/foPage.model";
 import { PubSub } from "../../foundry/foPubSub";
 
-import { Lifecycle, foLifecycleEvent } from "../../foundry/foLifecycle";
+import { Lifecycle, foLifecycleEvent, Knowcycle } from "../../foundry/foLifecycle";
 
 //https://valor-software.com/ngx-bootstrap/#/tabs
 
@@ -28,8 +28,13 @@ export class foInspectorComponent implements OnInit {
   ngOnInit() {
     this.rootPage = this.stage;
 
+    let max = 25;
     Lifecycle.observable.subscribe(event => {
-      this.pushMax(event, 10);
+      this.pushMax(event, max);
+    });
+
+    Knowcycle.observable.subscribe(event => {
+      this.pushMax(event, max);
     });
   }
 
@@ -50,6 +55,6 @@ export class foInspectorComponent implements OnInit {
   }
 
   doRefreshConcepts() {
-    PubSub.Pub('onKnowledgeChanged');
+    Knowcycle.defined()
   }
 }

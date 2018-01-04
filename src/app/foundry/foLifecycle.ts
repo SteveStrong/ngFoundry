@@ -86,6 +86,7 @@ export class foLifecycleEventLock {
 }
 
 export let LifecycleLock: foLifecycleEventLock = new foLifecycleEventLock();
+export let KnowcycleLock: foLifecycleEventLock = new foLifecycleEventLock();
 
 
 export class foLifecycle {
@@ -105,6 +106,11 @@ export class foLifecycle {
             event.id = counter++;
             this.emit.next(event);
         });
+    }
+
+    defined(obj?: foObject) {
+        this.emit.next(new foLifecycleEvent('defined', obj, counter++))
+        return this;
     }
 
     created(obj: foObject) {
