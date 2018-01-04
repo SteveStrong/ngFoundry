@@ -218,8 +218,12 @@ export class SharingService {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.findItem(cmd.guid, () => {
             //this.message.push(json);
-            let spec = Stencil.find(data.myClass);
-            let shape = spec ? spec.newInstance(data) : RuntimeType.newInstance(data.myType, data);
+            let concept = Concept.find(data.myConcept);
+            let spec =  Stencil.find(data.myClass);
+
+            let shape =  concept && concept.newInstance(data);
+            shape =  shape ? shape : spec.newInstance(data);
+            shape = shape ? shape : RuntimeType.newInstance(data.myType, data);
             this._page.found(cmd.parentGuid,
               (item) => { item.addSubcomponent(shape); },
               (miss) => { this._page.addSubcomponent(shape); }

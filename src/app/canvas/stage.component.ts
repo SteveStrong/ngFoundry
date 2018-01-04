@@ -532,6 +532,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y += 50;
 
       objects.push(shape)
+      //foObject.jsonAlert(shape.asJson);
 
       // if (!last) {
       //   last = shape;
