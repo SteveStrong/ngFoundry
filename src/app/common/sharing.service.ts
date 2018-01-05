@@ -28,8 +28,6 @@ export class SharingService {
 
   private _page: foPage;
 
-
-
   constructor(
     private signalR: SignalRService,
     private http: Http) {
@@ -171,9 +169,7 @@ export class SharingService {
 
       function forceParent(shape: foGlyph) {
         let parent = shape.myParent && shape.myParent();
-        if (!parent) {
-          shape.reParent(this._page)
-        }
+        if (!parent) shape.reParent(this._page);
       }
 
       this.signalR.subCommand("dropShape", (cmd, data) => {

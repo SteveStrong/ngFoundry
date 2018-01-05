@@ -60,17 +60,28 @@ export class foShape2D extends foGlyph {
         })
     }
 
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
+        let changed = super.didLocationChange(x, y, angle);
+        if (!Number.isNaN(angle) && this.angle != angle) {
+            changed = true;
+            this.angle = angle;
+        };
+        return changed;
+    }
+
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(angle)) this.angle = angle;
-        super.dropAt(x, y, angle);
-        this.notifySource('drop', this.getLocation());
+        if (this.didLocationChange(x, y, angle)) {
+            this.notifySource('drop', this.getLocation());
+            Lifecycle.dropped(this);
+        }
         return this;
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(angle)) this.angle = angle;
-        super.move(x, y, angle);
-        this.notifySource('drop', this.getLocation());
+        if (this.didLocationChange(x, y, angle)) {
+            this.notifySource('drop', this.getLocation());
+            Lifecycle.moved(this);
+        }
         return this;
     }
 

@@ -25,12 +25,12 @@ export class foGlyph extends foNode implements iShape {
 
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) { 
-        if ( this._isSelected != value ) {
+    set isSelected(value: boolean) {
+        if (this._isSelected != value) {
             this._isSelected = value;
             Lifecycle.selected(this, value);
         };
-       
+
     }
 
     protected _visible: boolean = true;
@@ -173,14 +173,23 @@ export class foGlyph extends foNode implements iShape {
         Lifecycle.created(this)
         return this;
     }
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x) ) this.x = x;
 
-        if (!Number.isNaN(y)) this.y = y;
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
+        let changed = false;
+        if (!Number.isNaN(x) && this.x != x) {
+            changed = true;
+            this.x = x;
+        };
 
-        Lifecycle.dropped(this);
-        return this;
+        if (!Number.isNaN(y) && this.y != y) {
+            changed = true;
+            this.y = y;
+        };
+
+        return changed;
     }
+
+
 
 
 
@@ -212,12 +221,12 @@ export class foGlyph extends foNode implements iShape {
             x: x,
             y: y,
             ease: ease
-        // }).eventCallback("onUpdate", () => {
-        //     this.drop();
+            // }).eventCallback("onUpdate", () => {
+            //     this.drop();
         }).eventCallback("onComplete", () => {
             this.initialize(x, y);
         });
-       
+
         return this;
     }
 
@@ -233,7 +242,7 @@ export class foGlyph extends foNode implements iShape {
             this.dropAt(x, y);
             Lifecycle.easeTo(this);
         });
-       
+
         return this;
     }
 
@@ -241,14 +250,21 @@ export class foGlyph extends foNode implements iShape {
         let from = Tools.union(to, { ease: Back[ease] });
 
         TweenLite.to(this, time, from).eventCallback("onComplete", () => this.override(to));
-        Lifecycle.easeTween(this, {time, ease, to});
+        Lifecycle.easeTween(this, { time, ease, to });
+        return this;
+    }
+
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (this.didLocationChange(x, y, angle)) {
+            Lifecycle.dropped(this);
+        }
         return this;
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (!Number.isNaN(x)) this.x = x;
-        if (!Number.isNaN(y)) this.y = y;
-        Lifecycle.moved(this);
+        if (this.didLocationChange(x, y, angle)) {
+            Lifecycle.moved(this);
+        }
         return this;
     }
 
@@ -652,7 +668,7 @@ export class foGlyph extends foNode implements iShape {
             }
         });
 
-        Lifecycle.layout(this, {method: 'layoutSubcomponentsVertical', resize, space})
+        Lifecycle.layout(this, { method: 'layoutSubcomponentsVertical', resize, space })
         return this;
     }
 
@@ -684,7 +700,7 @@ export class foGlyph extends foNode implements iShape {
             }
         });
 
-        Lifecycle.layout(this, {method: 'layoutSubcomponentsHorizontal', resize, space})
+        Lifecycle.layout(this, { method: 'layoutSubcomponentsHorizontal', resize, space })
         return this;
     }
 
@@ -706,7 +722,7 @@ export class foGlyph extends foNode implements iShape {
                 self.height = Math.max(self.height, item.height);
             }
         });
-        Lifecycle.layout(this, {method: 'layoutMarginRight', resize, space})
+        Lifecycle.layout(this, { method: 'layoutMarginRight', resize, space })
         return this;
     }
 
@@ -728,7 +744,7 @@ export class foGlyph extends foNode implements iShape {
                 self.height = loc.y;
             }
         });
-        Lifecycle.layout(this, {method: 'layoutMarginTop', resize, space})
+        Lifecycle.layout(this, { method: 'layoutMarginTop', resize, space })
         return this;
     }
 }
