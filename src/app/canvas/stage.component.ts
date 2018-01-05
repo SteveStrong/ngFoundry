@@ -362,7 +362,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
         //created forces a broadast of latest state
         let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
-        picture.created().easeTween(place, 2.5);
+        picture.LifecycleCreated().easeTween(place, 2.5);
       })
     }
 
@@ -374,7 +374,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 80,
       imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
       angle: Tools.randomInt(-30, 30)
-    }).created().dropAt(330, 330).addAsSubcomponent(this);
+    }).LifecycleCreated().dropAt(330, 330).addAsSubcomponent(this);
  
 
     let size = {
@@ -638,8 +638,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
     if (!properties) {
-      let shape = RuntimeType.create(localTwoByFour, spec).dropAt(200, 200).addAsSubcomponent(this);
-      this.sharing.callMethod('doAddTwoByFour', shape);
+      let shape = RuntimeType.create(localTwoByFour, spec)
+        .dropAt(200, 200).addAsSubcomponent(this)
+        .LifecycleCommand('doAddTwoByFour');
     } else {
       RuntimeType.create(localTwoByFour, properties).addAsSubcomponent(this);
     }
@@ -703,10 +704,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    !properties && this.sharing.broadcast('doAddStack', {
-      shape: shape.myGuid,
-      subShape: subShape.myGuid
-    });
+    // !properties && this.sharing.broadcast('doAddStack', {
+    //   shape: shape.myGuid,
+    //   subShape: subShape.myGuid
+    // });
   }
 
   doIt( ) {
@@ -737,7 +738,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       angle: spec.angle,
       width: spec.length,
       height: height,
-    }).created().dropAt(600, 400).addAsSubcomponent(this);
+    }).LifecycleCreated().dropAt(600, 400).addAsSubcomponent(this);
 
     RuntimeType.create<Line>(Line, {
       opacity: 1,
@@ -748,14 +749,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: x2,
       finishY: y2,
       height: height,
-    }).created().dropAt(600, 300).addAsSubcomponent(this);
+    }).LifecycleCreated().dropAt(600, 300).addAsSubcomponent(this);
 
     new foText2D({
       color: 'black',
       background: 'yellow',
       context: 'Drop at 400,400 && 400,300',
       fontSize: 30,
-    }).created().dropAt(600, 500).addAsSubcomponent(this);
+    }).LifecycleCreated().dropAt(600, 500).addAsSubcomponent(this);
   }
 
   doShapeGlue() {

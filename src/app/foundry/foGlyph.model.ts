@@ -169,8 +169,18 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
-    public created() {
+    public LifecycleCreated() {
         Lifecycle.created(this)
+        return this;
+    }
+
+    public LifecycleCommand(method: string) {
+        Lifecycle.command(this, method);
+        return this;
+    }
+
+    public LifecycleAction(method: string, params?: any) {
+        Lifecycle.action(this, method, params)
         return this;
     }
 

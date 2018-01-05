@@ -142,6 +142,19 @@ export class foLifecycle {
         return this;
     }
 
+    action(obj:foObject, action:string, params?:any) {
+        this.emit.next(new foLifecycleEvent('run', obj, counter++, {
+            action: action,
+            params: params
+        }));
+        return this;
+    }
+
+    command(obj: foObject, method:string) {
+        this.emit.next(new foLifecycleEvent('command', obj, counter++, method));
+        return this;
+    }
+
     selected(obj: foObject, value: any) {
         this.emit.next(new foLifecycleEvent('selected', obj, counter++, value))
         return this;

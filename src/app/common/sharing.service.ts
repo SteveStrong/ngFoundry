@@ -132,6 +132,18 @@ export class SharingService {
     return this;
   }
 
+  public command(know: foObject, value: any) {
+    this.signalR.pubCommand("syncCommand", { guid: know.myGuid, method:value }, know.asJson);
+    return this;
+  }
+
+  public run(know: foObject, value: any) {
+    let action = value.action;
+    let params = value.params;
+    this.signalR.pubCommand("syncRun", { guid: know.myGuid, action:action }, params);
+    return this;
+  }
+
   public layout(know: foObject, value?: any) {
     this.signalR.pubCommand("syncLayout", { guid: know.myGuid }, value);
     return this;
@@ -149,15 +161,15 @@ export class SharingService {
     return this;
   }
 
-  public callMethod(cmd: string, target: foObject) {
-    this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
-    return this;
-  }
+  // public callMethod(cmd: string, target: foObject) {
+  //   this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
+  //   return this;
+  // }
 
-  public broadcast(cmd: string, data: any) {
-    this.signalR.pubCommand("callMethod", { func: cmd }, data);
-    return this;
-  }
+  // public broadcast(cmd: string, data: any) {
+  //   this.signalR.pubCommand("callMethod", { func: cmd }, data);
+  //   return this;
+  // }
 
 
   //------------------------------------------------
@@ -283,9 +295,20 @@ export class SharingService {
   
       });
   
-      this.signalR.subCommand("callMethod", (cmd, data) => {
-        let func = cmd.func;
-        func && this[func](data);
+      this.signalR.subCommand("syncCommand", (cmd, data) => {
+        let method = cmd.method;
+        method && this._page[method](data);
+      });
+
+      this.signalR.subCommand("syncRun", (cmd, value) => {
+        // foObject.jsonAlert(value);
+        let self = this;
+        this._page.found(cmd.guid, item => {
+          let action = cmd.action;
+            LifecycleLock.protected(cmd.guid, self, _ => {
+              item[action](value);
+            });
+        });
       });
   
   
