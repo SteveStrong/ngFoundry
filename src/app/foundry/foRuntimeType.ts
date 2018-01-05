@@ -1,14 +1,14 @@
 
 import { Tools } from './foTools';
 
-import { foCollection } from './foCollection.model';
+import { foObject } from './foObject.model';
 import { PubSub } from "./foPubSub";
 import { foNode } from './foNode.model';
 import { foKnowledge } from './foKnowledge.model';
 
 import { Knowcycle } from "./foLifecycle";
 
-export class foRuntimeType {
+export class foRuntimeType extends foObject{
     public modelPrimitives = {}
     public knowledgePrimitives = {}
 
@@ -28,8 +28,11 @@ export class foRuntimeType {
 
     public define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         let name = type.name;
-        this.modelPrimitives[name] = type;
-        Knowcycle.primitive(name);
+        if ( !this.modelPrimitives[name]) {
+            this.myName = name;
+            this.modelPrimitives[name] = type;
+            Knowcycle.primitive(this,name);
+        }
         return type;
     }
 
@@ -48,8 +51,11 @@ export class foRuntimeType {
 
     public knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
         let name = type.name;
-        this.knowledgePrimitives[name] = type;
-        Knowcycle.primitive(name);
+        if ( !this.knowledgePrimitives[name]) {
+            this.myName = name;
+            this.knowledgePrimitives[name] = type;
+            Knowcycle.primitive(this,name);
+        }
         return type;
     }
 

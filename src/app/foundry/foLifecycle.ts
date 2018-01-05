@@ -30,6 +30,10 @@ export class foLifecycleEvent {
         return this.object.myType;
     }
 
+    get myName() {
+        return this.object.myName;
+    }
+
     constructor(cmd: string, obj: foObject, count: number = 0, value?: any) {
         this.id = count;
         this.cmd = cmd;
@@ -108,8 +112,8 @@ export class foLifecycle {
         });
     }
 
-    primitive(name?: string) {
-        this.emit.next(new foLifecycleEvent('primitive', new foObject({myName:name}), counter++))
+    primitive(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('primitive', obj, counter++, value))
         return this;
     }
 
