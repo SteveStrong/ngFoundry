@@ -67,7 +67,9 @@ export class foPage extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.color = 'Linen';
-        this.x = this.y = 100;
+        //setting x,y to something other than zero will break
+        //the rendering of 1D shapes
+        //this.x = this.y = 0;
         this.setupMouseEvents();
     }
 
@@ -214,7 +216,6 @@ export class foPage extends foShape2D {
         }
 
         PubSub.Sub('mousedown', (loc: cPoint, e: MouseEvent, keys) => {
-            loc.add(this.marginX, this.marginY);
             this.onMouseLocationChanged(loc, "down", keys);
 
             grab = findHandle(loc);
@@ -281,7 +282,6 @@ export class foPage extends foShape2D {
 
             } else {
                 this.onMouseLocationChanged(loc, "hover", keys);
-                loc.add(this.marginX, this.marginY);
 
                 let found = this.findHitShape(loc);
                 if (found && found == hovershape) {

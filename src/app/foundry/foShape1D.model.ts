@@ -17,7 +17,7 @@ import { foGlyph } from '../foundry/foGlyph.model'
 //and have all the same properties
 export class foShape1D extends foShape2D {
 
-    public thickness:number;
+    public thickness: number;
 
     protected _x1: number;
     protected _y1: number;
@@ -76,7 +76,7 @@ export class foShape1D extends foShape2D {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson():any {
+    protected toJson(): any {
         return Tools.mixin(super.toJson(), {
             startX: this.startX,
             startY: this.startY,
@@ -131,14 +131,14 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    glueStart(target: foShape2D, handle?: string){
+    glueStart(target: foShape2D, handle?: string) {
         return this.createGlue('begin', target, handle);
     }
 
-    glueFinish(target: foShape2D, handle?: string){
+    glueFinish(target: foShape2D, handle?: string) {
         return this.createGlue('end', target, handle);
     }
-    
+
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         let { x: cX, y: cY } = this.center();
 
@@ -244,6 +244,8 @@ export class foShape1D extends foShape2D {
         let center = this.globalToLocalPoint(this.center('center'));
         let end = this.globalToLocalPoint(this.end('end'));
 
+        begin['size'] = 20;
+        end['size'] = 20;
         let spec = [begin, center, end];
         return this.generateHandles(spec);
     }
@@ -291,7 +293,11 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
+        ctx.save();
+        ctx.globalAlpha = .3;
+        ctx.fillStyle = 'cyan';
         ctx.fillRect(0, 0, this.width, this.height);
+        ctx.restore()
 
         ctx.lineWidth = this.thickness || 4;
         //ctx.strokeStyle = '#003300';
@@ -329,8 +335,11 @@ export class foShape1D extends foShape2D {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
 
+        ctx.save();
+        ctx.globalAlpha = .3;
         ctx.fillStyle = 'green';
         ctx.fillRect(0, 0, this.width, this.height);
+        ctx.restore()
 
         ctx.lineWidth = this.thickness || 1;
         ctx.beginPath()

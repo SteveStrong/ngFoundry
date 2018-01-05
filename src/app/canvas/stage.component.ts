@@ -709,13 +709,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     });
   }
 
+  doIt( ) {
+    this.doShape1D();
+  }
   doShape1D() {
 
-    let height = 20;
-    let x1 = 150;
+    let height = 60;
+    let x1 = 50;
     let y1 = 100;
-    let x2 = 350;
-    let y2 = 200;
+    let x2 = 450;
+    let y2 = 100;
 
     let dX = x2 - x1;
     let dY = y2 - y1;
@@ -734,7 +737,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       angle: spec.angle,
       width: spec.length,
       height: height,
-    }).drop(400, 400).addAsSubcomponent(this);
+    }).drop(600, 400).addAsSubcomponent(this);
 
     RuntimeType.create<Line>(Line, {
       opacity: 1,
@@ -745,7 +748,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: x2,
       finishY: y2,
       height: height,
-    }).drop(400, 300).addAsSubcomponent(this);
+    }).drop(600, 300).addAsSubcomponent(this);
 
     new foText2D({
       color: 'black',

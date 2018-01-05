@@ -46,6 +46,10 @@ export class foInspectorComponent implements OnInit {
     this.lifecycleEvent.push(value);
   }
 
+  doClearEvents() {
+    this.lifecycleEvent = [];
+  }
+
   doRefreshRuntimeTypes() {
     Knowcycle.primitive()
   }

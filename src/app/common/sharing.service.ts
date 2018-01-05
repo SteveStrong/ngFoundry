@@ -158,7 +158,7 @@ export class SharingService {
 
 
   //------------------------------------------------
-  public startSharing(page: foPage) {
+  public startSharing(page: foPage, next?:()=>{}) {
 
     this._page = page;
 
@@ -189,7 +189,6 @@ export class SharingService {
         });
       });
 
-
       this.signalR.subCommand("selectShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.found(cmd.guid, shape => {
@@ -209,7 +208,6 @@ export class SharingService {
       this.signalR.subCommand("clearPage", (cmd, data) => {
         this._page.clearPage();
       });
-
 
       this.signalR.subCommand("syncKnow", (cmd, data) => {
         //foObject.jsonAlert(data);
@@ -231,30 +229,6 @@ export class SharingService {
         });
 
       });
-
-
-      //remember things do render unless it is part of 
-      //a subcomponent
-      // this.signalR.subCommand("createShape", (cmd, data) => {
-      //   //foObject.jsonAlert(data);
-
-      //   LifecycleLock.protected(cmd.guid, this, _ => {
-      //     this._page.findItem(cmd.guid, () => {
-      //       //this.message.push(json);            
-      //       let concept = Stencil.find(data.myClass);
-      //       let shape = concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
-      //       //foObject.jsonAlert(shape);
-      //       this._page.found(cmd.parentGuid,
-      //         (item) => { shape.reParent(item); },
-      //         (miss) => { this._page.establishInDictionary(shape); }
-      //       );
-      //     }, found => {
-      //       found.override(data);
-      //     });
-      //   });
-
-      // });
-
 
       this.signalR.subCommand("syncShape", (cmd, data) => {
         //foObject.jsonAlert(data);
@@ -288,35 +262,39 @@ export class SharingService {
         });
       });
 
-    });
-
-    this.signalR.subCommand("easeTween", (cmd, value) => {
-      //foObject.jsonAlert(value);
-      LifecycleLock.protected(cmd.guid, this, _ => {
-        let { time, ease, to } = value;
-        this._page.found(cmd.guid, item => {
-          item.easeTween(to, time, Back[ease]);
+      this.signalR.subCommand("easeTween", (cmd, value) => {
+        //foObject.jsonAlert(value);
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          let { time, ease, to } = value;
+          this._page.found(cmd.guid, item => {
+            item.easeTween(to, time, Back[ease]);
+          });
+        });
+  
+      });
+  
+      this.signalR.subCommand("callMethod", (cmd, data) => {
+        let func = cmd.func;
+        func && this[func](data);
+      });
+  
+  
+      this.signalR.subCommand("syncGlue", (cmd, data) => {
+        //foObject.jsonAlert(data);
+        this._page.found(cmd.sourceGuid, (source) => {
+          this._page.found(cmd.targetGuid, (target) => {
+            let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
+            (<foShape2D>target).drop();
+          });
         });
       });
 
-    });
+      next && next();
 
-    this.signalR.subCommand("callMethod", (cmd, data) => {
-      let func = cmd.func;
-      func && this[func](data);
     });
 
 
-    this.signalR.subCommand("syncGlue", (cmd, data) => {
-      //foObject.jsonAlert(data);
-      this._page.found(cmd.sourceGuid, (source) => {
-        this._page.found(cmd.targetGuid, (target) => {
-          let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
-          (<foShape2D>target).drop();
-        });
-      });
-    });
-  });
+
+  }
 }
 
-}
