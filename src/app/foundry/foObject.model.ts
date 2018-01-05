@@ -23,7 +23,12 @@ export class foObject implements iObject {
     }
 
     static jsonAlert(obj) {
-        alert(JSON.stringify(obj, undefined, 3));
+        try {
+            alert(JSON.stringify(obj, undefined, 3));
+        } catch ( ex) {
+            alert(ex);
+        }
+      
     }
 
 

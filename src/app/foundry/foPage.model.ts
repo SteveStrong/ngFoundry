@@ -113,6 +113,21 @@ export class foPage extends foShape2D {
         }
     }
 
+    establishInDictionary(obj: foNode) {
+        let guid = obj.myGuid;
+        this._dictionary.findItem(guid, () => {
+            this._dictionary.addItem(guid, obj);
+        });
+        return obj;
+    }
+
+    removeFromDictionary(obj: foNode) {
+        let guid = obj.myGuid;
+        this._dictionary.found(guid, () => {
+            this._dictionary.removeItem(guid);
+        });
+        return obj;
+    }
 
     addSubcomponent(obj: foNode, properties?: any) {
         let guid = obj.myGuid;

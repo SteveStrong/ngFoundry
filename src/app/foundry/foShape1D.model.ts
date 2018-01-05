@@ -291,7 +291,7 @@ export class foShape1D extends foShape2D {
         ctx.beginPath()
         ctx.setLineDash([15, 5]);
 
-        //ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = this.thickness || 4;
         //ctx.strokeStyle = '#003300';
@@ -304,8 +304,8 @@ export class foShape1D extends foShape2D {
         ctx.lineTo(x2, y2);
         ctx.stroke();
 
-        //this.drawStart(ctx);
-        //this.drawEnd(ctx);
+        this.drawStart(ctx);
+        this.drawEnd(ctx);
     }
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
@@ -329,14 +329,15 @@ export class foShape1D extends foShape2D {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = this.color;
 
-        //ctx.fillStyle = 'green';
-        //ctx.fillRect(0, 0, this.width, this.height);
+        ctx.fillStyle = 'green';
+        ctx.fillRect(0, 0, this.width, this.height);
 
         ctx.lineWidth = this.thickness || 1;
         ctx.beginPath()
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
+
     }
 }
 
