@@ -219,17 +219,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addEventHooks();
 
     Lifecycle.observable.subscribe(event => {
-      console.log(event.cmd, event.myGuid);
+      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
       //Toast.info(event.cmd, event.myGuid )
     })
 
-    this.onItemChangedParent = (shape: foGlyph): void => {
-      //this.sharing.syncParent(shape);
-    }
+    // this.onItemChangedParent = (shape: foGlyph): void => {
+    //   //this.sharing.syncParent(shape);
+    // }
 
-    this.onItemChangedPosition = (shape: foGlyph): void => {
-      //this.sharing.moveTo(shape, shape.getLocation());
-    }
+    // this.onItemChangedPosition = (shape: foGlyph): void => {
+    //   //this.sharing.moveTo(shape, shape.getLocation());
+    // }
 
     this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
       this.mouseLoc = loc;
@@ -307,6 +307,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   doBoundry() {
+    this.doLoadStencil();
 
     let text = Stencil.find<foShape2D>('boundry::text');
 
@@ -328,6 +329,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           context: 'test ' + j
         }).addAsSubcomponent(body);
       }
+
       body.wait(10, () => body.layoutSubcomponentsVertical(true, 10));
     }
     box.wait(10, () => box.layoutSubcomponentsHorizontal(true, 10));
@@ -707,13 +709,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     });
   }
 
+  doIt( ) {
+    this.doShape1D();
+  }
   doShape1D() {
 
-    let height = 20;
-    let x1 = 150;
+    let height = 60;
+    let x1 = 50;
     let y1 = 100;
-    let x2 = 350;
-    let y2 = 200;
+    let x2 = 450;
+    let y2 = 100;
 
     let dX = x2 - x1;
     let dY = y2 - y1;
@@ -725,23 +730,32 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       cY: (y2 + y1) / 2,
     }
 
-    let fake = RuntimeType.create<foShape2D>(foShape2D, {
+    RuntimeType.create<foShape2D>(foShape2D, {
       opacity: .5,
       color: 'gray',
+
       angle: spec.angle,
       width: spec.length,
       height: height,
-    }).drop(400, 400).addAsSubcomponent(this);
+    }).drop(600, 400).addAsSubcomponent(this);
 
-    let shape = RuntimeType.create<Line>(Line, {
-      opacity: .5,
-      color: 'gray',
+    RuntimeType.create<Line>(Line, {
+      opacity: 1,
+      thickness: 10,
+      color: 'black',
       startX: x1,
       startY: y1,
       finishX: x2,
       finishY: y2,
       height: height,
-    }).drop(400, 300).addAsSubcomponent(this);
+    }).drop(600, 300).addAsSubcomponent(this);
+
+    new foText2D({
+      color: 'black',
+      background: 'yellow',
+      context: 'Drop at 400,400 && 400,300',
+      fontSize: 30,
+    }).drop(600, 500).addAsSubcomponent(this);
   }
 
   doShapeGlue() {

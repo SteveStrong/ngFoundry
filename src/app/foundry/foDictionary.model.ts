@@ -1,9 +1,10 @@
 import { Tools } from './foTools'
 
-import { foKnowledge } from './foKnowledge.model'
+import { foObject } from './foObject.model'
+import { iObject, Action, Func } from './foInterface'
 
 
-export class foDictionary<T extends foKnowledge> extends foKnowledge {
+export class foDictionary<T extends iObject> extends foObject {
 
     private _lookup: any = {};
 

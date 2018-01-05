@@ -1,20 +1,22 @@
 ﻿import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { Tools  } from '../foundry/foTools';
+import { foComponent  } from '../foundry/foComponent.model';
 
-describe("Foundry: Array as a property", function () {
-     var obj;
+describe("Foundry: Array as a property", () => {
+     let obj;
 
     beforeEach(function () {
         var x = {
             items: [1, 2, 3, 4, 5],
             stringItems: ['washington', 'bush',  'addams', 'jefferson', 'bush' ]
         };
-        obj = fo.makeComponent(x);
+        obj = new foComponent(x);
         return obj;
     });
 
     it("should be a components", function () {
-        expect(fo.utils.isaComponent(obj)).toBe(true);
+        //expect(Tools.isaComponent(obj)).toBe(true);
 
         expect(obj.Properties.count).toEqual(2);
         expect(obj.Subcomponents.isEmpty()).toBe(true);
@@ -25,7 +27,7 @@ describe("Foundry: Array as a property", function () {
         expect(obj.items.isEmpty()).toBe(false);
         expect(obj.items.length).toEqual(5);
 
-        expect(fo.utils.isArray(obj.items)).toBe(true);
+        expect(Tools.isArray(obj.items)).toBe(true);
     });
 
     it("can map", function () {

@@ -58,9 +58,6 @@ import { Knowcycle } from './foLifecycle';
 //     }
 // }
 
-export class foMaster extends foConcept<foGlyph> {
-
-} 
 
 export class foStencilLibrary extends foLibrary {
 
@@ -82,7 +79,8 @@ export class foStencilLibrary extends foLibrary {
 
 
     public define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
- 
+        RuntimeType.define(type);
+        
         let concept = new foConcept<T>({ myName });
         concept.definePrimitive(type);
         concept.specification = specification || {};
@@ -110,13 +108,6 @@ export class foStencilLibrary extends foLibrary {
         return concept;
     }
 
-
-    public newInstance<T extends foNode>(id: string, properties?: any, func?: Action<T>): T {
-        let concept = this.find(id);
-        let instance = concept.newInstance(properties) as T;
-        func && func(instance);
-        return instance;
-    }
 }
 
 

@@ -209,6 +209,21 @@ export class foGlyph extends foNode implements iShape {
         return this._subcomponents;
     }
 
+    public easeToNoLifecycle(x: number, y: number, time: number = .5, ease: any = Back.ease) {
+
+        TweenLite.to(this, time, {
+            x: x,
+            y: y,
+            ease: ease
+        // }).eventCallback("onUpdate", () => {
+        //     this.drop();
+        }).eventCallback("onComplete", () => {
+            this.initialize(x, y);
+        });
+       
+        return this;
+    }
+
     public easeTo(x: number, y: number, time: number = .5, ease: any = Back.ease) {
 
         TweenLite.to(this, time, {
@@ -624,7 +639,7 @@ export class foGlyph extends foNode implements iShape {
             let { x: pinX, y: pinY } = item.pinLocation();
             loc.x = resize ? pinX : loc.x;
             loc.y += pinY;
-            item.easeTo(loc.x, loc.y);
+            item.easeToNoLifecycle(loc.x, loc.y);
             loc.y += (space + item.height) - pinY;
 
             if (resize) {
@@ -632,7 +647,8 @@ export class foGlyph extends foNode implements iShape {
                 self.height = loc.y;
             }
         });
-        //self.drop(x, y);
+
+        Lifecycle.layout(this, {method: 'layoutSubcomponentsVertical', resize, space})
         return this;
     }
 
@@ -655,7 +671,7 @@ export class foGlyph extends foNode implements iShape {
             let { x: pinX, y: pinY } = item.pinLocation();
             loc.x += pinX;
             loc.y = resize ? pinY : loc.y;
-            item.easeTo(loc.x, loc.y);
+            item.easeToNoLifecycle(loc.x, loc.y);
             loc.x += (space + item.width) - pinX;
 
             if (resize) {
@@ -663,7 +679,8 @@ export class foGlyph extends foNode implements iShape {
                 self.height = Math.max(self.height, item.height);
             }
         });
-        //self.drop(x, y);
+
+        Lifecycle.layout(this, {method: 'layoutSubcomponentsHorizontal', resize, space})
         return this;
     }
 
@@ -677,7 +694,7 @@ export class foGlyph extends foNode implements iShape {
         this.nodes.forEach(item => {
             let { x: pinX, y: pinY } = item.pinLocation();
             loc.x += pinX;
-            item.easeTo(loc.x, loc.y + pinY);
+            item.easeToNoLifecycle(loc.x, loc.y + pinY);
             loc.x += (space + item.width) - pinX;
 
             if (resize) {
@@ -685,6 +702,7 @@ export class foGlyph extends foNode implements iShape {
                 self.height = Math.max(self.height, item.height);
             }
         });
+        Lifecycle.layout(this, {method: 'layoutMarginRight', resize, space})
         return this;
     }
 
@@ -698,7 +716,7 @@ export class foGlyph extends foNode implements iShape {
         this.nodes.forEach(item => {
             let { x: pinX, y: pinY } = item.pinLocation();
             loc.y += pinY;
-            item.easeTo(loc.x + pinX, loc.y);
+            item.easeToNoLifecycle(loc.x + pinX, loc.y);
             loc.y += (space + item.height) - pinY;
 
             if (resize) {
@@ -706,6 +724,7 @@ export class foGlyph extends foNode implements iShape {
                 self.height = loc.y;
             }
         });
+        Lifecycle.layout(this, {method: 'layoutMarginTop', resize, space})
         return this;
     }
 }

@@ -66,6 +66,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 
     definePrimitive(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
+        RuntimeType.define(type);
         this.primitive = type.name;
         this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
             return new type(properties, subcomponents, parent);

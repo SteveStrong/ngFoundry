@@ -143,6 +143,11 @@ export class foLifecycle {
         return this;
     }
 
+    layout(obj: foObject, value: any) {
+        this.emit.next(new foLifecycleEvent('layout', obj, counter++, value))
+        return this;
+    }
+
     glued(obj: foObject) {
         this.emit.next(new foLifecycleEvent('glued', obj, counter++))
         return this;

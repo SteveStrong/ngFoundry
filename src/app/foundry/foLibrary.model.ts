@@ -38,11 +38,10 @@ export class foLibrary extends foKnowledge {
         return this._concepts;
     }
 
-    establishConcept(key: string, spec: any = undefined) {
-        let concepts = this.concepts;
-        let concept = concepts.getItem(key);
+    establishConcept(key: string, properties?: any) {
+        let concept = this.concepts.getItem(key);
         if (!concept) {
-            concept = concepts.addItem(key, new foConcept(spec));
+            concept = this.concepts.addItem(key, new foConcept(properties));
             concept.myName = key;
         }
         return concept;
@@ -52,11 +51,10 @@ export class foLibrary extends foKnowledge {
         return this._properties;
     }
 
-    establishProperty(key: string, spec: any = undefined) {
-        let properties = this.properties;
-        let property = properties.getItem(key);
+    establishProperty(key: string, properties: any) {
+        let property = this.properties.getItem(key);
         if (!property) {
-            property = properties.addItem(key, new foProperty(spec));
+            property = this.properties.addItem(key, new foProperty(properties));
             property.myName = key;
         }
         return property;

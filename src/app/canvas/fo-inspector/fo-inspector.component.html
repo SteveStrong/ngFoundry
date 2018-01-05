@@ -2,9 +2,14 @@
   <tab heading='Debug'>
     <pre class="well">{{stage.mouseLoc | json}}</pre>
 
-    <div *ngFor="let event of lifecycleEvent" >
-      <div>{{event.id}} - {{event.cmd}}  {{event.guid}} : {{event.value}}</div>
+    <div class="well" (click)="doClearEvents()">
+      <div *ngFor="let event of lifecycleEvent;  let index=index; let odd=odd; let even=even;" class="row" [ngClass]="{ odd: odd, even: even }" >
+        <span class="col-sm-3">{{event.id}} - {{event.cmd}}</span>
+        <span class="col-sm-3">{{event.myType}}</span>
+        <span class="col-sm-6">{{event.guid}} : {{event.value}}</span>
+      </div>
     </div>
+
     <!-- <pre class="well">{{stage.message | json}}</pre> -->
 
     <!-- <pre class="well">{{sitOnShape | json}}</pre> -->
