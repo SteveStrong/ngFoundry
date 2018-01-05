@@ -105,13 +105,18 @@ export class SharingService {
     return this;
   }
 
-  public moved(shape: foGlyph) {
-    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+  public dropped(shape: foGlyph) {
+    this.signalR.pubCommand("dropShape", { guid: shape.myGuid }, shape.getLocation());
     return this;
   }
 
-  public easeTo(shape: foGlyph) {
-    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, shape.getLocation());
+  public moved(shape: foGlyph, value?:any) {
+    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, value ? value : shape.getLocation());
+    return this;
+  }
+
+  public easeTo(shape: foGlyph, value?:any) {
+    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, value ? value : shape.getLocation());
   }
 
   public easeTween(shape: foGlyph, value?: any) {
@@ -171,10 +176,19 @@ export class SharingService {
         }
       }
 
+      this.signalR.subCommand("dropShape", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.dropAt(data.x, data.y, data.angle);
+            //forceParent(shape);
+          });
+        });
+      });
+
       this.signalR.subCommand("moveShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.found(cmd.guid, shape => {
-            shape.drop(data.x, data.y, data.angle);
+            shape.move(data.x, data.y, data.angle);
             //forceParent(shape);
           });
         });
@@ -284,7 +298,7 @@ export class SharingService {
         this._page.found(cmd.sourceGuid, (source) => {
           this._page.found(cmd.targetGuid, (target) => {
             let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
-            (<foShape2D>target).drop();
+            (<foShape2D>target).dropAt();
           });
         });
       });

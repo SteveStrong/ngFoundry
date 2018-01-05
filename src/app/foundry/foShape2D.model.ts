@@ -41,7 +41,7 @@ export class foShape2D extends foGlyph {
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
-            angle:this.angle
+            angle: this.angle
         });
     }
 
@@ -60,16 +60,17 @@ export class foShape2D extends foGlyph {
         })
     }
 
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        let moved = false;
-        if (!Number.isNaN(x) && this.x != x) moved = true;
-        if (!Number.isNaN(y) && this.y != y) moved = true;
-        if (!Number.isNaN(angle) && this.angle != angle) {
-            this.angle = angle;
-            moved = true;
-        }
-        moved && super.drop(x, y);
-        moved && this.notifySource('drop', this.getLocation());
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(angle)) this.angle = angle;
+        super.dropAt(x, y, angle);
+        this.notifySource('drop', this.getLocation());
+        return this;
+    }
+
+    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(angle)) this.angle = angle;
+        super.move(x, y, angle);
+        this.notifySource('drop', this.getLocation());
         return this;
     }
 

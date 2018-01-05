@@ -162,6 +162,11 @@ export class foLifecycle {
         return this;
     }
 
+    dropped(obj: foObject) {
+        this.emit.next(new foLifecycleEvent('dropped', obj, counter++))
+        return this;
+    }
+
     moved(obj: foObject) {
         this.debounced.next(new foLifecycleEvent('moved', obj, counter++))
         return this;

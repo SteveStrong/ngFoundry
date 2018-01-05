@@ -157,13 +157,14 @@ export class foShape1D extends foShape2D {
     }
 
 
-    public drop(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-        let angle = Number.isNaN(ang) ? 0 : ang;
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        this.initialize(x, y, angle);
+        return super.dropAt(x, y, angle);
+    }
 
-        if (!Number.isNaN(x) && !Number.isNaN(y)) {
-            this.initialize(x, y, angle);
-        }
-        return this;
+    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        this.initialize(x, y, angle);
+        return super.move(x, y, angle);
     }
 
 

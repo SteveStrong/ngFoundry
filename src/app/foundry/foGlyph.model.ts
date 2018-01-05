@@ -173,19 +173,16 @@ export class foGlyph extends foNode implements iShape {
         Lifecycle.created(this)
         return this;
     }
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        let moved = false;
-        if (!Number.isNaN(x) && this.x != x) {
-            this.x = x;
-            moved = true;
-        }
-        if (!Number.isNaN(y) && this.y != y) {
-            this.y = y;
-            moved = true;
-        }
-        moved && Lifecycle.moved(this);
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x) ) this.x = x;
+
+        if (!Number.isNaN(y)) this.y = y;
+
+        Lifecycle.dropped(this);
         return this;
     }
+
+
 
     destroyed(obj: foNode) {
         this.removeSubcomponent(obj);
@@ -231,9 +228,9 @@ export class foGlyph extends foNode implements iShape {
             y: y,
             ease: ease
         }).eventCallback("onUpdate", () => {
-            this.drop();
+            this.move();
         }).eventCallback("onComplete", () => {
-            this.drop(x, y);
+            this.dropAt(x, y);
             Lifecycle.easeTo(this);
         });
        
@@ -248,16 +245,23 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
+    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this.x = x;
+        if (!Number.isNaN(y)) this.y = y;
+        Lifecycle.moved(this);
+        return this;
+    }
+
     public moveTo(loc: iPoint, offset?: iPoint) {
         let x = loc.x + (offset ? offset.x : 0);
         let y = loc.y + (offset ? offset.y : 0);
-        return this.drop(x, y);
+        return this.move(x, y);
     }
 
     public moveBy(loc: iPoint, offset?: iPoint) {
         let x = this.x + loc.x + (offset ? offset.x : 0);
         let y = this.y + loc.y + (offset ? offset.y : 0);
-        return this.drop(x, y);
+        return this.move(x, y);
     }
 
     updateContext(ctx: CanvasRenderingContext2D) {
