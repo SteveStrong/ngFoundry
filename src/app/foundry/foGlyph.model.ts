@@ -255,7 +255,7 @@ export class foGlyph extends foNode implements iShape {
             this.move();
         }).eventCallback("onComplete", () => {
             this.dropAt(x, y);
-            Lifecycle.easeTo(this);
+            Lifecycle.easeTo(this, this.getLocation());
         });
 
         return this;
@@ -271,14 +271,14 @@ export class foGlyph extends foNode implements iShape {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            Lifecycle.dropped(this);
+            Lifecycle.dropped(this, this.getLocation());
         }
         return this;
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            Lifecycle.moved(this);
+            Lifecycle.moved(this, this.getLocation());
         }
         return this;
     }
@@ -625,6 +625,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public moveHandle(handle: foHandle, loc: iPoint) {
+        Lifecycle.movedHandle(handle, loc);
     }
 
 

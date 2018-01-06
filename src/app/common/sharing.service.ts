@@ -22,6 +22,7 @@ import { foPage } from "../foundry/foPage.model";
 import { Back } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
+import { foHandle } from 'app/foundry/foHandle';
 
 @Injectable()
 export class SharingService {
@@ -108,12 +109,18 @@ export class SharingService {
     return this;
   }
 
-  public moved(shape: foGlyph, value?:any) {
+  public moved(shape: foGlyph, value?: any) {
     this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, value ? value : shape.getLocation());
     return this;
   }
 
-  public easeTo(shape: foGlyph, value?:any) {
+  public movedHandle(shape: foGlyph, value?: any) {
+    let parentGuid = shape.myParent().myGuid;
+    this.signalR.pubCommand("movedHandle", { guid: shape.myGuid, parentGuid: parentGuid, value: value }, shape.asJson);
+    return this;
+  }
+
+  public easeTo(shape: foGlyph, value?: any) {
     this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, value ? value : shape.getLocation());
   }
 
@@ -133,14 +140,14 @@ export class SharingService {
   }
 
   public command(know: foObject, value: any) {
-    this.signalR.pubCommand("syncCommand", { guid: know.myGuid, method:value }, know.asJson);
+    this.signalR.pubCommand("syncCommand", { guid: know.myGuid, method: value }, know.asJson);
     return this;
   }
 
   public run(know: foObject, value: any) {
     let action = value.action;
     let params = value.params;
-    this.signalR.pubCommand("syncRun", { guid: know.myGuid, action:action }, params);
+    this.signalR.pubCommand("syncRun", { guid: know.myGuid, action: action }, params);
     return this;
   }
 
@@ -173,7 +180,7 @@ export class SharingService {
 
 
   //------------------------------------------------
-  public startSharing(page: foPage, next?:()=>{}) {
+  public startSharing(page: foPage, next?: () => {}) {
 
     this._page = page;
 
@@ -239,6 +246,17 @@ export class SharingService {
 
       });
 
+      this.signalR.subCommand("movedHandle", (cmd, data) => {
+        //foObject.jsonAlert(cmd);
+        let { parentGuid, value } = cmd;
+        LifecycleLock.protected(parentGuid, this, _ => {
+          this._page.found(parentGuid,
+            (item) => { item.moveHandle(data, value) }
+          );
+        });
+
+      });
+
       this.signalR.subCommand("syncParent", (cmd, parentGuid) => {
         //foObject.jsonAlert(cmd);
 
@@ -292,9 +310,9 @@ export class SharingService {
             item.easeTween(to, time, Back[ease]);
           });
         });
-  
+
       });
-  
+
       this.signalR.subCommand("syncCommand", (cmd, data) => {
         let method = cmd.method;
         method && this._page[method](data);
@@ -305,13 +323,13 @@ export class SharingService {
         let self = this;
         this._page.found(cmd.guid, item => {
           let action = cmd.action;
-            LifecycleLock.protected(cmd.guid, self, _ => {
-              item[action](value);
-            });
+          LifecycleLock.protected(cmd.guid, self, _ => {
+            item[action](value);
+          });
         });
       });
-  
-  
+
+
       this.signalR.subCommand("syncGlue", (cmd, data) => {
         //foObject.jsonAlert(data);
         this._page.found(cmd.sourceGuid, (source) => {

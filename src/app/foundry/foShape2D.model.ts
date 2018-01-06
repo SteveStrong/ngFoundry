@@ -72,7 +72,7 @@ export class foShape2D extends foGlyph {
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
             this.notifySource('drop', this.getLocation());
-            Lifecycle.dropped(this);
+            Lifecycle.dropped(this,this.getLocation());
         }
         return this;
     }
@@ -80,7 +80,7 @@ export class foShape2D extends foGlyph {
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
             this.notifySource('drop', this.getLocation());
-            Lifecycle.moved(this);
+            Lifecycle.moved(this,this.getLocation());
         }
         return this;
     }

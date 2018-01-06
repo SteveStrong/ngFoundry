@@ -23,6 +23,9 @@ export class foLifecycleEvent {
     get guid() {
         return this.object.myGuid;
     }
+    get simpleGuid() {
+        return this.object.myGuid.slice(-8);
+    }
     get myGuid() {
         return this.object.myGuid;
     }
@@ -142,7 +145,7 @@ export class foLifecycle {
         return this;
     }
 
-    action(obj:foObject, action:string, params?:any) {
+    action(obj: foObject, action: string, params?: any) {
         this.emit.next(new foLifecycleEvent('run', obj, counter++, {
             action: action,
             params: params
@@ -150,7 +153,7 @@ export class foLifecycle {
         return this;
     }
 
-    command(obj: foObject, method:string) {
+    command(obj: foObject, method: string) {
         this.emit.next(new foLifecycleEvent('command', obj, counter++, method));
         return this;
     }
@@ -175,18 +178,23 @@ export class foLifecycle {
         return this;
     }
 
-    dropped(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('dropped', obj, counter++))
+    dropped(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('dropped', obj, counter++, value))
         return this;
     }
 
-    moved(obj: foObject) {
-        this.debounced.next(new foLifecycleEvent('moved', obj, counter++))
+    movedHandle(obj: foObject, value?: any) {
+        this.debounced.next(new foLifecycleEvent('movedHandle', obj, counter++, value))
         return this;
     }
 
-    easeTo(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('easeTo', obj, counter++))
+    moved(obj: foObject, value?: any) {
+        this.debounced.next(new foLifecycleEvent('moved', obj, counter++, value))
+        return this;
+    }
+
+    easeTo(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('easeTo', obj, counter++, value))
         return this;
     }
 

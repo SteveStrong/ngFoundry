@@ -12,6 +12,8 @@ import { foConcept } from '../foundry/foConcept.model'
 
 import { foShape2D } from '../foundry/foShape2D.model'
 import { foGlyph } from '../foundry/foGlyph.model'
+import { Lifecycle } from './foLifecycle';
+
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -156,15 +158,30 @@ export class foShape1D extends foShape2D {
         return this;
     }
 
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
+        let changed = super.didLocationChange(x, y, angle);
+        let { x: cX, y: cY } = this.center();
+        if (!Number.isNaN(x) && this.x != cX) {
+            changed = true;
+        };
+        if (!Number.isNaN(y) && this.y != cY) {
+            changed = true;
+        };
+        return changed;
+    }
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        this.initialize(x, y, angle);
-        return super.dropAt(x, y, angle);
+        if (this.didLocationChange(x, y, angle)) {
+            this.initialize(x, y, angle);
+            Lifecycle.dropped(this, this.getLocation());
+        }
+        return this;
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         this.initialize(x, y, angle);
-        return super.move(x, y, angle);
+        Lifecycle.moved(this, this.getLocation());
+        return this;
     }
 
 
@@ -265,6 +282,7 @@ export class foShape1D extends foShape2D {
                 this.moveTo(loc)
                 break;
         }
+        super.moveHandle(handle, loc);
     }
 
     //same as Shape1D
