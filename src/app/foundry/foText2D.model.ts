@@ -65,7 +65,10 @@ export class foText2D extends foShape2D {
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
-            text:this.text
+            context: this.context,
+            background:this.background,
+            fontSize:this.fontSize,
+            margin:this.margin
         });
     }
 

@@ -6,7 +6,7 @@ import { PubSub } from "./foPubSub";
 import { foNode } from './foNode.model';
 import { foKnowledge } from './foKnowledge.model';
 
-import { Knowcycle } from "./foLifecycle";
+import { Knowcycle, Lifecycle } from "./foLifecycle";
 
 export class foRuntimeType extends foObject{
     public modelPrimitives = {}
@@ -39,6 +39,7 @@ export class foRuntimeType extends foObject{
     public create<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }, properties?: any) {
         let instance = new type(properties) as T;
         instance.initialize();
+        Lifecycle.created(instance);
         return instance;
     }
 
@@ -46,6 +47,7 @@ export class foRuntimeType extends foObject{
     public establish<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
         let instance = new type(properties);
         instance.initialize();
+        Knowcycle.created(instance);
         return instance;
     }
 
