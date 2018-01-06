@@ -625,7 +625,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public moveHandle(handle: foHandle, loc: iPoint) {
-        Lifecycle.movedHandle(handle, loc);
+        Lifecycle.handle(handle, loc);
     }
 
 

@@ -282,7 +282,7 @@ export class foShape1D extends foShape2D {
                 this.moveTo(loc)
                 break;
         }
-        super.moveHandle(handle, loc);
+        Lifecycle.handle(handle, loc);
     }
 
     //same as Shape1D

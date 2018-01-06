@@ -183,8 +183,8 @@ export class foLifecycle {
         return this;
     }
 
-    movedHandle(obj: foObject, value?: any) {
-        this.debounced.next(new foLifecycleEvent('movedHandle', obj, counter++, value))
+    handle(obj: foObject, value?: any) {
+        this.debounced.next(new foLifecycleEvent('handle', obj, counter++, value))
         return this;
     }
 

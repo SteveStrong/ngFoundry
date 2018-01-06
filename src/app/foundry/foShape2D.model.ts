@@ -150,6 +150,7 @@ export class foShape2D extends foGlyph {
                 break;
 
         }
+        Lifecycle.handle(handle, loc);
     }
 
 

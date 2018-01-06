@@ -114,9 +114,9 @@ export class SharingService {
     return this;
   }
 
-  public movedHandle(shape: foGlyph, value?: any) {
+  public handle(shape: foGlyph, value?: any) {
     let parentGuid = shape.myParent().myGuid;
-    this.signalR.pubCommand("movedHandle", { guid: shape.myGuid, parentGuid: parentGuid, value: value }, shape.asJson);
+    this.signalR.pubCommand("syncHandle", { guid: shape.myGuid, parentGuid: parentGuid, value: value }, shape.asJson);
     return this;
   }
 
@@ -246,7 +246,7 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("movedHandle", (cmd, data) => {
+      this.signalR.subCommand("syncHandle", (cmd, data) => {
         //foObject.jsonAlert(cmd);
         let { parentGuid, value } = cmd;
         LifecycleLock.protected(parentGuid, this, _ => {
