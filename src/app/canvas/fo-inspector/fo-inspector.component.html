@@ -4,9 +4,12 @@
 
     <div class="well" (click)="doClearEvents()">
       <div *ngFor="let event of lifecycleEvent;  let index=index; let odd=odd; let even=even;" class="row" [ngClass]="{ odd: odd, even: even }" >
-        <span class="col-sm-3">{{event.id}} - {{event.cmd}}</span>
-        <span class="col-sm-3">{{event.myType}}</span>
-        <span class="col-sm-6">{{event.guid}} : {{event.value}}</span>
+        <span class="col-sm-1">{{event.id}}</span>
+        <span class="col-sm-1">{{event.cmd}}</span>
+        <span class="col-sm-1">{{event.myType}}</span>
+        <span class="col-sm-1">{{event.myName}}</span>
+        <span class="col-sm-2">{{event.simpleGuid}}</span>
+        <span class="col-sm-5">{{event.value | json}}</span>
       </div>
     </div>
 

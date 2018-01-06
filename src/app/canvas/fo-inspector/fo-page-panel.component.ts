@@ -11,7 +11,7 @@ import { foGlyph } from "../../foundry/foGlyph.model";
   styleUrls: ['./fo-page-panel.component.css']
 })
 export class foPagePanelComponent implements OnInit {
-
+  showDetails = false;
   @Input()
   public node: foGlyph;
 
@@ -25,6 +25,10 @@ export class foPagePanelComponent implements OnInit {
     if (spec) {
       this.commands = spec.commands;
     }
+  }
+
+  doToggleDetails() {
+    this.showDetails = !this.showDetails;
   }
 
   doCommand(cmd: string) {

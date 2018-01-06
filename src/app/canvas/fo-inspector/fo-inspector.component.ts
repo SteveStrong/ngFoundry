@@ -6,6 +6,7 @@ import { foPage } from "../../foundry/foPage.model";
 import { PubSub } from "../../foundry/foPubSub";
 
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../../foundry/foLifecycle";
+import { RuntimeType } from 'app/foundry/foRuntimeType';
 
 //https://valor-software.com/ngx-bootstrap/#/tabs
 
@@ -51,7 +52,7 @@ export class foInspectorComponent implements OnInit {
   }
 
   doRefreshRuntimeTypes() {
-    Knowcycle.primitive()
+    Knowcycle.primitive(RuntimeType)
   }
 
   doRefreshStencil() {

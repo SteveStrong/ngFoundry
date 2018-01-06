@@ -22,13 +22,12 @@ import { foPage } from "../foundry/foPage.model";
 import { Back } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
+import { foHandle } from 'app/foundry/foHandle';
 
 @Injectable()
 export class SharingService {
 
   private _page: foPage;
-
-
 
   constructor(
     private signalR: SignalRService,
@@ -105,13 +104,24 @@ export class SharingService {
     return this;
   }
 
-  public moved(shape: foGlyph) {
-    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, shape.getLocation());
+  public dropped(shape: foGlyph) {
+    this.signalR.pubCommand("dropShape", { guid: shape.myGuid }, shape.getLocation());
     return this;
   }
 
-  public easeTo(shape: foGlyph) {
-    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, shape.getLocation());
+  public moved(shape: foGlyph, value?: any) {
+    this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, value ? value : shape.getLocation());
+    return this;
+  }
+
+  public handle(shape: foGlyph, value?: any) {
+    let parentGuid = shape.myParent().myGuid;
+    this.signalR.pubCommand("syncHandle", { guid: shape.myGuid, parentGuid: parentGuid, value: value }, shape.asJson);
+    return this;
+  }
+
+  public easeTo(shape: foGlyph, value?: any) {
+    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, value ? value : shape.getLocation());
   }
 
   public easeTween(shape: foGlyph, value?: any) {
@@ -126,6 +136,18 @@ export class SharingService {
 
   public defined(know: foObject) {
     this.signalR.pubCommand("syncKnow", { guid: know.myGuid, type: know.myType }, know.asJson);
+    return this;
+  }
+
+  public command(know: foObject, value: any) {
+    this.signalR.pubCommand("syncCommand", { guid: know.myGuid, method: value }, know.asJson);
+    return this;
+  }
+
+  public run(know: foObject, value: any) {
+    let action = value.action;
+    let params = value.params;
+    this.signalR.pubCommand("syncRun", { guid: know.myGuid, action: action }, params);
     return this;
   }
 
@@ -146,19 +168,19 @@ export class SharingService {
     return this;
   }
 
-  public callMethod(cmd: string, target: foObject) {
-    this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
-    return this;
-  }
+  // public callMethod(cmd: string, target: foObject) {
+  //   this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
+  //   return this;
+  // }
 
-  public broadcast(cmd: string, data: any) {
-    this.signalR.pubCommand("callMethod", { func: cmd }, data);
-    return this;
-  }
+  // public broadcast(cmd: string, data: any) {
+  //   this.signalR.pubCommand("callMethod", { func: cmd }, data);
+  //   return this;
+  // }
 
 
   //------------------------------------------------
-  public startSharing(page: foPage, next?:()=>{}) {
+  public startSharing(page: foPage, next?: () => {}) {
 
     this._page = page;
 
@@ -166,15 +188,22 @@ export class SharingService {
 
       function forceParent(shape: foGlyph) {
         let parent = shape.myParent && shape.myParent();
-        if (!parent) {
-          shape.reParent(this._page)
-        }
+        if (!parent) shape.reParent(this._page);
       }
+
+      this.signalR.subCommand("dropShape", (cmd, data) => {
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          this._page.found(cmd.guid, shape => {
+            shape.dropAt(data.x, data.y, data.angle);
+            //forceParent(shape);
+          });
+        });
+      });
 
       this.signalR.subCommand("moveShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this._page.found(cmd.guid, shape => {
-            shape.drop(data.x, data.y, data.angle);
+            shape.move(data.x, data.y, data.angle);
             //forceParent(shape);
           });
         });
@@ -213,6 +242,17 @@ export class SharingService {
         //foObject.jsonAlert(data);
         KnowcycleLock.protected(cmd.guid, this, _ => {
           Stencil.hydrate(data);
+        });
+
+      });
+
+      this.signalR.subCommand("syncHandle", (cmd, data) => {
+        //foObject.jsonAlert(cmd);
+        let { parentGuid, value } = cmd;
+        LifecycleLock.protected(parentGuid, this, _ => {
+          this._page.found(parentGuid,
+            (item) => { item.moveHandle(data, value) }
+          );
         });
 
       });
@@ -270,21 +310,32 @@ export class SharingService {
             item.easeTween(to, time, Back[ease]);
           });
         });
-  
+
       });
-  
-      this.signalR.subCommand("callMethod", (cmd, data) => {
-        let func = cmd.func;
-        func && this[func](data);
+
+      this.signalR.subCommand("syncCommand", (cmd, data) => {
+        let method = cmd.method;
+        method && this._page[method](data);
       });
-  
-  
+
+      this.signalR.subCommand("syncRun", (cmd, value) => {
+        // foObject.jsonAlert(value);
+        let self = this;
+        this._page.found(cmd.guid, item => {
+          let action = cmd.action;
+          LifecycleLock.protected(cmd.guid, self, _ => {
+            item[action](value);
+          });
+        });
+      });
+
+
       this.signalR.subCommand("syncGlue", (cmd, data) => {
         //foObject.jsonAlert(data);
         this._page.found(cmd.sourceGuid, (source) => {
           this._page.found(cmd.targetGuid, (target) => {
             let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
-            (<foShape2D>target).drop();
+            (<foShape2D>target).dropAt();
           });
         });
       });

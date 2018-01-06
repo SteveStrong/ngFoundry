@@ -255,7 +255,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .1,
       width: 100,
       height: 200,
-    }).drop(300, 300).addAsSubcomponent(this)
+    }).dropAt(300, 300).addAsSubcomponent(this)
       .then(item => {
         item.doStart();
       });
@@ -270,8 +270,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
     let shape = <foGlyph>def.newInstance();
-    
-    shape.drop(500, 500).addAsSubcomponent(this)
+
+    shape.dropAt(500, 500).addAsSubcomponent(this)
       .then(item => {
         item.doStart();
       });
@@ -315,7 +315,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     let boundry = Stencil.find<foShape2D>('boundry::boundry');
 
-    let box = boundry.newInstance().drop(this.centerX, this.centerY).addAsSubcomponent(this);
+    let box = boundry.newInstance().dropAt(this.centerX, this.centerY).addAsSubcomponent(this);
 
 
     for (var i = 0; i < 3; i++) {
@@ -362,7 +362,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
         //created forces a broadast of latest state
         let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
-        picture.created().easeTween(place, 2.5);
+        picture.easeTween(place, 2.5);
       })
     }
 
@@ -374,8 +374,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       height: 80,
       imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
       angle: Tools.randomInt(-30, 30)
-    }).created().drop(330, 330).addAsSubcomponent(this);
- 
+    }).LifecycleCreated().dropAt(330, 330).addAsSubcomponent(this);
+
 
     let size = {
       width: 200,
@@ -407,14 +407,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let body = block.newInstance({
         width: 10 + i * 10,
         height: 10 + i * 10,
-      }).drop(100, 100).addAsSubcomponent(this);
+      }).dropAt(100, 100).addAsSubcomponent(this);
     }
 
     for (var i = 0; i < 5; i++) {
       let body = text.newInstance({
         width: 10 + i * 10,
         fontSize: 10 + i * 10,
-      }).drop(100, 300).addAsSubcomponent(this);
+      }).dropAt(100, 300).addAsSubcomponent(this);
     }
 
   }
@@ -464,7 +464,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       let frame = body.newInstance({
         context: data.categories
-      }).drop(100, 200).addAsSubcomponent(this);
+      }).dropAt(100, 200).addAsSubcomponent(this);
 
       //give this a chance to render so sizes are right for text
       setTimeout(() => {
@@ -532,7 +532,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let shape = textBlock.newInstance({
         text: 'Hello ' + item,
         fontSize: size,
-      }).drop(350, y).addAsSubcomponent(this);
+      }).dropAt(350, y).addAsSubcomponent(this);
       y += 50;
 
       objects.push(shape)
@@ -617,7 +617,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape = RuntimeType.create(TwoByTwo, {
       color: 'pink',
       myName: "main shape"
-    }).drop(200, 200).addAsSubcomponent(this);
+    }).dropAt(200, 200).addAsSubcomponent(this);
   }
 
 
@@ -632,14 +632,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     RuntimeType.define(localTwoByFour);
 
-    let spec = {
-      color: 'green',
-      angle: 45
-    }
-
     if (!properties) {
-      let shape = RuntimeType.create(localTwoByFour, spec).drop(200, 200).addAsSubcomponent(this);
-      this.sharing.callMethod('doAddTwoByFour', shape);
+      RuntimeType.create(localTwoByFour, {
+        color: 'green',
+        angle: 45
+      }).dropAt(200, 200).addAsSubcomponent(this)
+        .LifecycleCommand('doAddTwoByFour');
     } else {
       RuntimeType.create(localTwoByFour, properties).addAsSubcomponent(this);
     }
@@ -657,14 +655,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         //this.height = angle;
         this.angle = angle;
       }
-    }).drop(500, 500);
+    }).dropAt(500, 500);
     this.addSubcomponent(shape);
   }
 
   doAddTenByTen() {
     let shape = RuntimeType.create(TenByTen, {
       color: 'gray'
-    }).drop(600, 300);
+    }).dropAt(600, 300);
 
     this.addSubcomponent(shape);
   }
@@ -676,7 +674,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .5,
       color: 'gray',
       angle: 10
-    }).drop(600, 300).addAsSubcomponent(this);
+    }).dropAt(600, 300).addAsSubcomponent(this);
 
     let subShape = RuntimeType.create(TwoByFour, {
       myGuid: properties && properties.subShape,
@@ -703,13 +701,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    !properties && this.sharing.broadcast('doAddStack', {
-      shape: shape.myGuid,
-      subShape: subShape.myGuid
-    });
+    // !properties && this.sharing.broadcast('doAddStack', {
+    //   shape: shape.myGuid,
+    //   subShape: subShape.myGuid
+    // });
   }
 
-  doIt( ) {
+  doIt() {
     this.doShape1D();
   }
   doShape1D() {
@@ -730,14 +728,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       cY: (y2 + y1) / 2,
     }
 
-    RuntimeType.create<foShape2D>(foShape2D, {
-      opacity: .5,
-      color: 'gray',
+    // RuntimeType.create<foShape2D>(foShape2D, {
+    //   opacity: .5,
+    //   color: 'gray',
 
-      angle: spec.angle,
-      width: spec.length,
-      height: height,
-    }).drop(600, 400).addAsSubcomponent(this);
+    //   angle: spec.angle,
+    //   width: spec.length,
+    //   height: height,
+    // }).LifecycleCreated().dropAt(600, 400).addAsSubcomponent(this);
 
     RuntimeType.create<Line>(Line, {
       opacity: 1,
@@ -748,14 +746,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       finishX: x2,
       finishY: y2,
       height: height,
-    }).drop(600, 300).addAsSubcomponent(this);
+    }).dropAt(600, 300).addAsSubcomponent(this);
 
-    new foText2D({
-      color: 'black',
-      background: 'yellow',
-      context: 'Drop at 400,400 && 400,300',
-      fontSize: 30,
-    }).drop(600, 500).addAsSubcomponent(this);
+    // new foText2D({
+    //   color: 'black',
+    //   background: 'yellow',
+    //   context: 'Drop at 400,400 && 400,300',
+    //   fontSize: 30,
+    // }).LifecycleCreated().dropAt(600, 500).addAsSubcomponent(this);
+  
   }
 
   doShapeGlue() {
@@ -763,12 +762,12 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'cyan',
       opacity: .8,
 
-    }).drop(100, 300, 45).addAsSubcomponent(this);
+    }).dropAt(100, 300, 45).addAsSubcomponent(this);
 
     let shape2 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
-    }).drop(300, 400).addAsSubcomponent(this);
+    }).dropAt(300, 400).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
@@ -784,7 +783,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       startY: pt1.y,
       finishX: pt2.x,
       finishY: pt2.y,
-    }).drop(600, 350).addAsSubcomponent(this);
+    }).dropAt(600, 350).addAsSubcomponent(this);
 
 
     let wire = RuntimeType.create<Line>(Line, {
@@ -808,7 +807,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .5,
       height: 20,
       color: 'black',
-    }).drop(400, 400).addAsSubcomponent(this);
+    }).dropAt(400, 400).addAsSubcomponent(this);
 
     let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
@@ -818,8 +817,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     wire.createGlue('begin', shape1);
     wire.createGlue('end', shape2);
 
-    shape1.drop(100, 200, 30);
-    shape2.drop(400, 250);
+    shape1.dropAt(100, 200, 30);
+    shape2.dropAt(400, 250);
 
     wire.glue.forEach(glue => {
       this.sharing.syncGlue(glue);
@@ -843,7 +842,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       color: 'blue',
       width: 150,
       height: 100,
-    }).drop(300, 300, 0).then(item => {
+    }).dropAt(300, 300, 0).then(item => {
       item.doAnimation = item.Animation;
       item.isSelected = true;
     }).addAsSubcomponent(this);
@@ -861,7 +860,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       myName: 'root  dRectangle',
       width: 300,
       height: 100
-    }).drop(150, 150, 0);
+    }).dropAt(150, 150, 0);
 
     this.addSubcomponent(shape);
 
@@ -870,7 +869,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       myName: 'blue  child',
       width: 50,
       height: 100
-    }).addAsSubcomponent(shape).drop(100, 50);
+    }).addAsSubcomponent(shape).dropAt(100, 50);
     // //this.addSubcomponent(subShape);
 
     subShape.doAnimation = function () {

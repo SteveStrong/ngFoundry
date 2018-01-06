@@ -25,12 +25,12 @@ export class foGlyph extends foNode implements iShape {
 
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) { 
-        if ( this._isSelected != value ) {
+    set isSelected(value: boolean) {
+        if (this._isSelected != value) {
             this._isSelected = value;
             Lifecycle.selected(this, value);
         };
-       
+
     }
 
     protected _visible: boolean = true;
@@ -169,23 +169,44 @@ export class foGlyph extends foNode implements iShape {
         return this;
     }
 
-    public created() {
+    public LifecycleCreated() {
         Lifecycle.created(this)
         return this;
     }
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        let moved = false;
-        if (!Number.isNaN(x) && this.x != x) {
-            this.x = x;
-            moved = true;
-        }
-        if (!Number.isNaN(y) && this.y != y) {
-            this.y = y;
-            moved = true;
-        }
-        moved && Lifecycle.moved(this);
+
+    public LifecycleDestroyed() {
+        Lifecycle.destroyed(this)
         return this;
     }
+
+    public LifecycleCommand(method: string) {
+        Lifecycle.command(this, method);
+        return this;
+    }
+
+    public LifecycleAction(method: string, params?: any) {
+        Lifecycle.action(this, method, params)
+        return this;
+    }
+
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
+        let changed = false;
+        if (!Number.isNaN(x) && this.x != x) {
+            changed = true;
+            this.x = x;
+        };
+
+        if (!Number.isNaN(y) && this.y != y) {
+            changed = true;
+            this.y = y;
+        };
+
+        return changed;
+    }
+
+
+
+
 
     destroyed(obj: foNode) {
         this.removeSubcomponent(obj);
@@ -215,12 +236,12 @@ export class foGlyph extends foNode implements iShape {
             x: x,
             y: y,
             ease: ease
-        // }).eventCallback("onUpdate", () => {
-        //     this.drop();
+            // }).eventCallback("onUpdate", () => {
+            //     this.drop();
         }).eventCallback("onComplete", () => {
             this.initialize(x, y);
         });
-       
+
         return this;
     }
 
@@ -231,12 +252,12 @@ export class foGlyph extends foNode implements iShape {
             y: y,
             ease: ease
         }).eventCallback("onUpdate", () => {
-            this.drop();
+            this.move();
         }).eventCallback("onComplete", () => {
-            this.drop(x, y);
-            Lifecycle.easeTo(this);
+            this.dropAt(x, y);
+            Lifecycle.easeTo(this, this.getLocation());
         });
-       
+
         return this;
     }
 
@@ -244,20 +265,34 @@ export class foGlyph extends foNode implements iShape {
         let from = Tools.union(to, { ease: Back[ease] });
 
         TweenLite.to(this, time, from).eventCallback("onComplete", () => this.override(to));
-        Lifecycle.easeTween(this, {time, ease, to});
+        Lifecycle.easeTween(this, { time, ease, to });
+        return this;
+    }
+
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (this.didLocationChange(x, y, angle)) {
+            Lifecycle.dropped(this, this.getLocation());
+        }
+        return this;
+    }
+
+    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (this.didLocationChange(x, y, angle)) {
+            Lifecycle.moved(this, this.getLocation());
+        }
         return this;
     }
 
     public moveTo(loc: iPoint, offset?: iPoint) {
         let x = loc.x + (offset ? offset.x : 0);
         let y = loc.y + (offset ? offset.y : 0);
-        return this.drop(x, y);
+        return this.move(x, y);
     }
 
     public moveBy(loc: iPoint, offset?: iPoint) {
         let x = this.x + loc.x + (offset ? offset.x : 0);
         let y = this.y + loc.y + (offset ? offset.y : 0);
-        return this.drop(x, y);
+        return this.move(x, y);
     }
 
     updateContext(ctx: CanvasRenderingContext2D) {
@@ -590,6 +625,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public moveHandle(handle: foHandle, loc: iPoint) {
+        Lifecycle.handle(handle, loc);
     }
 
 
@@ -648,7 +684,7 @@ export class foGlyph extends foNode implements iShape {
             }
         });
 
-        Lifecycle.layout(this, {method: 'layoutSubcomponentsVertical', resize, space})
+        Lifecycle.layout(this, { method: 'layoutSubcomponentsVertical', resize, space })
         return this;
     }
 
@@ -680,7 +716,7 @@ export class foGlyph extends foNode implements iShape {
             }
         });
 
-        Lifecycle.layout(this, {method: 'layoutSubcomponentsHorizontal', resize, space})
+        Lifecycle.layout(this, { method: 'layoutSubcomponentsHorizontal', resize, space })
         return this;
     }
 
@@ -702,7 +738,7 @@ export class foGlyph extends foNode implements iShape {
                 self.height = Math.max(self.height, item.height);
             }
         });
-        Lifecycle.layout(this, {method: 'layoutMarginRight', resize, space})
+        Lifecycle.layout(this, { method: 'layoutMarginRight', resize, space })
         return this;
     }
 
@@ -724,7 +760,7 @@ export class foGlyph extends foNode implements iShape {
                 self.height = loc.y;
             }
         });
-        Lifecycle.layout(this, {method: 'layoutMarginTop', resize, space})
+        Lifecycle.layout(this, { method: 'layoutMarginTop', resize, space })
         return this;
     }
 }

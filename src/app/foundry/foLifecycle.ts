@@ -23,11 +23,18 @@ export class foLifecycleEvent {
     get guid() {
         return this.object.myGuid;
     }
+    get simpleGuid() {
+        return this.object.myGuid.slice(-8);
+    }
     get myGuid() {
         return this.object.myGuid;
     }
     get myType() {
         return this.object.myType;
+    }
+
+    get myName() {
+        return this.object.myName;
     }
 
     constructor(cmd: string, obj: foObject, count: number = 0, value?: any) {
@@ -108,8 +115,8 @@ export class foLifecycle {
         });
     }
 
-    primitive(name?: string) {
-        this.emit.next(new foLifecycleEvent('primitive', new foObject({myName:name}), counter++))
+    primitive(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('primitive', obj, counter++, value))
         return this;
     }
 
@@ -138,6 +145,19 @@ export class foLifecycle {
         return this;
     }
 
+    action(obj: foObject, action: string, params?: any) {
+        this.emit.next(new foLifecycleEvent('run', obj, counter++, {
+            action: action,
+            params: params
+        }));
+        return this;
+    }
+
+    command(obj: foObject, method: string) {
+        this.emit.next(new foLifecycleEvent('command', obj, counter++, method));
+        return this;
+    }
+
     selected(obj: foObject, value: any) {
         this.emit.next(new foLifecycleEvent('selected', obj, counter++, value))
         return this;
@@ -158,13 +178,23 @@ export class foLifecycle {
         return this;
     }
 
-    moved(obj: foObject) {
-        this.debounced.next(new foLifecycleEvent('moved', obj, counter++))
+    dropped(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('dropped', obj, counter++, value))
         return this;
     }
 
-    easeTo(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('easeTo', obj, counter++))
+    handle(obj: foObject, value?: any) {
+        this.debounced.next(new foLifecycleEvent('handle', obj, counter++, value))
+        return this;
+    }
+
+    moved(obj: foObject, value?: any) {
+        this.debounced.next(new foLifecycleEvent('moved', obj, counter++, value))
+        return this;
+    }
+
+    easeTo(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('easeTo', obj, counter++, value))
         return this;
     }
 

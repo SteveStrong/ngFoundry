@@ -13,6 +13,7 @@ import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
 import { foGlyph } from './foGlyph.model';
+import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
@@ -66,16 +67,13 @@ export class foHandle extends foNode {
     }
 
 
-    public drop(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
         return this;
     }
 
     public moveTo(loc: iPoint, offset?: iPoint) {
-        //let x = loc.x + (offset ? offset.x : 0);
-        //let y = loc.y + (offset ? offset.y : 0);
-
         this.myParentGlyph().moveHandle(this, loc);
         return this;
     }
