@@ -50,8 +50,11 @@ export class foShape1D extends foShape2D {
 
 
     get width(): number {
-        let { angle, length } = this.angleDistance();
-        return this._width || length;
+        if ( !this._width ) {
+            let { length } = this.angleDistance();
+            this._width = length;
+        }
+        return this._width;
     }
     set width(value: number) { this._width = value; }
 
@@ -93,6 +96,7 @@ export class foShape1D extends foShape2D {
         let { x: cX, y: cY } = this.center();
         this.x = cX;
         this.y = cY;
+        this.width = 0;
     }
 
     private setFinish(point: iPoint) {
@@ -101,6 +105,7 @@ export class foShape1D extends foShape2D {
         let { x: cX, y: cY } = this.center();
         this.x = cX;
         this.y = cY;
+        this.width = 0;
     }
 
     public notifyOnChange(source: any, channel: string, ...args: any[]) {
@@ -155,6 +160,7 @@ export class foShape1D extends foShape2D {
         this.startY = start.y;
         this.finishX = finish.x;
         this.finishY = finish.y;
+        this.width = 0;
         return this;
     }
 
