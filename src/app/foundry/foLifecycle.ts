@@ -202,6 +202,8 @@ export class foLifecycle {
         this.emit.next(new foLifecycleEvent('easeTween', obj, counter++, value))
         return this;
     }
+
+
 }
 
 export let Lifecycle: foLifecycle = new foLifecycle(300);

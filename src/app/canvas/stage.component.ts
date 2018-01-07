@@ -508,6 +508,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
+
+
   doText() {
     let textBlock = Stencil.define<foText2D>('text::block', foText2D, {
       color: 'black',
@@ -538,20 +540,20 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       objects.push(shape)
       //foObject.jsonAlert(shape.asJson);
 
-      // if (!last) {
-      //   last = shape;
-      // } else {
-      //   let wire = wireConcept.newInstance().addAsSubcomponent(this);
+      if (!last) {
+        last = shape;
+      } else {
+        let wire = wireConcept.newInstance().addAsSubcomponent(this);
 
-      //   this.sharing.syncGlue(wire.glueStart(last));
-      //   this.sharing.syncGlue(wire.glueFinish(shape));
-      //   last = shape;
-      // }
+        wire.glueStart(last);
+        wire.glueFinish(shape);
+        last = shape;
+      }
     })
 
 
     // objects.forEach(shape => {
-    //   shape.easeTo(shape.x + Tools.randomInt(-100, 100));
+    //   shape.easeTo(shape.x + Tools.randomInt(-100, 300), shape.y);
     // })
 
 
@@ -707,9 +709,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     // });
   }
 
-  doIt() {
-    this.doShape1D();
-  }
+
   doShape1D() {
 
     let height = 60;
@@ -757,6 +757,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   
   }
 
+  doIt() {
+    this.doShapeGlue();
+  }
+
   doShapeGlue() {
     let shape1 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
@@ -797,8 +801,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addAsSubcomponent(this);
 
 
-    this.sharing.syncGlue(wire.createGlue('begin', shape1));
-    this.sharing.syncGlue(wire.createGlue('end', shape2));
+    wire.createGlue('begin', shape1);
+    wire.createGlue('end', shape2);
   }
 
   doObjGlue() {
@@ -819,11 +823,6 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     shape1.dropAt(100, 200, 30);
     shape2.dropAt(400, 250);
-
-    wire.glue.forEach(glue => {
-      this.sharing.syncGlue(glue);
-    })
-
   }
 
   doObjRect() {

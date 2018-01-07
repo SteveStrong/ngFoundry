@@ -163,22 +163,6 @@ export class SharingService {
   }
 
 
-  public syncGlue(target: foObject) {
-    this.signalR.pubCommand("syncGlue", target.asJson);
-    return this;
-  }
-
-  // public callMethod(cmd: string, target: foObject) {
-  //   this.signalR.pubCommand("callMethod", { func: cmd }, target.asJson);
-  //   return this;
-  // }
-
-  // public broadcast(cmd: string, data: any) {
-  //   this.signalR.pubCommand("callMethod", { func: cmd }, data);
-  //   return this;
-  // }
-
-
   //------------------------------------------------
   public startSharing(page: foPage, next?: () => {}) {
 
