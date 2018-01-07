@@ -5,6 +5,7 @@ import { ModelRef } from './foInterface'
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
 import { foShape2D } from './foShape2D.model';
+import { foHandle } from './foHandle';
 import { Lifecycle } from './foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
@@ -13,15 +14,21 @@ export class foGlue extends foNode {
     myTarget: ModelRef<foShape2D>;
     mySource: ModelRef<foShape2D>;
 
-    protected _targetHandle: string;
-    get targetHandle(): string { return this._targetHandle; }
-    set targetHandle(value: string) {
+    protected _targetHandle: foHandle;
+    get targetHandle(): foHandle { return this._targetHandle; }
+    set targetHandle(value: foHandle) {
         this._targetHandle = value;
     }
 
-    get sourceHandle(): string { return this.myName; }
-    set sourceHandle(value: string) {
+    get sourceName(): string { return this.myName; }
+    set sourceName(value: string) {
         this.myName = value;
+    }
+
+    protected _targetName: string;
+    get targetName(): string { return this._targetName; }
+    set targetName(value: string) {
+        this._targetName = value;
     }
 
 
@@ -32,7 +39,8 @@ export class foGlue extends foNode {
     glueTo(target: foShape2D, handleName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape2D>this.myParent(); };
-        this.targetHandle = handleName; // Tools.isString(handle) ? target.getConnectionPoint(<string>handle) :  handle;
+        this.targetName = handleName; 
+        this.targetHandle = target.getConnectionPoint(handleName);
         target.addGlue(this);
         Lifecycle.glued(this);
         return this;
@@ -50,10 +58,10 @@ export class foGlue extends foNode {
         return Tools.mixin(super.toJson(), {
             guid: this.myGuid,
             myType: this.myType,
-            sourceGuid: this.mySource() && this.mySource().myGuid,
-            sourceHandle: this.sourceHandle,
-            targetGuid: this.myTarget() && this.myTarget().myGuid,
-            targetHandle: this.targetHandle
+            sourceGuid: this.mySource && this.mySource() && this.mySource().myGuid,
+            sourceName: this.sourceName,
+            targetGuid: this.myTarget && this.myTarget() && this.myTarget().myGuid,
+            targetName: this.targetName
         });
     }
 
