@@ -154,13 +154,14 @@ export class foShape2D extends foGlyph {
     }
 
     public dissolveGlue(name: string) {
-        let glue = this.glue.findMember(name);
-        glue && glue.unglue();
-        return glue;
+        if (this._glue) {
+            let glue = this.glue.findMember(name);
+            glue && glue.unglue();
+            return glue;
+        }
     }
 
     public addGlue(glue: foGlue) {
-        foObject.jsonAlert(this, 'adding glue')
         this.glue.addMember(glue);
         return glue;
     }

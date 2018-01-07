@@ -817,7 +817,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addAsSubcomponent(this);
 
 
-    wire.glueStartTo(shape1);
+    wire.glueStartTo(shape1, 'left');
    // wire.glueFinishTo(shape2);
   }
 
