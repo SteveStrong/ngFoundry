@@ -611,7 +611,7 @@ export class foGlyph extends foNode implements iShape {
             { x: 0, y: this.height, myName: "0:H" },
         ];
 
-        return this.generateHandles(spec, []);
+        return this.generateHandles(spec);
     }
 
     getHandle(name:string): foHandle { 

@@ -22,20 +22,20 @@ export class foObject implements iObject {
         snd.play();
     }
 
-    static jsonAlert(obj) {
+    static jsonAlert(obj: any, title?: string) {
         try {
-            alert(JSON.stringify(obj, undefined, 3));
-        } catch ( ex) {
+            alert(JSON.stringify(obj, undefined, 3) + title);
+        } catch (ex) {
+            alert(JSON.stringify(obj.asJson, undefined, 3) + title);
             alert(ex);
         }
-      
     }
 
 
 
     //https://www.npmjs.com/package/reflect-metadata
     //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
-    
+
     get myType(): string {
         let comp: any = this.constructor;
         return comp.name;
@@ -100,12 +100,12 @@ export class foObject implements iObject {
     }
 
     public override(properties?: any) {
-        properties && Tools.overrideComputed(this,properties);
+        properties && Tools.overrideComputed(this, properties);
         return this;
     }
 
     public extend(properties?: any) {
-        properties && Tools.extendComputed(this,properties);
+        properties && Tools.extendComputed(this, properties);
         return this;
     }
 
@@ -140,7 +140,7 @@ export class foObject implements iObject {
     }
 
     get asJson() { return this.toJson(); }
-    protected toJson():any {
+    protected toJson(): any {
         return {
             myName: this.myName,
             myGuid: this.myGuid,

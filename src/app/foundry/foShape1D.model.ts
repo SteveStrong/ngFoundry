@@ -93,6 +93,7 @@ export class foShape1D extends foShape2D {
             startY: this.startY,
             finishX: this.finishX,
             finishY: this.finishY,
+            glue: this._glue && Tools.asArray(this.glue.asJson)
         });
     }
 
@@ -130,11 +131,15 @@ export class foShape1D extends foShape2D {
     }
 
     glueStartTo(target: foShape2D, handleName?: string) {
-        return this.establishGlue(shape1DEndNamed.start, target, handleName);
+        let glue =  this.establishGlue(shape1DEndNamed.start, target, handleName);
+        glue.doTargetMoveProxy = this.setStart.bind(this);
+        return glue;
     }
 
     glueFinishTo(target: foShape2D, handleName?: string) {
-        return this.establishGlue(shape1DEndNamed.finish, target, handleName);
+        let glue = this.establishGlue(shape1DEndNamed.finish, target, handleName);
+        glue.doTargetMoveProxy = this.setFinish.bind(this);
+        return glue;
     }
 
     unglueStart() {

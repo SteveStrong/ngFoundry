@@ -19,7 +19,8 @@ export interface iObject {
     asReference(): string;
     getChildAt(i: number): iObject;
     override(properties?: any);
-    hasAncestor(member?: iObject):boolean;
+    hasAncestor(member?: iObject): boolean;
+    asJson: string;
 }
 
 export interface iNode {

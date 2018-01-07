@@ -1,16 +1,13 @@
 
-import { Tools } from './foTools';
-import { iObject, Action, ModelRef } from './foInterface'
+
+import { Action } from './foInterface'
 
 import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foDictionary } from './foDictionary.model';
-import { foNode } from './foNode.model';
-import { foShape2D } from './foShape2D.model';
+
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { debounce, debounceTime, } from 'rxjs/operators';
-import { StringifyOptions } from 'querystring';
+import { debounceTime, } from 'rxjs/operators';
+
 
 let counter = 0;
 
@@ -168,8 +165,8 @@ export class foLifecycle {
         return this;
     }
 
-    glued(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('glued', obj, counter++))
+    glued(obj: foObject, value: any) {
+        this.emit.next(new foLifecycleEvent('glued', obj, counter++, value))
         return this;
     }
 

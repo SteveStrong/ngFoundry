@@ -13,7 +13,6 @@ import { foNode } from '../foundry/foNode.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
 import { Lifecycle } from './foLifecycle';
-import { BroadcastChange } from './foChange';
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -26,7 +25,12 @@ export class foShape2D extends foGlyph {
         this._angle = value;
     }
 
-    get glue(): foCollection<foGlue> { return this._glue || new foCollection<foGlue>(); }
+    get glue(): foCollection<foGlue> {
+        if (!this._glue) {
+            this._glue = new foCollection<foGlue>()
+        }
+        return this._glue;
+    }
     protected _glue: foCollection<foGlue>;
 
     get connectionPoints(): foCollection<foConnectionPoint> { return this._connectionPoints || this.createConnectionPoints(); }
@@ -43,7 +47,8 @@ export class foShape2D extends foGlyph {
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
-            angle: this.angle
+            angle: this.angle,
+            glue: this._glue && Tools.asArray(this.glue.asJson)
         });
     }
 
@@ -64,7 +69,7 @@ export class foShape2D extends foGlyph {
         if (this.didLocationChange(x, y, angle)) {
             let point = this.getLocation();
             this._glue && this.glue.forEach(item => {
-                BroadcastChange.dropped(item, point);
+                item.targetMoved(point);
             })
             Lifecycle.dropped(this, point);
         }
@@ -75,7 +80,7 @@ export class foShape2D extends foGlyph {
         if (this.didLocationChange(x, y, angle)) {
             let point = this.getLocation();
             this._glue && this.glue.forEach(item => {
-                BroadcastChange.moved(item, point);
+                item.targetMoved(point);
             })
             Lifecycle.moved(this, point);
         }
@@ -155,6 +160,7 @@ export class foShape2D extends foGlyph {
     }
 
     public addGlue(glue: foGlue) {
+        foObject.jsonAlert(this, 'adding glue')
         this.glue.addMember(glue);
         return glue;
     }
@@ -167,20 +173,24 @@ export class foShape2D extends foGlyph {
         return glue;
     }
 
-    protected generateConnectionPoints(spec: any): foCollection<foConnectionPoint> {
+    protected generateConnectionPoints(spec: Array<any>, proxy?: Array<any>): foCollection<foConnectionPoint> {
 
+        let i = 0;
         if (!this._connectionPoints) {
             this._connectionPoints = new foCollection<foConnectionPoint>()
             spec.forEach(item => {
                 let type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint);
                 let point = new type(item, undefined, this);
+                point.doMoveProxy = proxy && proxy[i];
                 this._connectionPoints.addMember(point);
+                i++;
             });
         } else {
-            let i = 0;
             spec.forEach(item => {
-                let point = this._connectionPoints.getChildAt(i++)
+                let point = this._connectionPoints.getChildAt(i)
                 point.override(item);
+                point.doMoveProxy = proxy && proxy[i];
+                i++;
             });
         }
         return this._connectionPoints;
