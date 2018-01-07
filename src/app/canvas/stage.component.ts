@@ -782,28 +782,28 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     }).dropAt(100, 300, 45).addAsSubcomponent(this);
     let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
-    let pt2 = pt1.add(200, 200);
+    //let pt2 = pt1.clone().add(200, 200);
 
-    // let shape2 = RuntimeType.create(TwoByOne, {
-    //   color: 'blue',
-    //   opacity: .8,
-    // }).dropAt(300, 400).addAsSubcomponent(this);
+    let shape2 = RuntimeType.create(TwoByOne, {
+      color: 'blue',
+      opacity: .8,
+    }).dropAt(300, 400).addAsSubcomponent(this);
 
-    // shape2.pinX = (): number => { return 0.0; }
-    // let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+    shape2.pinX = (): number => { return 0.0; }
+    let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
 
     //let pc = pt1.midpoint(pt2);
 
 
-    // RuntimeType.create<Line>(Line, {
-    //   opacity: .5,
-    //   color: 'gray',
-    //   height: 30,
-    //   startX: pt1.x,
-    //   startY: pt1.y,
-    //   finishX: pt2.x,
-    //   finishY: pt2.y,
-    // }).dropAt(600, 350).addAsSubcomponent(this);
+    RuntimeType.create<Line>(Line, {
+      opacity: .5,
+      color: 'gray',
+      height: 30,
+      startX: pt1.x,
+      startY: pt1.y,
+      finishX: pt2.x,
+      finishY: pt2.y,
+    }).dropAt(600, 350).addAsSubcomponent(this);
 
 
     let wire = RuntimeType.create<Line>(Line, {
@@ -818,7 +818,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
     wire.glueStartTo(shape1, 'left');
-   // wire.glueFinishTo(shape2);
+    wire.glueFinishTo(shape2, 'right');
   }
 
   doObjGlue() {
