@@ -165,13 +165,13 @@ export class foShape2D extends foGlyph {
         return glue;
     }
 
-    protected establishGlue(name: string, target: foShape2D, handleName?: string) {
+    public establishGlue(name: string, target: foShape2D, handleName?: string) {
         let glue = this.getGlue(name)
         glue.glueTo(target, handleName);
         return glue;
     }
 
-    protected dissolveGlue(name: string) {
+    public dissolveGlue(name: string) {
         let glue = this.glue.findMember(name);
         glue && glue.unglue();
         return glue;

@@ -1,8 +1,7 @@
 
-import { Tools } from '../foundry/foTools'
 import { PubSub } from "../foundry/foPubSub";
 import { cPoint, cFrame } from "../foundry/foGeometry";
-import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
+import { iPoint, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { foCollection } from '../foundry/foCollection.model'
@@ -10,7 +9,6 @@ import { foDictionary } from "../foundry/foDictionary.model";
 
 import { foNode } from '../foundry/foNode.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
-import { foConcept } from '../foundry/foConcept.model'
 import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph } from '../foundry/foGlyph.model'
@@ -78,12 +76,12 @@ export class foPage extends foShape2D {
     get centerY(): number { return this.height / 2; }
 
 
-    findItem(key: string, onMissing?: Action<foGlyph>, onFound?: Action<foGlyph>) {
-        return this._dictionary.findItem(key, onMissing, onFound);
+    findItem<T extends foGlyph>(key: string, onMissing?: Action<T>, onFound?: Action<T>): T {
+        return this._dictionary.findItem(key, onMissing, onFound) as T;
     }
 
-    found(key: string, onFound?: Action<foGlyph>, onMissing?: Action<foGlyph>) {
-        return this._dictionary.found(key, onFound, onMissing);
+    found<T extends foGlyph>(key: string, onFound?: Action<T>, onMissing?: Action<T>): T {
+        return this._dictionary.found(key, onFound, onMissing) as T;
     }
 
     getMatrix() {
@@ -200,7 +198,6 @@ export class foPage extends foShape2D {
         let shape: foGlyph = null;
         let shapeUnder: foGlyph = null;
         let hovershape: foGlyph = null;
-        let lastSelected: foGlyph = null;
         let offset: iPoint = null;
         let handles: foCollection<foHandle> = new foCollection<foHandle>()
         let grab: foHandle = null;
@@ -476,12 +473,12 @@ export class foPage extends foShape2D {
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 5;
 
-        let left = this.marginX - this.x;
-        let top = this.marginY - this.y;
-        let width = this.width / this.scaleX;
-        let height = this.height / this.scaleY;
-        let right = left + width;
-        let bottom = top + height;
+        //let left = this.marginX - this.x;
+        //let top = this.marginY - this.y;
+        //let width = this.width / this.scaleX;
+        //let height = this.height / this.scaleY;
+        //let right = left + width;
+        //let bottom = top + height;
 
         //draw vertical...
         ctx.rect(0, 0, this.width, this.height);
