@@ -6,20 +6,16 @@
   "apps": [
     {
       "root": "src",
-      "outDir": "dist",
+      "outDir": "dist/publicweb",
       "assets": [
         "assets",
         "favicon.ico",
         {
-          "glob": "index.js",
-          "input": "./server/",
+          "glob": "*.*",
+          "input": "../server/",
           "output": "./"
         },
-        {
-          "glob": "package.json",
-          "input": "./server/",
-          "output": "./"
-        }
+        "manifest.json"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -27,7 +23,7 @@
       "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig": "tsconfig.spec.json",
-      "prefix": "foundry",
+      "prefix": "fo",
       "styles": [
         "styles.css",
         "ng2-toastr.css"
@@ -36,6 +32,7 @@
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
+        "deploy": "environments/environment.deploy.ts",
         "prod": "environments/environment.prod.ts"
       }
     }
