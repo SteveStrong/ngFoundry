@@ -70,6 +70,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     private sharing: SharingService,
     private http: Http) {
     super();
+
+    this.myName = "Page 1"
   }
 
   doClear() {
@@ -559,6 +561,27 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
+  doConnector2D(){
+    let def = Stencil.define<foShape2D>('glue::shape', foShape2D, {
+      color: 'blue',
+      width: 200,
+      height: 150,
+    });
+    
+    let shape1 = def.newInstance().dropAt(300,200).addAsSubcomponent(this);
+    let shape2 = def.newInstance().dropAt(600,200).addAsSubcomponent(this);
+
+    def = Stencil.define<foShape2D>('glue::line', foShape1D, {
+      color: 'Red',
+      height: 15,
+    });
+
+    let wire = def.newInstance().addAsSubcomponent(this);
+    let right = shape1.getConnectionPoint('right');
+    let left = shape2.getConnectionPoint('left');
+
+  }
+
   doAddGlyph() {
     let shape = RuntimeType.create(foGlyph, {
       color: 'cyan',
@@ -754,7 +777,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   context: 'Drop at 400,400 && 400,300',
     //   fontSize: 30,
     // }).LifecycleCreated().dropAt(600, 500).addAsSubcomponent(this);
-  
+
   }
 
   doIt() {

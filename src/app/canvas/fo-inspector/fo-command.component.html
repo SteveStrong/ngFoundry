@@ -22,9 +22,11 @@
     <button (click)="stage.doObjGroup()" type="button" class="btn btn-info">Group</button>
   </accordion-group>
 
-  <accordion-group heading="Glue">
+  <accordion-group heading="Glue" [isOpen]=true>
     <button (click)="stage.doShape1D()" type="button" class="btn btn-success">Shape 1D</button>
+    <button (click)="stage.doConnector2D()" type="button" class="btn btn-info">Connector 2D</button>
 
+    
     <button (click)="stage.doShapeGlue()" type="button" class="btn btn-success">Glue 1D</button>
     <button (click)="stage.doObjGlue()" type="button" class="btn btn-warning">Glue 1D</button>
   </accordion-group>

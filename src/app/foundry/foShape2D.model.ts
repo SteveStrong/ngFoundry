@@ -7,6 +7,7 @@ import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foHandle } from '../foundry/foHandle'
 import { foGlue } from '../foundry/foGlue'
+import { foConnectionPoint } from '../foundry/foConnectionPoint'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 import { foConcept } from '../foundry/foConcept.model'
@@ -29,6 +30,9 @@ export class foShape2D extends foGlyph {
 
     get glue(): foCollection<foGlue> { return this._glue; }
     protected _glue: foCollection<foGlue>;
+
+    get connectionPoints(): foCollection<foConnectionPoint> { return this._connectionPoints || this.createConnectionPoints(); }
+    protected _connectionPoints: foCollection<foConnectionPoint>;
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
@@ -185,6 +189,60 @@ export class foShape2D extends foGlyph {
         return glue;
     }
 
+    protected generateConnectionPoints(spec: any): foCollection<foConnectionPoint> {
+
+        if (!this._connectionPoints) {
+            this._connectionPoints = new foCollection<foConnectionPoint>()
+            spec.forEach(item => {
+                let type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint);
+                let point = new type(item, undefined, this);
+                this._connectionPoints.addMember(point);
+            });
+        } else {
+            let i = 0;
+            spec.forEach(item => {
+                let point = this._connectionPoints.getChildAt(i++)
+                point.override(item);
+            });
+        }
+        return this._connectionPoints;
+    }
+
+    public createConnectionPoints(): foCollection<foConnectionPoint> {
+
+        let spec = [
+            { x: this.width/2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint) },
+            { x: this.width/2, y: this.height, myName: "bottom", angle:45 },
+            { x: 0, y: this.height/2, myName: "left" },
+            { x: this.width, y: this.height/2, myName: "right" },
+        ];
+
+        return this.generateConnectionPoints(spec);
+    }
+    
+    getConnectionPoint(name:string): foConnectionPoint {
+        if (!this._connectionPoints) return;
+        return this._connectionPoints.findMember(name); 
+     }
+
+    public findConnectionPoint(loc: cPoint, e): foConnectionPoint {
+        if (!this._connectionPoints) return;
+
+        for (var i: number = 0; i < this.connectionPoints.length; i++) {
+            let point: foConnectionPoint = this.connectionPoints.getChildAt(i);
+            if (point.hitTest(loc)) {
+                return point;
+            }
+        }
+    }
+
+
+    public drawConnectionPoints(ctx: CanvasRenderingContext2D) {
+        this.connectionPoints.forEach(item => {
+            item.render(ctx);
+        })
+    }
+
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
@@ -218,6 +276,7 @@ export class foShape2D extends foGlyph {
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawHandles(ctx);
+        this.drawConnectionPoints(ctx);
         this.drawPin(ctx);
     }
 

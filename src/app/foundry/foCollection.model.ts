@@ -55,7 +55,10 @@ export class foCollection<T extends iObject> extends foObject {
     }
 
     findMember(name: string): T {
-        return this._members[0];
+        let found = this._members.filter(item => {
+            return item.myName == name || item.myGuid == name;
+        });
+        return found.length > 0 ? found[0] : undefined;
     }
 
     getMember(id): T {

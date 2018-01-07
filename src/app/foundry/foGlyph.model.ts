@@ -587,7 +587,8 @@ export class foGlyph extends foNode implements iShape {
         if (!this._handles) {
             this._handles = new foCollection<foHandle>()
             spec.forEach(item => {
-                let handle = new foHandle(item, undefined, this);
+                let type = item.myType ? item.myType: RuntimeType.define(foHandle)
+                let handle = new type(item, undefined, this);
                 this._handles.addMember(handle);
             });
         } else {
@@ -603,7 +604,7 @@ export class foGlyph extends foNode implements iShape {
     public createHandles(): foCollection<foHandle> {
 
         let spec = [
-            { x: 0, y: 0, myName: "0:0" },
+            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle) },
             { x: this.width, y: 0, myName: "W:0" },
             { x: this.width, y: this.height, myName: "W:H" },
             { x: 0, y: this.height, myName: "0:H" },
@@ -612,6 +613,10 @@ export class foGlyph extends foNode implements iShape {
         return this.generateHandles(spec);
     }
 
+    getHandle(name:string): foHandle { 
+        if (!this._handles) return;
+        return this._handles.findMember(name); 
+    }
 
     public findHandle(loc: cPoint, e): foHandle {
         if (!this._handles) return;
