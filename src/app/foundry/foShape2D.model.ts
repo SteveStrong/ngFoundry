@@ -26,7 +26,7 @@ export class foShape2D extends foGlyph {
         this._angle = value;
     }
 
-    get glue(): foCollection<foGlue> { return this._glue; }
+    get glue(): foCollection<foGlue> { return this._glue || new foCollection<foGlue>(); }
     protected _glue: foCollection<foGlue>;
 
     get connectionPoints(): foCollection<foConnectionPoint> { return this._connectionPoints || this.createConnectionPoints(); }
@@ -168,24 +168,24 @@ export class foShape2D extends foGlyph {
     protected establishGlue(name: string, target: foShape2D, handleName?: string) {
         let glue = this.getGlue(name)
         glue.glueTo(target, handleName);
+        return glue;
+    }
 
+    protected dissolveGlue(name: string) {
+        let glue = this.glue.findMember(name);
+        glue && glue.unglue();
         return glue;
     }
 
     public addGlue(glue: foGlue) {
-        if (!this._glue) {
-            this._glue = new foCollection<foGlue>();
-        }
-        this._glue.addMember(glue);
+        this.glue.addMember(glue);
         return glue;
     }
 
 
     public removeGlue(glue: foGlue) {
         if (this._glue) {
-            this._glue.removeMember(glue);
-            glue.removeParent(this);
-            Lifecycle.unglued(glue);
+            this.glue.removeMember(glue);
         }
         return glue;
     }

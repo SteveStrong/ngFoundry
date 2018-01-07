@@ -38,6 +38,14 @@ export class foGlue extends foNode {
         return this;
     }
 
+    unglue() {
+        this.myTarget().removeGlue(this);
+        Lifecycle.unglued(this);
+        this.myTarget = undefined;
+        this.mySource = undefined;
+        return this;
+    }
+
     protected toJson():any {
         return Tools.mixin(super.toJson(), {
             guid: this.myGuid,

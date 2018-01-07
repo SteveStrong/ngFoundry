@@ -152,6 +152,14 @@ export class foShape1D extends foShape2D {
         return this.establishGlue(shape1DEndNamed.finish, target, handleName);
     }
 
+    unglueStart() {
+        return this.dissolveGlue(shape1DEndNamed.start);
+    }
+
+    unglueFinish() {
+        return this.dissolveGlue(shape1DEndNamed.finish);
+    }
+
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         let { x: cX, y: cY } = this.center();
 
