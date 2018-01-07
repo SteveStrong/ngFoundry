@@ -159,6 +159,7 @@ export class foShape2D extends foGlyph {
         let glue = this.addGlue(new foGlue({ myName: name }));
         glue.glueTo(target, handle);
         target.addGlue(glue);
+        Lifecycle.glued(glue);
         return glue;
     }
 
@@ -171,8 +172,6 @@ export class foShape2D extends foGlyph {
         if (!glue.hasParent) {
             glue.myParent = () => { return this; }
         }
-
-        Lifecycle.glued(glue);
         return glue;
     }
 

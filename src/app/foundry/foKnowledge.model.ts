@@ -21,6 +21,10 @@ export class foKnowledge extends foObject {
     newInstance(properties?: any) {
         return undefined;
     }
+
+    get commands(): Array<string> {
+        return [];
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';
