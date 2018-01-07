@@ -1,19 +1,16 @@
 
 import { Tools } from './foTools';
-import { cPoint, cFrame, cRect } from './foGeometry';
+import { cPoint, cFrame } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+import { TweenLite, Back } from "gsap";
 
 
-import { iObject, iNode, iShape, iPoint, iSize, iRect, iFrame, Action } from './foInterface';
+import {iShape, iPoint, iRect, iFrame } from './foInterface';
 
 import { foHandle } from './foHandle';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
-import { foDictionary } from './foDictionary.model';
 import { foNode } from './foNode.model';
-import { foConcept } from './foConcept.model';
-import { foComponent } from './foComponent.model';
 
 import { Lifecycle } from './foLifecycle';
 

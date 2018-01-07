@@ -1,18 +1,24 @@
 
 import { Tools } from '../foundry/foTools'
 import { cPoint } from "../foundry/foGeometry";
-import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
+import { iPoint } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foHandle } from '../foundry/foHandle'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
-import { foConcept } from '../foundry/foConcept.model'
 
 import { foShape2D } from '../foundry/foShape2D.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 import { Lifecycle } from './foLifecycle';
+
+
+export enum shape1DEndNamed {
+    start = "start",
+    finish = "finish",
+    center = "center"
+};
 
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -113,10 +119,10 @@ export class foShape1D extends foShape2D {
             case 'drop':
                 let name = source.myName;
                 let pt = <cPoint>args[0];
-                if (name == 'begin') {
+                if (name == shape1DEndNamed.start) {
                     this.setStart(pt);
                 }
-                if (name == 'end') {
+                if (name == shape1DEndNamed.finish) {
                     this.setFinish(pt);
                 }
 
@@ -138,12 +144,12 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    glueStart(target: foShape2D, handle?: string) {
-        return this.createGlue('begin', target, handle);
+    glueStartTo(target: foShape2D, handleName?:string) {
+        return this.establishGlue(shape1DEndNamed.start, target, handleName);
     }
 
-    glueFinish(target: foShape2D, handle?: string) {
-        return this.createGlue('end', target, handle);
+    glueFinishTo(target: foShape2D, handleName?: string) {
+        return this.establishGlue(shape1DEndNamed.finish, target, handleName);
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
@@ -264,9 +270,9 @@ export class foShape1D extends foShape2D {
 
     public createHandles(): foCollection<foHandle> {
 
-        let begin = this.globalToLocalPoint(this.begin('start'));
-        let center = this.globalToLocalPoint(this.center('center'));
-        let end = this.globalToLocalPoint(this.end('end'));
+        let begin = this.globalToLocalPoint(this.begin(shape1DEndNamed.start));
+        let center = this.globalToLocalPoint(this.center(shape1DEndNamed.center));
+        let end = this.globalToLocalPoint(this.end(shape1DEndNamed.finish));
 
         begin['size'] = 20;
         end['size'] = 20;

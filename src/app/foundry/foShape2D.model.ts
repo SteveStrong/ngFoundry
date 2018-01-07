@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint, cRect } from "../foundry/foGeometry";
-import { iRect, iPoint, iSize, iFrame, Action } from '../foundry/foInterface'
+import { cPoint } from "../foundry/foGeometry";
+import { iPoint, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -10,8 +10,6 @@ import { foGlue } from '../foundry/foGlue'
 import { foConnectionPoint } from '../foundry/foConnectionPoint'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
-import { foConcept } from '../foundry/foConcept.model'
-import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph } from '../foundry/foGlyph.model'
 
@@ -76,7 +74,7 @@ export class foShape2D extends foGlyph {
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
             this.notifySource('drop', this.getLocation());
-            Lifecycle.dropped(this,this.getLocation());
+            Lifecycle.dropped(this, this.getLocation());
         }
         return this;
     }
@@ -84,7 +82,7 @@ export class foShape2D extends foGlyph {
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
             this.notifySource('drop', this.getLocation());
-            Lifecycle.moved(this,this.getLocation());
+            Lifecycle.moved(this, this.getLocation());
         }
         return this;
     }
@@ -141,7 +139,7 @@ export class foShape2D extends foGlyph {
     }
 
     public moveHandle(handle: foHandle, loc: iPoint) {
-        let pt = handle.localToGlobal(0, 0).subtract(loc.x, loc.y);
+        //let pt = handle.localToGlobal(0, 0).subtract(loc.x, loc.y);
         //this.growSize(pt.x, pt.y)
         switch (handle.myName) {
             case '0:0':
@@ -158,29 +156,32 @@ export class foShape2D extends foGlyph {
     }
 
 
-
-    createGlue(name: string, target: foShape2D, handle?: string) {
-        let glue = this.addGlue(new foGlue({ myName: name }));
-        glue.glueTo(target, handle);
-        target.addGlue(glue);
-        Lifecycle.glued(glue);
+    protected getGlue(name: string) {
+        let glue = this.glue.findMember(name);
+        if (!glue) {
+            glue = new foGlue({ myName: name }, this);
+            this.addGlue(glue);
+        }
         return glue;
     }
 
-    addGlue(glue: foGlue) {
+    protected establishGlue(name: string, target: foShape2D, handleName?: string) {
+        let glue = this.getGlue(name)
+        glue.glueTo(target, handleName);
+
+        return glue;
+    }
+
+    public addGlue(glue: foGlue) {
         if (!this._glue) {
             this._glue = new foCollection<foGlue>();
         }
         this._glue.addMember(glue);
-
-        if (!glue.hasParent) {
-            glue.myParent = () => { return this; }
-        }
         return glue;
     }
 
 
-    removeGlue(glue: foGlue) {
+    public removeGlue(glue: foGlue) {
         if (this._glue) {
             this._glue.removeMember(glue);
             glue.removeParent(this);
@@ -211,19 +212,19 @@ export class foShape2D extends foGlyph {
     public createConnectionPoints(): foCollection<foConnectionPoint> {
 
         let spec = [
-            { x: this.width/2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint) },
-            { x: this.width/2, y: this.height, myName: "bottom", angle:45 },
-            { x: 0, y: this.height/2, myName: "left" },
-            { x: this.width, y: this.height/2, myName: "right" },
+            { x: this.width / 2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint) },
+            { x: this.width / 2, y: this.height, myName: "bottom", angle: 45 },
+            { x: 0, y: this.height / 2, myName: "left" },
+            { x: this.width, y: this.height / 2, myName: "right" },
         ];
 
         return this.generateConnectionPoints(spec);
     }
-    
-    getConnectionPoint(name:string): foConnectionPoint {
+
+    getConnectionPoint(name: string): foConnectionPoint {
         if (!this._connectionPoints) return;
-        return this._connectionPoints.findMember(name); 
-     }
+        return this._connectionPoints.findMember(name);
+    }
 
     public findConnectionPoint(loc: cPoint, e): foConnectionPoint {
         if (!this._connectionPoints) return;

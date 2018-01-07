@@ -1,5 +1,7 @@
 # NgFoundry
 
+http://nicholasjohnson.com/blog/how-angular2-di-works-with-typescript/
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
 
 ## Development server

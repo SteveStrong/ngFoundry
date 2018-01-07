@@ -1,19 +1,11 @@
 
-import { Tools } from './foTools';
-import { cPoint } from './foGeometry';
+
 import { Matrix2D } from './foMatrix2D';
-
-import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
-
 import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foDictionary } from './foDictionary.model';
-import { foNode } from './foNode.model';
-import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
 import { foHandle } from './foHandle';
-import { Lifecycle } from 'app/foundry/foLifecycle';
+//import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates

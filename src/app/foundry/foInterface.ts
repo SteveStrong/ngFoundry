@@ -89,6 +89,7 @@ export interface iBox extends iRect {
     set(x: number, y: number, width: number, height: number): iRect
 }
 
+
 export interface iShape extends iRect, iNode {
     isSelected: boolean;
 

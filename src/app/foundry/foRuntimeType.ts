@@ -1,8 +1,5 @@
 
-import { Tools } from './foTools';
-
 import { foObject } from './foObject.model';
-import { PubSub } from "./foPubSub";
 import { foNode } from './foNode.model';
 import { foKnowledge } from './foKnowledge.model';
 
