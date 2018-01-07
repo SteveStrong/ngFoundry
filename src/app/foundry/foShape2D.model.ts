@@ -14,6 +14,7 @@ import { foNode } from '../foundry/foNode.model'
 import { foGlyph } from '../foundry/foGlyph.model'
 
 import { Lifecycle } from './foLifecycle';
+import { BroadcastChange } from './foChange';
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -47,20 +48,8 @@ export class foShape2D extends foGlyph {
         });
     }
 
-    public notifyOnChange(source: any, channel: string, ...args: any[]) {
-    }
 
-    notifySource(channel: string, ...args: any[]) {
-        this._glue && this._glue.forEach(item => {
-            item.mySource().notifyOnChange(item, channel, ...args);
-        })
-    }
 
-    notifyTarget(channel: string, ...args: any[]) {
-        this._glue && this._glue.forEach(item => {
-            item.myTarget().notifyOnChange(item, channel, ...args);
-        })
-    }
 
     public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
         let changed = super.didLocationChange(x, y, angle);
@@ -71,18 +60,25 @@ export class foShape2D extends foGlyph {
         return changed;
     }
 
+
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            this.notifySource('drop', this.getLocation());
-            Lifecycle.dropped(this, this.getLocation());
+            let point = this.getLocation();
+            this._glue && this.glue.forEach(item => {
+                BroadcastChange.dropped(item, point);
+            })
+            Lifecycle.dropped(this, point);
         }
         return this;
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            this.notifySource('drop', this.getLocation());
-            Lifecycle.moved(this, this.getLocation());
+            let point = this.getLocation();
+            this._glue && this.glue.forEach(item => {
+                BroadcastChange.moved(item, point);
+            })
+            Lifecycle.moved(this, point);
         }
         return this;
     }

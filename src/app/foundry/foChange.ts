@@ -121,6 +121,6 @@ export class foChange {
 
 }
 
-export let Change: foChange = new foChange(300);
+export let BroadcastChange: foChange = new foChange(300);
 
 

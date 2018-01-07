@@ -114,21 +114,6 @@ export class foShape1D extends foShape2D {
         this.width = 0;
     }
 
-    public notifyOnChange(source: any, channel: string, ...args: any[]) {
-        switch (channel) {
-            case 'drop':
-                let name = source.myName;
-                let pt = <cPoint>args[0];
-                if (name == shape1DEndNamed.start) {
-                    this.setStart(pt);
-                }
-                if (name == shape1DEndNamed.finish) {
-                    this.setFinish(pt);
-                }
-
-                break;
-        }
-    }
 
     private angleDistance(): any {
         let { x: x1, y: y1 } = this.begin();
