@@ -56,7 +56,7 @@ export class foShape1D extends foShape2D {
 
 
     get width(): number {
-        if ( !this._width ) {
+        if (!this._width) {
             let { length } = this.angleDistance();
             this._width = length;
         }
@@ -129,7 +129,7 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    glueStartTo(target: foShape2D, handleName?:string) {
+    glueStartTo(target: foShape2D, handleName?: string) {
         return this.establishGlue(shape1DEndNamed.start, target, handleName);
     }
 
@@ -267,28 +267,15 @@ export class foShape1D extends foShape2D {
         let center = this.globalToLocalPoint(this.center(shape1DEndNamed.center));
         let end = this.globalToLocalPoint(this.end(shape1DEndNamed.finish));
 
-        begin['size'] = 20;
-        end['size'] = 20;
+        Tools.mixin(begin, { size: 20 });
+        Tools.mixin(end, { size: 20 });
+        Tools.mixin(center, { size: 20 });
         let spec = [begin, center, end];
-        return this.generateHandles(spec);
+        let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
+
+        return this.generateHandles(spec, proxy);
     }
 
-    public moveHandle(handle: foHandle, loc: iPoint) {
-        switch (handle.myName) {
-            case 'start':
-                this.setStart(loc)
-                break;
-
-            case 'end':
-                this.setFinish(loc);
-                break;
-
-            case 'center':
-                this.moveTo(loc)
-                break;
-        }
-        Lifecycle.handle(handle, loc);
-    }
 
     //same as Shape1D
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {

@@ -10,8 +10,8 @@ import { foNode } from './foNode.model';
 import { foComponent } from './foComponent.model';
 
 import { foGlyph } from './foGlyph.model';
-
-
+import { Lifecycle } from './foLifecycle';
+import { BroadcastChange } from './foChange';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foHandle extends foNode {
@@ -46,6 +46,7 @@ export class foHandle extends foNode {
         this._color = value;
     }
 
+    public doMoveProxy: (loc: iPoint) => void;
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -71,7 +72,12 @@ export class foHandle extends foNode {
     }
 
     public moveTo(loc: iPoint, offset?: iPoint) {
-        this.myParentGlyph().moveHandle(this, loc);
+        //let x = loc.x + (offset ? offset.x : 0);
+        //let y = loc.y + (offset ? offset.y : 0);
+  
+        this.doMoveProxy && this.doMoveProxy(loc);
+        BroadcastChange.moved(this, loc)
+        Lifecycle.handle(this, loc);
         return this;
     }
 
@@ -124,12 +130,6 @@ export class foHandle extends foNode {
     }
 
 
-    
-
-
-    public myParentGlyph(): foGlyph {
-        return this.myParent && <foGlyph>this.myParent()
-    }
 
     protected localHitTest = (hit: iPoint): boolean => {
 

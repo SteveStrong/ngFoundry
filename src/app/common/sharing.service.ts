@@ -238,16 +238,16 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("syncHandle", (cmd, data) => {
-        //foObject.jsonAlert(cmd);
-        let { parentGuid, value } = cmd;
-        LifecycleLock.protected(parentGuid, this, _ => {
-          this._page.found(parentGuid,
-            (item) => { item.moveHandle(data, value) }
-          );
-        });
+      // this.signalR.subCommand("syncHandle", (cmd, data) => {
+      //   //foObject.jsonAlert(cmd);
+      //   let { parentGuid, value } = cmd;
+      //   LifecycleLock.protected(parentGuid, this, _ => {
+      //     this._page.found(parentGuid,
+      //       (item) => { item.moveHandle(data, value) }
+      //     );
+      //   });
 
-      });
+      // });
 
       this.signalR.subCommand("syncParent", (cmd, parentGuid) => {
         //foObject.jsonAlert(cmd);

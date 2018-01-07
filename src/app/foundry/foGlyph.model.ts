@@ -579,20 +579,24 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    protected generateHandles(spec: any): foCollection<foHandle> {
+    protected generateHandles(spec: Array<any>, proxy?:Array<any>): foCollection<foHandle> {
 
+        let i = 0;
         if (!this._handles) {
             this._handles = new foCollection<foHandle>()
             spec.forEach(item => {
                 let type = item.myType ? item.myType: RuntimeType.define(foHandle)
                 let handle = new type(item, undefined, this);
+                handle.doMoveProxy = proxy && proxy[i]
                 this._handles.addMember(handle);
+                i++;
             });
         } else {
-            let i = 0;
             spec.forEach(item => {
-                let handle = this._handles.getChildAt(i++)
+                let handle = this._handles.getChildAt(i)
                 handle.override(item);
+                handle.doMoveProxy = proxy && proxy[i];
+                i++;
             });
         }
         return this._handles;
@@ -607,7 +611,7 @@ export class foGlyph extends foNode implements iShape {
             { x: 0, y: this.height, myName: "0:H" },
         ];
 
-        return this.generateHandles(spec);
+        return this.generateHandles(spec, []);
     }
 
     getHandle(name:string): foHandle { 
@@ -625,11 +629,6 @@ export class foGlyph extends foNode implements iShape {
             }
         }
     }
-
-    public moveHandle(handle: foHandle, loc: iPoint) {
-        Lifecycle.handle(handle, loc);
-    }
-
 
     public drawHandles(ctx: CanvasRenderingContext2D) {
         this.handles.forEach(item => {

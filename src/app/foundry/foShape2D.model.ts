@@ -5,7 +5,6 @@ import { iPoint, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle } from '../foundry/foHandle'
 import { foGlue } from '../foundry/foGlue'
 import { foConnectionPoint } from '../foundry/foConnectionPoint'
 import { foCollection } from '../foundry/foCollection.model'
@@ -133,24 +132,6 @@ export class foShape2D extends foGlyph {
             y: this.pinY()
         }
     }
-
-    public moveHandle(handle: foHandle, loc: iPoint) {
-        //let pt = handle.localToGlobal(0, 0).subtract(loc.x, loc.y);
-        //this.growSize(pt.x, pt.y)
-        switch (handle.myName) {
-            case '0:0':
-                break;
-            case 'W:0':
-                break;
-            case 'W:H':
-                break;
-            case '0:H':
-                break;
-
-        }
-        Lifecycle.handle(handle, loc);
-    }
-
 
     protected getGlue(name: string) {
         let glue = this.glue.findMember(name);
