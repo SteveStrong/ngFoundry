@@ -133,12 +133,14 @@ export class foShape1D extends foShape2D {
     glueStartTo(target: foShape2D, handleName?: string) {
         let glue =  this.establishGlue(shape1DEndNamed.start, target, handleName);
         glue.doTargetMoveProxy = this.setStart.bind(this);
+        glue.targetMoved(target.getLocation());
         return glue;
     }
 
     glueFinishTo(target: foShape2D, handleName?: string) {
         let glue = this.establishGlue(shape1DEndNamed.finish, target, handleName);
         glue.doTargetMoveProxy = this.setFinish.bind(this);
+        glue.targetMoved(target.getLocation());
         return glue;
     }
 

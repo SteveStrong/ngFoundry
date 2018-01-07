@@ -549,6 +549,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
+  doIt() {
+    this.doConnector2D();
+  }
+
   doConnector2D(){
     let def = Stencil.define<foShape2D>('glue::shape', foShape2D, {
       color: 'blue',
@@ -771,9 +775,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
-  doIt() {
-    this.doShapeGlue();
-  }
+
 
   doShapeGlue() {
     let shape1 = RuntimeType.create(TwoByOne, {
