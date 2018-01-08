@@ -1,16 +1,10 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint, cMargin } from "../foundry/foGeometry";
-import { iShape, iPoint, iSize, Action } from '../foundry/foInterface'
+import { cMargin } from "../foundry/foGeometry";
+
 
 import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle } from '../foundry/foHandle'
-import { foGlue } from '../foundry/foGlue'
-import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
-import { foConcept } from '../foundry/foConcept.model'
-import { foComponent } from '../foundry/foComponent.model'
 
 import { foShape2D } from '../foundry/foShape2D.model'
 
@@ -51,6 +45,7 @@ export class foText2D extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
+        this.setupPreDraw();
         this.extend({
             text: function () {
                 if (this.context && this.context.text) {
@@ -72,19 +67,33 @@ export class foText2D extends foShape2D {
         });
     }
 
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        ctx.save();
+    get size():number {
+        return (this.fontSize || 12);
+    }
+
+    updateContext(ctx: CanvasRenderingContext2D) {
+        super.updateContext(ctx);
 
         ctx.textAlign = this.textAlign || 'center';
         ctx.textBaseline = this.textBaseline || 'middle';
+        ctx.font = this.font || this.size + "px Georgia";
+    };
 
-        let size = (this.fontSize || 12)
+    setupPreDraw() {
 
-        ctx.font = this.font || size + "px Georgia";
+        let preDraw = (ctx: CanvasRenderingContext2D): void => {
+            let textMetrics = ctx.measureText(this.text);
+            this.width = textMetrics.width + ((this.margin && this.margin.width) || 0);
+            this.height = this.size + ((this.margin && this.margin.height) || 0);
+            this.createConnectionPoints();
+            this.preDraw = undefined;
+        };
 
-        let textMetrics = ctx.measureText(this.text);
-        this.width = textMetrics.width + ((this.margin && this.margin.width) || 0);
-        this.height = size + ((this.margin && this.margin.height) || 0);
+        this.preDraw = preDraw;
+    }
+
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        ctx.save();
 
         //this.drawOrigin(ctx);
         this.updateContext(ctx);
@@ -114,7 +123,8 @@ export class foText2D extends foShape2D {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 1;
         this.drawOutline(ctx);
-        //this.drawHandles(ctx);
+        this.drawHandles(ctx);
+        this.drawConnectionPoints(ctx);
         this.drawPin(ctx);
     }
 
