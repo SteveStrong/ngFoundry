@@ -196,7 +196,7 @@ export class foText2D extends foShape2D {
 
     drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
 
-        let textMetrics = ctx.measureText(text);
+        //let textMetrics = ctx.measureText(text);
 
         ctx.textAlign = "left" || "right" || "center" || "start" || "end";
 

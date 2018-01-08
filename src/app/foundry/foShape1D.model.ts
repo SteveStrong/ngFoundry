@@ -14,7 +14,7 @@ import { foGlyph } from '../foundry/foGlyph.model'
 import { Lifecycle } from './foLifecycle';
 
 
-export enum shape1DEndNamed {
+export enum shape1DNames {
     start = "start",
     finish = "finish",
     center = "center"
@@ -131,25 +131,25 @@ export class foShape1D extends foShape2D {
     }
 
     glueStartTo(target: foShape2D, handleName?: string) {
-        let glue =  this.establishGlue(shape1DEndNamed.start, target, handleName);
+        let glue =  this.establishGlue(shape1DNames.start, target, handleName);
         glue.doTargetMoveProxy = this.setStart.bind(this);
         glue.targetMoved(target.getLocation());
         return glue;
     }
 
     glueFinishTo(target: foShape2D, handleName?: string) {
-        let glue = this.establishGlue(shape1DEndNamed.finish, target, handleName);
+        let glue = this.establishGlue(shape1DNames.finish, target, handleName);
         glue.doTargetMoveProxy = this.setFinish.bind(this);
         glue.targetMoved(target.getLocation());
         return glue;
     }
 
     unglueStart() {
-        return this.dissolveGlue(shape1DEndNamed.start);
+        return this.dissolveGlue(shape1DNames.start);
     }
 
     unglueFinish() {
-        return this.dissolveGlue(shape1DEndNamed.finish);
+        return this.dissolveGlue(shape1DNames.finish);
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
@@ -270,9 +270,9 @@ export class foShape1D extends foShape2D {
 
     public createHandles(): foCollection<foHandle> {
 
-        let begin = this.globalToLocalPoint(this.begin(shape1DEndNamed.start));
-        let center = this.globalToLocalPoint(this.center(shape1DEndNamed.center));
-        let end = this.globalToLocalPoint(this.end(shape1DEndNamed.finish));
+        let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
+        let center = this.globalToLocalPoint(this.center(shape1DNames.center));
+        let end = this.globalToLocalPoint(this.end(shape1DNames.finish));
 
         Tools.mixin(begin, { size: 20 });
         Tools.mixin(end, { size: 20 });

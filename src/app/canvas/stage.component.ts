@@ -18,7 +18,7 @@ import { foHandle } from "../foundry/foHandle";
 
 
 import { foGlyph } from "../foundry/foGlyph.model";
-import { foShape2D } from "../foundry/foShape2D.model";
+import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
 import { foImage } from "../foundry/foImage.model";
@@ -535,8 +535,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       } else {
         let wire = wireConcept.newInstance().addAsSubcomponent(this);
 
-        wire.glueStartTo(last);
-        wire.glueFinishTo(shape);
+        wire.glueStartTo(last, shape2DNames.bottom);
+        wire.glueFinishTo(shape, shape2DNames.top);
         last = shape;
       }
     })
@@ -553,17 +553,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.doConnector2D();
   }
 
-  doConnector2D(){
+  doConnector2D() {
     let def = Stencil.define<foShape2D>('glue::shape', foShape2D, {
       color: 'blue',
       width: 200,
       height: 150,
     });
-    
-    let shape1 = def.newInstance().dropAt(300,200).addAsSubcomponent(this);
-    let shape2 = def.newInstance().dropAt(600,200).addAsSubcomponent(this);
-    //let right = shape1.getConnectionPoint('right');
-    //let left = shape2.getConnectionPoint('left');
+
+    let shape1 = def.newInstance().dropAt(300, 200).addAsSubcomponent(this);
+    let shape2 = def.newInstance().dropAt(600, 200).addAsSubcomponent(this);
 
     let cord = Stencil.define<foShape1D>('glue::line', foShape1D, {
       color: 'Red',
@@ -573,8 +571,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let wire = cord.newInstance().addAsSubcomponent(this);
 
 
-    wire.glueStartTo(shape1, 'right');
-    wire.glueFinishTo(shape2, 'left');
+    wire.glueStartTo(shape1, shape2DNames.right);
+    wire.glueFinishTo(shape2, shape2DNames.left);
   }
 
   doAddGlyph() {
@@ -819,8 +817,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addAsSubcomponent(this);
 
 
-    wire.glueStartTo(shape1, 'left');
-    wire.glueFinishTo(shape2, 'right');
+    wire.glueStartTo(shape1, shape2DNames.left);
+    wire.glueFinishTo(shape2, shape2DNames.right);
   }
 
   doObjGlue() {
