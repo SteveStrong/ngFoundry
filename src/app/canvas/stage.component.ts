@@ -1,28 +1,22 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
-import { Http, Response } from '@angular/http';
-
-import { EmitterService } from '../common/emitter.service';
-
+import { Http } from '@angular/http';
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
-import { iShape, iPoint, iSize } from '../foundry/foInterface'
 
 import { RuntimeType } from '../foundry/foRuntimeType';
-import { PubSub } from "../foundry/foPubSub";
-import { Matrix2D } from "../foundry/foMatrix2D";
-import { cPoint, cRect, cMargin } from "../foundry/foGeometry";
+
+import { cPoint, cMargin } from "../foundry/foGeometry";
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
-import { foDictionary } from "../foundry/foDictionary.model";
-import { foKnowledge } from "../foundry/foKnowledge.model";
+
 import { Stencil } from "../foundry/foStencil";
 
 import { foPage } from "../foundry/foPage.model";
 
 import { foHandle } from "../foundry/foHandle";
 
-import { foGlue } from "../foundry/foGlue";
+
 import { foGlyph } from "../foundry/foGlyph.model";
 import { foShape2D } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
@@ -31,15 +25,9 @@ import { foImage } from "../foundry/foImage.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 import { particleEngine } from "./particle.model";
 
-import { foDisplay2D } from "../foundry/foDisplay2D.model";
+
 import { dRectangle, dGlue } from "./displayshapes.model";
-
-import { Toast } from '../common/emitter.service';
 import { SharingService } from "../common/sharing.service";
-
-//https://greensock.com/docs/TweenMax
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
-import { foObject } from 'app/foundry/foObject.model';
 
 import { Lifecycle } from '../foundry/foLifecycle';
 
@@ -70,6 +58,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     private sharing: SharingService,
     private http: Http) {
     super();
+
+    this.myName = "Page 1"
   }
 
   doClear() {
@@ -249,7 +239,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doParticleEngine() {
-    let engine = new particleEngine({
+    new particleEngine({
       color: 'coral',
       particleCount: 10,
       opacity: .1,
@@ -404,14 +394,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     });
 
     for (var i = 0; i < 5; i++) {
-      let body = block.newInstance({
+      block.newInstance({
         width: 10 + i * 10,
         height: 10 + i * 10,
       }).dropAt(100, 100).addAsSubcomponent(this);
     }
 
     for (var i = 0; i < 5; i++) {
-      let body = text.newInstance({
+      text.newInstance({
         width: 10 + i * 10,
         fontSize: 10 + i * 10,
       }).dropAt(100, 300).addAsSubcomponent(this);
@@ -420,7 +410,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doDocker() {
-    let block = Stencil.define<foText2D>('text::block', foText2D, {
+    Stencil.define<foText2D>('text::block', foText2D, {
       color: 'green',
       fontSize: 20,
     });
@@ -545,8 +535,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       } else {
         let wire = wireConcept.newInstance().addAsSubcomponent(this);
 
-        wire.glueStart(last);
-        wire.glueFinish(shape);
+        wire.glueStartTo(last);
+        wire.glueFinishTo(shape);
         last = shape;
       }
     })
@@ -559,8 +549,36 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   }
 
+  doIt() {
+    this.doConnector2D();
+  }
+
+  doConnector2D(){
+    let def = Stencil.define<foShape2D>('glue::shape', foShape2D, {
+      color: 'blue',
+      width: 200,
+      height: 150,
+    });
+    
+    let shape1 = def.newInstance().dropAt(300,200).addAsSubcomponent(this);
+    let shape2 = def.newInstance().dropAt(600,200).addAsSubcomponent(this);
+    //let right = shape1.getConnectionPoint('right');
+    //let left = shape2.getConnectionPoint('left');
+
+    let cord = Stencil.define<foShape1D>('glue::line', foShape1D, {
+      color: 'Red',
+      height: 15,
+    });
+
+    let wire = cord.newInstance().addAsSubcomponent(this);
+
+
+    wire.glueStartTo(shape1, 'right');
+    wire.glueFinishTo(shape2, 'left');
+  }
+
   doAddGlyph() {
-    let shape = RuntimeType.create(foGlyph, {
+    RuntimeType.create(foGlyph, {
       color: 'cyan',
       x: 150,
       y: 100,
@@ -577,7 +595,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       width: 200,
     }).addAsSubcomponent(this);
 
-    let subShape = RuntimeType.create(foGlyph, {
+    RuntimeType.create(foGlyph, {
       color: 'blue',
       x: 25,
       y: 25,
@@ -593,7 +611,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       y: 400,
     });
 
-    let shape = def.newInstance()
+    def.newInstance()
       .addAsSubcomponent(this);
   }
 
@@ -616,7 +634,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddTwoByTwo() {
 
-    let shape = RuntimeType.create(TwoByTwo, {
+    RuntimeType.create(TwoByTwo, {
       color: 'pink',
       myName: "main shape"
     }).dropAt(200, 200).addAsSubcomponent(this);
@@ -718,15 +736,15 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let x2 = 450;
     let y2 = 100;
 
-    let dX = x2 - x1;
-    let dY = y2 - y1;
+    // let dX = x2 - x1;
+    // let dY = y2 - y1;
 
-    let spec = {
-      angle: foGlyph.RAD_TO_DEG * Math.atan2(dY, dX),
-      length: Math.sqrt(dX * dX + dY * dY),
-      cX: (x2 + x1) / 2,
-      cY: (y2 + y1) / 2,
-    }
+    // let spec = {
+    //   angle: foGlyph.RAD_TO_DEG * Math.atan2(dY, dX),
+    //   length: Math.sqrt(dX * dX + dY * dY),
+    //   cX: (x2 + x1) / 2,
+    //   cY: (y2 + y1) / 2,
+    // }
 
     // RuntimeType.create<foShape2D>(foShape2D, {
     //   opacity: .5,
@@ -754,12 +772,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   context: 'Drop at 400,400 && 400,300',
     //   fontSize: 30,
     // }).LifecycleCreated().dropAt(600, 500).addAsSubcomponent(this);
-  
+
   }
 
-  doIt() {
-    this.doShapeGlue();
-  }
+
 
   doShapeGlue() {
     let shape1 = RuntimeType.create(TwoByOne, {
@@ -767,19 +783,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .8,
 
     }).dropAt(100, 300, 45).addAsSubcomponent(this);
+    let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
+    //let pt2 = pt1.clone().add(200, 200);
 
     let shape2 = RuntimeType.create(TwoByOne, {
-      color: 'cyan',
+      color: 'blue',
       opacity: .8,
     }).dropAt(300, 400).addAsSubcomponent(this);
+
     shape2.pinX = (): number => { return 0.0; }
-
-    let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
-    let pc = pt1.midpoint(pt2);
+
+    //let pc = pt1.midpoint(pt2);
 
 
-    let shape = RuntimeType.create<Line>(Line, {
+    RuntimeType.create<Line>(Line, {
       opacity: .5,
       color: 'gray',
       height: 30,
@@ -801,8 +819,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addAsSubcomponent(this);
 
 
-    wire.createGlue('begin', shape1);
-    wire.createGlue('end', shape2);
+    wire.glueStartTo(shape1, 'left');
+    wire.glueFinishTo(shape2, 'right');
   }
 
   doObjGlue() {
@@ -818,8 +836,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape2 = RuntimeType.create(dGlue).addAsSubcomponent(this);
     shape2.pinX = (): number => { return 0.0; }
 
-    wire.createGlue('begin', shape1);
-    wire.createGlue('end', shape2);
+    wire.glueStartTo(shape1);
+    wire.glueFinishTo(shape2);
 
     shape1.dropAt(100, 200, 30);
     shape2.dropAt(400, 250);
@@ -837,7 +855,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    let shape = RuntimeType.create(objRect, {
+    RuntimeType.create(objRect, {
       color: 'blue',
       width: 150,
       height: 100,

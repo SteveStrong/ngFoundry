@@ -18,6 +18,10 @@ export class cPoint implements iPoint {
         return this;
     }
 
+    clone() {
+        return new cPoint(this.x, this.y, this.myName);
+    }
+
     add(x: number = 0, y: number = 0) {
         this.x += x;
         this.y += y;

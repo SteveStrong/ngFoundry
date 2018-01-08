@@ -19,7 +19,8 @@ export interface iObject {
     asReference(): string;
     getChildAt(i: number): iObject;
     override(properties?: any);
-    hasAncestor(member?: iObject):boolean;
+    hasAncestor(member?: iObject): boolean;
+    asJson: string;
 }
 
 export interface iNode {
@@ -88,6 +89,7 @@ export interface iBox extends iRect {
 
     set(x: number, y: number, width: number, height: number): iRect
 }
+
 
 export interface iShape extends iRect, iNode {
     isSelected: boolean;

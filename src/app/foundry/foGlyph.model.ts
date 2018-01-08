@@ -1,19 +1,16 @@
 
 import { Tools } from './foTools';
-import { cPoint, cFrame, cRect } from './foGeometry';
+import { cPoint, cFrame } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
-import { TweenLite, TweenMax, Back, Power0, Bounce } from "gsap";
+import { TweenLite, Back } from "gsap";
 
 
-import { iObject, iNode, iShape, iPoint, iSize, iRect, iFrame, Action } from './foInterface';
+import { iShape, iPoint, iRect, iFrame } from './foInterface';
 
 import { foHandle } from './foHandle';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
-import { foDictionary } from './foDictionary.model';
 import { foNode } from './foNode.model';
-import { foConcept } from './foConcept.model';
-import { foComponent } from './foComponent.model';
 
 import { Lifecycle } from './foLifecycle';
 
@@ -361,6 +358,12 @@ export class foGlyph extends foNode implements iShape {
         return target.globalToLocal(pt.x, pt.y, pt);
     };
 
+    globalCenter(): cPoint {
+        let { x, y } = this.pinLocation();
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y);
+    };
+
     public getOffset = (loc: iPoint): iPoint => {
         let x = this.x;
         let y = this.y;
@@ -582,19 +585,24 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    protected generateHandles(spec: any): foCollection<foHandle> {
+    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle> {
 
+        let i = 0;
         if (!this._handles) {
             this._handles = new foCollection<foHandle>()
             spec.forEach(item => {
-                let handle = new foHandle(item, undefined, this);
+                let type = item.myType ? item.myType : RuntimeType.define(foHandle)
+                let handle = new type(item, undefined, this);
+                handle.doMoveProxy = proxy && proxy[i]
                 this._handles.addMember(handle);
+                i++;
             });
         } else {
-            let i = 0;
             spec.forEach(item => {
-                let handle = this._handles.getChildAt(i++)
+                let handle = this._handles.getChildAt(i)
                 handle.override(item);
+                handle.doMoveProxy = proxy && proxy[i];
+                i++;
             });
         }
         return this._handles;
@@ -603,7 +611,7 @@ export class foGlyph extends foNode implements iShape {
     public createHandles(): foCollection<foHandle> {
 
         let spec = [
-            { x: 0, y: 0, myName: "0:0" },
+            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle) },
             { x: this.width, y: 0, myName: "W:0" },
             { x: this.width, y: this.height, myName: "W:H" },
             { x: 0, y: this.height, myName: "0:H" },
@@ -612,6 +620,10 @@ export class foGlyph extends foNode implements iShape {
         return this.generateHandles(spec);
     }
 
+    getHandle(name: string): foHandle {
+        if (!this._handles) return;
+        return this._handles.findMember(name);
+    }
 
     public findHandle(loc: cPoint, e): foHandle {
         if (!this._handles) return;
@@ -623,11 +635,6 @@ export class foGlyph extends foNode implements iShape {
             }
         }
     }
-
-    public moveHandle(handle: foHandle, loc: iPoint) {
-        Lifecycle.handle(handle, loc);
-    }
-
 
     public drawHandles(ctx: CanvasRenderingContext2D) {
         this.handles.forEach(item => {

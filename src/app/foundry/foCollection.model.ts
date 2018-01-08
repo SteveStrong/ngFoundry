@@ -1,10 +1,10 @@
+import { Tools } from './foTools'
 import { foObject } from './foObject.model'
 import { iObject, Action, Func } from './foInterface'
 
 //we want foCollection to be observable
 
 export class foCollection<T extends iObject> extends foObject {
-    private _memberType;
     private _members: Array<T>;
 
     constructor(list: Array<T> = undefined) {
@@ -55,7 +55,10 @@ export class foCollection<T extends iObject> extends foObject {
     }
 
     findMember(name: string): T {
-        return this._members[0];
+        let found = this._members.filter(item => {
+            return item.myName == name || item.myGuid == name;
+        });
+        return found.length > 0 ? found[0] : undefined;
     }
 
     getMember(id): T {
@@ -101,5 +104,10 @@ export class foCollection<T extends iObject> extends foObject {
             this._members.push(item);
         }
         return this._members;
+    }
+
+    protected toJson(): any {
+        let list = !this.hasMembers ?[] : this._members.map( item => item.asJson )
+        return Tools.mixin(super.toJson(), list );
     }
 }

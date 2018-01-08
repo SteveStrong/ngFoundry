@@ -1,15 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
 
-import { Tools } from "../foundry/foTools";
-import { EmitterService } from '../common/emitter.service';
-import { PubSub } from "../foundry/foPubSub";
-
-import { Toast } from '../common/emitter.service';
 import { SignalRService } from "../common/signalr.service";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
-import { foKnowledge } from "../foundry/foKnowledge.model";
 import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
@@ -22,7 +15,7 @@ import { foPage } from "../foundry/foPage.model";
 import { Back } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
-import { foHandle } from 'app/foundry/foHandle';
+import { foGlue } from 'app/foundry/foGlue';
 
 @Injectable()
 export class SharingService {
@@ -30,8 +23,7 @@ export class SharingService {
   private _page: foPage;
 
   constructor(
-    private signalR: SignalRService,
-    private http: Http) {
+    private signalR: SignalRService) {
 
     this.initLifecycle();
     this.initKnowcycle();
@@ -114,6 +106,22 @@ export class SharingService {
     return this;
   }
 
+  public glued(glue: foGlue) {
+    this.signalR.pubCommand("syncGlue", {
+      sourceGuid: glue.mySource().myGuid,
+      targetGuid: glue.myTarget().myGuid,
+    }, glue.asJson);
+    return this;
+  }
+
+  public unglued(glue: foGlue) {
+    this.signalR.pubCommand("syncUnGlue", { 
+      sourceGuid: glue.mySource().myGuid,
+      targetGuid: glue.myTarget().myGuid,
+    }, glue.asJson);
+    return this;
+  }
+
   public handle(shape: foGlyph, value?: any) {
     let parentGuid = shape.myParent().myGuid;
     this.signalR.pubCommand("syncHandle", { guid: shape.myGuid, parentGuid: parentGuid, value: value }, shape.asJson);
@@ -170,10 +178,10 @@ export class SharingService {
 
     this.signalR.start().then(() => {
 
-      function forceParent(shape: foGlyph) {
-        let parent = shape.myParent && shape.myParent();
-        if (!parent) shape.reParent(this._page);
-      }
+      // function forceParent(shape: foGlyph) {
+      //   let parent = shape.myParent && shape.myParent();
+      //   if (!parent) shape.reParent(this._page);
+      // }
 
       this.signalR.subCommand("dropShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
@@ -230,16 +238,16 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("syncHandle", (cmd, data) => {
-        //foObject.jsonAlert(cmd);
-        let { parentGuid, value } = cmd;
-        LifecycleLock.protected(parentGuid, this, _ => {
-          this._page.found(parentGuid,
-            (item) => { item.moveHandle(data, value) }
-          );
-        });
+      // this.signalR.subCommand("syncHandle", (cmd, data) => {
+      //   //foObject.jsonAlert(cmd);
+      //   let { parentGuid, value } = cmd;
+      //   LifecycleLock.protected(parentGuid, this, _ => {
+      //     this._page.found(parentGuid,
+      //       (item) => { item.moveHandle(data, value) }
+      //     );
+      //   });
 
-      });
+      // });
 
       this.signalR.subCommand("syncParent", (cmd, parentGuid) => {
         //foObject.jsonAlert(cmd);
@@ -316,10 +324,11 @@ export class SharingService {
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
         //foObject.jsonAlert(data);
-        this._page.found(cmd.sourceGuid, (source) => {
-          this._page.found(cmd.targetGuid, (target) => {
-            let glue = (<foShape2D>source).createGlue(cmd.sourceHandle, (<foShape2D>target));
-            (<foShape2D>target).dropAt();
+        let { sourceName, targetName } = data;
+        this._page.found<foShape2D>(cmd.sourceGuid, (source) => {
+          this._page.found<foShape2D>(cmd.targetGuid, (target) => {
+            source.establishGlue(sourceName, target, targetName);
+            //(<foShape2D>target).dropAt();
           });
         });
       });

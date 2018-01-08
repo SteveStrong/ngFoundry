@@ -1,20 +1,17 @@
 
-import { Tools } from './foTools';
+
 import { cPoint } from './foGeometry';
 import { Matrix2D } from './foMatrix2D';
 
-import { iObject, iNode, iShape, iPoint, iSize, iRect, Action } from './foInterface';
+import { iPoint } from './foInterface';
 
 import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foDictionary } from './foDictionary.model';
 import { foNode } from './foNode.model';
-import { foConcept } from './foConcept.model';
 import { foComponent } from './foComponent.model';
 
 import { foGlyph } from './foGlyph.model';
-import { Lifecycle } from 'app/foundry/foLifecycle';
-
+import { Lifecycle } from './foLifecycle';
+import { BroadcastChange } from './foChange';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foHandle extends foNode {
@@ -39,7 +36,7 @@ export class foHandle extends foNode {
     get size(): number { return this._size || 10.0; }
     set size(value: number) { this._size = value; }
 
-    get opacity(): number { return this._opacity || .5; }
+    get opacity(): number { return this._opacity || 1; }
     set opacity(value: number) { this._opacity = value; }
 
     get color(): string {
@@ -49,6 +46,7 @@ export class foHandle extends foNode {
         this._color = value;
     }
 
+    public doMoveProxy: (loc: iPoint) => void;
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -66,6 +64,13 @@ export class foHandle extends foNode {
         super(properties, subcomponents, parent);
     }
 
+    public pinLocation() {
+        let loc = this.size / 2
+        return {
+            x: loc,
+            y: loc
+        }
+    }
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
@@ -74,7 +79,12 @@ export class foHandle extends foNode {
     }
 
     public moveTo(loc: iPoint, offset?: iPoint) {
-        this.myParentGlyph().moveHandle(this, loc);
+        //let x = loc.x + (offset ? offset.x : 0);
+        //let y = loc.y + (offset ? offset.y : 0);
+  
+        this.doMoveProxy && this.doMoveProxy(loc);
+        BroadcastChange.moved(this, loc)
+        Lifecycle.handle(this, loc);
         return this;
     }
 
@@ -120,6 +130,17 @@ export class foHandle extends foNode {
         return inv.transformPoint(x, y, pt);
     };
 
+    localToGlobalPoint(pt: cPoint): cPoint {
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(pt.x, pt.y, pt);
+    };
+
+    globalCenter(): cPoint {
+        let {x, y} = this.pinLocation();
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y);
+    };
+
     public getOffset = (loc: iPoint): iPoint => {
         let x = this.x;
         let y = this.y;
@@ -127,12 +148,6 @@ export class foHandle extends foNode {
     }
 
 
-    
-
-
-    public myParentGlyph(): foGlyph {
-        return this.myParent && <foGlyph>this.myParent()
-    }
 
     protected localHitTest = (hit: iPoint): boolean => {
 

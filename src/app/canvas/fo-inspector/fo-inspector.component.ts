@@ -3,10 +3,10 @@ import { Component, OnInit, Input } from '@angular/core';
 import { StageComponent } from "../stage.component";
 
 import { foPage } from "../../foundry/foPage.model";
-import { PubSub } from "../../foundry/foPubSub";
 
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../../foundry/foLifecycle";
 import { RuntimeType } from 'app/foundry/foRuntimeType';
+import { BroadcastChange, foChangeEvent } from 'app/foundry/foChange';
 
 //https://valor-software.com/ngx-bootstrap/#/tabs
 
@@ -18,6 +18,7 @@ import { RuntimeType } from 'app/foundry/foRuntimeType';
 })
 export class foInspectorComponent implements OnInit {
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
+  changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
   @Input()
   public stage: StageComponent;
@@ -31,24 +32,32 @@ export class foInspectorComponent implements OnInit {
 
     let max = 25;
     Lifecycle.observable.subscribe(event => {
-      this.pushMax(event, max);
+      this.pushMax(event, max, this.lifecycleEvent);
     });
 
     Knowcycle.observable.subscribe(event => {
-      this.pushMax(event, max);
+      this.pushMax(event, max, this.lifecycleEvent);
+    });
+
+    BroadcastChange.observable.subscribe(event => {
+      this.pushMax(event, max, this.changeEvent);
     });
   }
 
-  pushMax(value, max) {
-    let length = this.lifecycleEvent.length;
+  pushMax(value, max, array) {
+    let length = array.length;
     if (length >= max) {
-      this.lifecycleEvent.splice(0, length - max + 1);
+      array.splice(0, length - max + 1);
     }
-    this.lifecycleEvent.push(value);
+    array.push(value);
   }
 
-  doClearEvents() {
+  doClearlifecycleEvents() {
     this.lifecycleEvent = [];
+  }
+
+  doClearChangeEvents() {
+    this.changeEvent = [];
   }
 
   doRefreshRuntimeTypes() {

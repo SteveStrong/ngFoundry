@@ -1,12 +1,12 @@
 
 import { Tools } from './foTools';
-import { iObject, Action, ModelRef } from './foInterface'
+import { ModelRef, iPoint } from './foInterface'
 
 import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foDictionary } from './foDictionary.model';
 import { foNode } from './foNode.model';
 import { foShape2D } from './foShape2D.model';
+import { foHandle } from './foHandle';
+import { Lifecycle } from './foLifecycle';
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
@@ -15,37 +15,77 @@ export class foGlue extends foNode {
     myTarget: ModelRef<foShape2D>;
     mySource: ModelRef<foShape2D>;
 
-    protected _targetHandle: string;
-    get targetHandle(): string { return this._targetHandle; }
-    set targetHandle(value: string) {
+    protected _targetHandle: foHandle;
+    get targetHandle(): foHandle { return this._targetHandle; }
+    set targetHandle(value: foHandle) {
         this._targetHandle = value;
     }
 
-    get sourceHandle(): string { return this.myName; }
-    set sourceHandle(value: string) {
+    get sourceName(): string { return this.myName; }
+    set sourceName(value: string) {
         this.myName = value;
     }
 
+    protected _targetName: string;
+    get targetName(): string { return this._targetName; }
+    set targetName(value: string) {
+        this._targetName = value;
+    }
+
+    public doSourceMoveProxy: (loc: iPoint) => void;
+    public doTargetMoveProxy: (loc: iPoint) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
     }
 
-    glueTo(target: foShape2D, handle: string) {
-        this.myTarget = () => { return target };
-        this.mySource = () => { return <foShape2D>this.myParent() };
-        this.targetHandle = handle;
+    glueTo(target: foShape2D, handleName: string) {
+        this.myTarget = () => { return target; };
+        this.mySource = () => { return <foShape2D>this.myParent(); };
+        this.targetName = handleName;
+        this.targetHandle = target.getConnectionPoint(handleName);
+        target.addGlue(this);
+
+        let sourceGuid = this.mySource().myGuid; //.slice(-8);
+        let targetGuid = this.myTarget().myGuid; //.slice(-8);
+        Lifecycle.glued(this, {
+            source: sourceGuid,
+            sourceName: this.sourceName,
+            target: targetGuid, 
+            targetName: this.targetName
+        });
         return this;
     }
 
-    protected toJson():any {
+    unglue() {
+        this.myTarget().removeGlue(this);
+        Lifecycle.unglued(this);
+        this.myTarget = undefined;
+        this.mySource = undefined;
+        this.doSourceMoveProxy = undefined;
+        this.doTargetMoveProxy = undefined;
+
+        return this;
+    }
+
+    sourceMoved(loc: iPoint) {
+        this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
+    }
+
+    targetMoved(loc: iPoint) {  
+        let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
+        this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
+    }
+
+
+    protected toJson(): any {
         return Tools.mixin(super.toJson(), {
             guid: this.myGuid,
             myType: this.myType,
-            sourceGuid: this.mySource() && this.mySource().myGuid,
-            sourceHandle: this.sourceHandle,
-            targetGuid: this.myTarget() && this.myTarget().myGuid,
-            targetHandle: this.targetHandle
+            sourceGuid: this.mySource && this.mySource() && this.mySource().myGuid,
+            sourceName: this.sourceName,
+            targetGuid: this.myTarget && this.myTarget() && this.myTarget().myGuid,
+            targetName: this.targetName
         });
     }
 

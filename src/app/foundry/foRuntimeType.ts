@@ -1,8 +1,5 @@
 
-import { Tools } from './foTools';
-
 import { foObject } from './foObject.model';
-import { PubSub } from "./foPubSub";
 import { foNode } from './foNode.model';
 import { foKnowledge } from './foKnowledge.model';
 
@@ -18,12 +15,6 @@ export class foRuntimeType extends foObject{
 
     public metaPrimitives(): Array<string> {
         return Object.keys(this.knowledgePrimitives);
-    }
-
-    public newInstance(type: string, properties?: any) {
-        let create = this.modelPrimitives[type];
-        let instance = this.create(create,properties);
-        return instance;
     }
 
     public define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
@@ -43,13 +34,12 @@ export class foRuntimeType extends foObject{
         return instance;
     }
 
-
-    public establish<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
-        let instance = new type(properties);
-        instance.initialize();
-        Knowcycle.created(instance);
+    public newInstance(type: string, properties?: any) {
+        let create = this.modelPrimitives[type];
+        let instance = this.create(create,properties);
         return instance;
     }
+
 
     public knowledge<T extends foKnowledge>(type: { new(p?: any): T; }) {
         let name = type.name;
@@ -59,6 +49,13 @@ export class foRuntimeType extends foObject{
             Knowcycle.primitive(this,name);
         }
         return type;
+    }
+
+    public construct<T extends foKnowledge>(type: { new(p?: any): T; }, properties?: any) {
+        let instance = new type(properties);
+        instance.initialize();
+        Knowcycle.created(instance);
+        return instance;
     }
 
 }

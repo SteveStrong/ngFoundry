@@ -1,5 +1,4 @@
 import { Tools } from './foTools'
-import { iObject, Action } from '../foundry/foInterface'
 import { PubSub } from './foPubSub'
 
 import { foKnowledge } from './foKnowledge.model'
@@ -11,7 +10,7 @@ import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
-import { Knowcycle } from './foLifecycle';
+;
 
 
 
@@ -143,7 +142,7 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
         PubSub.Sub("attribute", (action, source, attribute) => {
             if (this._mySource === source) {
-                let view = this.establishViewAttribute(attribute)
+               // let view = this.establishViewAttribute(attribute)
             }
         });
     }

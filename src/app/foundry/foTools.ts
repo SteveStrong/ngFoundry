@@ -288,7 +288,7 @@ export class foTools {
     };
 
     defineCalculatedProperty(target, name, func) {
-        var self = target;
+        //var self = target;
         Object.defineProperty(target, name, {
             enumerable: true,
             configurable: true,
