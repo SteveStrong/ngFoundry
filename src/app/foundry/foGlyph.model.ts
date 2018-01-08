@@ -5,7 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import {iShape, iPoint, iRect, iFrame } from './foInterface';
+import { iShape, iPoint, iRect, iFrame } from './foInterface';
 
 import { foHandle } from './foHandle';
 import { foObject } from './foObject.model';
@@ -358,6 +358,12 @@ export class foGlyph extends foNode implements iShape {
         return target.globalToLocal(pt.x, pt.y, pt);
     };
 
+    globalCenter(): cPoint {
+        let { x, y } = this.pinLocation();
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y);
+    };
+
     public getOffset = (loc: iPoint): iPoint => {
         let x = this.x;
         let y = this.y;
@@ -579,13 +585,13 @@ export class foGlyph extends foNode implements iShape {
     }
 
 
-    protected generateHandles(spec: Array<any>, proxy?:Array<any>): foCollection<foHandle> {
+    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle> {
 
         let i = 0;
         if (!this._handles) {
             this._handles = new foCollection<foHandle>()
             spec.forEach(item => {
-                let type = item.myType ? item.myType: RuntimeType.define(foHandle)
+                let type = item.myType ? item.myType : RuntimeType.define(foHandle)
                 let handle = new type(item, undefined, this);
                 handle.doMoveProxy = proxy && proxy[i]
                 this._handles.addMember(handle);
@@ -614,9 +620,9 @@ export class foGlyph extends foNode implements iShape {
         return this.generateHandles(spec);
     }
 
-    getHandle(name:string): foHandle { 
+    getHandle(name: string): foHandle {
         if (!this._handles) return;
-        return this._handles.findMember(name); 
+        return this._handles.findMember(name);
     }
 
     public findHandle(loc: cPoint, e): foHandle {

@@ -64,6 +64,13 @@ export class foHandle extends foNode {
         super(properties, subcomponents, parent);
     }
 
+    public pinLocation() {
+        let loc = this.size / 2
+        return {
+            x: loc,
+            y: loc
+        }
+    }
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
@@ -121,6 +128,17 @@ export class foHandle extends foNode {
     globalToLocal(x: number, y: number, pt?: cPoint) {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt);
+    };
+
+    localToGlobalPoint(pt: cPoint): cPoint {
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(pt.x, pt.y, pt);
+    };
+
+    globalCenter(): cPoint {
+        let {x, y} = this.pinLocation();
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y);
     };
 
     public getOffset = (loc: iPoint): iPoint => {

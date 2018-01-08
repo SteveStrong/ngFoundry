@@ -210,8 +210,7 @@ export class foShape2D extends foGlyph {
     }
 
     getConnectionPoint(name: string): foConnectionPoint {
-        if (!this._connectionPoints) return;
-        return this._connectionPoints.findMember(name);
+        return this.connectionPoints.findMember(name);
     }
 
     public findConnectionPoint(loc: cPoint, e): foConnectionPoint {

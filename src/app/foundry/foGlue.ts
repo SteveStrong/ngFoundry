@@ -46,13 +46,14 @@ export class foGlue extends foNode {
         this.targetHandle = target.getConnectionPoint(handleName);
         target.addGlue(this);
 
-        let sourceGuid = this.mySource().myGuid.slice(-8);
-        let targetGuid = this.myTarget().myGuid.slice(-8);
+        let sourceGuid = this.mySource().myGuid; //.slice(-8);
+        let targetGuid = this.myTarget().myGuid; //.slice(-8);
         Lifecycle.glued(this, {
             source: sourceGuid,
             sourceName: this.sourceName,
             target: targetGuid, 
-            targetName: this.targetName});
+            targetName: this.targetName
+        });
         return this;
     }
 
@@ -71,8 +72,9 @@ export class foGlue extends foNode {
         this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
     }
 
-    targetMoved(loc: iPoint) {
-        this.doTargetMoveProxy && this.doTargetMoveProxy(loc);
+    targetMoved(loc: iPoint) {  
+        let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
+        this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
     }
 
 
