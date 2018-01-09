@@ -8,6 +8,12 @@ import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { BroadcastChange, foChangeEvent } from '../foundry/foChange';
 import { RuntimeType } from 'app/foundry/foRuntimeType';
+import { foDocument } from 'app/foundry/foDocument.model';
+
+
+import { Stencil } from "../foundry/foStencil";
+import { foGlyph } from "../foundry/foGlyph.model";
+import { particleEngine } from "./particle.model";
 
 @Component({
   selector: 'foundry-drawing',
@@ -18,6 +24,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
+  rootWorkspace:foWorkspace = new foWorkspace({
+    myName: 'The workspace manages the user, their models and documents'
+  })
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
@@ -27,6 +36,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   public pageHeight = 1000;
 
   screen2D: Sceen2D = new Sceen2D();
+  currentDocument: foDocument;
   currentPage: foPage;
 
   constructor(
@@ -40,6 +50,35 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doDelete() {
     this.currentPage.deleteSelected();
+  }
+
+  doParticleEngine(page:foPage) {
+    // new particleEngine({
+    //   color: 'coral',
+    //   particleCount: 10,
+    //   opacity: .1,
+    //   width: 100,
+    //   height: 200,
+    // }).dropAt(300, 300).addAsSubcomponent(this.currentPage)
+    //   .then(item => {
+    //     item.doStart();
+    //   });
+
+    let def = Stencil.define<foGlyph>('particle', particleEngine, {
+      color: 'white',
+      particleCount: 100,
+      opacity: .1,
+      width: 700,
+      height: 700,
+    }).addCommands("doStart", "doStop", "doRotate");
+
+
+    let shape = def.newInstance();
+
+    shape.dropAt(500, 500).addAsSubcomponent(page)
+      .then(item => {
+        item.doStart();
+      });
   }
 
   ngOnInit() {
@@ -56,11 +95,16 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       this.pushMax(event, max, this.changeEvent);
     });
 
-    this.currentPage = new foPage({
-      myName: "Page 1",
+    this.currentDocument = this.rootWorkspace.document;
+    this.currentPage = this.currentDocument.createPage({
       width: this.pageWidth,
       height: this.pageHeight,
+    }).then(page => {
+      this.doParticleEngine(page);
     });
+
+
+
   }
 
   pushMax(value, max, array) {

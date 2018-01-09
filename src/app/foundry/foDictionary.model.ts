@@ -54,7 +54,10 @@ export class foDictionary<T extends iObject> extends foObject {
         this._lookup = {};
     }
 
-
+    get count() {
+        return Object.keys(this._lookup).length;
+    }
+    
     get keys() {
         return Object.keys(this._lookup);
     }
