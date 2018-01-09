@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
+import { foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 

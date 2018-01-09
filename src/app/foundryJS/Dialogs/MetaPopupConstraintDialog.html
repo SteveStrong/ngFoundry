@@ -1,0 +1,377 @@
+﻿<!DOCTYPE html>
+<html data-ng-app="foundry" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>meta popup dialog</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta charset="utf-8" />
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/content/toastr.min.css" rel="stylesheet" />
+</head>
+
+<body data-ng-controller="FoundryController">
+
+    <h1>{{vm.title}}</h1>
+    <input type="button" value="open dialog" ng-click="vm.openDialog()" />
+
+    <div class="row well">
+        <pre>{{vm.json}}</pre>
+    </div>
+
+    <script src="/Scripts/jquery-2.1.1.min.js"></script>
+    <script src="/Scripts/angular.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap.min.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    <script src="/Scripts/toastr.min.js"></script>
+    <script src="/Foundry/Foundry.js"></script>
+
+    <script>
+        var knowtApp = angular.module('foundry', ['ui.bootstrap']);
+        knowtApp.header = { title: 'Apparatus', help: 'knowtshareHelp.html' };
+
+        (function (app, fo, undefined) {
+
+            app.run(function ($log, $exceptionHandler, dialogService) {
+
+
+                //http://codeseven.github.io/toastr/demo.html
+                toastr.options = {
+                    positionClass: "toast-bottom-left",
+                }
+
+                fo.subscribe('info', function (a, b) {
+                    toastr.info(a, b);
+                });
+
+                fo.subscribe('warning', function (a, b) {
+                    toastr.warning(a, b);
+                });
+
+                fo.subscribe('error', function (a, b) {
+                    toastr.error(a, b);
+                });
+
+                fo.subscribe('success', function (a, b) {
+                    toastr.success(a, b);
+                });
+
+                //load templares for dialogs and shapes...
+                fo.utils.loadTemplate('KnowtView.Dialogs.html');
+            });
+
+        }(knowtApp, Foundry));
+
+
+        (function (app, fo, undefined) {
+            var utils = fo.utils;
+
+            Date.prototype.addDays = function (days) {
+                var dat = new Date(this.valueOf());
+                dat.setDate(dat.getDate() + days);
+                return dat;
+            }
+
+            fo.establishType('constraint::selectedItem', {
+                title: function () { return this.name; },
+                name:'',
+                value: '',
+                isSelected: false,
+            });
+
+            fo.establishType('constraint::dateRange', {
+                title: function () { return this.myName + '  ' + this.myType; },
+                incrementValue: '',
+                minOpened: false,
+                maxOpened: false,
+                format: 'dd-MMMM-yyyy',
+                dateOptions: {
+                    formatYear: 'yy',
+                    startingDay: 1
+                },
+
+                filter: function () {
+                    if (!this.incrementValue) return '';
+                    var min = this.min.toISOString(); //.split('T')[0];
+                    var max = this.max.toISOString(); //.split('T')[0];
+                    return "{0}({1},{2},{3})".format(this.myName, min, max, this.incrementValue.value);
+                },
+            }, function (spec, subcomponents, parent) {
+                var result = fo.makeComponent(spec, subcomponents, parent);
+                result.incrementValue = result.increment.valueValues.filter(function (item) { return item.isSelected; })[0];
+
+                      // Disable weekend selection
+              result.disabled = function(date, mode) {
+                  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+              };
+
+              result.minClear = function () {
+                  result.min = null;
+              };
+
+              result.maxClear = function () {
+                  result.max = null;
+              };
+
+              result.minOpen = function ($event) {
+                  $event.preventDefault();
+                  $event.stopPropagation();
+
+                  result.minOpened = true;
+              };
+
+              result.maxOpen = function ($event) {
+                  $event.preventDefault();
+                  $event.stopPropagation();
+
+                  result.maxOpened = true;
+              };
+
+                result.doLast21Days = function () {
+                    result.increment.valueValues.forEach(function (item) { return item.isSelected = false; });
+                    var defaultValue = result.increment.valueValues[0];
+                    defaultValue.isSelected = true;
+                    result.incrementValue = defaultValue;
+
+                    var today = new Date();
+                    result.max = today;
+                    result.min = today.addDays(-21);
+                }
+                return result;
+            });
+
+            fo.establishType('constraint::multiSelect', {
+                title: function () { return this.myName + '  ' + this.myType; },
+                filter: function () {
+                    var selected = this.membersWhere(function (item) { return item.isSelected; });
+                    if (selected.count == 0) return '';
+                    var values = selected.map(function (item) { return item.value; }).join(',');
+                    return "{0}[{1}]".format(this.myName, values);
+                },
+            }, function (spec, subcomponents, parent) {
+                var result = fo.makeComponent(spec, subcomponents, parent);
+                result.valueValues.forEach(function (item) {
+                    var part = result.addSubcomponent(fo.makeInstance('constraint::selectedItem', item));
+                });
+                result.toggleSelection = function (item) {
+                    item.isSelected = !item.isSelected;
+                    //result.smashProperty('filter');
+                    //fo.publish('refreshUI', []);
+                };
+                return result;
+            });
+
+            fo.establishType('constraint::singleSelect', {
+                title: function () { return this.myName + '  ' + this.myType; },
+                value: '',
+                filter: function () {
+                    if (!this.value) return '';
+                    return "{0}[{1}]".format( this.myName, this.value.value);
+                },
+            }, function (spec, subcomponents, parent) {
+                var result = fo.makeComponent(spec, subcomponents, parent);
+                return result;
+            });
+
+            var constraintMetaData = {
+                timePeriod: {
+                    dataType: 'date',
+                    controlType: 'dateRange',
+                    min: new Date(),
+                    max: new Date(),
+
+                    increment: {
+                        dataType: 'string',
+                        controlType: 'singleSelect',
+                        valueValues: [
+                            { name: 'by day', value: 'day', isSelected: true},
+                            { name: 'by week', value: 'week' },
+                            { name: 'by month', value: 'month' },
+                            { name: 'by quarter', value: 'quarter' },
+                            { name: 'by year', value: 'year' },
+                        ]
+                    }
+                },
+                 countryCode: {
+                    dataType: 'string',
+                    controlType: 'multiSelect',
+                    valueValues: [
+                        { name: 'Sierra Leone', value: 'SL', isSelected: true },
+                        { name: 'Mali', value: 'ML', isSelected: true},
+                        { name: 'Ghana', value: 'GN', isSelected: true },
+                        { name: 'Liberia', value: 'LR', isSelected: true },
+                        { name: 'Ivory Coast', value: 'CI' },
+                        { name: 'Senegal', value: 'NG' },
+                    ]
+                 },
+                 ruleNumber: {
+                     dataType: 'string',
+                     controlType: 'multiSelect',
+                     valueValues: [
+                         { name: '2345', value: '2345', isSelected: true },
+                         { name: '123', value: '123', isSelected: true },
+                     ]
+                 },
+                 legType: {
+                     dataType: 'string',
+                     controlType: 'singleSelect',
+                     valueValues: [
+                         { name: 'Domestic', value: 'D' },
+                         { name: 'Inbound', value: 'I', isSelected: true },
+                         { name: 'Outbound', value: 'O' },
+                         { name: 'Foreign', value: 'F' },
+                     ]
+                 },
+        }
+
+            function cleanArray(actual){
+                var newArray = new Array();
+                for(var i = 0; i<actual.length; i++){
+                    if (actual[i]){
+                        newArray.push(actual[i]);
+                    }
+                }
+                return newArray;
+            }
+
+            app.controller('FoundryController', function ($scope, $log, dialogService) {
+
+                var vm = fo.makeComponent({
+                    title: 'dialog test',
+                    json: '',
+                    constraint: '',
+                    filter: function () {
+                        var filters = cleanArray(this.Subcomponents.map(function (item) { return item.filter; }));
+                        return filters.join(';');
+                    },
+
+                    doDisplayJSON: function () {
+                        var spec = this.dehydrate(false);
+                        this.json = JSON.stringify(spec, undefined, 3);
+                    },
+                    doHideJSON: function () {
+                        this.json = '';
+                    },
+                    doToggleJSON: function () {
+                        this.json ? this.doHideJSON : this.doDisplayJSON;
+                    },
+                });
+
+                fo.utils.loopForEachValue(constraintMetaData, function (key, value) {
+                    var myType = 'constraint::' + value.controlType;
+                    fo.makeInstance(myType, value, vm, function (obj) {
+                        vm.addSubcomponent(obj, key);
+                    });
+                });
+
+                fo.subscribe('refreshUI', function () {
+                    $scope.$apply();
+                });
+
+
+                vm.openDialog = function () {
+                    dialogService.doPopupDialog({
+                        context: vm,
+                        headerTemplate: 'exampleHeader.html',
+                        bodyTemplate: 'exampleBody.html',
+                        footerTemplate: 'OkCancelFooter.html',
+                    },
+                    {
+                        onOK: function ($modalInstance, context) {
+                            context.constraint = context.filter;
+                        },
+                        onCancel: function ($modalInstance, context) {
+                            context.constraint = '';
+                        },
+                        onExit: function () {
+                            vm.doToggleJSON;
+                        },
+                        onReady: function () {
+                            vm.doHideJSON;
+                        }
+                    },
+                    {
+                    });
+                };
+
+
+                $scope.vm = vm;
+            });
+        }(knowtApp, Foundry));
+
+    </script>
+
+    <script src="KnowtViewNgDialog.js"></script>
+
+    <script id="exampleHeader.html" type="text/ng-template">
+        <p>this form is generated my meta data</p>
+    </script>
+
+    <script type="text/ng-template" id="dateRangeInLine.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{constraint.title}}</h3>
+            <datepicker ng-model="constraint.min" show-weeks="true" class="well well-sm"></datepicker>
+            <datepicker ng-model="constraint.max" show-weeks="true" class="well well-sm"></datepicker>
+            <select ng-model="constraint.incrementValue" ng-options="pick.name for pick in constraint.increment.valueValues">
+                <option value="">-- choose one --</option>
+            </select>
+            <button ng-click="constraint.doLast21Days()">default to last 21 days</button>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="dateRange.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{constraint.title}}</h3>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{constraint.format}}" ng-model="constraint.min" is-open="constraint.minOpened" datepicker-options="constraint.dateOptions" date-disabled="constraint.disabled(date, mode)" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="constraint.minOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+            <p class="input-group">
+                <input type="text" class="form-control" datepicker-popup="{{constraint.format}}" ng-model="constraint.max" is-open="constraint.maxOpened" datepicker-options="constraint.dateOptions" date-disabled="constraint.disabled(date, mode)" ng-required="true" close-text="Close" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" ng-click="constraint.maxOpen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>
+            </p>
+            <select ng-model="constraint.incrementValue" ng-options="pick.name for pick in constraint.increment.valueValues">
+                <option value="">-- choose one --</option>
+            </select>
+            <button ng-click="constraint.doLast21Days()">default to last 21 days</button>
+        </div>
+    </script>
+
+    <!--//http://odetocode.com/blogs/scott/archive/2013/06/19/using-ngoptions-in-angularjs.aspx-->
+
+    <script type="text/ng-template" id="singleSelect.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{constraint.title}}</h3>
+            <select ng-model="constraint.value" ng-options="pick.name for pick in constraint.valueValues">
+                <option value="">-- choose one --</option>
+            </select>
+       </div>
+    </script>
+
+    <script type="text/ng-template" id="multiSelect.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{constraint.title}}</h3>
+            <div ng-repeat="part in constraint.Subcomponents.elements" ng-click="constraint.toggleSelection(part)">
+                <input type="checkbox" name="validvalues[]" title="{{part.title}} value=" {{part.value}} " ng-checked=" part.isSelected" />   {{part.name}}
+            </div>
+        </div>
+    </script>
+
+
+    <script id="exampleBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <p>Filter: {{context.filter}}</p>
+            <div ng-repeat="constraint in context.Subcomponents.elements">
+                <div ng-if="constraint.controlType.matches('daterange')" ng-include="'dateRange.html'"></div>
+                <div ng-if="constraint.controlType.matches('singleselect')" ng-include="'singleSelect.html'"></div>
+                <div ng-if="constraint.controlType.matches('multiselect')" ng-include="'multiSelect.html'"></div>
+            </div>
+
+        </div>
+    </script>
+</body>
+
+</html>
