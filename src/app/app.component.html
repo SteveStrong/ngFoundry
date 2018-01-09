@@ -1,11 +1,11 @@
 <div class="navbar navbar-inverse " role="navigation">
   <div class="container-fluid">
-      <a class='navbar-brand' href="http://localhost:4200/canvas" target="_blank" >+</a>
+    <a class='navbar-brand' [href]="href" target="_blank">+</a>
     <a class='navbar-brand' [routerLink]="['/welcome']">Welcome</a>
-
+    <a class="nav navbar-brand " [routerLink]="[ '/drawing'] ">Drawing</a>
 
     <div class="nav navbar-nav navbar-right ">
-      
+
       <a class="nav navbar-brand " [routerLink]="[ '/canvas'] ">Canvas</a>
       <a class="nav navbar-brand " [routerLink]="[ '/test'] ">Test</a>
 

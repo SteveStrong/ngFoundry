@@ -1,5 +1,7 @@
 
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { EmitterService } from './common/emitter.service';
 //https://www.npmjs.com/package/ng2-toastr
 import { ToastsManager, ToastOptions, Toast } from 'ng2-toastr/ng2-toastr';
@@ -13,13 +15,21 @@ import { environment } from '../environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'ngFoundry';
+  title: string = 'ngFoundry';
+  href: string;
 
-  constructor(private toastrService: ToastsManager, private options: ToastOptions, private vcr: ViewContainerRef) {
+  constructor(
+    private toastrService: ToastsManager,
+    private router: Router,
+    private options: ToastOptions,
+    private vcr: ViewContainerRef) {
 
     //let pt = new Point(0,0);
 
-    this.toastrService.setRootViewContainerRef(vcr);
+
+    
+
+    this.toastrService.setRootViewContainerRef(this.vcr);
 
     this.options.showCloseButton = true;
     this.options.newestOnTop = true;
@@ -32,6 +42,8 @@ export class AppComponent implements OnInit {
 
 
   openToast(type, title, message) {
+    //refresh based on opening toast
+    this.href = this.router.url; 
     this.toastrService[type](title, message, this.options);
   }
 
@@ -44,6 +56,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.href = this.router.url;
 
     EmitterService.get("SHOWERROR").subscribe((item) => {
       //console.log('SHOWERROR ' + JSON.stringify(item, undefined, 3));
