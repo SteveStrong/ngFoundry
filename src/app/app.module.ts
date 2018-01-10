@@ -37,6 +37,8 @@ import { CanvasTestComponent } from './canvas/canvastest.component';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+
 import { foInspectorComponent } from './canvas/fo-inspector/fo-inspector.component';
 import { foStencilComponent } from './canvas/fo-inspector/fo-stencil.component';
 import { foModelComponent } from './canvas/fo-inspector/fo-model.component';
@@ -90,6 +92,7 @@ import { DrawingComponent } from './canvas/drawing.component';
   imports: [
     BrowserAnimationsModule,
     AccordionModule.forRoot(),
+    PaginationModule.forRoot(),
     TabsModule.forRoot(),
     ToastModule.forRoot(),
 

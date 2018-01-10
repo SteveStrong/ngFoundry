@@ -17,6 +17,8 @@ export class foDocument extends foNode {
         return this._pages;
     }
 
+
+
     createPage(properties?:any){
         let nextPage = `Page-${this.pages.count + 1}`;
         let spec = Tools.union(properties, {myName: nextPage})

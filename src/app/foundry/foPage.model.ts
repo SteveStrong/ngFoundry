@@ -487,6 +487,15 @@ export class foPage extends foShape2D {
         ctx.restore();
     }
 
+    drawName(ctx: CanvasRenderingContext2D) {
+        ctx.save();
+        ctx.font = '50pt Calibri';
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'blue';
+        ctx.strokeText(this.myName, 10, 50);
+        ctx.restore();
+    }
+
     get boundryFrame(): cFrame {
         let frame = this.nodes.first().boundryFrame;
         this.nodes.forEach(item => {
@@ -509,6 +518,8 @@ export class foPage extends foShape2D {
 
         ctx.save();
         this.updateContext(ctx);
+
+        this.drawName(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);
