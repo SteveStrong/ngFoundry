@@ -3,27 +3,49 @@ import { PubSub } from "../foundry/foPubSub";
 
 import { cPoint } from "../foundry/foGeometry";
 
-function doAnimate(mySelf) {
-    function animate() {
-        requestAnimationFrame(animate);
-        mySelf.render(mySelf.context);
-    }
-    animate();
-}
 
 
 export class Sceen2D {
-
+    private stopped: boolean = true
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
 
+    //https://developer.mozilla.org/en-US/docs/Web/API/Window/cancelAnimationFrame
+    requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame; // || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
+    cancelAnimation = window.cancelAnimationFrame; // || window.mozCancelAnimationFrame;
+
     render: (context: CanvasRenderingContext2D) => void;
 
+
+    public doAnimate = (): void => {
+        this.render(this.context);
+        this._request = this.requestAnimation(this.doAnimate);
+    }
+
+
+    private _request: any;
     go(next?: () => {}) {
-        doAnimate(this);
+        this.stopped = false;
+        this.doAnimate();
         next && next();
     }
 
+
+    stop(next?: () => {}) {
+        this.stopped = true;
+        this.cancelAnimation(this._request)
+        next && next();
+    }
+
+    toggleOnOff(): boolean {
+        this.stopped ? this.go() : this.stop();
+        return this.stopped;
+    }
+
+    clear() {
+        this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+    }
+    
     setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {
         this.canvas = nativeElement;
         this.context = this.canvas.getContext("2d");
@@ -43,39 +65,39 @@ export class Sceen2D {
     }
 
     pubMouseEvents(canvas: HTMLCanvasElement) {
-        var rect = canvas.getBoundingClientRect();
-        var body = canvas.ownerDocument.body;
-        var pt = new cPoint();
+        let rect = canvas.getBoundingClientRect();
+        //let body = canvas.ownerDocument.body;
+        let pt = new cPoint();
 
         function getMousePos(event: MouseEvent): cPoint {
-            let px = event.pageX;
-            let py = event.pageY;
+            //let px = event.pageX;
+            //let py = event.pageY;
 
             let x = rect.left;
             let y = rect.top;
             return pt.set(event.clientX - x, event.clientY - y);
         }
 
-        //http://jsfiddle.net/jy5yQ/1/
-        function getMousePosition(event: MouseEvent): cPoint {
-            let x: number;
-            let y: number;
+        // //http://jsfiddle.net/jy5yQ/1/
+        // function getMousePosition(event: MouseEvent): cPoint {
+        //     let x: number;
+        //     let y: number;
 
-            if (event.pageX != undefined && event.pageY != undefined) {
-                x = event.pageX;
-                y = event.pageY;
-            }
-            else {
-                x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            }
+        //     if (event.pageX != undefined && event.pageY != undefined) {
+        //         x = event.pageX;
+        //         y = event.pageY;
+        //     }
+        //     else {
+        //         x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        //         y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        //     }
 
-            x -= canvas.offsetLeft;
-            y -= canvas.offsetTop;
+        //     x -= canvas.offsetLeft;
+        //     y -= canvas.offsetTop;
 
 
-            return pt.set(x, y);
-        }
+        //     return pt.set(x, y);
+        // }
 
 
         canvas.addEventListener('mousedown', (e: MouseEvent) => {

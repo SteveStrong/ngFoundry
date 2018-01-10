@@ -21,6 +21,9 @@ import { foGlue } from 'app/foundry/foGlue';
 export class SharingService {
 
   private _page: foPage;
+  set currentPage(value:foPage){
+    this._page = value;
+  }
 
   constructor(
     private signalR: SignalRService) {
@@ -171,11 +174,11 @@ export class SharingService {
   }
 
 
+
   //------------------------------------------------
-  public startSharing(page: foPage, next?: () => {}) {
+  public startSharing(next?: (self:SharingService) => {}) {
 
-    this._page = page;
-
+  
     this.signalR.start().then(() => {
 
       // function forceParent(shape: foGlyph) {
@@ -333,7 +336,7 @@ export class SharingService {
         });
       });
 
-      next && next();
+      next && next(this);
 
     });
 

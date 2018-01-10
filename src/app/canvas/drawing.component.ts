@@ -21,11 +21,12 @@ import { particleEngine } from "./particle.model";
   styleUrls: ['./drawing.component.css']
 })
 export class DrawingComponent implements OnInit, AfterViewInit {
+  label: string = 'Off';
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
-  rootWorkspace:foWorkspace = new foWorkspace({
-    myName: 'The workspace manages the user, their models and documents'
+  rootWorkspace: foWorkspace = new foWorkspace({
+    myName: 'The workspace manages the user', //, their models and documents'
   })
 
   @ViewChild('canvas')
@@ -52,17 +53,11 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.currentPage.deleteSelected();
   }
 
-  doParticleEngine(page:foPage) {
-    // new particleEngine({
-    //   color: 'coral',
-    //   particleCount: 10,
-    //   opacity: .1,
-    //   width: 100,
-    //   height: 200,
-    // }).dropAt(300, 300).addAsSubcomponent(this.currentPage)
-    //   .then(item => {
-    //     item.doStart();
-    //   });
+  doOnOff() {
+    this.label = this.screen2D.toggleOnOff() ? "On" : "Off"
+  }
+
+  doParticleEngine(page: foPage) {
 
     let def = Stencil.define<foGlyph>('particle', particleEngine, {
       color: 'white',
@@ -81,6 +76,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       });
   }
 
+
+
   ngOnInit() {
     let max = 25;
     Lifecycle.observable.subscribe(event => {
@@ -96,15 +93,30 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     });
 
     this.currentDocument = this.rootWorkspace.document;
-    this.currentPage = this.currentDocument.createPage({
+    this.currentPage = this.createPage()
+      .then(page => {
+        this.doParticleEngine(page);
+      });
+  }
+
+  private createPage(): foPage {
+    return this.currentDocument.createPage({
       width: this.pageWidth,
       height: this.pageHeight,
-    }).then(page => {
-      this.doParticleEngine(page);
     });
+  }
 
+  doAddPage() {
+    this.doGoToPage(this.createPage());
+  }
 
+  doDeletePage() {
 
+  }
+
+  doGoToPage(page: foPage) {
+    this.currentPage = page;
+    this.doSetCurrentPage(this.currentPage);
   }
 
   pushMax(value, max, array) {
@@ -131,20 +143,26 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     Knowcycle.defined()
   }
 
+  doSetCurrentPage(page: foPage) {
+
+    this.sharing.currentPage = page;
+    this.screen2D.clear();
+    this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
+      ctx.save();
+      page.render(ctx);
+      ctx.restore();
+    }
+    this.screen2D.go();
+
+  }
 
   public ngAfterViewInit() {
 
+    this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
+    this.sharing.startSharing();
+
     this.currentPage.then(page => {
-      this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
-
-      this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
-        ctx.save();
-        page.render(ctx);
-        ctx.restore();
-      }
-
-      this.sharing.startSharing(page);
-      this.screen2D.go();
+      this.doSetCurrentPage(page);
     })
   }
 
