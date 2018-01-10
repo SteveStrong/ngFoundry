@@ -4,14 +4,6 @@ import { PubSub } from "../foundry/foPubSub";
 import { cPoint } from "../foundry/foGeometry";
 
 
-// function doAnimate(mySelf, again:boolean=true) {
-//     function animate() {
-//         requestAnimationFrame(animate);
-//         mySelf.render(mySelf.context);
-//     }
-//     again && animate();
-// }
-
 
 export class Sceen2D {
     private stopped: boolean = true
@@ -19,8 +11,8 @@ export class Sceen2D {
     context: CanvasRenderingContext2D;
 
     //https://developer.mozilla.org/en-US/docs/Web/API/Window/cancelAnimationFrame
-    requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
-    cancelAnimation = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+    requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame; // || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
+    cancelAnimation = window.cancelAnimationFrame; // || window.mozCancelAnimationFrame;
 
     render: (context: CanvasRenderingContext2D) => void;
 
@@ -50,6 +42,10 @@ export class Sceen2D {
         return this.stopped;
     }
 
+    clear() {
+        this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+    }
+    
     setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {
         this.canvas = nativeElement;
         this.context = this.canvas.getContext("2d");
@@ -82,26 +78,26 @@ export class Sceen2D {
             return pt.set(event.clientX - x, event.clientY - y);
         }
 
-        //http://jsfiddle.net/jy5yQ/1/
-        function getMousePosition(event: MouseEvent): cPoint {
-            let x: number;
-            let y: number;
+        // //http://jsfiddle.net/jy5yQ/1/
+        // function getMousePosition(event: MouseEvent): cPoint {
+        //     let x: number;
+        //     let y: number;
 
-            if (event.pageX != undefined && event.pageY != undefined) {
-                x = event.pageX;
-                y = event.pageY;
-            }
-            else {
-                x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            }
+        //     if (event.pageX != undefined && event.pageY != undefined) {
+        //         x = event.pageX;
+        //         y = event.pageY;
+        //     }
+        //     else {
+        //         x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+        //         y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        //     }
 
-            x -= canvas.offsetLeft;
-            y -= canvas.offsetTop;
+        //     x -= canvas.offsetLeft;
+        //     y -= canvas.offsetTop;
 
 
-            return pt.set(x, y);
-        }
+        //     return pt.set(x, y);
+        // }
 
 
         canvas.addEventListener('mousedown', (e: MouseEvent) => {

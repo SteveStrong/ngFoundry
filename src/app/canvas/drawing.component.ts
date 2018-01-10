@@ -21,7 +21,7 @@ import { particleEngine } from "./particle.model";
   styleUrls: ['./drawing.component.css']
 })
 export class DrawingComponent implements OnInit, AfterViewInit {
-  label:string = '';
+  label: string = 'Off';
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
@@ -54,7 +54,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
   doOnOff() {
-    this.label = this.screen2D.toggleOnOff()? "On" : "Off"
+    this.label = this.screen2D.toggleOnOff() ? "On" : "Off"
   }
 
   doParticleEngine(page: foPage) {
@@ -93,24 +93,28 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     });
 
     this.currentDocument = this.rootWorkspace.document;
-    this.currentPage = this.currentDocument.createPage({
+    this.currentPage = this.createPage()
+      .then(page => {
+        this.doParticleEngine(page);
+      });
+  }
+
+  private createPage(): foPage {
+    return this.currentDocument.createPage({
       width: this.pageWidth,
       height: this.pageHeight,
-    }).then(page => {
-      this.doParticleEngine(page);
     });
   }
 
   doAddPage() {
-    let page = this.currentDocument.createPage();
-    this.doGoToPage(page);
+    this.doGoToPage(this.createPage());
   }
 
   doDeletePage() {
 
   }
 
-  doGoToPage(page:foPage) {
+  doGoToPage(page: foPage) {
     this.currentPage = page;
     this.doSetCurrentPage(this.currentPage);
   }
@@ -141,23 +145,24 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doSetCurrentPage(page: foPage) {
 
-    this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
-
+    this.sharing.currentPage = page;
+    this.screen2D.clear();
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
       ctx.save();
       page.render(ctx);
       ctx.restore();
     }
+    this.screen2D.go();
 
-    this.sharing.startSharing(page);
   }
 
   public ngAfterViewInit() {
 
+    this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
+    this.sharing.startSharing();
+
     this.currentPage.then(page => {
       this.doSetCurrentPage(page);
-      this.screen2D.go();
-      this.label = "Off"
     })
   }
 

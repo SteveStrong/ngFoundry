@@ -10,7 +10,7 @@
       <div class="btn-group mr-2 pull-right" role="group">
         <button (click)="doAddPage()" type="button" class="btn btn-success">New Page</button>
         <ng-container *ngFor="let page of currentDocument.pages.members">
-          <button (click)="doGoToPage()" type="button" class="btn btn-info">{{page.myName}}</button>
+          <button (click)="doGoToPage(page)" type="button" class="btn btn-info">{{page.myName}}</button>
         </ng-container>
         <button (click)="doDeletePage()" type="button" class="btn btn-danger">Delete Page</button>
       </div>
