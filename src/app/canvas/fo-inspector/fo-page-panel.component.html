@@ -6,7 +6,7 @@
     <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
   </ng-container>
 
-  <ng-container *ngIf="node && !node.nodes.isHidden ">
+  <ng-container *ngIf="!node.nodes.isHidden ">
     <p *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
       <fo-page-panel [node]="node"></fo-page-panel>
     </p>
