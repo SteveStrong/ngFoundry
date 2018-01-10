@@ -14,6 +14,14 @@ import { foGlyph } from '../foundry/foGlyph.model'
 
 import { Lifecycle } from './foLifecycle';
 
+export enum shape2DNames {
+    left = "left",
+    right = "right",
+    top = "top",
+    bottom = "bottom",
+    center = "center"
+};
+
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
 export class foShape2D extends foGlyph {

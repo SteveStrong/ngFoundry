@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { StageComponent } from './canvas/stage.component';
+import { DrawingComponent } from './canvas/drawing.component';
 import { CanvasTestComponent } from './canvas/canvastest.component';
 import { NetworkviewComponent } from './networkview/networkview.component';
 import { ListviewComponent } from './listview/listview.component';
@@ -17,6 +18,7 @@ const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent },
   { path: 'webgl', component: WebglviewComponent },
   { path: 'canvas', component: StageComponent },
+  { path: 'drawing', component: DrawingComponent },
   { path: 'test', component: CanvasTestComponent },
   { path: 'svg', component: TestSvgComponent },
   { path: 'circle', component: TestSvgCircleComponent },

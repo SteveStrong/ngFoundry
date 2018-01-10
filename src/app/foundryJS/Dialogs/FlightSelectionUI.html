@@ -1,0 +1,770 @@
+﻿<!DOCTYPE html>
+<html data-ng-app="foundry" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>flight dialog</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/content/toastr.min.css" rel="stylesheet" />
+</head>
+<body data-ng-controller="FoundryController">
+
+
+    <h1>{{vm.title}}</h1>
+    <!--<input type="button" value="open dialog" ng-click="vm.openDialog()" />-->
+
+    <div class="container">
+        <div class="row">
+            <span class="col-lg-8" >active filter: {{manager.activeFliter}}</span>
+        </div>
+        <div class="row">
+            <button class="col-lg-2 btn btn-info" ng-click="constraint.doAddConstraint()" ng-repeat="constraint in manager.constraints">{{constraint.name}}</button>
+        </div>
+        <div class="row">
+            <div class="row">
+                <div class="col-lg-2" ng-repeat="constraint in manager.activeConstraints">
+                    <button class="btn btn-danger" ng-click="constraint.doRemoveConstraint()">{{constraint.name}}</button>
+                    <select ng-model="constraint.currentSelection" multiple size="10" ng-options="pick.name for pick in constraint.validValuesList">
+                    </select>
+                    <p>F:{{constraint.localFilter}}</p>
+                    <p>P:{{constraint.previousFilter}}</p>
+                    <pre>{{constraint.selections}}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <table st-table="rowCollection" class="table table-striped">
+        <thead>
+            <tr>
+                <th st-sort="id">ID</th>
+                <th st-sort="flightNumber">flight</th>
+                <th st-sort="travelNexus">travel nexus</th>
+                <th st-sort="travelNexus">depart iata</th>
+                <th st-sort="travelNexus">depart country</th>
+                <th st-sort="travelNexus">arrive iata</th>
+                <th st-sort="travelNexus">arrive country</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr ng-repeat="row in flights">
+                <td>{{row.id}}</td>
+                <td>{{row.flightNumber}}</td>
+                <td>{{row.travelNexus}}</td>
+                <td>{{row.departureAirport.iataCode}}</td>
+                <td>{{row.departureAirport.countryCode}}</td>
+                <td>{{row.arrivalAirport.iataCode}}</td>
+                <td>{{row.arrivalAirport.countryCode}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <table st-table="rowCollection" class="table table-striped">
+        <thead>
+            <tr>
+                <th st-sort="id">ID</th>
+                <th st-sort="carrierCode">iata</th>
+                <th st-sort="name">name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in carriers">
+                <td>{{row.id}}</td>
+                <td>{{row.carrierCode}}</td>
+                <td>{{row.name}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table st-table="rowCollection" class="table table-striped">
+        <thead>
+            <tr>
+                <th st-sort="id">ID</th>
+                <th st-sort="iataCode">iata</th>
+                <th st-sort="countryCode">country</th>
+                <th st-sort="name">name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in airports">
+                <td>{{row.id}}</td>
+                <td>{{row.iataCode}}</td>
+                <td>{{row.countryCode}}</td>
+                <td>{{row.name}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+
+    <div class="row well">
+        <pre>{{vm.json}}</pre>
+    </div>
+
+    <script src="/Scripts/jquery-2.1.1.min.js"></script>
+    <script src="/Scripts/angular.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap.min.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    <script src="/Scripts/toastr.min.js"></script>
+    <script src="/Foundry/Foundry.js"></script>
+
+    <a href="http://lorenzofox3.github.io/smart-table-website/" target="_blank">smart-table-website</a>
+    <script src="/Scripts/smart-table.debug.js"></script>
+
+    <script>
+        /******
+1              DKR        L?opold S?dar Senghor International Airport       SN
+2              MAX      Ouro Sogui Airport          SN
+3              BXE        Bakel Airport      SN
+4              KGG       K??dougou Airport          SN
+5              TUD       Tambacounda Airport    SN
+6              NKC       Nouakchott International Airport             MR
+7              ATR        Atar International Airport             MR
+8              CKY        Conakry Airport                GN
+9              SID         Amilcar Cabral International Airport         CV
+10           BVC        Rabil Airport       CV
+11           RAI         Praia International Airport           CV
+12           SNE        Pregui??a Airport             CV
+13           VXE        S?So Pedro Airport          CV
+14           H28        Whetstone International Airport              US
+15           ADD       Bole International Airport            ET
+16           BJR         Bahir Dar Airport              ET
+17           GMB      Gambella Airport             ET
+18           GDQ      Gonder Airport ET
+19           GDE       Gode Airport     ET
+
+ 
+ 1              !!             !!!!
+2              8F           STP AIRWAYS
+3              8I            INSEL AIR ARUBA
+4              8U          AFRIQIYAH AIRWAYS
+5              8V           WRIGHT AIR SERVICE
+6              9F           EUROSTAR INTERNATIONAL
+7              9G          AIRPORT EXPRESS RAIL
+8              9T           ACT AIRLINES INC
+9              9U          AIR MOLDOVA
+10           A5           HOP!
+11           A6           AIR ALPS AVIATION
+12           AE           MANDARIN AIRLINES
+13           AF           AIR FRANCE
+14           HA          HAWAIIAN AIRLINES
+15           HBR        HEBRIDEAN AIR SERVICES
+16           HM         AIR SEYCHELLES
+17           HO          JUNEYAO AIRLINES
+18           HY           UZBEKISTAN AIRWAYS
+19           HZ           SAKHALINSKIE AVIATRASSY
+
+
+        ******/
+
+    </script>
+    <script>
+        var knowtApp = angular.module('foundry', ['ui.bootstrap']);
+
+        (function (app, fo, undefined) {
+
+            app.defaultNS = function (name) {
+                var id = fo.getNamespaceKey(this.name, name);
+                return id;
+            }
+
+            app.createType = function () {
+                if (!fo[app.name]) {
+                    fo.exportTypes();
+                }
+                return fo[app.name];
+            }
+
+            app.run(function ($log, $exceptionHandler, dialogService) {
+
+
+                //http://codeseven.github.io/toastr/demo.html
+                toastr.options = {
+                    positionClass: "toast-bottom-left",
+                }
+
+                fo.subscribe('info', function (a, b) {
+                    toastr.info(a, b);
+                });
+
+                fo.subscribe('warning', function (a, b) {
+                    toastr.warning(a, b);
+                });
+
+                fo.subscribe('error', function (a, b) {
+                    toastr.error(a, b);
+                });
+
+                fo.subscribe('success', function (a, b) {
+                    toastr.success(a, b);
+                });
+
+                //load templares for dialogs and shapes...
+                fo.utils.loadTemplate('KnowtView.Dialogs.html');
+            });
+
+        }(knowtApp, Foundry));
+
+        var carrierData = [
+         {
+             id: 2,
+             carrierCode: '8F',
+             name: 'STP AIRWAYS',
+         },
+         {
+             id: 3,
+             carrierCode: '8I',
+             name: ' INSEL AIR ARUBA',
+         },
+         {
+             id: 4,
+             carrierCode: '8U',
+             name: 'AFRIQIYAH AIRWAYS',
+         },
+         {
+             id: 5,
+             carrierCode: '8V',
+             name: ' WRIGHT AIR SERVICE',
+         },
+         {
+             id: 6,
+             carrierCode: '9F',
+             name: 'EUROSTAR INTERNATIONAL',
+         },
+         {
+             id: 7,
+             carrierCode: '8F',
+             name: 'STP AIRWAYS',
+         },
+         {
+             id: 8,
+             carrierCode: '9G',
+             name: 'AIRPORT EXPRESS RAIL',
+         },
+         {
+             id: 9,
+             carrierCode: '9U',
+             name: 'ACT AIRLINES INC',
+         },
+        ];
+
+        var airportData = [
+             {
+                 id: 2,
+                 iataCode: 'MAX',
+                 name: 'Ouro Sogui Airport',
+                 countryCode: 'SN',
+             },
+             {
+                 id: 3,
+                 iataCode: 'BXE',
+                 name: 'Bakel Airport',
+                 countryCode: 'SN',
+             },
+             {
+                 id: 4,
+                 iataCode: 'KGG',
+                 name: 'K??dougou Airport',
+                 countryCode: 'SN',
+             },
+              {
+                  id: 5,
+                  iataCode: 'TUD',
+                  name: 'Tambacounda Airport',
+                  countryCode: 'SN',
+              },
+             {
+                 id: 6,
+                 iataCode: 'NKC',
+                 name: 'Nouakchott International Airport',
+                 countryCode: 'MR',
+             },
+             {
+                 id: 7,
+                 iataCode: 'ATR',
+                 name: 'Atar International Airport',
+                 countryCode: 'MR',
+             },
+            {
+                id: 8,
+                iataCode: 'CKY',
+                name: 'Conakry Airport',
+                countryCode: 'GN',
+            },
+            {
+                id: 9,
+                iataCode: 'SID',
+                name: ' Amilcar Cabral International Airport',
+                countryCode: 'CV',
+            },
+            {
+                id: 10,
+                iataCode: 'BVC',
+                name: 'Rabil Airport ',
+                countryCode: 'CV',
+            },
+            {
+                id: 11,
+                iataCode: 'RAI',
+                name: 'Praia International Airpor',
+                countryCode: 'CV',
+            },
+            {
+                id: 12,
+                iataCode: 'SNE',
+                name: 'Pregui??a Airport',
+                countryCode: 'CV',
+            },
+            {
+                id: 13,
+                iataCode: 'VXE',
+                name: 'S?So Pedro Airport ',
+                countryCode: 'CV',
+            },
+        ];
+
+        var filghtData = [
+            {
+                id: 1,
+                arrivalLocationId: 13,
+                departureLocationId: 2,
+                conveyanceNumber: '87',
+                carrierId:9,
+            },
+            {
+                id: 2,
+                arrivalLocationId: 2,
+                departureLocationId: 3,
+                conveyanceNumber: '767',
+                carrierId: 3,
+            },
+            {
+                id: 3,
+                arrivalLocationId: 3,
+                departureLocationId: 4,
+                conveyanceNumber: '76',
+                carrierId: 2,
+            },
+            {
+                id: 4,
+                arrivalLocationId: 4,
+                departureLocationId: 3,
+                conveyanceNumber: '205',
+                carrierId: 3,
+            },
+            {
+                id: 5,
+                arrivalLocationId: 12,
+                departureLocationId: 2,
+                conveyanceNumber: '1234',
+                carrierId: 5,
+            },
+            {
+                id: 6,
+                arrivalLocationId: 10,
+                departureLocationId: 6,
+                conveyanceNumber: '345',
+                carrierId: 4,
+            },
+            {
+                id: 7,
+                arrivalLocationId: 4,
+                departureLocationId: 5,
+                conveyanceNumber: '265',
+                carrierId: 9,
+            },
+            {
+                id: 8,
+                arrivalLocationId: 5,
+                departureLocationId: 6,
+                conveyanceNumber: '22',
+                carrierId: 9,
+            },
+        ];
+
+        (function (app, fo, undefined) {
+            var utils = fo.utils;
+
+            fo.meta.establishMetadata(app.defaultNS('flight'), {
+                carrierCode: { title: 'Carrier', filter: 'carrierCode({0})' },
+                conveyanceNumber: { title: 'Number', filter: 'conveyanceNumber({0})' },
+                travelNexus: {
+                    title: 'Travel Nexus',
+                    filter: 'travelNexus[{0}]',
+                    validValuesList: [
+                        { code: 'D', displayValue: 'US Domestic' },
+                        { code: 'I', displayValue: 'US Arrivals' },
+                        { code: 'O', displayValue: 'US Departures' },
+                        { code: 'N', displayValue: 'Non US' },
+                    ]
+                },
+            });
+
+
+            var metaFlight = fo.meta.findMetadata(app.defaultNS('flight'));
+            var lookup = fo.filtering.applyMapping(metaFlight.travelNexus.validValuesList, 'code');
+
+            fo.establishType(app.defaultNS('carrier'), {
+                id: "",
+                type: "carrier",
+                carrierCode: '',
+                name: '',
+            });
+
+            var carrierDictionary = fo.getEntityDictionaryLookup(app.defaultNS('carrier'));
+
+            fo.establishType(app.defaultNS('airport'), {
+                id: "",
+                type: "airport",
+                iataCode: '',
+                name: '',
+                countryCode: '',
+                position: [0, 0],
+            });
+
+            var airportDictionary = fo.getEntityDictionaryLookup(app.defaultNS('airport'));
+
+            fo.establishType(app.defaultNS('flight'), {
+                id: "",
+                type: "flight",
+                arrivalLocationId: '',
+                departureLocationId: '',
+                arrivalAirport: function () {
+                    var port = airportDictionary[this.arrivalLocationId];
+                    return port;
+                },
+                departureAirport: function () {
+                    var port = airportDictionary[this.departureLocationId];
+                    return port;
+                },
+                conveyanceNumber: '',
+                carrierId: '',
+                carrier: function () {
+                    var carrier = carrierDictionary[this.carrierId];
+                    return carrier;
+                },
+                carrierCode: function () {
+                    return this.carrier.carrierCode;
+                },
+                scheduledArrivalTime: '',
+                scheduledDepartureTime: '',
+                travelNexusCode: function () {
+                    var arrival = this.arrivalAirport.countryCode;
+                    var departure = this.departureAirport.countryCode;
+                    var usArrival = arrival.matches('us');
+                    var usDeparture = departure.matches('us');
+                    if (usArrival && usDeparture) return 'D';
+                    if (usArrival && !usDeparture) return 'I';
+                    if (!usArrival && usDeparture) return 'O';
+                    return 'N';
+                },
+                travelNexus: function () {
+                    var nexus = lookup[this.travelNexusCode];
+                    return nexus.displayValue;
+                },
+                position: [0, 0],
+                flightNumber: function () {
+                    return this.carrierCode + ' ' + this.conveyanceNumber;
+                },
+            });
+
+            var flightDictionary = fo.getEntityDictionaryLookup(app.defaultNS('flight'));
+
+
+            //<td>{{row.id}}</td>
+            //<td>{{row.flightNumber}}</td>
+            //<td>{{row.travelNexus}}</td>
+            //<td>{{row.departureAirport.iataCode}}</td>
+            //<td>{{row.departureAirport.countryCode}}</td>
+            //<td>{{row.arrivalAirport.iataCode}}</td>
+            //<td>{{row.arrivalAirport.countryCode}}</td>
+ //           <button class="btn btn-success" ng-click="constraint.doCreateFilter()">filter</button>
+ //<p>{{constraint.filter}}</p>
+
+
+            var constraintList = [
+                {
+                    id: 1,
+                    name: 'carrierId',
+                    mapping: function () {
+                        return function (flight) {
+                            return {
+                                id: flight.carrierId,
+                                value: flight.carrier.carrierCode,
+                                name: flight.carrier.name,
+                            }
+                        }
+                    },
+                },
+                {
+                    id: 2,
+                    name: 'arrivalLocationId',
+                    mapping: function () {
+                        return function (flight) {
+                            return {
+                                id: flight.arrivalLocationId,
+                                value: flight.arrivalAirport.iataCode,
+                                name: flight.arrivalAirport.name,
+                            }
+                        };
+                    }
+                },
+                {
+                    id: 3,
+                    name: 'departureLocationId',
+                    mapping: function () {
+                        return function (flight) {
+                            return {
+                                id: flight.departureLocationId,
+                                value: flight.departureAirport.iataCode,
+                                name: flight.departureAirport.name,
+                            }
+                        }
+                    }
+                },
+                {
+                    id: 4,
+                    name: 'departureCountryCode',
+                    mapping: function () {
+                        return function (flight) {
+                            var item = flight.departureAirport;
+                            return {
+                                id: item.id,
+                                value: item.countryCode,
+                                name: item.countryCode,
+                            }
+                        }
+                    }
+                },
+                {
+                    id: 5,
+                    name: 'arrivalCountryCode',
+                    mapping: function () {
+                        return function (flight) {
+                            var item = flight.arrivalAirport;
+                            return {
+                                id: item.id,
+                                value: item.countryCode,
+                                name: item.countryCode,
+                            }
+                        }
+                    }
+                },
+            ];
+
+
+            fo.establishType(app.defaultNS('constraintManager'), {
+                id: "",
+                constraints: function () {
+                    var list = this.selectComponents(function (item) { return !item.isActive; });
+                    return list.elements;
+                },
+                activeConstraints: [],
+                activeFliter: function () {
+                    return this.activeConstraints.map(function (item) {
+                        return item.localFilter;
+                    }).join(';');
+                },
+            }, function (spec, subcomponents, parent) {
+                var factory = app.createType();
+
+                var obj = fo.makeComponent(spec, subcomponents, parent);
+
+                constraintList.forEach(function (item) {
+                    var constraint = factory.establishConstraint(item, function (obj) { return obj.id; }, undefined, obj);
+                    obj.addSubcomponent(constraint);
+                });
+                return obj;
+            });
+
+            fo.establishType(app.defaultNS('constraint'), {
+                id: "",
+                name: "",
+                isActive: false,
+                mapping: function () {
+                    return function (flight) {
+                        return {
+                            id: 1,
+                            value: 'A',
+                            name: 'mapping',
+                        }
+                    }
+                },
+                validValuesList: function () {
+                    var list = fo.utils.objectToArray(flightDictionary, this.mapping);
+                    return list;
+                },
+                localFilter: function () {
+                    if (this.currentSelection.length == 0) return;
+
+                    var list = this.currentSelection.map(function (item) {
+                        return item.id;
+                    }).join(',');
+
+                    return "{0}[{1}]".format(this.name, list);
+                },
+                currentSelection: [],
+                selections: function () {
+                    return this.currentSelection;
+                },
+                previousConstraint: '',
+                previousFilter: function () {
+                    return this.previousConstraint ? this.previousConstraint.localFilter + ';' + this.localFilter : ''
+                },
+                filteredValidValuesList: function () {
+                    var list = fo.utils.objectToArray(flightDictionary, function (item) {
+                        return {
+                            id: item.carrierId,
+                            value: item.carrier.carrierCode,
+                            name: item.carrier.name,
+                        }
+                    });
+                    return list;
+                }
+            }, function (spec, subcomponents, parent) {
+
+                var obj = fo.makeComponent(spec, subcomponents, parent);
+
+                obj.doAddConstraint = function () {
+                    obj.isActive = true;
+                    var active = parent.activeConstraints;
+                    obj.previousConstraint = active && active.length > 0 && active[active.length - 1];
+                    parent.activeConstraints.push(obj);
+                    parent.smashProperty('activeFliter');
+                }
+
+                obj.doRemoveConstraint = function () {
+                    obj.isActive = false;
+                    obj.previousConstraint = undefined;
+                    var index = parent.activeConstraints.indexOf(obj);
+                    if (index > -1) {
+                        parent.activeConstraints.splice(index, 1);
+                    }
+                    parent.smashProperty('activeFliter');
+                }
+
+
+                return obj;
+            });
+
+            app.controller('FoundryController', function ($scope, $log, dialogService) {
+
+                //http://foaas.com/
+
+                var factory = app.createType();
+
+                var manager =  factory.newConstraintManager();
+
+
+                $scope.manager = manager;
+
+                $scope.carriers = carrierData.map(function (item) {
+                    var carrier = factory.establishCarrier(item, function (obj) { return obj.id; });
+                    return carrier;
+                });
+ 
+                $scope.airports = airportData.map(function (item) {
+                    var airport = factory.establishAirport(item, function (obj) { return obj.id;} );
+                    return airport;
+                });
+
+                $scope.flights = filghtData.map(function (item) {
+                    var flight = factory.establishFlight(item, function (obj) { return obj.id; });
+                    return flight;
+                });
+
+                var vm = fo.makeComponent({
+                    title: 'dialog test',
+                    json: '',
+                    waiting: false,
+                    currentSelection: '',
+                    validValuesList: metaFlight.travelNexus.validValuesList,
+                    canDoGetDataAsync: function () {
+                        return this.currentSelection ? true : false;
+                    },
+                    doDisplayJSON: function () {
+                        var spec = this.dehydrate(true);
+                        this.json = JSON.stringify(spec, undefined, 3);
+                    },
+                    doHideJSON: function () {
+                        this.json = '';
+                    },
+                    doToggleJSON: function () {
+                        this.json ? this.doHideJSON : this.doDisplayJSON;
+                    },
+                });
+
+
+                vm.openDialog = function () {
+                    dialogService.doPopupDialog({
+                        context: vm,
+                        headerTemplate: 'exampleHeader.html',
+                        bodyTemplate: 'exampleBody.html',
+                        footerTemplate: 'exampleFooter.html',
+                    },
+                    {
+                        //onOK: function ($modalInstance, context) {
+                        //    var spec = context.getSpec();
+                        //},
+                        onCancel: function ($modalInstance, context) {
+                        },
+                        onExit: function () {
+                            vm.doToggleJSON;
+                        },
+                        onReady: function () {
+                            vm.doHideJSON;
+                        }
+                    },
+                    {
+                        doGetDataAsync: function (context) {
+                            context.waiting = true;
+                            setTimeout(function () {
+                                context.waiting = false;
+                                dialogService.doCloseDialog();
+                            }, 10 * 1000);
+                        },
+                    });
+                };
+
+
+                $scope.vm = vm;
+            });
+
+
+
+
+        }(knowtApp, Foundry));
+
+    </script>
+
+
+    <script src="KnowtViewNgDialog.js"></script>
+
+    <script id="exampleHeader.html" type="text/ng-template">
+        <p>you are in charge!</p>
+    </script>
+
+    <!--{ code: 'D', displayValue: 'US Domestic' },-->
+
+    <script id="exampleBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <h4>Go ahead and change the title</h4>
+            <select ng-model="context.currentSelection" multiple size="4" ng-options="pick.displayValue for pick in context.validValuesList">
+            </select>
+            <img ng-show="context.waiting" src="waiting.gif" alt="" />
+        </div>
+    </script>
+
+    <script id="exampleFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doGetDataAsync(context)" ng-disabled="!context.canDoGetDataAsync">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()" >Cancel</button>
+    </script>
+
+</body>
+</html>
+

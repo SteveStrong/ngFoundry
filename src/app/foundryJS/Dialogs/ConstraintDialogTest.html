@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html data-ng-app="foundry" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>constraint dialog</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/content/toastr.min.css" rel="stylesheet" />
+</head>
+<body data-ng-controller="FoundryController">
+
+    <h1>{{vm.title}}</h1>
+    <input type="button" value="open dialog" ng-click="vm.openDialog()" />
+
+    <div class="row well">
+        <pre>{{vm.json}}</pre>
+    </div>
+
+    <script src="/Scripts/jquery-2.1.1.min.js"></script>
+    <script src="/Scripts/angular.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap.min.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    <script src="/Scripts/toastr.min.js"></script>
+    <script src="/Foundry/Foundry.js"></script>
+
+    <script>
+        var knowtApp = angular.module('foundry', ['ui.bootstrap']);
+        knowtApp.header = { title: 'Apparatus', help: 'knowtshareHelp.html' };
+
+        (function (app, fo, undefined) {
+
+            app.run(function ($log, $exceptionHandler, dialogService) {
+
+
+                //http://codeseven.github.io/toastr/demo.html
+                toastr.options = {
+                    positionClass: "toast-bottom-left",
+                }
+
+                fo.subscribe('info', function (a, b) {
+                    toastr.info(a, b);
+                });
+
+                fo.subscribe('warning', function (a, b) {
+                    toastr.warning(a, b);
+                });
+
+                fo.subscribe('error', function (a, b) {
+                    toastr.error(a, b);
+                });
+
+                fo.subscribe('success', function (a, b) {
+                    toastr.success(a, b);
+                });
+
+                //load templares for dialogs and shapes...
+                fo.utils.loadTemplate('KnowtView.Dialogs.html');
+            });
+
+        }(knowtApp, Foundry));
+
+
+        (function (app, fo, undefined) {
+            var utils = fo.utils;
+
+            var iCounter = 0;
+            var animals = ['Alligator', 'Barracuda', 'Camel', 'Dolphin', 'Elephant', 'Falcon', 'Gila Monster', 'Hummingbird', 'Ibis', 'Jaguar', 'Kangaroo', 'Lemur'];
+
+            app.controller('FoundryController', function ($scope, $log, dialogService) {
+
+                var vm = fo.makeComponent({
+                    title: 'dialog test',
+                    json: '',
+                    pickList: function () {
+                        var list = animals.map(function (item) {
+                            return { title: item, code: item.substring(0, 3).toLocaleUpperCase()  };
+                        });
+                        return list;
+                    },
+                    currentSelection: '',
+                    selectedAnimal: '',
+                    selectedAnimalCode: function () {
+                        return this.currentSelection ? this.currentSelection.code : 'NONE';
+                    },
+
+                    doDisplayJSON: function () {
+                        var spec = this.dehydrate(true);
+                        this.json = JSON.stringify(spec, undefined, 3);
+                    },
+                    doHideJSON: function () {
+                        this.json = '';
+                    },
+                    doToggleJSON: function () {
+                        this.json ? this.doHideJSON : this.doDisplayJSON;
+                    },
+                });
+
+
+                vm.openDialog = function () {
+                    dialogService.doPopupDialog({
+                        context: vm,
+                        headerTemplate: 'exampleHeader.html',
+                        bodyTemplate: 'exampleBody.html',
+                        footerTemplate: 'OkCancelFooter.html',
+                    },
+                    {
+                        onOK: function ($modalInstance, context) {
+                            vm.makePartOfSpec('selectedAnimal');
+                            vm.makePartOfSpec('selectedAnimalCode');
+                            var spec = context.getSpec();
+                        },
+                        onCancel: function ($modalInstance, context) {
+                        },
+                        onExit: function () {
+                            vm.doToggleJSON;
+                        },
+                        onReady: function () {
+                            vm.doHideJSON;
+                        }
+                    },
+                    {
+                    });
+                };
+
+
+                $scope.vm = vm;
+            });
+        }(knowtApp, Foundry))
+    </script>
+
+    <script src="KnowtViewNgDialog.js"></script>
+
+    <script id="exampleHeader.html" type="text/ng-template">
+        <p>you are in charge!</p>
+    </script>
+
+    <script type="text/ng-template" id="dateinput.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Date Input</h3>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="countryinput.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Country Input</h3>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="ruleinput.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Rule Input</h3>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="legtypeinput.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Leg Type Input</h3>
+        </div>
+    </script>
+
+    <script id="exampleBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <h4>Go ahead and change the title</h4>
+            <div ng-include="'dateinput.html'"></div>
+            <div ng-include="'countryinput.html'"></div>
+            <div ng-include="'ruleinput.html'"></div>
+            <div ng-include="'legtypeinput.html'"></div>
+           <div class="form-group">
+                <label for="IDSessionKey" class="control-label">title:</label>
+                <input autofocus id="IDSessionKey" class="form-control" type="text" ng-model="context.title" placeholder="put the title here" />
+
+                <p>or move selected shape to a different page...</p>
+                <select ng-model="context.currentSelection" ng-options="pick.title for pick in context.pickList">
+                    <option value="">-- choose one --</option>
+                </select>
+            </div>
+        </div>
+    </script>
+
+</body>
+
+</html>

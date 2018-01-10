@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html data-ng-app="foundry" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>constraint dialog</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/content/toastr.min.css" rel="stylesheet" />
+</head>
+<body data-ng-controller="FoundryController">
+
+    <h1>{{vm.title}}</h1>
+    <input type="button" value="open dialog" ng-click="vm.openDialog()" />
+
+    <div class="row well">
+        <pre>{{vm.json}}</pre>
+    </div>
+
+    <script src="/Scripts/jquery-2.1.1.min.js"></script>
+    <script src="/Scripts/angular.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap.min.js"></script>
+    <script src="/Scripts/angular-ui/ui-bootstrap-tpls.min.js"></script>
+    <script src="/Scripts/toastr.min.js"></script>
+    <script src="/Foundry/Foundry.js"></script>
+
+    <script>
+        var knowtApp = angular.module('foundry', ['ui.bootstrap']);
+
+        (function (app, fo, undefined) {
+
+            app.run(function ($log, $exceptionHandler, dialogService) {
+
+
+                //http://codeseven.github.io/toastr/demo.html
+                toastr.options = {
+                    positionClass: "toast-bottom-left",
+                }
+
+                fo.subscribe('info', function (a, b) {
+                    toastr.info(a, b);
+                });
+
+                fo.subscribe('warning', function (a, b) {
+                    toastr.warning(a, b);
+                });
+
+                fo.subscribe('error', function (a, b) {
+                    toastr.error(a, b);
+                });
+
+                fo.subscribe('success', function (a, b) {
+                    toastr.success(a, b);
+                });
+
+                //load templares for dialogs and shapes...
+                fo.utils.loadTemplate('KnowtView.Dialogs.html');
+            });
+
+        }(knowtApp, Foundry));
+
+
+        (function (app, fo, undefined) {
+            var utils = fo.utils;
+
+
+            //http://stackoverflow.com/questions/20739941/export-json-to-csv-or-excel-with-utf-8-e-g-greek-encoding-using-javascript
+
+
+            testJson = [
+                {
+                    "name": "Tony Peña",
+                    "city": "New York",
+                    "country": "United States",
+                    "birthdate": "1978-03-15",
+                    "amount": 42
+
+                },
+                {
+                    "name": "Ζαλώνης Thessaloniki",
+                    "city": "Athens",
+                    "country": "Greece",
+                    "birthdate": "1987-11-23",
+                    "amount": 42
+                },
+                                {
+                                    "name": "Steve",
+                                    "city": "New York",
+                                    "country": "USA",
+                                    "birthdate": "1978-03-15",
+                                    "amount": 300
+
+                                },
+            ];
+
+            // Simple type mapping; dates can be hard
+            // and I would prefer to simply use `datevalue`
+            // ... you could even add the formula in here.
+            testTypes = {
+                "name": "String",
+                "city": "String",
+                "country": "String",
+                "birthdate": "String",
+                "amount": "Number"
+            };
+
+            fo.defineType('xls::person', {
+                "name": "Steve",
+                "city": "New York",
+                "country": "USA",
+                "birthdate": "1978-03-15",
+                "amount": 300
+            });
+
+
+            var spec = fo.meta.establishMetadata('xls::person', fo.meta.guessMetaData(testJson[0]));
+
+
+            emitXmlHeader = function () {
+                return '<?xml version="1.0"?>\n' +
+                       '<ss:Workbook xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">\n' +
+                       '<ss:Worksheet ss:Name="Sheet1">\n' +
+                       '<ss:Table>\n\n';
+            };
+
+            emitXmlFooter = function () {
+                return '\n</ss:Table>\n' +
+                       '</ss:Worksheet>\n' +
+                       '</ss:Workbook>\n';
+            };
+
+            jsonToSsXml = function (jsonObject) {
+                var row;
+                var col;
+                var xml;
+                var data = typeof jsonObject != "object"
+                         ? JSON.parse(jsonObject)
+                         : jsonObject;
+
+                xml = emitXmlHeader();
+
+                for (row = 0; row < data.length; row++) {
+                    xml += '<ss:Row>\n';
+
+                    for (col in data[row]) {
+                        xml += '  <ss:Cell>\n';
+                        xml += '    <ss:Data ss:Type="' + testTypes[col] + '">';
+                        xml += data[row][col] + '</ss:Data>\n';
+                        xml += '  </ss:Cell>\n';
+                    }
+
+                    xml += '</ss:Row>\n';
+                }
+
+                xml += emitXmlFooter();
+                return xml;
+            };
+
+            //download = function (content, filename, contentType) {
+            //    if (!contentType) contentType = 'application/octet-stream';
+            //    var a = document.getElementById('test');
+            //    var blob = new Blob([content], {
+            //        'type': contentType
+            //    });
+            //    a.href = window.URL.createObjectURL(blob);
+            //    a.download = filename;
+            //};
+
+
+            //http://filext.com/faq/office_mime_types.php
+            function writeAsBlob(payload, name, ext) {
+                var blob = new Blob([payload], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                fo.writeBlobFile(blob, name, ext);
+            };
+
+
+            app.controller('FoundryController', function ($scope, $log, dialogService) {
+
+                var vm = fo.makeComponent({
+                    title: 'dialog test',
+                    json: '',
+                    documentName: '',
+ 
+                    doDisplayJSON: function () {
+                        var spec = this.dehydrate(true);
+                        this.json = JSON.stringify(spec, undefined, 3);
+                    },
+                    doHideJSON: function () {
+                        this.json = '';
+                    },
+                    doToggleJSON: function () {
+                        this.json ? this.doHideJSON : this.doDisplayJSON;
+                    },
+                });
+
+
+
+
+                vm.openDialog = function () {
+                    dialogService.doPopupDialog({
+                        context: vm,
+                        headerTemplate: 'saveFileHeader.html',
+                        bodyTemplate: 'saveFileBody.html',
+                        footerTemplate: 'saveFileFooter.html',
+                    },
+                    {
+                        onOK: function ($modalInstance, context) {
+                            //var data = JSON.stringify( context.dehydrate(true));
+                            //var name = context.documentName;
+                            //var ext = '.xls';
+                            //fo.writeTextFileAsync(data, name, ext, function () {
+                            //    alert('all done');
+                            //});
+                            var result = jsonToSsXml(testJson);
+                            var file = context.documentName + ".xls";
+                            //download(result, file, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                            writeAsBlob(result, context.documentName, ".xls");  //extension matches above meme type
+                        },
+                        onCancel: function ($modalInstance, context) {
+                        },
+                        onExit: function () {
+                            vm.doToggleJSON;
+                        },
+                        onReady: function () {
+                            vm.doHideJSON;
+                        }
+                    },
+                    {
+                    });
+                };
+
+
+                $scope.vm = vm;
+            });
+        }(knowtApp, Foundry))
+    </script>
+
+    <script src="KnowtViewNgDialog.js"></script>
+
+  </body>
+
+</html>

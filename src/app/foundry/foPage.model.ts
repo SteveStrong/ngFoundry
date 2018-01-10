@@ -227,7 +227,7 @@ export class foPage extends foShape2D {
                 grab = null;
                 handles.clearAll();
                 this._subcomponents.forEach(item => {
-                    item.unSelect(true,found);
+                    item.unSelect(true, found);
                 });
             }
 
@@ -345,7 +345,7 @@ export class foPage extends foShape2D {
 
         PubSub.Sub('wheel', (loc: cPoint, g: cPoint, zoom: number, e: WheelEvent, keys) => {
             this.onMouseLocationChanged(loc, "wheel", keys);
-            if ( keys.shift && keys.ctrl) {
+            if (keys.shift && keys.ctrl) {
                 this.zoomToCenter(g, zoom, e);
             }
         });
@@ -524,10 +524,10 @@ export class foPage extends foShape2D {
     }
 
 
-   public preDraw = (ctx: CanvasRenderingContext2D): void => {
-      //ctx.fillStyle = this.color;
-      //ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
-    }    
+    public preDraw = (ctx: CanvasRenderingContext2D): void => {
+        //ctx.fillStyle = this.color;
+        //ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         this.drawGrid(ctx);

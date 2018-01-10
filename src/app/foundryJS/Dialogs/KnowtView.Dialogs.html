@@ -1,0 +1,308 @@
+﻿<script id="dialogTemplate.html" type="text/ng-template">
+    <div class="modal-content">
+        <div class="modal-header" ng-show="showHeader">
+            <button type="button" ng-click="doCancel()" class=" close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div ng-include=" 'dialogHeader.html' "></div>
+        </div>
+        <div class="modal-body" ng-show="showBody">
+            <div ng-include=" 'dialogBody.html' "></div>
+        </div>
+        <div class="modal-footer" ng-show="showFooter">
+            <div ng-include=" 'dialogFooter.html' "></div>
+        </div>
+    </div>
+</script>
+
+<script id="dialogHeader.html" type="text/ng-template">
+</script>
+
+<script id="dialogBody.html" type="text/ng-template">
+    <p>replace the dialog body</p>
+</script>
+
+<script id="dialogFooter.html" type="text/ng-template">
+    <button class="btn btn-default pull-left" ng-click="doMore()">{{labelMore || 'More...'}}</button>
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">{{labelOK || 'OK' }}</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">{{labelCancel || 'Cancel'}}</button>
+</script>
+
+<script id="OkCancelFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<script id="MoreOkCancelFooter.html" type="text/ng-template">
+    <button class="btn btn-default pull-left" ng-click="doMore()">More...</button>
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<script id="YesNoFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">Yes</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">No</button>
+</script>
+
+<script id="NoYesFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">No</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Yes</button>
+</script>
+
+<script id="CloseFooter.html" type="text/ng-template">
+    <button class='btn btn-success ' data-dismiss='modal' ng-click="doCancel()">Close</button>
+</script>
+
+<script id="noteHeader.html" type="text/ng-template">
+    <p>by {{context.author}}</p>
+</script>
+
+<!--     data-bind="show: hasNoteUri"  class="btn btn-default glyphicon glyphicon-link"-->
+<!--http://blog.teamtreehouse.com/accepting-speech-input-html5-forms-->
+
+<script id="noteBody.html" type="text/ng-template">
+
+    <div class="form-horizontal" role="form">
+        <div class="form-group notePanel-formGroup" style="margin-left:2px">
+            <label for="IDTextSummary" class="control-label">Headline:</label>
+            <input id="IDTextSummary" x-webkit-speech class="form-control" style="display:inline" capture-focus="true" ng-model="context.headerText" placeholder="the note headline" />
+        </div>
+
+        <!--http://jsfiddle.net/nicolasmoise/XaL9r/1/   ng-animate=""  -->
+
+        <div class="panel-collapse" collapse="!showDetails">
+            <div class="form-group notePanel-formGroup" style="margin-left:2px">
+                <label for="IDTextNote" class="control-label">Details:</label>
+                <textarea class="form-control" id="IDTextNote" rows="5" ng-model="context.noteText" placeholder="the note text"></textarea>
+            </div>
+            <div class="form-group notePanel-formGroup" style="margin-left:2px">
+                <label for="IDTextURI" class="control-label"> <a href="#" target="_blank" ng-disable="!context.hasNoteUri" ng-href="{{context.noteUri}}">Link: </a>(ex. http://www.knowtshare.com)</label>
+                <input class="form-control" id="IDTextURI" ng-model="context.noteUri" placeholder="the note uri" />
+                <img ng-show="context.hasImageUri" ng-src="{{context.noteUri}}" alt="image missing" height="100" />
+            </div>
+        </div>
+
+    </div>
+
+</script>
+
+<script id="noteFooter.html" type="text/ng-template">
+    <button class="btn btn-default pull-left" ng-click="doMore()">More...</button>
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+
+
+<!--templates to support clear All dialog-->
+<script id="ClearAllHeader.html" type="text/ng-template">
+    <!--<p>Clear All</p>-->
+</script>
+<script id="ClearAllBody.html" type="text/ng-template">
+    <div>
+        <p>Do you want to...</p>
+        <button ng-click="ClearNotes()" style="margin:10px" class="btn btn-info">clear all notes</button>
+        <button ng-click="SaveDocumentFirst()" style="margin:10px" class="btn btn-info">save this document</button>
+        <button ng-click="doCancel()" style="margin:10px" class='btn btn-default '>Cancel</button>
+    </div>
+</script>
+<script id="ClearAllFooter.html" type="text/ng-template">
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<!--templates to support movetopage page dialog-->
+<script id="MoveToPageHeader.html" type="text/ng-template">
+    <!--<p>by {{context.author}}</p>-->
+</script>
+<script id="MoveToPageBody.html" type="text/ng-template">
+    <p>Do you want to...</p>
+    <button ng-click="CreatePageFromNote()" style="margin:10px" class="btn btn-info">create page from note</button>
+    <p>or move selected shape to a different page...</p>
+    <select ng-model="context.targetPage" ng-options="page.title for page in context.pages">
+        <option value="">-- choose page --</option>
+    </select>
+</script>
+<script id="MoveToPageFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<!--templates to support rename page dialog-->
+<script id="RenamePageHeader.html" type="text/ng-template">
+    <p>
+        rename this page
+    </p>
+</script>
+<script id="RenamePageBody.html" type="text/ng-template">
+    <div class="form-horizontal" role="form">
+        <div class="form-group notePanel-formGroup" style="margin-left:2px">
+            <label for="IDTextSummary" class="control-label">Page name:</label>
+            <input id="IDTextSummary" x-webkit-speech class="form-control" style="display:inline" capture-focus="true" ng-model="context.headerText" placeholder="the page title" />
+        </div>
+    </div>
+</script>
+<script id="RenamePageFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<!--templates to support delete page dialog-->
+<script id="DeletePageHeader.html" type="text/ng-template">
+    <p>Delete Confirmation</p>
+</script>
+<script id="DeletePageBody.html" type="text/ng-template">
+    <div>
+        <p>Do you want to...</p>
+        <button ng-click="DeletePage()" style="margin:10px" class="btn btn-info">delete current page</button>
+        <button ng-click="doCancel()" style="margin:10px" class='btn btn-default '>Cancel</button>
+    </div>
+</script>
+<script id="DeletePageFooter.html" type="text/ng-template">
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+
+<!--templates to support clear All dialog-->
+<script id="ClearOrMergeHeader.html" type="text/ng-template">
+    <!--<p>Clear All</p>-->
+</script>
+<script id="ClearOrMergeBody.html" type="text/ng-template">
+    <div>
+        <p>Do you want to...</p>
+        <button ng-click="ClearNotes()" style="margin:10px" class="btn btn-info">clear existing notes</button>
+        <button ng-click="MergeNotes()" style="margin:10px" class="btn btn-info">merge file with existing notes</button>
+        <button ng-click="doCancel()" style="margin:10px" class='btn btn-default '>Cancel</button>
+    </div>
+</script>
+<script id="ClearOrMergeFooter.html" type="text/ng-template">
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+
+<!--templates to support Clear File Drop dialog-->
+<script id="ClearFileDropHeader.html" type="text/ng-template">
+    <p>File Merge</p>
+</script>
+<script id="ClearFileDropBody.html" type="text/ng-template">
+    <div>
+        <p>Do you want to...</p>
+        <button ng-click="ClearExistingNotes()" style="margin:10px" class="btn btn-info">clear existing notes</button>
+        <button ng-click="MergeNotes()" style="margin:10px" class="btn btn-info">add new notes to existing notes</button>
+        <!--<button ng-click="SaveThenClear()" style="margin:10px" class="btn btn-info">save, then clear existing notes</button>-->
+    </div>
+</script>
+<script id="ClearFileDropFooter.html" type="text/ng-template">
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<!--templates to support Confirm Delete dialog-->
+<script id="ConfirnDeleteHeader.html" type="text/ng-template">
+    <p>Delete Confirmation</p>
+</script>
+<script id="ConfirnDeleteBody.html" type="text/ng-template">
+    <div>
+        <p>Do you want to delete the...</p>
+        <button ng-click="SaveAttached()" style="margin:10px" class="btn btn-info">selected note only</button>
+        <button ng-click="DeleteAll()" style="margin:10px" class="btn btn-info">selected note and attached notes</button>
+    </div>
+</script>
+<script id="ConfirnDeleteFooter.html" type="text/ng-template">
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+
+
+<script id="sessionJoinHeader.html" type="text/ng-template">
+    <p>Enter the Session that you want to join.</p>
+</script>
+
+<script id="sessionJoinBody.html" type="text/ng-template">
+    <div class="form-horizontal" role="form">
+        <h4>Other collaborators can join you by entering this session.</h4>
+        <div class="form-group">
+            <label for="IDSessionKey" class="control-label"></label>
+            <input autofocus id="IDSessionKey" class="form-control" type="text" ng-model="context.sessionKey" placeholder="type a shareable Session word or phrase" />
+        </div>
+    </div>
+</script>
+
+<script id="sessionCreateHeader.html" type="text/ng-template">
+    <p>Enter the session that you want to create.</p>
+</script>
+
+<script id="sessionCreateBody.html" type="text/ng-template">
+    <div class="form-horizontal" role="form">
+        <h4>Other collaborators can join you by entering this session.</h4>
+        <div class="form-group">
+            <label for="IDSessionKey" class="control-label"></label>
+            <input autofocus id="IDSessionKey" class="form-control" type="text" ng-model="context.sessionKey" placeholder="type a shareable Session word or phrase" />
+            <button class="btn btn-primary" ng-click="context.doGenerateSessionKey" ng-disable="!context.canDoGenerateSessionKey">generate key</button>
+        </div>
+        <!--<div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="value: presenter" />
+                <b>Presenter:Audience</b>&nbsp;&mdash;&nbsp;<em>subscribers can only view your presentation</em>
+            </label>
+        </div>-->
+    </div>
+
+</script>
+
+
+<script id="saveFileHeader.html" type="text/ng-template">
+    <p>There are changes. You should save your data before you continue.</p>
+</script>
+
+<script id="saveFileBody.html" type="text/ng-template">
+    <label for="IDSaveFile" class="control-label">The browser will export you data to this file:</label>
+    <input x-webkit-speech class="form-control" style="display:inline" id="IDSaveFile" type="text" ng-model="context.documentName" placeholder="type in the file name">
+</script>
+
+<script id="saveFileFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+<script id="invitationBody.html" type="text/ng-template">
+    <div data-context="target">
+        <p>Cut and paste this URL and send it to a friend.</p>
+        <textarea rows="5" cols="50" data-bind="value: invitationUrl"></textarea>
+    </div>
+</script>
+
+<script id="nickNameBody.html" type="text/ng-template">
+    <div>
+        <p>Create or change your nick name:</p>
+        <input type="text" data-bind="value: nickName" data-update="keyup" placeholder="ie: James Bond">
+    </div>
+</script>
+
+<script id="messageBox.html" type="text/ng-template">
+    <div data-height="200" data-width="400" data-caption="Message">
+        <p data-bind="text: message"></p>
+    </div>
+</script>
+
+<script id="contentMessageBox.html" type="text/ng-template">
+    <div data-height="200" data-width="400" data-caption="Message">
+        <div data-bind="html: content"></div>
+    </div>
+</script>
+
+
+
+<script id="loginHeader.html" type="text/ng-template">
+    <p>login is required.</p>
+</script>
+
+<script id="loginBody.html" type="text/ng-template">
+    <label for="IDUserName" class="control-label">username:</label>
+    <input class="form-control" style="display:inline" id="IDUserName" type="text" ng-model="context.username" placeholder="username">
+    <label for="IDPassword" class="control-label">username:</label>
+    <input class="form-control" style="display:inline" id="IDPassword" type="text" ng-model="context.password" placeholder="password">
+</script>
+
+<script id="loginlFooter.html" type="text/ng-template">
+    <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+    <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+</script>
+
+
