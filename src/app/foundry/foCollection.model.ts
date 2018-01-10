@@ -7,6 +7,7 @@ import { iObject, Action, Func } from './foInterface'
 export class foCollection<T extends iObject> extends foObject {
     private _members: Array<T>;
 
+    isHidden: boolean = false;
     constructor(list: Array<T> = undefined) {
         super();
 
@@ -14,6 +15,7 @@ export class foCollection<T extends iObject> extends foObject {
         list && list.forEach(item => this.addMember(item));
     }
 
+    
     getChildAt(i: number): T {
         return this._members[i]
     }

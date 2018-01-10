@@ -2,7 +2,7 @@ import { Tools } from '../foundry/foTools';
 
 
 import { foShape2D } from "../foundry/foShape2D.model";
-import { foKnowledge } from "../foundry/foKnowledge.model";
+//import { foKnowledge } from "../foundry/foKnowledge.model";
 import { Stencil } from "../foundry/foStencil";
 
 
@@ -37,7 +37,6 @@ export class particle extends foShape2D {
     ctx.save();
     this.updateContext(ctx);
    
-
     this.draw(ctx);
 
     ctx.restore();
@@ -87,11 +86,16 @@ export class particle extends foShape2D {
 
 export class particleEngine extends foShape2D {
   particleCount: number;
+  
+  constructor(properties?: any) {
+    super(properties);
+    this.nodes.isHidden = true;
+  }
 
   doStart() {
     var particleType = Stencil.define('particle', particle);
     let count = this.particleCount || 100;
-    for (var i = 0; i < this.particleCount; i++) {
+    for (var i = 0; i < count; i++) {
       particleType.newInstance()
         .addAsSubcomponent(this)
         .doReset();
