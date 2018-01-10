@@ -204,7 +204,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
-    this.sharing.startSharing(this);
+    this.sharing.startSharing();
+    this.sharing.currentPage = this;
 
     this.addEventHooks();
 
