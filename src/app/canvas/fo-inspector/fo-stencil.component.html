@@ -1,7 +1,11 @@
 <accordion>
     <accordion-group *ngFor="let key of headings" [heading]="key" [isOpen]="true">
         <fo-stencil-panel *ngFor="let item of groups[key]" [rootPage]="rootPage" [stencilItem]="item"></fo-stencil-panel>
-      </accordion-group>
+    </accordion-group>
 </accordion>
 
-<!-- <pre>{{list | json}}</pre> -->
+
+<fo-stencil-panel *ngFor="let concept of concepts.members" [rootPage]="rootPage" [stencilItem]="concept"></fo-stencil-panel>
+
+
+<pre>{{concepts | json}}</pre>

@@ -10,7 +10,7 @@ import { foKnowledge } from "../../foundry/foKnowledge.model";
   styleUrls: ['./fo-stencil-panel.component.css']
 })
 export class foStencilPanelComponent implements OnInit {
-
+  lastCreated: any
   @Input()
   public stencilItem:foKnowledge;
 
@@ -24,14 +24,14 @@ export class foStencilPanelComponent implements OnInit {
   }
 
   doCreate() {
-    this.stencilItem.newInstance()
-      .drop(this.rootPage.centerX, this.rootPage.centerY)
+    this.lastCreated = this.stencilItem.newInstance()
+    .dropAt(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
 
   }
 
   doCommand(cmd:string) {
-
+    this.lastCreated && this.lastCreated[cmd]();
   }
 
 }

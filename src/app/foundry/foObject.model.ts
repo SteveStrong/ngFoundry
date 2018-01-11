@@ -22,11 +22,11 @@ export class foObject implements iObject {
         snd.play();
     }
 
-    static jsonAlert(obj: any, title?: string) {
+    static jsonAlert(obj: any, title: string = 'JSON Alert') {
         try {
-            alert(JSON.stringify(obj, undefined, 3) + title);
+            alert(title + '\r' + JSON.stringify(obj, undefined, 3));
         } catch (ex) {
-            alert(JSON.stringify(obj.asJson, undefined, 3) + title);
+            alert(title + '\r' + JSON.stringify(obj.asJson, undefined, 3));
             alert(ex);
         }
     }

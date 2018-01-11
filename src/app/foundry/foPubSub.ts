@@ -11,25 +11,32 @@ interface IDictionary {
 class foPubSub {
     private registry: IDictionary = {}
 
-    Pub = function (name: string, ...args: any[]) {
+    Pub(name: string, ...args: any[]) {
         if (!this.registry[name]) return;
-        this.registry[name].forEach(x => {
-            x.apply(null, args);
+        this.registry[name].forEach(fn => {
+            fn.apply(null, args);
         });
+        return this;
     }
 
-    Sub = function (name: string, fn: ISubscription) {
+    Sub(name: string, fn: ISubscription) {
         if (!this.registry[name]) {
-            this.registry[name] = [fn];
-        } else {
-            this.registry[name].push(fn);
+            this.registry[name] = [];
         }
+        this.registry[name].push(fn);
+        return this;
     }
 
-    Unsub = function (name: string, fn: ISubscription) {
+    Unsub(name: string, fn: ISubscription) {
         if (this.registry[name]) {
             delete this.registry[name];
         }
+        return this;
+    }
+
+    Clear() {
+        this.registry = {};
+        return this;
     }
 }
 

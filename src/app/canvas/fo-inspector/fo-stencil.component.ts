@@ -1,12 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+//import { foObject } from "../../foundry/foObject.model"
 import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
+//import { foDictionary } from '../../foundry/foDictionary.model';
+import { foWorkspace } from "../../foundry/foWorkspace.model";
+
 import { Stencil } from "../../foundry/foStencil";
 import { Knowcycle } from "../../foundry/foLifecycle";
 
-
+import { PubSub } from "../../foundry/foPubSub";
+import { foCollection } from 'app/foundry/foCollection.model';
 
 @Component({
   selector: 'fo-stencil',
@@ -14,6 +19,8 @@ import { Knowcycle } from "../../foundry/foLifecycle";
   styleUrls: ['./fo-stencil.component.css']
 })
 export class foStencilComponent implements OnInit {
+  rootWorkspace: foWorkspace;
+  concepts: foCollection<foKnowledge> = new foCollection<foKnowledge>()
   @Input()
   public rootPage: foPage;
 
@@ -36,6 +43,18 @@ export class foStencilComponent implements OnInit {
       this.initViewModel();
     });
 
+    
+    
+    PubSub.Sub("resStencil", (item)=> {
+      this.rootWorkspace = item;
+      
+      this.rootWorkspace.library.forEachKeyValue((key, lib)=>{
+        lib.concepts.forEachKeyValue((name, con)=>{
+          this.concepts.addMember(con);
+        })
+      });
+
+    }).Pub("reqStencil", this);
   }
 
 

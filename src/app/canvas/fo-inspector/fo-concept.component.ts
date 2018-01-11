@@ -37,8 +37,8 @@ export class foConceptComponent implements OnInit {
   }
 
   doCreate(concept){
-    let box = concept.newInstance()
-      .drop(this.rootPage.centerX, this.rootPage.centerY)
+    concept.newInstance()
+      .dropAt(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
 
   }

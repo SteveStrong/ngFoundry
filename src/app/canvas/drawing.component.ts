@@ -2,6 +2,9 @@ import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '
 
 import { foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
+import { foLibrary } from '../foundry/foLibrary.model'
+import { PubSub } from "../foundry/foPubSub";
+
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 
 import { SharingService } from "../common/sharing.service";
@@ -60,9 +63,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     ParticleStencil.find<foShape2D>('engine')
       .newInstance()
       .dropAt(500, 500).addAsSubcomponent(page)
-            .then(item => {
-              item.doStart();
-            });
+      .then(item => {
+        item.doStart();
+      });
   }
 
 
@@ -86,6 +89,15 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       .then(page => {
         this.doParticleEngine(page);
       });
+
+    let concept = ParticleStencil.find<foShape2D>('engine');
+    let lib = new foLibrary({});
+    lib.concepts.addItem(concept.myName, concept)
+    this.rootWorkspace.library.addItem(ParticleStencil.myName, lib);
+
+    PubSub.Sub("reqStencil", (item) => {
+      PubSub.Pub("resStencil", this.rootWorkspace);
+    });
   }
 
   private createPage(): foPage {
