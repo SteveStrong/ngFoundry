@@ -1,9 +1,6 @@
 import { Tools } from '../foundry/foTools'
-import { Action } from '../foundry/foInterface'
 
-import { foObject } from '../foundry/foObject.model'
 import { foNode } from './foNode.model'
-import { foGlyph } from '../foundry/foGlyph.model'
 import { foConcept } from 'app/foundry/foConcept.model';
 import { foLibrary } from 'app/foundry/foLibrary.model';
 
@@ -11,52 +8,6 @@ import { foLibrary } from 'app/foundry/foLibrary.model';
 import { RuntimeType } from './foRuntimeType';
 import { Knowcycle } from './foLifecycle';
 
-// export class foStencilSpec<T extends foGlyph> extends foObject {
-
-//     primitive: string;
-//     create: { new(p?: any, s?: Array<T>, r?: T): T; };
-//     properties: any;
-//     subcomponents: Array<T>;
-//     commands: Array<string> = new Array<string>();
-
-//     constructor(props?:any){
-//         super()
-//         props && Tools.mixin(this, props)
-//     }
-
-//     set(name: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, inits?: any, subs?: Array<T>) {
-//         this.myName = name;
-//         this.primitive = type.name;
-//         this.create = type;
-//         this.properties = inits;
-//         this.subcomponents = subs;
-//     }
-
-//     protected toJson(): any {
-//         return Tools.mixin(super.toJson(), {
-//             primitive: this.primitive,
-//             properties: this.properties,
-//             subcomponents: this.subcomponents,
-//         });
-//     }
-
-//     newInstance<T extends foGlyph>(properties?: any, subcomponents?: Array<T>) {
-//         let spec = Tools.union(properties, this.properties);
-//         let instance = new this.create(spec);
-//         instance.myClass = this.myName;
-//         return instance;
-//     }
-
-
-//     addCommands(...cmds: string[]) {
-//         this.commands && this.commands.push(...cmds)
-//         return this;
-//     }
-
-//     getCommands(): Array<string> {
-//         return this.commands;
-//     }
-// }
 
 
 export class foStencilLibrary extends foLibrary {
@@ -64,7 +15,7 @@ export class foStencilLibrary extends foLibrary {
     public namespaces(): Array<string> {
         let lookup = {}
         this.concepts.members.forEach( concept => {
-            let { namespace, name } = Tools.splitNamespaceType(concept.myName);
+            let { namespace } = Tools.splitNamespaceType(concept.myName);
             lookup[namespace] = concept;
         })
         return Object.keys(lookup);
