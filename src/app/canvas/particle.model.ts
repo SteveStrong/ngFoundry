@@ -90,6 +90,7 @@ export class particleEngine extends foShape2D {
   constructor(properties?: any) {
     super(properties);
     this.nodes.isHidden = true;
+    this.nodes.isSelectable = false;
   }
 
   doStart() {
