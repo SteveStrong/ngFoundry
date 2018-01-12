@@ -10,7 +10,8 @@ import { foKnowledge } from "../../foundry/foKnowledge.model";
   styleUrls: ['./fo-stencil-panel.component.css']
 })
 export class foStencilPanelComponent implements OnInit {
-  lastCreated: any
+  lastCreated: any;
+  showDetails = false;
   @Input()
   public stencilItem:foKnowledge;
 
@@ -23,6 +24,10 @@ export class foStencilPanelComponent implements OnInit {
   ngOnInit() {
   }
 
+  doToggleDetails() {
+    this.showDetails = !this.showDetails;
+  }
+  
   doCreate() {
     this.lastCreated = this.stencilItem.newInstance()
     .dropAt(this.rootPage.centerX, this.rootPage.centerY)

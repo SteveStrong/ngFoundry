@@ -40,3 +40,5 @@ export class foWorkspace extends foKnowledge {
     }
 
 }
+
+export let Workspace: foWorkspace = new foWorkspace();

@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-  <div (click)="doToggleDetails()" class="panel-body">{{node.myName}}: {{node.myType}} - {{node.color}}</div>
+  <div (click)="doToggleDetails()" class="panel-body">{{node.displayName()}}</div>
   <pre *ngIf="showDetails" class="well">{{node.asJson | json }}</pre>
 
   <ng-container *ngFor="let cmd of commands; let i = index; let isOdd = odd">

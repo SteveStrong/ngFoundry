@@ -2,7 +2,7 @@ import { Tools } from './foTools'
 
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
-import { foConcept, foProjection } from './foConcept.model'
+import { foConcept } from './foConcept.model'
 import { foProperty } from './foProperty.model'
 import { foMethod } from './foMethod.model'
 

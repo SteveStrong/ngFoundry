@@ -1,11 +1,12 @@
-import { Tools } from './foTools'
+import { Tools, foNames } from './foTools'
 import { iObject, ModelRef } from './foInterface'
 //import { setTimeout } from 'timers';
 
 
+
 export class foObject implements iObject {
     private _myGuid: string;
-    myName: string = 'unknown';
+    myName: string = foNames.UNKNOWN;
     myParent: ModelRef<iObject>;
 
     constructor(properties?: any, parent?: foObject) {
@@ -56,10 +57,14 @@ export class foObject implements iObject {
         }
     }
 
+    displayName() {
+        return `${this.myName} - ${this.myType}`;
+    }
+
     asReference(): string {
         let parent = this.myParent && this.myParent();
         if (!parent) {
-            return `root`;
+            return foNames.ROOT;
         }
         return `${this.myName}.${parent.asReference()}`;
     }
