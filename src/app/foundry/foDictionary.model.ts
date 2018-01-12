@@ -3,13 +3,13 @@ import { Tools } from './foTools'
 import { foObject } from './foObject.model'
 import { iObject } from './foInterface'
 
-
 export class foDictionary<T extends iObject> extends foObject {
+
 
     private _lookup: any = {};
 
-    constructor(spec: any = undefined) {
-        super(spec);
+    constructor(properties?: any, parent?: foObject) {
+        super(properties, parent);
     }
 
     addItem(key: string, obj: T): T {
@@ -95,7 +95,8 @@ export class foDictionary<T extends iObject> extends foObject {
     };
 
     protected toJson(): any {
-        return Tools.mixin(super.toJson(), this.jsonMerge(this._lookup) );
+        return Tools.mixin(super.toJson(), this.jsonMerge(this._lookup));
     }
 
 }
+

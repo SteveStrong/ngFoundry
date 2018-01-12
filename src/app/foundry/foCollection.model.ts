@@ -8,6 +8,7 @@ export class foCollection<T extends iObject> extends foObject {
     private _members: Array<T>;
 
     isHidden: boolean = false;
+    isSelectable: boolean = true;
     constructor(list: Array<T> = undefined) {
         super();
 

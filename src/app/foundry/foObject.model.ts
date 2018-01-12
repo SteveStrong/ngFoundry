@@ -1,11 +1,12 @@
-import { Tools } from './foTools'
+import { Tools, foNames } from './foTools'
 import { iObject, ModelRef } from './foInterface'
 //import { setTimeout } from 'timers';
 
 
+
 export class foObject implements iObject {
     private _myGuid: string;
-    myName: string = 'unknown';
+    myName: string = foNames.UNKNOWN;
     myParent: ModelRef<iObject>;
 
     constructor(properties?: any, parent?: foObject) {
@@ -22,11 +23,11 @@ export class foObject implements iObject {
         snd.play();
     }
 
-    static jsonAlert(obj: any, title?: string) {
+    static jsonAlert(obj: any, title: string = 'JSON Alert') {
         try {
-            alert(JSON.stringify(obj, undefined, 3) + title);
+            alert(title + '\r' + JSON.stringify(obj, undefined, 3));
         } catch (ex) {
-            alert(JSON.stringify(obj.asJson, undefined, 3) + title);
+            alert(title + '\r' + JSON.stringify(obj.asJson, undefined, 3));
             alert(ex);
         }
     }
@@ -56,10 +57,14 @@ export class foObject implements iObject {
         }
     }
 
+    displayName() {
+        return `${this.myName} - ${this.myType}`;
+    }
+
     asReference(): string {
         let parent = this.myParent && this.myParent();
         if (!parent) {
-            return `root`;
+            return foNames.ROOT;
         }
         return `${this.myName}.${parent.asReference()}`;
     }

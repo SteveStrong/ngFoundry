@@ -1,5 +1,14 @@
 "use strict";
 
+
+export enum foNames {
+    UNKNOWN = "unknown",
+    AT = '@',
+    THIS = 'this',
+    SELF = 'self',
+    ROOT = 'root'
+};
+
 export class foTools {
 
     // Speed up calls to hasOwnProperty
@@ -115,8 +124,17 @@ export class foTools {
         return `rgb(${r},${g},${b})`;
     }
 
+    matches(str1:string,str2:string) {
+        if ( str1 === str2) return true;
+        return str1 && str2 && str1.toLocaleLowerCase() == str2.toLocaleLowerCase();
+    }
+
+    capitalizeFirstLetter (str1:string) {
+        return str1.charAt(0).toUpperCase() + str1.slice(1);
+    }
+
     isSelf(ref) {
-        return ref.matches('@') || ref.matches('this') || ref.matches('self')
+        return this.matches(ref, foNames.AT) || this.matches(ref, foNames.THIS) || this.matches(ref, foNames.SELF)
     };
 
     isArray(obj) {

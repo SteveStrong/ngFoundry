@@ -2,20 +2,45 @@ import { Tools } from './foTools'
 
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
-import { foConcept, foProjection } from './foConcept.model'
+import { foConcept } from './foConcept.model'
 import { foProperty } from './foProperty.model'
-import { foMethod } from './foMethod.model'
 
-import { foNode } from './foNode.model'
+
+class ConceptDictionary extends foDictionary<foKnowledge>{
+    public establish = (name:string):foKnowledge => {
+        this.findItem(name, () => {
+            this.addItem(name, new foConcept({myName:name}))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
+    }
+}
+
+class PropertyDictionary extends foDictionary<foProperty>{
+    public establish = (name:string):foProperty => {
+        this.findItem(name, () => {
+            this.addItem(name, new foConcept({myName:name}))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
+    }
+}
+
 
 export class foLibrary extends foKnowledge {
 
-    private _concepts: foDictionary<foKnowledge> = new foDictionary<foKnowledge>({ myName: 'concepts' });
-    private _properties: foDictionary<foProperty> = new foDictionary<foProperty>({ myName: 'properties' });
+    private _concepts: ConceptDictionary = new ConceptDictionary({ myName: 'concepts' }, this);
+    private _properties: PropertyDictionary = new PropertyDictionary({ myName: 'properties' }, this);
     //private _projection: foDictionary<foProjection> = new foDictionary<foProjection>({ myName: 'projections' });
 
-    constructor(spec?: any) {
-        super(spec);
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
     }
 
     get debug() {
@@ -61,3 +86,6 @@ export class foLibrary extends foKnowledge {
     }
 
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.knowledge(foLibrary);

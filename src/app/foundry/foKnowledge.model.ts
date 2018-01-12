@@ -1,17 +1,12 @@
-import { Tools } from './foTools'
-
-
-import { foTools } from './foTools'
+import { Tools, foNames } from './foTools'
 
 import { foObject } from './foObject.model'
-import { foCollection } from './foCollection.model'
-
 
 
 export class foKnowledge extends foObject {
-
-    constructor(properties?: any) {
-        super(properties);
+    private static _counter: number = 0;
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
     }
        
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
@@ -24,6 +19,15 @@ export class foKnowledge extends foObject {
 
     get commands(): Array<string> {
         return [];
+    }
+
+    defaultName() {
+        if (Tools.matches(this.myName, foNames.UNKNOWN)) {
+            foKnowledge._counter += 1;
+            let count = ("0000" + foKnowledge._counter).slice(-4);
+            this.myName = `${this.myType}_${count}`;
+        }
+        return this;
     }
 }
 

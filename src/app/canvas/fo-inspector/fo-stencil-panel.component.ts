@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
+import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
+import { Toast } from "../../common/emitter.service";
 
 
 @Component({
@@ -10,7 +12,8 @@ import { foKnowledge } from "../../foundry/foKnowledge.model";
   styleUrls: ['./fo-stencil-panel.component.css']
 })
 export class foStencilPanelComponent implements OnInit {
-
+  lastCreated: foNode;
+  showDetails = false;
   @Input()
   public stencilItem:foKnowledge;
 
@@ -23,15 +26,20 @@ export class foStencilPanelComponent implements OnInit {
   ngOnInit() {
   }
 
+  doToggleDetails() {
+    this.showDetails = !this.showDetails;
+  }
+  
   doCreate() {
-    this.stencilItem.newInstance()
-      .drop(this.rootPage.centerX, this.rootPage.centerY)
+    this.lastCreated = this.stencilItem.newInstance().defaultName()
+    .dropAt(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
 
+    Toast.info("Created", this.lastCreated.displayName())
   }
 
   doCommand(cmd:string) {
-
+    this.lastCreated && this.lastCreated[cmd]();
   }
 
 }

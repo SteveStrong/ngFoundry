@@ -17,6 +17,22 @@ export class foRuntimeType extends foObject{
         return Object.keys(this.knowledgePrimitives);
     }
 
+    public find(type: string):any {
+        let found = this.modelPrimitives[type];
+        found = found ? found : this.knowledgePrimitives[type];
+        return found;
+    }
+
+    public make(name: string, properties?:any):any {
+        let type = this.find(name);
+        if ( type ) {
+            let instance = new type(properties);
+            instance.initialize();
+            Lifecycle.created(instance);
+            return instance;
+        }
+    }
+
     public define<T extends foNode>(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         let name = type.name;
         if ( !this.modelPrimitives[name]) {

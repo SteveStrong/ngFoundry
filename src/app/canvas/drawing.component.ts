@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
-import { foWorkspace } from "../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
+
+
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 
 import { SharingService } from "../common/sharing.service";
@@ -11,9 +13,7 @@ import { RuntimeType } from 'app/foundry/foRuntimeType';
 import { foDocument } from 'app/foundry/foDocument.model';
 
 
-import { Stencil } from "../foundry/foStencil";
-import { foGlyph } from "../foundry/foGlyph.model";
-import { particleEngine } from "./particle.model";
+import { ParticleStencil, foShape2D } from "./particle.model";
 
 @Component({
   selector: 'foundry-drawing',
@@ -25,9 +25,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
-  rootWorkspace: foWorkspace = new foWorkspace({
-    myName: 'The workspace manages the user', //, their models and documents'
-  })
+  rootWorkspace: foWorkspace = globalWorkspace.defaultName();
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
@@ -59,18 +57,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doParticleEngine(page: foPage) {
 
-    let def = Stencil.define<foGlyph>('particle', particleEngine, {
-      color: 'white',
-      particleCount: 100,
-      opacity: .1,
-      width: 700,
-      height: 700,
-    }).addCommands("doStart", "doStop", "doRotate");
-
-
-    let shape = def.newInstance();
-
-    shape.dropAt(500, 500).addAsSubcomponent(page)
+    ParticleStencil.find<foShape2D>('engine')
+      .newInstance().defaultName()
+      .dropAt(500, 500).addAsSubcomponent(page)
       .then(item => {
         item.doStart();
       });
@@ -97,6 +86,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       .then(page => {
         this.doParticleEngine(page);
       });
+
+    let concept = ParticleStencil.find<foShape2D>('engine');
+    this.rootWorkspace.library.establish('stencil').concepts.addItem(concept.myName, concept);
   }
 
   private createPage(): foPage {
@@ -147,10 +139,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
     this.sharing.currentPage = page;
     this.screen2D.clear();
+    //with the render function you could
+    //1) render a single page
+    //2) render pages like layers
+    //3) render pages side by side
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
-      ctx.save();
       page.render(ctx);
-      ctx.restore();
     }
     this.screen2D.go();
 

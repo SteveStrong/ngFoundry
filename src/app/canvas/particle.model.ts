@@ -2,15 +2,16 @@ import { Tools } from '../foundry/foTools';
 
 
 import { foShape2D } from "../foundry/foShape2D.model";
-//import { foKnowledge } from "../foundry/foKnowledge.model";
-import { Stencil } from "../foundry/foStencil";
+import { foStencilLibrary } from "../foundry/foStencil";
 
+export let ParticleStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export { foShape2D } from "../foundry/foShape2D.model";
 
 export class particle extends foShape2D {
 
   public vx: number;
   public vy: number;
-  public gravity: number = 0.03;
+  public gravity: number = 0.02;
 
   constructor(properties?: any) {
     super(properties);
@@ -36,7 +37,7 @@ export class particle extends foShape2D {
 
     ctx.save();
     this.updateContext(ctx);
-   
+
     this.draw(ctx);
 
     ctx.restore();
@@ -86,14 +87,15 @@ export class particle extends foShape2D {
 
 export class particleEngine extends foShape2D {
   particleCount: number;
-  
+
   constructor(properties?: any) {
     super(properties);
     this.nodes.isHidden = true;
+    this.nodes.isSelectable = false;
   }
 
   doStart() {
-    var particleType = Stencil.define('particle', particle);
+    var particleType = ParticleStencil.define('particle', particle);
     let count = this.particleCount || 100;
     for (var i = 0; i < count; i++) {
       particleType.newInstance()
@@ -110,6 +112,15 @@ export class particleEngine extends foShape2D {
     this.angle += 30;
   }
 }
+
+ParticleStencil.define<foShape2D>('engine', particleEngine, {
+  color: 'white',
+  particleCount: 100,
+  opacity: .1,
+  width: 700,
+  height: 700,
+}).addCommands("doStart", "doStop", "doRotate");
+
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(particleEngine);

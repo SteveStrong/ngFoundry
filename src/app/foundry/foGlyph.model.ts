@@ -411,11 +411,14 @@ export class foGlyph extends foNode implements iShape {
 
     protected findChildObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph {
         let children = this.nodes;
-        for (let i: number = 0; i < children.length; i++) {
-            let child: foGlyph = children.getMember(i);
-            let found = child.findChildObjectUnderPoint(hit, ctx);
-            if (found) return found;
+        if (children.isSelectable) {
+            for (let i: number = 0; i < children.length; i++) {
+                let child: foGlyph = children.getMember(i);
+                let found = child.findChildObjectUnderPoint(hit, ctx);
+                if (found) return found;
+            }
         }
+
         if (this.hitTest(hit, ctx)) {
             return this;
         }
@@ -435,12 +438,13 @@ export class foGlyph extends foNode implements iShape {
 
     protected findChildObjectUnderFrame(source: foGlyph, hit: iFrame, ctx: CanvasRenderingContext2D): foGlyph {
         let children = this.nodes;
-        for (let i: number = 0; i < children.length; i++) {
-            let child: foGlyph = children.getMember(i);
-            if (source.hasAncestor(child)) continue;
-            let found = child.findChildObjectUnderFrame(source, hit, ctx);
-            if (found) return found;
-
+        if (children.isSelectable) {
+            for (let i: number = 0; i < children.length; i++) {
+                let child: foGlyph = children.getMember(i);
+                if (source.hasAncestor(child)) continue;
+                let found = child.findChildObjectUnderFrame(source, hit, ctx);
+                if (found) return found;
+            }
         }
         if (this.overlapTest(hit, ctx)) {
             return this;

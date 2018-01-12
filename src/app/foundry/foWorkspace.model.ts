@@ -1,9 +1,10 @@
-
 import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
 import { foDictionary } from './foDictionary.model'
 import { foDocument } from './foDocument.model'
 import { foKnowledge } from "../foundry/foKnowledge.model";
+import { foObject } from 'app/foundry/foObject.model';
+
 
 // Feature detect + local reference
 export let storage = (function () {
@@ -17,10 +18,36 @@ export let storage = (function () {
     } catch (exception) { }
 }());
 
+class LibraryDictionary extends foDictionary<foLibrary>{
+    public establish = (name:string):foLibrary => {
+        this.findItem(name, () => {
+            this.addItem(name, new foLibrary({myName:name}))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foObject) {
+        super(properties, parent);
+    }
+}
+
+class ModelDictionary extends foDictionary<foModel>{
+    public establish = (name:string):foModel => {
+        this.findItem(name, () => {
+            this.addItem(name, new foModel({myName:name}))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foObject) {
+        super(properties, parent);
+    }
+}
+
 export class foWorkspace extends foKnowledge {
 
-    private _library: foDictionary<foLibrary> = new foDictionary<foLibrary>({ myName: 'library' });
-    private _model: foDictionary<foModel> = new foDictionary<foModel>({ myName: 'model' });
+    private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
+    private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
     private _document: foDocument = new foDocument({}, [], this);
 
     constructor(spec?: any) {
@@ -40,3 +67,5 @@ export class foWorkspace extends foKnowledge {
     }
 
 }
+
+export let globalWorkspace: foWorkspace = new foWorkspace();

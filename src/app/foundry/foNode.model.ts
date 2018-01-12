@@ -1,5 +1,5 @@
 
-import { Tools } from './foTools'
+import { Tools, foNames } from './foTools'
 import { iObject, iNode, Action } from './foInterface'
 
 import { foObject } from './foObject.model'
@@ -7,6 +7,7 @@ import { foCollection } from './foCollection.model'
 
 
 export class foNode extends foObject implements iNode {
+    private static _counter: number = 0;
     private _index: number = 0;
     private _childDepth: number = 0;
 
@@ -22,6 +23,12 @@ export class foNode extends foObject implements iNode {
         this._class = value;
     }
 
+    displayName() {
+        if (this._class) {
+            return `${this.myName} - ${this.myClass}`;
+        }
+        return `${this.myName} - ${this.myType}`;
+    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, parent);
@@ -46,7 +53,7 @@ export class foNode extends foObject implements iNode {
 
     reParent(newParent: foNode) {
         let parent = this.myParent && this.myParent();
-        if ( parent != newParent ){
+        if (parent != newParent) {
             this.removeFromParent()
             newParent.addSubcomponent(this);
         }
@@ -89,6 +96,15 @@ export class foNode extends foObject implements iNode {
         obj._childDepth = 0;
         this._subcomponents.removeMember(obj);
         return obj;
+    }
+
+    defaultName() {
+        if (Tools.matches(this.myName, foNames.UNKNOWN)) {
+            foNode._counter += 1;
+            let count = ("0000" + foNode._counter).slice(-4);
+            this.myName = `${this.myType}_${count}`;
+        }
+        return this;
     }
 
     get index(): number {
