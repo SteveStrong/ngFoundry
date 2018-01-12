@@ -88,7 +88,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       });
 
     let concept = ParticleStencil.find<foShape2D>('engine');
-    this.rootWorkspace.library.establish('stencil').concepts.addItem(ParticleStencil.myName, concept);
+    this.rootWorkspace.library.establish('stencil').concepts.addItem(concept.myName, concept);
   }
 
   private createPage(): foPage {
