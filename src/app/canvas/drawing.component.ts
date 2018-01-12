@@ -1,8 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
-import { Workspace, foWorkspace } from "../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
-import { foLibrary } from '../foundry/foLibrary.model'
 import { PubSub } from "../foundry/foPubSub";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
@@ -26,7 +25,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
-  rootWorkspace: foWorkspace = Workspace;
+  rootWorkspace: foWorkspace = globalWorkspace.defaultName();
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
@@ -89,9 +88,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       });
 
     let concept = ParticleStencil.find<foShape2D>('engine');
-    let lib = new foLibrary({});
-    lib.concepts.addItem(concept.myName, concept)
-    this.rootWorkspace.library.addItem(ParticleStencil.myName, lib);
+    this.rootWorkspace.library.establish('stencil').concepts.addItem(ParticleStencil.myName, concept);
 
     // PubSub.Sub("reqStencil", (item) => {
     //   PubSub.Pub("resStencil", this.rootWorkspace);

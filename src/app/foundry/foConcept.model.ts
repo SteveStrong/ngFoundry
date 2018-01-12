@@ -10,7 +10,7 @@ import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
-;
+
 
 
 

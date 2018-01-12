@@ -61,3 +61,6 @@ export class foLibrary extends foKnowledge {
     }
 
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.knowledge(foLibrary);

@@ -5,7 +5,7 @@ import { foPage } from "../../foundry/foPage.model";
 import { Tools } from "../../foundry/foTools";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 //import { foDictionary } from '../../foundry/foDictionary.model';
-import { Workspace, foWorkspace } from "../../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
 
 import { Stencil } from "../../foundry/foStencil";
 import { Knowcycle } from "../../foundry/foLifecycle";
@@ -19,7 +19,7 @@ import { foCollection } from 'app/foundry/foCollection.model';
   styleUrls: ['./fo-stencil.component.css']
 })
 export class foStencilComponent implements OnInit {
-  rootWorkspace: foWorkspace = Workspace;
+  rootWorkspace: foWorkspace = globalWorkspace;
   concepts: foCollection<foKnowledge> = new foCollection<foKnowledge>()
   @Input()
   public rootPage: foPage;
