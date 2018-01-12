@@ -2,7 +2,6 @@ import { Tools } from './foTools'
 
 import { foObject } from './foObject.model'
 import { iObject } from './foInterface'
-import { RuntimeType } from './foRuntimeType'
 
 export class foDictionary<T extends iObject> extends foObject {
 

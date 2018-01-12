@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { Tools } from "../../foundry/foTools";
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
 import { foGlyph } from "../../foundry/foGlyph.model";
 

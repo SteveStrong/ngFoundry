@@ -5,8 +5,8 @@ import { foObject } from './foObject.model'
 
 export class foKnowledge extends foObject {
     private static _counter: number = 0;
-    constructor(properties?: any) {
-        super(properties);
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
     }
        
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {

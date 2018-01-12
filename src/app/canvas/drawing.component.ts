@@ -2,7 +2,7 @@ import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
-import { PubSub } from "../foundry/foPubSub";
+
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 
@@ -89,10 +89,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
     let concept = ParticleStencil.find<foShape2D>('engine');
     this.rootWorkspace.library.establish('stencil').concepts.addItem(ParticleStencil.myName, concept);
-
-    // PubSub.Sub("reqStencil", (item) => {
-    //   PubSub.Pub("resStencil", this.rootWorkspace);
-    // });
   }
 
   private createPage(): foPage {
