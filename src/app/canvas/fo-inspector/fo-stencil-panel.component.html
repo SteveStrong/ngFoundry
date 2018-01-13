@@ -1,14 +1,14 @@
 <div class="panel panel-default">
   <div class="panel-body">
-    <div (click)="doToggleDetails()" class="panel-body">{{stencilItem.displayName}}</div>
+    <div (click)="doToggleDetails()" class="panel-body">{{concept.displayName}}</div>
 
 
-    <button (click)="doCreate()" type="button" class="btn btn-info">{{stencilItem.myName}}</button>
+    <button (click)="doCreate()" type="button" class="btn btn-info">{{concept.myName}}</button>
 
-    <ng-container *ngFor="let cmd of stencilItem.commands; let i = index; let isOdd = odd">
+    <ng-container *ngFor="let cmd of concept.commands; let i = index; let isOdd = odd">
       <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
     </ng-container>
-    <pre *ngIf="showDetails" class="well">{{stencilItem.asJson | json }}</pre>
+    <pre *ngIf="showDetails" class="well">{{concept.asJson | json }}</pre>
   </div>
 
 </div>

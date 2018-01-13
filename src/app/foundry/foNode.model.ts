@@ -30,6 +30,9 @@ export class foNode extends foObject implements iNode {
         }
         return `${this.myName} - ${this.myType}`;
     }
+    set displayName(value:string){
+        this._displayName = value;
+    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, parent);

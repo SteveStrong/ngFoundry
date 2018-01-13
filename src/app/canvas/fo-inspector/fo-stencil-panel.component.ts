@@ -15,7 +15,7 @@ export class foStencilPanelComponent implements OnInit {
   lastCreated: foNode;
   showDetails = false;
   @Input()
-  public stencilItem:foKnowledge;
+  public concept:foKnowledge;
 
   @Input()
   public rootPage: foPage;
@@ -31,7 +31,7 @@ export class foStencilPanelComponent implements OnInit {
   }
   
   doCreate() {
-    this.lastCreated = this.stencilItem.newInstance().defaultName()
+    this.lastCreated = this.concept.newInstance().defaultName()
     .dropAt(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
 

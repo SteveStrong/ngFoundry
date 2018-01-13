@@ -23,6 +23,7 @@ export class foKnowledge extends foObject {
         return [];
     }
 
+
     defaultName() {
         if (Tools.matches(this.myName, foNames.UNKNOWN)) {
             foKnowledge._counter += 1;
@@ -33,12 +34,14 @@ export class foKnowledge extends foObject {
     }
 
     get displayName() {
-        if ( this._displayName ) {
-            foKnowledge._counter += 1;
-            let count = ("0000" + foKnowledge._counter).slice(-4);
-            this._displayName = `${this.myType}_${count}`;
+        if ( this._displayName ) return this._displayName;
+        if (Tools.matches(this.myName, foNames.UNKNOWN)) {
+            return this.defaultName().myName;
         }
-        return this._displayName;      
+        return this.myName;      
+    }
+    set displayName(value:string){
+        this._displayName = value;
     }
 }
 

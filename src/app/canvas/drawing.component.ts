@@ -91,8 +91,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   
     let libs = this.rootWorkspace.library;
-    libs.add(ParticleStencil);
-    libs.add(ShapeStencil);
+    libs.add(ParticleStencil).displayName = "Particle";
+    libs.add(ShapeStencil).displayName = "Shape";
     
   }
 
