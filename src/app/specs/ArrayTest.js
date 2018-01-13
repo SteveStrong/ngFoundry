@@ -1,6 +1,4 @@
-﻿import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { Tools  } from '../foundry/foTools';
+﻿import { Tools  } from '../foundry/foTools';
 import { foComponent  } from '../foundry/foComponent.model';
 
 describe("Foundry: Array as a property", () => {
@@ -15,12 +13,6 @@ describe("Foundry: Array as a property", () => {
         return obj;
     });
 
-    it("should be a components", function () {
-        //expect(Tools.isaComponent(obj)).toBe(true);
-
-        expect(obj.Properties.count).toEqual(2);
-        expect(obj.Subcomponents.isEmpty()).toBe(true);
-    });
 
     it("have managed items list", function () {
         expect(obj.items).toBeDefined();
