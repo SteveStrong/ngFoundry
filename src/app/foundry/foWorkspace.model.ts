@@ -47,6 +47,7 @@ class ModelDictionary extends foDictionary<foModel>{
 export class foWorkspace extends foKnowledge {
 
     private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
+    private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
     private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
     private _document: foDocument = new foDocument({}, [], this);
 
@@ -64,6 +65,9 @@ export class foWorkspace extends foKnowledge {
 
     get library() {
         return this._library;
+    }
+    get stencil() {
+        return this._stencil;
     }
 
 }

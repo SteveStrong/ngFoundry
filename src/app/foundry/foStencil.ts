@@ -1,7 +1,9 @@
 import { Tools } from '../foundry/foTools'
+import { Action, Spec } from '../foundry/foInterface';
 
 import { foNode } from './foNode.model'
 import { foConcept } from 'app/foundry/foConcept.model';
+import { foMethod, foFactory } from 'app/foundry/foMethod.model';
 import { foLibrary } from 'app/foundry/foLibrary.model';
 
 
@@ -57,6 +59,24 @@ export class foStencilLibrary extends foLibrary {
         this.concepts.addItem(concept.myName, concept);
         Knowcycle.defined(concept);
         return concept;
+    }
+
+    public action<T extends foNode>(myName: string, funct:Action<T>): foMethod<T> {
+          
+        let method = new foMethod(funct, { myName });
+
+        this.actions.addItem(myName, method);
+        Knowcycle.defined(method);
+        return method;
+    }
+
+    public factory<T extends foNode>(myName: string, funct:Spec<T>): foFactory<T> {
+          
+        let method = new foFactory(funct, { myName });
+
+        this.factories.addItem(myName, method);
+        Knowcycle.defined(method);
+        return method;
     }
 
 }

@@ -73,6 +73,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       });
   }
 
+  doSubShape(page: foPage) {
+
+    let result = ShapeStencil.factories.getItem('doAddSubGlyph').run();
+    result.addAsSubcomponent(page)
+  }
+
 
 
   ngOnInit() {
@@ -92,11 +98,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.currentDocument = this.rootWorkspace.document;
     this.currentPage = this.createPage()
       .then(page => {
-        this.doParticleEngine(page);
+        //this.doParticleEngine(page);
+        //this.doSubShape(page);
       });
 
   
-    let libs = this.rootWorkspace.library;
+    let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
     

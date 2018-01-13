@@ -21,7 +21,7 @@ export class foStencilComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.list = this.rootWorkspace.library.members;
+    this.list = this.rootWorkspace.stencil.members;
   }
 
 

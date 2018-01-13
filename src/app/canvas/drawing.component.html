@@ -51,15 +51,19 @@
         </div>
 
       </tab>
+      <tab heading='Stencil'>
+        <fo-stencil [rootPage]="currentPage"></fo-stencil>
+      </tab>
       <tab heading='Page'>
         <fo-drawing [rootPage]="currentPage"></fo-drawing>
+      </tab>
+      <tab heading='Concepts'>
+        <fo-concept [rootPage]="currentPage"></fo-concept>
       </tab>
       <tab heading='Model'>
         <fo-model></fo-model>
       </tab>
-      <tab heading='Stencil'>
-        <fo-stencil [rootPage]="currentPage"></fo-stencil>
-      </tab>
+
     </tabset>
   </div>
 </div>

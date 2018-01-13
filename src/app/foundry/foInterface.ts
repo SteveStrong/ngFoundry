@@ -12,6 +12,10 @@ export interface Func<T, TResult> {
     (item: T): TResult;
 }
 
+export interface Spec<T> {
+    (spec?: any): T;
+}
+
 export interface iObject {
     myName: string;
     myParent: ModelRef<iObject>;
