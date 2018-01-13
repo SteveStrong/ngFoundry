@@ -12,8 +12,6 @@ import { foNode } from './foNode.model'
 import { RuntimeType } from './foRuntimeType';
 
 
-
-
 export class foConcept<T extends foNode> extends foKnowledge {
 
     private _create = (properties?: any, subcomponents?: Array<foNode>, parent?: foObject): T => {

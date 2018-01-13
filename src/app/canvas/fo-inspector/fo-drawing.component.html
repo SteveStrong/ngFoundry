@@ -1,8 +1,8 @@
 <ng-container>
   <div class="panel panel-default">
-    <div class="panel-body">{{rootPage.displayName}}</div>
-    <ng-container *ngFor="let node of rootPage.nodes.members; let i = index; let isOdd = odd">
-      <fo-page-panel [node]="node"></fo-page-panel>
+    <div class="panel-body">{{document.displayName}}</div>
+    <ng-container *ngFor="let page of document.nodes.members; let i = index; let isOdd = odd">
+      <fo-page [page]="page"></fo-page>
     </ng-container>
   </div>
 </ng-container>

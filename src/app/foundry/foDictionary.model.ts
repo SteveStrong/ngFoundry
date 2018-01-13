@@ -11,6 +11,11 @@ export class foDictionary<T extends iObject> extends foObject {
         super(properties, parent);
     }
 
+    find(key: string): T {
+        let result: T = this._lookup[key];
+        return result;
+    }
+
     add(obj: T): T {
         return this.addItem(obj.myName, obj);
     }

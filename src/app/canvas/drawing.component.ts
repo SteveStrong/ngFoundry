@@ -2,7 +2,7 @@ import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostLis
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
-
+import { foModel } from "../foundry/foModel.model";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
 
@@ -15,6 +15,7 @@ import { foDocument } from 'app/foundry/foDocument.model';
 
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
+import { PersonDomain } from "./domain.model";
 
 
 @Component({
@@ -107,6 +108,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
     
+    this.rootWorkspace.library.add(PersonDomain);
+    this.rootWorkspace.model.addItem('default', new foModel({}))
   }
 
   private createPage(): foPage {

@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
+import { foLibrary } from 'app/foundry/foLibrary.model';
+
 import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
 
 
-import { foLibrary } from 'app/foundry/foLibrary.model';
 
 @Component({
   selector: 'fo-stencil',

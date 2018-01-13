@@ -100,10 +100,10 @@ export class foLibrary extends foKnowledge {
         return this._factory;
     }
 
-    establishConcept(key: string, properties?: any) {
+    establishConcept<T extends foNode>(key: string, properties?: any) {
         let concept = this.concepts.getItem(key);
         if (!concept) {
-            concept = this.concepts.addItem(key, new foConcept(properties));
+            concept = this.concepts.addItem(key, new foConcept<T>(properties));
             concept.myName = key;
         }
         return concept;

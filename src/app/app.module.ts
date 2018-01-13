@@ -51,6 +51,7 @@ import { foPagePanelComponent } from './canvas/fo-inspector/fo-page-panel.compon
 import { foModelPanelComponent } from './canvas/fo-inspector/fo-model-panel.component';
 import { foConceptPanelComponent } from './canvas/fo-inspector/fo-concept-panel.component';
 import { DrawingComponent } from './canvas/drawing.component';
+import { foPageComponent } from './canvas/fo-inspector/fo-page.component';
 
 @NgModule({
   declarations: [
@@ -87,7 +88,8 @@ import { DrawingComponent } from './canvas/drawing.component';
     foPagePanelComponent,
     foModelPanelComponent,
     foConceptPanelComponent,
-    DrawingComponent
+    DrawingComponent,
+    foPageComponent
   ],
   imports: [
     BrowserAnimationsModule,

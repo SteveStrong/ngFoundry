@@ -1,4 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+
+import { foPage } from "../../foundry/foPage.model";
+import { foNode } from "../../foundry/foNode.model";
+import { foKnowledge } from "../../foundry/foKnowledge.model";
+import { Toast } from "../../common/emitter.service";
+
 
 @Component({
   selector: 'fo-concept-panel',
@@ -6,10 +13,30 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./fo-concept-panel.component.css']
 })
 export class foConceptPanelComponent implements OnInit {
+  lastCreated: foNode;
+  showDetails = false;
+  @Input()
+  public concept:foKnowledge;
 
   constructor() { }
 
   ngOnInit() {
+  }
+
+  doToggleDetails() {
+    this.showDetails = !this.showDetails;
+  }
+  
+  doCreate() {
+    this.lastCreated = this.concept.newInstance().defaultName()
+    // .dropAt(this.rootPage.centerX, this.rootPage.centerY)
+    //   .addAsSubcomponent(this.rootPage);
+
+    Toast.info("Created", this.lastCreated.displayName)
+  }
+
+  doCommand(cmd:string) {
+    this.lastCreated && this.lastCreated[cmd]();
   }
 
 }

@@ -1,6 +1,6 @@
 <accordion>
-  <accordion-group *ngFor="let key of headings" [heading]="key" [isOpen]="true">
-      <button *ngFor="let item of groups[key]" (click)="doCreate(item)" type="button" class="btn btn-info">{{item.name}}</button>
+  <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="true">
+      <fo-concept-panel *ngFor="let concept of item.concepts.members" [concept]="concept"></fo-concept-panel>
   </accordion-group>
 </accordion>
 
