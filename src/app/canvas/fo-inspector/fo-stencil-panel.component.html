@@ -1,14 +1,15 @@
 <div class="panel panel-default">
   <div class="panel-body">
-    <div (click)="doToggleDetails()" class="panel-body">{{concept.displayName}}</div>
+    <div class="panel-body">
+      <button (click)="doCreate()" type="button" class="btn btn-info">{{concept.displayName}}</button>
+      <button (click)="doToggleDetails()" type="button" class="btn btn-success pull-right">...</button>
 
+      <ng-container *ngFor="let cmd of concept.commands; let i = index; let isOdd = odd">
+        <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
+      </ng-container>
+      <pre *ngIf="showDetails" class="well">{{concept.asJson | json }}</pre>
+    </div>
 
-    <button (click)="doCreate()" type="button" class="btn btn-info">{{concept.myName}}</button>
-
-    <ng-container *ngFor="let cmd of concept.commands; let i = index; let isOdd = odd">
-      <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
-    </ng-container>
-    <pre *ngIf="showDetails" class="well">{{concept.asJson | json }}</pre>
   </div>
 
 </div>

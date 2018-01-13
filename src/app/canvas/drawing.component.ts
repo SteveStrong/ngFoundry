@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener  } from '@angular/core';
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
@@ -39,6 +39,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   screen2D: Sceen2D = new Sceen2D();
   currentDocument: foDocument;
   currentPage: foPage;
+
+  //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    alert( event.key);
+  }
 
   constructor(
     private sharing: SharingService) {
