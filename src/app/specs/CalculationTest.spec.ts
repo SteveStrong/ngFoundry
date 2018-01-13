@@ -3,7 +3,7 @@ import { foComponent } from '../foundry/foComponent.model'
 
 
 
-describe("Foundry: Calculation", function () {
+xdescribe("Foundry: Calculation", function () {
     var obj;
     var firstname= "George";
     var lastname = "Washington";
@@ -17,7 +17,7 @@ describe("Foundry: Calculation", function () {
     };
 
     beforeEach(function() {
-        obj = fo.makeComponent(nameSpec);
+        obj = new foComponent(nameSpec);
     });
 
     it("should be able to compute", function() {

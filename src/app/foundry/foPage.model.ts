@@ -212,6 +212,10 @@ export class foPage extends foShape2D {
             }
         }
 
+        PubSub.Sub('onkeypress', (e: KeyboardEvent, keys) => {
+            alert('code:' + keys.code)
+        });
+
         PubSub.Sub('mousedown', (loc: cPoint, e: MouseEvent, keys) => {
             this.onMouseLocationChanged(loc, "down", keys);
 

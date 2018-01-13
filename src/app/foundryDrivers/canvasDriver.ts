@@ -99,6 +99,12 @@ export class Sceen2D {
         //     return pt.set(x, y);
         // }
 
+        canvas.addEventListener('keypress', (e: KeyboardEvent) => {
+            e.preventDefault();
+            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            PubSub.Pub('onkeypress', e, keys);
+        });
+
 
         canvas.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault()

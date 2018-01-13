@@ -13,33 +13,17 @@ import { Knowcycle } from "../../foundry/foLifecycle";
   styleUrls: ['./fo-concept.component.css']
 })
 export class foConceptComponent implements OnInit {
-  @Input()
-  public rootPage: foPage;
 
-  list:Array<foKnowledge> = new Array<foKnowledge>();
-  headings:Array<string> = new Array<string>();
-  groups:any = {};
 
   constructor() { }
 
-  initViewModel() {
-    this.list = Stencil.concepts.members;
 
-    this.groups = Tools.groupBy(Tools.pluck('namespace'), this.list);
-    this.headings = Stencil.namespaces();
-  }
 
   ngOnInit() {
-    this.initViewModel();
-    Knowcycle.observable.subscribe(item => {
-      this.initViewModel();
-    });
+
   }
 
   doCreate(concept){
-    concept.newInstance()
-      .dropAt(this.rootPage.centerX, this.rootPage.centerY)
-      .addAsSubcomponent(this.rootPage);
 
   }
 

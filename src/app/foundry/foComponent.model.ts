@@ -14,8 +14,7 @@ export class foComponent extends foNode {
     
         
     init(properties?:any, subcomponents?:Array<foNode>, parent?:foObject) {
-        var self = this;
-        
+      
         this.myName = properties &&  properties['myName'] ? properties['myName'] : 'unknown'; 
 
         //create a different behaviour

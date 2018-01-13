@@ -1,7 +1,6 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
-
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.js" />
+﻿
+import { Tools } from '../foundry/foTools'
+import { foComponent } from '../foundry/foComponent.model'
 
 describe("Foundry: Block", function () {
     var block;
@@ -18,7 +17,7 @@ describe("Foundry: Block", function () {
     };
 
     beforeEach(function() {
-        block = fo.makeComponent(blockSpec);
+        block = new foComponent(blockSpec);
     });
 
     it("should should have the right sided base", function() {

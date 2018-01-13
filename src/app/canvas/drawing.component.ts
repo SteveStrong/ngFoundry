@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener  } from '@angular/core';
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
@@ -14,6 +14,8 @@ import { foDocument } from 'app/foundry/foDocument.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";
+import { ShapeStencil } from "./shapes.model";
+
 
 @Component({
   selector: 'foundry-drawing',
@@ -37,6 +39,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   screen2D: Sceen2D = new Sceen2D();
   currentDocument: foDocument;
   currentPage: foPage;
+
+  //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    alert( event.key);
+  }
 
   constructor(
     private sharing: SharingService) {
@@ -65,6 +73,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       });
   }
 
+  doSubShape(page: foPage) {
+
+    let result = ShapeStencil.factories.getItem('doAddSubGlyph').run();
+    result.addAsSubcomponent(page)
+  }
+
 
 
   ngOnInit() {
@@ -84,11 +98,15 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.currentDocument = this.rootWorkspace.document;
     this.currentPage = this.createPage()
       .then(page => {
-        this.doParticleEngine(page);
+        //this.doParticleEngine(page);
+        //this.doSubShape(page);
       });
 
-    let concept = ParticleStencil.find<foShape2D>('engine');
-    this.rootWorkspace.library.establish('stencil').concepts.addItem(concept.myName, concept);
+  
+    let libs = this.rootWorkspace.stencil;
+    libs.add(ParticleStencil).displayName = "Particle";
+    libs.add(ShapeStencil).displayName = "Shape";
+    
   }
 
   private createPage(): foPage {

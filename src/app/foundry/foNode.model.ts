@@ -23,11 +23,15 @@ export class foNode extends foObject implements iNode {
         this._class = value;
     }
 
-    displayName() {
+    get displayName() {
+        if ( this._displayName) return this._displayName;
         if (this._class) {
             return `${this.myName} - ${this.myClass}`;
         }
         return `${this.myName} - ${this.myType}`;
+    }
+    set displayName(value:string){
+        this._displayName = value;
     }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {

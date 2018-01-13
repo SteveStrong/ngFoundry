@@ -1,8 +1,6 @@
 <accordion>
-    <accordion-group *ngFor="let key of headings" [heading]="key" [isOpen]="true">
-        <fo-stencil-panel *ngFor="let item of groups[key]" [rootPage]="rootPage" [stencilItem]="item"></fo-stencil-panel>
+    <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="false">
+        <fo-stencil-panel *ngFor="let concept of item.concepts.members" [rootPage]="rootPage" [concept]="concept"></fo-stencil-panel>
     </accordion-group>
 </accordion>
 
-
-<fo-stencil-panel *ngFor="let concept of concepts.members" [rootPage]="rootPage" [stencilItem]="concept"></fo-stencil-panel>
