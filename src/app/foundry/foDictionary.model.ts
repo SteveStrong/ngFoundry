@@ -5,16 +5,23 @@ import { iObject } from './foInterface'
 
 export class foDictionary<T extends iObject> extends foObject {
 
-
     private _lookup: any = {};
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
     }
 
+    add(obj: T): T {
+        return this.addItem(obj.myName, obj);
+    }
+
     addItem(key: string, obj: T): T {
         this._lookup[key] = obj;
         return obj;
+    }
+
+    remove(obj: T): T {
+        return this.removeItem(obj.myName);
     }
 
     removeItem(key: string): T {

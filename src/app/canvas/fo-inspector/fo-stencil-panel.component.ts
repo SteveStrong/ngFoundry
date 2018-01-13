@@ -35,7 +35,7 @@ export class foStencilPanelComponent implements OnInit {
     .dropAt(this.rootPage.centerX, this.rootPage.centerY)
       .addAsSubcomponent(this.rootPage);
 
-    Toast.info("Created", this.lastCreated.displayName())
+    Toast.info("Created", this.lastCreated.displayName)
   }
 
   doCommand(cmd:string) {

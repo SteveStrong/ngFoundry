@@ -14,6 +14,8 @@ import { foDocument } from 'app/foundry/foDocument.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";
+import { ShapeStencil } from "./shapes.model";
+
 
 @Component({
   selector: 'foundry-drawing',
@@ -87,8 +89,11 @@ export class DrawingComponent implements OnInit, AfterViewInit {
         this.doParticleEngine(page);
       });
 
-    let concept = ParticleStencil.find<foShape2D>('engine');
-    this.rootWorkspace.library.establish('stencil').concepts.addItem(concept.myName, concept);
+  
+    let libs = this.rootWorkspace.library;
+    libs.add(ParticleStencil);
+    libs.add(ShapeStencil);
+    
   }
 
   private createPage(): foPage {
