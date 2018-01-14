@@ -4,7 +4,9 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
-import { Sceen2D } from "../foundryDrivers/canvasDriver";
+import { Screen2D } from "../foundryDrivers/canvasDriver";
+import { Screen3D } from "../foundryDrivers/threeDriver";
+
 import { cPoint } from "../foundry/foGeometry";
 import { foGlyph } from "../foundry/foGlyph.model";
 
@@ -39,7 +41,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   @Input()
   public pageHeight = 1000;
 
-  screen2D: Sceen2D = new Sceen2D();
+  screen2D: Screen2D = new Screen2D();
+  screen3D: Screen3D = new Screen3D();
   currentDocument: foDocument;
 
   //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page

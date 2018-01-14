@@ -9,7 +9,7 @@ function doAnimate(mySelf) {
     animate();
 }
 
-export class Sceen3D {
+export class Screen3D {
     scene: any = {}
     camera: any = {};
     renderer: any = {}

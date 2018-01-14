@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Sceen2D } from "../foundryDrivers/canvasDriver";
+import { Screen2D } from "../foundryDrivers/canvasDriver";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 
@@ -52,7 +52,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   public pageHeight = 1000;
 
   message: Array<any> = [];
-  screen2D: Sceen2D = new Sceen2D();
+  screen2D: Screen2D = new Screen2D();
 
 
   constructor(

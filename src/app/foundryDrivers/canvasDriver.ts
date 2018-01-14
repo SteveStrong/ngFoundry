@@ -5,7 +5,7 @@ import { cPoint } from "../foundry/foGeometry";
 
 
 
-export class Sceen2D {
+export class Screen2D {
     private stopped: boolean = true
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
