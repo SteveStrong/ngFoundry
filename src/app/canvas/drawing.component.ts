@@ -5,6 +5,8 @@ import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
 import { Sceen2D } from "../foundryDrivers/canvasDriver";
+import { cPoint } from "../foundry/foGeometry";
+import { foGlyph } from "../foundry/foGlyph.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
@@ -169,6 +171,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     }
     this.screen2D.go();
 
+    this.addEventHooks(page);
+
   }
 
   public ngAfterViewInit() {
@@ -177,6 +181,47 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.sharing.startSharing();
 
     this.doSetCurrentPage(this.currentDocument.currentPage);
+  }
+
+  addEventHooks(page: foPage) {
+
+    page.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+      if (shape) {
+        shape.drawHover = function (ctx: CanvasRenderingContext2D) {
+          ctx.strokeStyle = "yellow";
+          ctx.lineWidth = 4;
+          shape.drawOutline(ctx);
+        }
+      }
+    }
+
+    page.onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+      if (shape) {
+        shape.drawHover = undefined;
+      }
+    }
+
+    page.onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+
+      if (shapeUnder) {
+        shapeUnder.drawHover = function (ctx: CanvasRenderingContext2D) {
+          ctx.strokeStyle = "green";
+          ctx.lineWidth = 8;
+          shapeUnder.drawOutline(ctx);
+          ctx.strokeStyle = "yellow";
+          ctx.lineWidth = 4;
+          shapeUnder.drawOutline(ctx);
+        }
+      }
+    }
+
+    page.onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+
+      if (shapeUnder) {
+        shapeUnder.drawHover = undefined;
+      }
+    }
+
   }
 
 }
