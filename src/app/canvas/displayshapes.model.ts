@@ -1,5 +1,5 @@
 import { Tools } from '../foundry/foTools';
-import { cPoint } from '../foundry/foGeometry';
+import { cPoint } from '../foundry/foGeometry2D';
 
 import { iObject, iNode, iShape, iPoint, iSize, Action } from '../foundry/foInterface';
 

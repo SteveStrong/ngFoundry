@@ -19,7 +19,7 @@
  * @constructor
  **/
 
-import { cPoint } from './foGeometry';
+import { cPoint } from './foGeometry2D';
 
 
 export class Matrix2D {

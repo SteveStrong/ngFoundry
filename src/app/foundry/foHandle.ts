@@ -1,6 +1,6 @@
 
 
-import { cPoint } from './foGeometry';
+import { cPoint } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
 import { iPoint } from './foInterface';

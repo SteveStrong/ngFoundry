@@ -1,6 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 
-import { cPoint  } from '../foundry/foGeometry';
+import { cPoint  } from '../foundry/foGeometry2D';
 import { Matrix2D, Identity  } from '../foundry/foMatrix2D';
 
 

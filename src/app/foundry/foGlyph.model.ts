@@ -1,6 +1,6 @@
 
 import { Tools } from './foTools';
-import { cPoint, cFrame } from './foGeometry';
+import { cPoint, cFrame } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
