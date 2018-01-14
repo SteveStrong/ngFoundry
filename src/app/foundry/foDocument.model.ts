@@ -39,6 +39,7 @@ export class foDocument extends foNode {
         });
         this.currentPage = new foPage(spec);
         this._pageByGuid = {};
+        Lifecycle.created(this.currentPage);
         return this.currentPage;
     }
 
@@ -56,4 +57,5 @@ export class foDocument extends foNode {
 }
 
 import { RuntimeType } from './foRuntimeType';
+import { Lifecycle } from 'app/foundry/foLifecycle';
 RuntimeType.define(foDocument);

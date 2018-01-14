@@ -40,6 +40,8 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
     ctx.font = '30pt Calibri';
     ctx.lineWidth = 3;
     ctx.strokeStyle = 'grey';
+    //ctx.rotate(10)
+    ctx.fillText(text, 10, 50);
     ctx.strokeText(text, 10, 50);
     ctx.restore();
   }
@@ -49,7 +51,6 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
     let context = canvas.getContext("2d");
 
     this.drawName(this.concept.myName, context)
-
   }
 
   doToggleDetails() {
@@ -69,6 +70,7 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
 
 
     let shape = found.newInstance({
+      myGuid: this.lastCreated.myGuid,
       context: this.lastCreated.displayName,
       fontSize: 40,
       x: 400,
