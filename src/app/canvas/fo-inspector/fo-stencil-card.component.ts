@@ -5,6 +5,7 @@ import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";
 
+import { globalWorkspace } from 'app/foundry/foWorkspace.model';
 
 @Component({
   selector: 'fo-stencil-card',
@@ -54,9 +55,12 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
   }
 
   doCreate() {
+    let page = globalWorkspace.activePage;
+
     this.lastCreated = this.concept.newInstance().defaultName()
-      .dropAt(this.rootPage.centerX, this.rootPage.centerY)
-      .addAsSubcomponent(this.rootPage);
+    .dropAt(page.centerX, page.centerY)
+      .addAsSubcomponent(page);
+
 
     Toast.info("Created", this.lastCreated.displayName)
   }

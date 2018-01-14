@@ -1,6 +1,6 @@
 <ng-container>
   <div class="panel panel-default">
-    <div class="panel-body">{{page.displayName}}</div>
+    <div (click)="gotoPage()" class="panel-body">{{page.displayName}}</div>
     <ng-container *ngFor="let node of page.nodes.members; let i = index; let isOdd = odd">
       <fo-page-panel [node]="node"></fo-page-panel>
     </ng-container>

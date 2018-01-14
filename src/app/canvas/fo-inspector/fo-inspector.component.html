@@ -2,28 +2,7 @@
   <tab heading='Debug'>
     <pre class="well">{{stage.mouseLoc | json}}</pre>
 
-    <div class="well" (click)="doClearlifecycleEvents()">
-      <div *ngFor="let event of lifecycleEvent;  let index=index; let odd=odd; let even=even;" class="row" [ngClass]="{ oddLife: odd, evenLife: even }" >
-        <span class="col-sm-1">{{event.id}}</span>
-        <span class="col-sm-1">{{event.cmd}}</span>
-        <span class="col-sm-2">{{event.myType}}</span>
-        <span class="col-sm-2">{{event.myName}}</span>
-        <span class="col-sm-2">{{event.simpleGuid}}</span>
-        <span class="col-sm-3">{{event.value | json}}</span>
-      </div>
-    </div>
-
-    <div class="well" (click)="doClearChangeEvents()">
-      <div *ngFor="let event of changeEvent;  let index=index; let odd=odd; let even=even;" class="row" [ngClass]="{ oddChange: odd, evenChange: even }" >
-        <span class="col-sm-1">{{event.id}}</span>
-        <span class="col-sm-1">{{event.cmd}}</span>
-        <span class="col-sm-2">{{event.myType}}</span>
-        <span class="col-sm-2">{{event.myName}}</span>
-        <span class="col-sm-2">{{event.simpleGuid}}</span>
-        <span class="col-sm-3">{{event.value | json}}</span>
-      </div>
-    </div>
-
+    <fo-events></fo-events>
     <!-- <pre class="well">{{stage.message | json}}</pre> -->
 
     <!-- <pre class="well">{{sitOnShape | json}}</pre> -->
@@ -31,19 +10,17 @@
     <!-- <pre class="well">{{_dictionary | json}}</pre> -->
     <!-- <pre class="well">{{Subcomponents | json}}</pre> -->
   </tab>
-  <!-- <tab heading='Runtime' (select)="doRefreshRuntimeTypes()">
-    <fo-runtime ></fo-runtime>
-  </tab> -->
+
   <tab heading='Page'>
-    <fo-page [page]="rootPage"></fo-page>
+    <fo-page [page]="stage"></fo-page>
   </tab>
   <tab heading='Model'>
     <fo-model></fo-model>
   </tab>
-  <tab heading='Stencil' (select)="doRefreshStencil()">
-    <fo-stencil [rootPage]="rootPage"></fo-stencil>
+  <tab heading='Stencil'>
+    <fo-stencil></fo-stencil>
   </tab>
   <tab heading='Commands'>
-    <fo-command [stage]="stage"></fo-command>  
+    <fo-command [stage]="stage"></fo-command>
   </tab>
 </tabset>

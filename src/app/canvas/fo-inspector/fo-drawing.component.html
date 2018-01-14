@@ -2,7 +2,7 @@
   <div class="panel panel-default">
     <div class="panel-body">{{document.displayName}}</div>
     <tabset type="pills">
-      <tab heading='page.myName' *ngFor="let page of document.pages.members; let i = index; let isOdd = odd">
+      <tab [heading]='page.myName' *ngFor="let page of document.pages.members; let i = index; let isOdd = odd">
           <fo-page [page]="page"></fo-page>
       </tab>
     </tabset>

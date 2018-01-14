@@ -16,15 +16,9 @@ export class foStencilComponent implements OnInit {
   rootWorkspace: foWorkspace = globalWorkspace;
   list:Array<foLibrary> = new Array<foLibrary>();
 
-  @Input()
-  public rootPage: foPage;
-
   constructor() { }
 
   ngOnInit() {
     this.list = this.rootWorkspace.stencil.members;
   }
-
-
-
 }

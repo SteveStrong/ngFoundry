@@ -1,8 +1,8 @@
 
 
 import { Action } from './foInterface'
-
 import { foObject } from './foObject.model';
+import { Tools } from './foTools';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -32,6 +32,14 @@ export class foLifecycleEvent {
 
     get myName() {
         return this.object.myName;
+    }
+
+    isNamed(name:string){
+        return Tools.matches(name,this.myName)
+    }
+
+    isCmd(cmd:string){
+        return Tools.matches(cmd,this.cmd)
     }
 
     constructor(cmd: string, obj: foObject, count: number = 0, value?: any) {

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { foPage } from "../../foundry/foPage.model";
+import { globalWorkspace } from "../../foundry/foWorkspace.model";
 
 @Component({
   selector: 'fo-page',
@@ -17,4 +18,7 @@ export class foPageComponent implements OnInit {
   ngOnInit() {
   }
 
+  gotoPage(){
+    globalWorkspace.document.currentPage = this.page;
+  }
 }

@@ -55,6 +55,7 @@ import { foPageComponent } from './canvas/fo-inspector/fo-page.component';
 import { foStencilCardComponent } from './canvas/fo-inspector/fo-stencil-card.component';
 import { foConceptCardComponent } from './canvas/fo-inspector/fo-concept-card.component';
 import { WorldComponent } from './canvas/world.component';
+import { foEventsComponent } from './canvas/fo-inspector/fo-events.component';
 
 @NgModule({
   declarations: [
@@ -95,7 +96,8 @@ import { WorldComponent } from './canvas/world.component';
     foPageComponent,
     foStencilCardComponent,
     foConceptCardComponent,
-    WorldComponent
+    WorldComponent,
+    foEventsComponent
   ],
   imports: [
     BrowserAnimationsModule,

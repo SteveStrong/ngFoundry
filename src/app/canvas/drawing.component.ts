@@ -5,20 +5,22 @@ import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
 import { Screen2D } from "../foundryDrivers/canvasDriver";
+import { BroadcastChange } from '../foundry/foChange';
 
 import { cPoint } from "../foundry/foGeometry";
 import { foGlyph } from "../foundry/foGlyph.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
-import { BroadcastChange, foChangeEvent } from '../foundry/foChange';
-import { RuntimeType } from 'app/foundry/foRuntimeType';
+import { foChangeEvent } from '../foundry/foChange';
+
 import { foDocument } from 'app/foundry/foDocument.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
+import { foObject } from 'app/foundry/foObject.model';
 
 
 @Component({
@@ -85,23 +87,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-    let max = 25;
-    Lifecycle.observable.subscribe(event => {
-      this.pushMax(event, max, this.lifecycleEvent);
-    });
-
-    Knowcycle.observable.subscribe(event => {
-      this.pushMax(event, max, this.lifecycleEvent);
-    });
-
-    BroadcastChange.observable.subscribe(event => {
-      this.pushMax(event, max, this.changeEvent);
-    });
-
     this.currentDocument = this.rootWorkspace.document.override({
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,
     });
+
+
 
     this.currentDocument.currentPage
       .then(page => {
@@ -123,7 +114,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
 
   doAddPage() {
-    this.doGoToPage(this.currentDocument.createPage());
+    this.currentDocument.createPage();
   }
 
   doDeletePage() {
@@ -132,32 +123,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doGoToPage(page: foPage) {
     this.currentDocument.currentPage = page;
-    this.doSetCurrentPage(page);
   }
 
-  pushMax(value, max, array) {
-    let length = array.length;
-    if (length >= max) {
-      array.splice(0, length - max + 1);
-    }
-    array.push(value);
-  }
 
-  doClearlifecycleEvents() {
-    this.lifecycleEvent = [];
-  }
-
-  doClearChangeEvents() {
-    this.changeEvent = [];
-  }
-
-  doRefreshRuntimeTypes() {
-    Knowcycle.primitive(RuntimeType)
-  }
-
-  doRefreshStencil() {
-    Knowcycle.defined()
-  }
 
   doSetCurrentPage(page: foPage) {
 
@@ -179,6 +147,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
     this.sharing.startSharing();
 
+    BroadcastChange.observable.subscribe(item => {
+      if ( item.isCmd('currentPage')) {
+        this.doSetCurrentPage(this.currentDocument.currentPage);
+      }
+    });
+    
     this.doSetCurrentPage(this.currentDocument.currentPage);
 
   }

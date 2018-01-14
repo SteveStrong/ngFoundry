@@ -43,7 +43,7 @@ export class Screen2D {
     }
 
     clear() {
-        this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+        this.context && this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
     }
     
     setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {

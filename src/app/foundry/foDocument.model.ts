@@ -5,10 +5,12 @@ import { foPage } from './foPage.model'
 import { foNode } from './foNode.model'
 import { foDictionary } from './foDictionary.model'
 
+import { BroadcastChange } from './foChange';
+
 export class foDocument extends foNode {
 
-    pageWidth:number;
-    pageHeight:number;
+    pageWidth: number;
+    pageHeight: number;
 
     private _pages: foDictionary<foPage> = new foDictionary<foPage>({ myName: 'pages' });
     private _pageByGuid = {};
@@ -26,28 +28,29 @@ export class foDocument extends foNode {
     }
 
     findPageByGuid(guid: string) {
-        if ( !Object.keys(this._pageByGuid).length) {
-            this.pages.forEachKeyValue((key,page)=> {
+        if (!Object.keys(this._pageByGuid).length) {
+            this.pages.forEachKeyValue((key, page) => {
                 this._pageByGuid[page.myGuid] = page;
             });
         }
         return this._pageByGuid[guid];
     }
 
-    createPage(properties?: any) { 
+    createPage(properties?: any) {
+        this._pageByGuid = {};
         let nextPage = `Page-${this.pages.count + 1}`;
-        let spec = Tools.union(properties, { 
+        let spec = Tools.union(properties, {
             myName: nextPage,
             width: this.pageWidth || 1000,
             height: this.pageHeight || 800,
         });
         this.currentPage = new foPage(spec);
-        this._pageByGuid = {};
-        Lifecycle.event('syncPage',this.currentPage);
+
+        Lifecycle.event('syncPage', this.currentPage);
         return this.currentPage;
     }
 
-    _currentPage: foPage
+    private _currentPage: foPage
     get currentPage() {
         if (this.pages.count == 0 || !this._currentPage) {
             this._currentPage = this.createPage();
@@ -55,8 +58,11 @@ export class foDocument extends foNode {
         return this._currentPage;
     }
     set currentPage(page: foPage) {
-        this._currentPage = page;
-        this.pages.addItem(page.myName, page);
+        if (this._currentPage != page) {
+            this._currentPage = page;
+            this.pages.addItem(page.myName, page);
+            BroadcastChange.changed('currentPage', this);
+        }
     }
 }
 
