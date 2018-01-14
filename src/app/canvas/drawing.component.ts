@@ -5,7 +5,6 @@ import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
 import { Screen2D } from "../foundryDrivers/canvasDriver";
-import { Screen3D } from "../foundryDrivers/threeDriver";
 
 import { cPoint } from "../foundry/foGeometry";
 import { foGlyph } from "../foundry/foGlyph.model";
@@ -42,7 +41,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   public pageHeight = 1000;
 
   screen2D: Screen2D = new Screen2D();
-  screen3D: Screen3D = new Screen3D();
   currentDocument: foDocument;
 
   //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page
@@ -52,7 +50,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private vcr: ViewContainerRef,
     private sharing: SharingService) {
   }
 
@@ -184,9 +181,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
     this.doSetCurrentPage(this.currentDocument.currentPage);
 
-
-    // this.screen3D.setRoot(this.vcr.element.nativeElement,this.pageWidth, this.pageHeight);
-    // this.screen3D.go();
   }
 
   addEventHooks(page: foPage) {

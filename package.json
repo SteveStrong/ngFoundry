@@ -23,6 +23,7 @@
     "@angular/router": "^5.0.0",
     "@aspnet/signalr-client": "^1.0.0-alpha2-final",
     "@ngrx/store": "^4.1.1",
+    "@types/three": "^0.89.2",
     "core-js": "^2.4.1",
     "d3": "^4.12.0",
     "font-awesome": "^4.7.0",

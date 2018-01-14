@@ -8,12 +8,13 @@ import { Screen3D } from "../foundryDrivers/threeDriver";
 })
 export class TestSceen1Component implements OnInit {
   mySceen: Screen3D = new Screen3D();
-  constructor(private vcr: ViewContainerRef) { 
-    
+
+  constructor(
+    private vcr: ViewContainerRef) {  
   }
 
   ngOnInit(): void {
-    this.mySceen.setRoot(this.vcr.element.nativeElement,0,0);
+    this.mySceen.setRoot(this.vcr.element.nativeElement);
     this.mySceen.go();
   }
 
