@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, ViewContainerRef, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
@@ -152,7 +152,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
         this.doSetCurrentPage(this.currentDocument.currentPage);
       }
     });
-    
+
     this.doSetCurrentPage(this.currentDocument.currentPage);
 
   }

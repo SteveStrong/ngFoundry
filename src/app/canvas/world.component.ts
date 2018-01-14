@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, ViewContainerRef, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
@@ -24,7 +24,7 @@ import { PersonDomain } from "./domain.model";
   templateUrl: './world.component.html',
   styleUrls: ['./world.component.css']
 })
-export class WorldComponent implements OnInit {
+export class WorldComponent implements OnInit, AfterViewInit {
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
