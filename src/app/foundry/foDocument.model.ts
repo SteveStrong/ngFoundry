@@ -7,7 +7,8 @@ import { foDictionary } from './foDictionary.model'
 
 export class foDocument extends foNode {
 
-
+    pageWidth:number;
+    pageHeight:number;
 
     private _pages: foDictionary<foPage> = new foDictionary<foPage>({ myName: 'pages' });
     private _pageByGuid = {};
@@ -31,11 +32,14 @@ export class foDocument extends foNode {
 
     createPage(properties?: any) { 
         let nextPage = `Page-${this.pages.count + 1}`;
-        let spec = Tools.union(properties, { myName: nextPage })
-        let page = new foPage(spec);
-        this.pages.addItem(page.myName, page);
+        let spec = Tools.union(properties, { 
+            myName: nextPage,
+            width: this.pageWidth || 1000,
+            height: this.pageHeight || 800,
+        });
+        this.currentPage = new foPage(spec);
         this._pageByGuid = {};
-        return page;
+        return this.currentPage;
     }
 
     _currentPage: foPage

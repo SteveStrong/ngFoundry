@@ -31,6 +31,17 @@ class LibraryDictionary extends foDictionary<foLibrary>{
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
     }
+
+    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
+        let result = list ? list : new foCollection<foKnowledge>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            value.select(where, result, deep);
+        })
+
+        return result;
+    }
 }
 
 class ModelDictionary extends foDictionary<foModel>{
@@ -43,6 +54,17 @@ class ModelDictionary extends foDictionary<foModel>{
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
+    }
+
+    selectComponent(where: WhereClause<foObject>, list?: foCollection<foObject>, deep: boolean = true): foCollection<foObject> {
+        let result = list ? list : new foCollection<foObject>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            value.select(where, result, deep);
+        })
+
+        return result;
     }
 }
 
@@ -64,14 +86,10 @@ export class foWorkspace extends foKnowledge {
     select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
         let result = super.select(where, list, deep);
 
-        this.library.forEachKeyValue((key,value) => {
-            value.select(where, result, deep);
-        });
+        this.library.select(where, result, deep);
 
-        this.stencil.forEachKeyValue((key,value) => {
-            value.select(where, result, deep);
-        })
-
+        this.stencil.select(where, result, deep);
+  
         return result;
     }
 

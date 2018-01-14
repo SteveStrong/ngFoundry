@@ -1,8 +1,10 @@
 <ng-container>
   <div class="panel panel-default">
     <div class="panel-body">{{document.displayName}}</div>
-    <ng-container *ngFor="let page of document.nodes.members; let i = index; let isOdd = odd">
-      <fo-page [page]="page"></fo-page>
-    </ng-container>
+    <tabset type="pills">
+      <tab heading='page.myName' *ngFor="let page of document.pages.members; let i = index; let isOdd = odd">
+          <fo-page [page]="page"></fo-page>
+      </tab>
+    </tabset>
   </div>
 </ng-container>

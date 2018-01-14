@@ -1,12 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { Tools } from "../../foundry/foTools";
+
 import { foModel } from "../../foundry/foModel.model";
 import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";
 
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foText2D } from "../../foundry/foText2D.model";
 
 @Component({
   selector: 'fo-concept-panel',
@@ -38,12 +39,19 @@ export class foConceptPanelComponent implements OnInit {
 
     Toast.info("Created", this.lastCreated.displayName);
 
-    let shape = new foText2D({
-      context: this.lastCreated,
+    let found = globalWorkspace.stencil.select(item => {
+      return Tools.matches(item.myName,'text');
+    }).first();
+
+    
+
+    let shape = found.newInstance({
+      context: this.lastCreated.displayName,
       fontSize: 40,
       x: 400,
       y: 400,
-    })
+    });
+    //foObject.jsonAlert(shape);
     globalWorkspace.activePage.addSubcomponent(shape);
 
   }

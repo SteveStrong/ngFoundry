@@ -39,7 +39,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   screen2D: Sceen2D = new Sceen2D();
   currentDocument: foDocument;
-  currentPage: foPage;
 
   //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page
   @HostListener('document:keypress', ['$event'])
@@ -52,12 +51,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
   doClear() {
-    this.currentPage.clearPage();
+    this.currentDocument.currentPage.clearPage();
     this.sharing.clearPage();
   }
 
   doDelete() {
-    this.currentPage.deleteSelected();
+    this.currentDocument.currentPage.deleteSelected();
   }
 
   doOnOff() {
@@ -96,8 +95,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       this.pushMax(event, max, this.changeEvent);
     });
 
-    this.currentDocument = this.rootWorkspace.document;
-    this.currentPage = this.createPage()
+    this.currentDocument = this.rootWorkspace.document.override({
+      pageWidth: this.pageWidth,
+      pageHeight: this.pageHeight,
+    });
+
+    this.currentDocument.currentPage
       .then(page => {
         //this.doParticleEngine(page);
         //this.doSubShape(page);
@@ -115,15 +118,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.rootWorkspace.model.addItem('default', new foModel({}))
   }
 
-  private createPage(): foPage {
-    return this.currentDocument.createPage({
-      width: this.pageWidth,
-      height: this.pageHeight,
-    });
-  }
 
   doAddPage() {
-    this.doGoToPage(this.createPage());
+    this.doGoToPage(this.currentDocument.createPage());
   }
 
   doDeletePage() {
@@ -131,8 +128,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
   doGoToPage(page: foPage) {
-    this.currentPage = page;
-    this.doSetCurrentPage(this.currentPage);
+    this.currentDocument.currentPage = page;
+    this.doSetCurrentPage(page);
   }
 
   pushMax(value, max, array) {
@@ -179,9 +176,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
     this.sharing.startSharing();
 
-    this.currentPage.then(page => {
-      this.doSetCurrentPage(page);
-    })
+    this.doSetCurrentPage(this.currentDocument.currentPage);
   }
 
 }
