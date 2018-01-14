@@ -1,6 +1,6 @@
 
 import { PubSub } from "../foundry/foPubSub";
-import { cPoint, cFrame } from "../foundry/foGeometry";
+import { cPoint, cFrame } from '../foundry/foGeometry2D';
 import { iPoint, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'

@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foundry/foPubSub";
 
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint } from '../foundry/foGeometry2D';
 
 
 

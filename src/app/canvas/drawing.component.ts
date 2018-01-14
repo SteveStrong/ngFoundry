@@ -7,7 +7,7 @@ import { foModel } from "../foundry/foModel.model";
 import { Screen2D } from "../foundryDrivers/canvasDriver";
 import { BroadcastChange } from '../foundry/foChange';
 
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint } from '../foundry/foGeometry2D';
 import { foGlyph } from "../foundry/foGlyph.model";
 
 import { SharingService } from "../common/sharing.service";

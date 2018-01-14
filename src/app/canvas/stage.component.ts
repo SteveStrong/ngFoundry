@@ -5,7 +5,7 @@ import { Screen2D } from "../foundryDrivers/canvasDriver";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 
-import { cPoint, cMargin } from "../foundry/foGeometry";
+import { cPoint, cMargin } from '../foundry/foGeometry2D';
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
