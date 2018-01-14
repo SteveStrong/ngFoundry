@@ -9,7 +9,7 @@ import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
 import { foComponent } from './foComponent.model';
 
-import { foGlyph } from './foGlyph.model';
+import { foGlyph } from './foGlyph2D.model';
 import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 

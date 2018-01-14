@@ -11,7 +11,7 @@ import { foNode } from '../foundry/foNode.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foGlyph } from '../foundry/foGlyph.model'
+import { foGlyph } from '../foundry/foGlyph2D.model'
 import { foShape2D } from '../foundry/foShape2D.model'
 import { foHandle } from 'app/foundry/foHandle';
 import { Lifecycle } from 'app/foundry/foLifecycle';

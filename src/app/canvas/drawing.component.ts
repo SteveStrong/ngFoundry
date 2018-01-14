@@ -8,7 +8,7 @@ import { Screen2D } from "../foundryDrivers/canvasDriver";
 import { BroadcastChange } from '../foundry/foChange';
 
 import { cPoint } from '../foundry/foGeometry2D';
-import { foGlyph } from "../foundry/foGlyph.model";
+import { foGlyph } from "../foundry/foGlyph2D.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";

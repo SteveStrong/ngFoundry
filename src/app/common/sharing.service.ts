@@ -7,7 +7,7 @@ import { RuntimeType } from '../foundry/foRuntimeType';
 import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
-import { foGlyph } from "../foundry/foGlyph.model";
+import { foGlyph } from "../foundry/foGlyph2D.model";
 import { foShape2D } from "../foundry/foShape2D.model";
 
 

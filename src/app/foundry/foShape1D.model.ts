@@ -10,7 +10,7 @@ import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
 import { foShape2D } from '../foundry/foShape2D.model'
-import { foGlyph } from '../foundry/foGlyph.model'
+import { foGlyph } from '../foundry/foGlyph2D.model'
 import { Lifecycle } from './foLifecycle';
 
 

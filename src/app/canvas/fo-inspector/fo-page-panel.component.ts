@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foGlyph } from "../../foundry/foGlyph.model";
+import { foGlyph } from "../../foundry/foGlyph2D.model";
 
 @Component({
   selector: 'fo-page-panel',

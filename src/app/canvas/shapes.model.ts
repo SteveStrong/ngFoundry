@@ -1,4 +1,4 @@
-import { foGlyph } from "../foundry/foGlyph.model";
+import { foGlyph } from "../foundry/foGlyph2D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
