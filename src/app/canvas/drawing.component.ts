@@ -160,7 +160,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doSetCurrentPage(page: foPage) {
 
-    this.sharing.currentPage = page;
     this.screen2D.clear();
     //with the render function you could
     //1) render a single page

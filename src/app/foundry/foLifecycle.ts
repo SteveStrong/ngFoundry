@@ -122,6 +122,11 @@ export class foLifecycle {
         return this;
     }
 
+    event(eventName:string, obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent(eventName, obj, counter++, value))
+        return this;
+    }
+
     created(obj: foObject) {
         this.emit.next(new foLifecycleEvent('created', obj, counter++))
         return this;

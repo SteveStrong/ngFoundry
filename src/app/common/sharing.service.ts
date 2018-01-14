@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { SignalRService } from "../common/signalr.service";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
@@ -8,7 +9,6 @@ import { Stencil } from "../foundry/foStencil";
 import { foNode } from "../foundry/foNode.model";
 import { foGlyph } from "../foundry/foGlyph.model";
 import { foShape2D } from "../foundry/foShape2D.model";
-import { foPage } from "../foundry/foPage.model";
 
 
 //https://greensock.com/docs/TweenMax
@@ -20,10 +20,8 @@ import { foGlue } from 'app/foundry/foGlue';
 @Injectable()
 export class SharingService {
 
-  private _page: foPage;
-  set currentPage(value:foPage){
-    this._page = value;
-  }
+  private workspace: foWorkspace = globalWorkspace;
+
 
   constructor(
     private signalR: SignalRService) {
@@ -80,6 +78,11 @@ export class SharingService {
       })
 
     });
+  }
+
+  public syncPage(page: foNode) {
+    this.signalR.pubCommand("syncPage", { guid: page.myGuid, name: page.myName }, page.asJson);
+    return this;
   }
 
   public created(shape: foNode) {
@@ -183,12 +186,12 @@ export class SharingService {
 
       // function forceParent(shape: foGlyph) {
       //   let parent = shape.myParent && shape.myParent();
-      //   if (!parent) shape.reParent(this._page);
+      //   if (!parent) shape.reParent(this.workspace.activePage);
       // }
 
       this.signalR.subCommand("dropShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.found(cmd.guid, shape => {
+          this.workspace.activePage.found(cmd.guid, shape => {
             shape.dropAt(data.x, data.y, data.angle);
             //forceParent(shape);
           });
@@ -197,7 +200,7 @@ export class SharingService {
 
       this.signalR.subCommand("moveShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.found(cmd.guid, shape => {
+          this.workspace.activePage.found(cmd.guid, shape => {
             shape.move(data.x, data.y, data.angle);
             //forceParent(shape);
           });
@@ -206,7 +209,7 @@ export class SharingService {
 
       this.signalR.subCommand("easeTo", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.found(cmd.guid, shape => {
+          this.workspace.activePage.found(cmd.guid, shape => {
             shape.easeTo(data.x, data.y, .8, Back.easeInOut);
             //forceParent(shape);
           });
@@ -215,7 +218,7 @@ export class SharingService {
 
       this.signalR.subCommand("selectShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.found(cmd.guid, shape => {
+          this.workspace.activePage.found(cmd.guid, shape => {
             shape.isSelected = data;
           });
         });
@@ -223,14 +226,14 @@ export class SharingService {
 
       this.signalR.subCommand("destroyed", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.found(cmd.guid, shape => {
-            this._page.destroyed(shape);
+          this.workspace.activePage.found(cmd.guid, shape => {
+            this.workspace.activePage.destroyed(shape);
           });
         });
       });
 
       this.signalR.subCommand("clearPage", (cmd, data) => {
-        this._page.clearPage();
+        this.workspace.activePage.clearPage();
       });
 
       this.signalR.subCommand("syncKnow", (cmd, data) => {
@@ -245,7 +248,7 @@ export class SharingService {
       //   //foObject.jsonAlert(cmd);
       //   let { parentGuid, value } = cmd;
       //   LifecycleLock.protected(parentGuid, this, _ => {
-      //     this._page.found(parentGuid,
+      //     this.workspace.activePage.found(parentGuid,
       //       (item) => { item.moveHandle(data, value) }
       //     );
       //   });
@@ -256,27 +259,40 @@ export class SharingService {
         //foObject.jsonAlert(cmd);
 
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.found(cmd.guid, (shape) => {
-            this._page.found(parentGuid,
+          this.workspace.activePage.found(cmd.guid, (shape) => {
+            this.workspace.activePage.found(parentGuid,
               (item) => { shape.reParent(item) },
-              (miss) => { shape.reParent(this._page) })
+              (miss) => { shape.reParent(this.workspace.activePage) })
           });
         });
 
       });
 
+      this.signalR.subCommand("syncPage", (cmd, data) => {
+        let pages = globalWorkspace.document.pages;
+        LifecycleLock.protected(cmd.guid, this, _ => {
+          pages.findItem(cmd.name, () => {  
+            globalWorkspace.document.createPage(data);         
+          }, found => {
+            found.override(data);
+          });
+        });
+
+      });
+
+
       this.signalR.subCommand("syncShape", (cmd, data) => {
         //foObject.jsonAlert(data);
 
         LifecycleLock.protected(cmd.guid, this, _ => {
-          this._page.findItem(cmd.guid, () => {
+          this.workspace.activePage.findItem(cmd.guid, () => {
             //this.message.push(json);            
             let concept = Stencil.find(data.myClass);
             let shape = concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
             //foObject.jsonAlert(shape);
-            this._page.found(cmd.parentGuid,
+            this.workspace.activePage.found(cmd.parentGuid,
               (item) => { shape.reParent(item); },
-              (miss) => { shape.reParent(this._page); }
+              (miss) => { shape.reParent(this.workspace.activePage); }
             );
           }, found => {
             found.override(data);
@@ -289,7 +305,7 @@ export class SharingService {
         // foObject.jsonAlert(value);
         let self = this;
         let { method, resize, space } = value;
-        this._page.found(cmd.guid, item => {
+        this.workspace.activePage.found(cmd.guid, item => {
           item.wait(10, () =>
             LifecycleLock.protected(cmd.guid, self, _ => {
               item[method](resize, space)
@@ -301,7 +317,7 @@ export class SharingService {
         //foObject.jsonAlert(value);
         LifecycleLock.protected(cmd.guid, this, _ => {
           let { time, ease, to } = value;
-          this._page.found(cmd.guid, item => {
+          this.workspace.activePage.found(cmd.guid, item => {
             item.easeTween(to, time, Back[ease]);
           });
         });
@@ -310,13 +326,13 @@ export class SharingService {
 
       this.signalR.subCommand("syncCommand", (cmd, data) => {
         let method = cmd.method;
-        method && this._page[method](data);
+        method && this.workspace.activePage[method](data);
       });
 
       this.signalR.subCommand("syncRun", (cmd, value) => {
         // foObject.jsonAlert(value);
         let self = this;
-        this._page.found(cmd.guid, item => {
+        this.workspace.activePage.found(cmd.guid, item => {
           let action = cmd.action;
           LifecycleLock.protected(cmd.guid, self, _ => {
             item[action](value);
@@ -328,8 +344,8 @@ export class SharingService {
       this.signalR.subCommand("syncGlue", (cmd, data) => {
         //foObject.jsonAlert(data);
         let { sourceName, targetName } = data;
-        this._page.found<foShape2D>(cmd.sourceGuid, (source) => {
-          this._page.found<foShape2D>(cmd.targetGuid, (target) => {
+        this.workspace.activePage.found<foShape2D>(cmd.sourceGuid, (source) => {
+          this.workspace.activePage.found<foShape2D>(cmd.targetGuid, (target) => {
             source.establishGlue(sourceName, target, targetName);
             //(<foShape2D>target).dropAt();
           });

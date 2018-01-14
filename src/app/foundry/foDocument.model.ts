@@ -21,6 +21,10 @@ export class foDocument extends foNode {
         return this._pages;
     }
 
+    findPage(name: string) {
+        return this._pages.find(name);
+    }
+
     findPageByGuid(guid: string) {
         if ( !Object.keys(this._pageByGuid).length) {
             this.pages.forEachKeyValue((key,page)=> {
@@ -39,7 +43,7 @@ export class foDocument extends foNode {
         });
         this.currentPage = new foPage(spec);
         this._pageByGuid = {};
-        Lifecycle.created(this.currentPage);
+        Lifecycle.event('syncPage',this.currentPage);
         return this.currentPage;
     }
 
