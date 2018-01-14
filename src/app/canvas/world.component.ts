@@ -1,18 +1,13 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
-import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
 import { Screen3D } from "../foundryDrivers/threeDriver";
 
-import { cPoint } from "../foundry/foGeometry";
-import { foGlyph } from "../foundry/foGlyph.model";
-
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { BroadcastChange, foChangeEvent } from '../foundry/foChange';
-import { RuntimeType } from 'app/foundry/foRuntimeType';
 import { foDocument } from 'app/foundry/foDocument.model';
 
 
