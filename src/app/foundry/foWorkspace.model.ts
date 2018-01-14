@@ -4,8 +4,9 @@ import { foDictionary } from './foDictionary.model'
 import { foDocument } from './foDocument.model'
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { foObject } from 'app/foundry/foObject.model';
-import { foConcept } from 'app/foundry/foConcept.model';
 
+import { foCollection } from './foCollection.model'
+import { WhereClause } from "./foInterface";
 
 // Feature detect + local reference
 export let storage = (function () {
@@ -20,9 +21,9 @@ export let storage = (function () {
 }());
 
 class LibraryDictionary extends foDictionary<foLibrary>{
-    public establish = (name:string):foLibrary => {
+    public establish = (name: string): foLibrary => {
         this.findItem(name, () => {
-            this.addItem(name, new foLibrary({myName:name}))
+            this.addItem(name, new foLibrary({ myName: name }))
         })
         return this.getItem(name);
     }
@@ -30,20 +31,12 @@ class LibraryDictionary extends foDictionary<foLibrary>{
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
     }
-
-    findConcept(name:string):foKnowledge {
-        let found:foKnowledge;
-        this.members.forEach(item=> {
-            found = found ? found : item.concepts.find(name);
-        })
-        return found;
-    }
 }
 
 class ModelDictionary extends foDictionary<foModel>{
-    public establish = (name:string):foModel => {
+    public establish = (name: string): foModel => {
         this.findItem(name, () => {
-            this.addItem(name, new foModel({myName:name}))
+            this.addItem(name, new foModel({ myName: name }))
         })
         return this.getItem(name);
     }
@@ -62,6 +55,24 @@ export class foWorkspace extends foKnowledge {
 
     constructor(spec?: any) {
         super(spec);
+    }
+
+    get activePage() {
+        return this._document.currentPage
+    }
+
+    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
+        let result = super.select(where, list, deep);
+
+        this.library.forEachKeyValue((key,value) => {
+            value.select(where, result, deep);
+        });
+
+        this.stencil.forEachKeyValue((key,value) => {
+            value.select(where, result, deep);
+        })
+
+        return result;
     }
 
     get document() {

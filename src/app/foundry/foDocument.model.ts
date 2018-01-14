@@ -7,6 +7,8 @@ import { foDictionary } from './foDictionary.model'
 
 export class foDocument extends foNode {
 
+
+
     private _pages: foDictionary<foPage> = new foDictionary<foPage>({ myName: 'pages' });
     private _pageByGuid = {};
 

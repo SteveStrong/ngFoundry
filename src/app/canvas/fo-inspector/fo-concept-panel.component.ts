@@ -5,8 +5,8 @@ import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";
 
-import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
-
+import { globalWorkspace } from "../../foundry/foWorkspace.model";
+import { foText2D } from "../../foundry/foText2D.model";
 
 @Component({
   selector: 'fo-concept-panel',
@@ -38,7 +38,13 @@ export class foConceptPanelComponent implements OnInit {
 
     Toast.info("Created", this.lastCreated.displayName);
 
-
+    let shape = new foText2D({
+      context: this.lastCreated,
+      fontSize: 40,
+      x: 400,
+      y: 400,
+    })
+    globalWorkspace.activePage.addSubcomponent(shape);
 
   }
 
