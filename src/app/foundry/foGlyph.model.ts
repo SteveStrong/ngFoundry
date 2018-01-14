@@ -30,6 +30,7 @@ export class foGlyph extends foNode implements iShape {
 
     }
 
+
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
     set visible(value: boolean) { this._visible = value; }

@@ -71,7 +71,8 @@ export class WorldComponent implements OnInit {
     this.screen3D.setRoot(this.worldRef.nativeElement, this.pageWidth, this.pageHeight);
     this.sharing.startSharing();
 
-    this.screen3D.clear();
+    this.screen3D.addBlock(100,400,900)
+
     //with the render function you could
     //1) render a single page
     //2) render pages like layers

@@ -15,6 +15,7 @@ export class TestSceen1Component implements OnInit {
 
   ngOnInit(): void {
     this.mySceen.setRoot(this.vcr.element.nativeElement);
+    this.mySceen.addBlock(100,400,900);
     this.mySceen.go();
   }
 

@@ -1,50 +1,68 @@
 
 import { Scene, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
 
-function doAnimate(mySelf) {
-    function animate() {
-        requestAnimationFrame(animate);
-
-        mySelf.doRotation(.01, .02, .03);
-    }
-    animate();
-}
-
-export class Screen3D {
-    private stopped: boolean = true;
-    width: number = window.innerWidth;
-    height: number = window.innerHeight;
-
-     //https://developer.mozilla.org/en-US/docs/Web/API/Window/cancelAnimationFrame
-     requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame; // || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
-     cancelAnimation = window.cancelAnimationFrame; // || window.mozCancelAnimationFrame;
- 
-    scene: Scene;
-    camera: PerspectiveCamera;
-    renderer: WebGLRenderer;
-    geometry: BoxGeometry;
-    material: MeshBasicMaterial;
+class block3D {
     mesh: Mesh;
+    constructor(width: number, height: number, depth: number) {
 
-    render: (context: CanvasRenderingContext2D) => void;
+        let geometry: BoxGeometry = new BoxGeometry(width, height, depth);
+        let material: MeshBasicMaterial = new MeshBasicMaterial({ color: 0x990033, wireframe: false });
 
+        this.mesh = new Mesh(geometry, material);
+    }
 
-    public doAnimate = (): void => {
-        this.doRotation(.01, .02, .03);
-        this.renderer.render(this.scene, this.camera);
-        this._request = this.requestAnimation(this.doAnimate);
+    addToScene(sceen: Scene) {
+        sceen.add(this.mesh);
     }
 
     doRotation(x, y, z) {
         this.mesh.rotation.x += 0.01;
         this.mesh.rotation.y += 0.02;
 
-        this.renderer.render(this.scene, this.camera);
+        //this.renderer.render(this.scene, this.camera);
     }
 
-    go() {
-        doAnimate(this);
+    preRender3D = () => {
+        this.mesh.rotation.x += 0.01;
+        this.mesh.rotation.y += 0.02;
+    };
+
+}
+
+
+export class Screen3D {
+    private stopped: boolean = true;
+    width: number = window.innerWidth;
+    height: number = window.innerHeight;
+
+    //https://developer.mozilla.org/en-US/docs/Web/API/Window/cancelAnimationFrame
+    requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame; // || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
+    cancelAnimation = window.cancelAnimationFrame; // || window.mozCancelAnimationFrame;
+
+    scene: Scene;
+    camera: PerspectiveCamera;
+    renderer: WebGLRenderer;
+
+    list: Array<any> = new Array();
+
+    preRender3D: (screen:Screen3D) => void;
+
+    constructor() {
+
+        this.preRender3D = (screen) => {
+            this.list.forEach(item => {
+                item.preRender3D(screen)
+            })
+        };
     }
+
+
+    public doAnimate = (): void => {
+        this.preRender3D(this);
+        this.renderer.render(this.scene, this.camera);
+        this._request = this.requestAnimation(this.doAnimate);
+    }
+
 
     private _request: any;
     go(next?: () => {}) {
@@ -80,12 +98,6 @@ export class Screen3D {
         this.camera = new PerspectiveCamera(75, this.width / this.height, 1, 10000);
         this.camera.position.z = 1000;
 
-        this.geometry = new BoxGeometry(100, 400, 900);
-        this.material = new MeshBasicMaterial({ color: 0x990033, wireframe: false });
-
-        this.mesh = new Mesh(this.geometry, this.material);
-        this.scene.add(this.mesh);
-
         this.renderer = new WebGLRenderer();
         this.renderer.setSize(this.width, this.height);
 
@@ -93,22 +105,14 @@ export class Screen3D {
         return nativeElement;
     }
 
-    // init(id) {
-    //     this.scene = new THREE.Scene();
+    addToScene(obj: any) {
+        this.list.push(obj);
+        this.scene.add(obj.mesh);
+    }
 
-    //     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
-    //     this.camera.position.z = 1000;
+    addBlock(width: number, height: number, depth: number) {
+        let obj = new block3D(width, height, depth);
+        this.addToScene(obj);
+    }
 
-    //     this.geometry = new THREE.BoxGeometry(100, 400, 900);
-    //     this.material = new THREE.MeshBasicMaterial({ color: 0x990033, wireframe: false });
-
-    //     this.mesh = new THREE.Mesh(this.geometry, this.material);
-    //     this.scene.add(this.mesh);
-
-    //     this.renderer = new THREE.WebGLRenderer();
-    //     this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-    //     var element = document.getElementById(id)
-    //     element.appendChild(this.renderer.domElement);
-    // }
 }
