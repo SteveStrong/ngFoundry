@@ -4,6 +4,7 @@ import { foDictionary } from './foDictionary.model'
 import { foDocument } from './foDocument.model'
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { foObject } from 'app/foundry/foObject.model';
+import { foConcept } from 'app/foundry/foConcept.model';
 
 
 // Feature detect + local reference
@@ -28,6 +29,14 @@ class LibraryDictionary extends foDictionary<foLibrary>{
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
+    }
+
+    findConcept(name:string):foKnowledge {
+        let found:foKnowledge;
+        this.members.forEach(item=> {
+            found = found ? found : item.concepts.find(name);
+        })
+        return found;
     }
 }
 
@@ -66,6 +75,7 @@ export class foWorkspace extends foKnowledge {
     get library() {
         return this._library;
     }
+
     get stencil() {
         return this._stencil;
     }

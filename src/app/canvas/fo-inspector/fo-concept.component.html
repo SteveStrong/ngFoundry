@@ -1,7 +1,6 @@
 <accordion>
   <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="true">
-      <fo-concept-panel *ngFor="let concept of item.concepts.members" [concept]="concept"></fo-concept-panel>
+      <fo-concept-panel *ngFor="let concept of item.concepts.members" [model]="rootModel" [concept]="concept"></fo-concept-panel>
   </accordion-group>
 </accordion>
 
-<!-- <pre>{{list | json}}</pre> -->

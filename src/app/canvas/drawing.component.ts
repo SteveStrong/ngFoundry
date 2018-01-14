@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener  } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
@@ -43,8 +43,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page
   @HostListener('document:keypress', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) { 
-    alert( event.key);
+  handleKeyboardEvent(event: KeyboardEvent) {
+    alert(event.key);
   }
 
   constructor(
@@ -103,11 +103,14 @@ export class DrawingComponent implements OnInit, AfterViewInit {
         //this.doSubShape(page);
       });
 
-  
+    Lifecycle.observable.subscribe(event => {
+      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+    })
+
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
-    
+
     this.rootWorkspace.library.add(PersonDomain);
     this.rootWorkspace.model.addItem('default', new foModel({}))
   }

@@ -8,7 +8,7 @@
   
     <ng-container *ngIf="!node.nodes.isHidden ">
       <p *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
-        <fo-page-panel [node]="node"></fo-page-panel>
+        <fo-model-panel [node]="node"></fo-model-panel>
       </p>
     </ng-container>
   

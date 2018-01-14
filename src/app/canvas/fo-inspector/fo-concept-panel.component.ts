@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-
-import { foPage } from "../../foundry/foPage.model";
+import { foModel } from "../../foundry/foModel.model";
 import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";
+
+import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
 
 
 @Component({
@@ -15,8 +16,12 @@ import { Toast } from "../../common/emitter.service";
 export class foConceptPanelComponent implements OnInit {
   lastCreated: foNode;
   showDetails = false;
+
   @Input()
   public concept:foKnowledge;
+
+  @Input()
+  public model:foModel;
 
   constructor() { }
 
@@ -29,10 +34,12 @@ export class foConceptPanelComponent implements OnInit {
   
   doCreate() {
     this.lastCreated = this.concept.newInstance().defaultName()
-    // .dropAt(this.rootPage.centerX, this.rootPage.centerY)
-    //   .addAsSubcomponent(this.rootPage);
+      .addAsSubcomponent(this.model);
 
-    Toast.info("Created", this.lastCreated.displayName)
+    Toast.info("Created", this.lastCreated.displayName);
+
+
+
   }
 
   doCommand(cmd:string) {
