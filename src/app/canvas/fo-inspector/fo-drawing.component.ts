@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { foPage } from "../../foundry/foPage.model";
+import { globalWorkspace } from "../../foundry/foWorkspace.model";
+import { foDocument } from "../../foundry/foDocument.model";
 
 @Component({
   selector: 'fo-drawing',
@@ -8,12 +9,13 @@ import { foPage } from "../../foundry/foPage.model";
   styleUrls: ['./fo-drawing.component.css']
 })
 export class foDrawingComponent implements OnInit {
-  @Input()
-  public rootPage: foPage;
+
+  public document: foDocument;
 
   constructor() { }
 
   ngOnInit() {
+    this.document = globalWorkspace.document;
   }
 
 }

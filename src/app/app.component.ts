@@ -24,16 +24,13 @@ export class AppComponent implements OnInit {
     private options: ToastOptions,
     private vcr: ViewContainerRef) {
 
-    //let pt = new Point(0,0);
 
-
-    
 
     this.toastrService.setRootViewContainerRef(this.vcr);
 
     this.options.showCloseButton = true;
     this.options.newestOnTop = true;
-    this.options.positionClass = "toast-top-right"; //"toast-bottom-left"  toast-top-full-width
+    this.options.positionClass = "toast-bottom-left"; //"toast-bottom-left" toast-top-right toast-top-full-width
   }
 
   public get IsProduction() {

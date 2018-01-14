@@ -30,6 +30,7 @@ export class foGlyph extends foNode implements iShape {
 
     }
 
+
     protected _visible: boolean = true;
     get visible(): boolean { return this._visible; }
     set visible(value: boolean) { this._visible = value; }
@@ -162,7 +163,7 @@ export class foGlyph extends foNode implements iShape {
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-        Lifecycle.created(this);
+        Lifecycle.created(this)
         return this;
     }
 

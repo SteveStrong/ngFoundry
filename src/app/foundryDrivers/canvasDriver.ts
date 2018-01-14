@@ -5,7 +5,7 @@ import { cPoint } from "../foundry/foGeometry";
 
 
 
-export class Sceen2D {
+export class Screen2D {
     private stopped: boolean = true
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D;
@@ -43,7 +43,7 @@ export class Sceen2D {
     }
 
     clear() {
-        this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+        this.context && this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
     }
     
     setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {

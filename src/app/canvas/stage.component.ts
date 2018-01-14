@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Sceen2D } from "../foundryDrivers/canvasDriver";
+import { Screen2D } from "../foundryDrivers/canvasDriver";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 
@@ -30,6 +30,7 @@ import { dRectangle, dGlue } from "./displayshapes.model";
 import { SharingService } from "../common/sharing.service";
 
 import { Lifecycle } from '../foundry/foLifecycle';
+import { globalWorkspace } from 'app/foundry/foWorkspace.model';
 
 class Line extends foShape1D {
 }
@@ -51,7 +52,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   public pageHeight = 1000;
 
   message: Array<any> = [];
-  screen2D: Sceen2D = new Sceen2D();
+  screen2D: Screen2D = new Screen2D();
 
 
   constructor(
@@ -60,6 +61,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     super();
 
     this.myName = "Page 1"
+    globalWorkspace.document.currentPage = this;
   }
 
   doClear() {
@@ -204,8 +206,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+
     this.sharing.startSharing();
-    this.sharing.currentPage = this;
 
     this.addEventHooks();
 

@@ -3,10 +3,13 @@ import { Action, Spec } from '../foundry/foInterface';
 
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
+import { foCollection } from './foCollection.model'
 import { foConcept } from './foConcept.model'
 import { foProperty } from './foProperty.model'
 import { foMethod, foFactory } from './foMethod.model';
 import { foNode } from './foNode.model'
+
+import { WhereClause } from "./foInterface";
 
 class ConceptDictionary extends foDictionary<foKnowledge>{
     public establish = (name: string): foKnowledge => {
@@ -67,7 +70,7 @@ export class foLibrary extends foKnowledge {
     private _properties: PropertyDictionary = new PropertyDictionary({ myName: 'properties' }, this);
     private _actions: ActionDictionary<foNode> = new ActionDictionary({ myName: 'actions' }, this);
     private _factory: FactoryDictionary<foNode> = new FactoryDictionary({ myName: 'factories' }, this);
- 
+
     constructor(properties?: any, parent?: foKnowledge) {
         super(properties, parent);
     }
@@ -100,10 +103,10 @@ export class foLibrary extends foKnowledge {
         return this._factory;
     }
 
-    establishConcept(key: string, properties?: any) {
+    establishConcept<T extends foNode>(key: string, properties?: any) {
         let concept = this.concepts.getItem(key);
         if (!concept) {
-            concept = this.concepts.addItem(key, new foConcept(properties));
+            concept = this.concepts.addItem(key, new foConcept<T>(properties));
             concept.myName = key;
         }
         return concept;
@@ -120,6 +123,16 @@ export class foLibrary extends foKnowledge {
             property.myName = key;
         }
         return property;
+    }
+
+    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
+        let result = super.select(where, list, deep);
+
+        this.concepts.forEachKeyValue((key,value) => {
+            value.select(where, result, deep);
+        })
+
+        return result;
     }
 
 }

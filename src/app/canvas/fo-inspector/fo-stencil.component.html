@@ -1,6 +1,6 @@
 <accordion>
     <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="false">
-        <fo-stencil-panel *ngFor="let concept of item.concepts.members" [rootPage]="rootPage" [concept]="concept"></fo-stencil-panel>
+        <fo-stencil-card *ngFor="let concept of item.concepts.members" [rootPage]="rootPage" [concept]="concept"></fo-stencil-card>
     </accordion-group>
 </accordion>
 

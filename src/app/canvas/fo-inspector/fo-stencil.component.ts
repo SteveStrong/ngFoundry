@@ -1,10 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { foPage } from "../../foundry/foPage.model";
+import { foLibrary } from 'app/foundry/foLibrary.model';
+
 import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
 
 
-import { foLibrary } from 'app/foundry/foLibrary.model';
 
 @Component({
   selector: 'fo-stencil',
@@ -15,15 +15,9 @@ export class foStencilComponent implements OnInit {
   rootWorkspace: foWorkspace = globalWorkspace;
   list:Array<foLibrary> = new Array<foLibrary>();
 
-  @Input()
-  public rootPage: foPage;
-
   constructor() { }
 
   ngOnInit() {
     this.list = this.rootWorkspace.stencil.members;
   }
-
-
-
 }

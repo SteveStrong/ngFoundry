@@ -10,9 +10,9 @@ import { foGlyph } from "../../foundry/foGlyph.model";
 })
 export class foPagePanelComponent implements OnInit {
   showDetails = false;
+  
   @Input()
   public node: foGlyph;
-
   public commands: Array<string>;
 
   constructor() { }

@@ -3,16 +3,8 @@
   <div class="col-xs-12 col-12">
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group mr-2" role="group">
-        <button (click)="doClear()" type="button" class="btn btn-danger">Clear</button>
-        <button (click)="doDelete()" type="button" class="btn btn-warning">Delete</button>
-        <button (click)="doOnOff()" type="button" class="btn btn-success">{{label}}</button>
       </div>
       <div class="btn-group mr-2 pull-right" role="group">
-        <ng-container *ngFor="let page of currentDocument.pages.members">
-          <button (click)="doGoToPage(page)" type="button" class="btn btn-info">{{page.myName}}</button>
-        </ng-container>
-        <button (click)="doAddPage()" type="button" class="btn btn-success">New Page</button>
-        <button (click)="doDeletePage()" type="button" class="btn btn-danger">Delete Page</button>
       </div>
       <h4 style="margin-left:30px">{{rootWorkspace.myName}}</h4>
     </div>
@@ -22,7 +14,7 @@
 <div class="row">
 
   <div class="col-md-8">
-    <canvas #canvas></canvas>
+    <div #world></div>
   </div>
 
   <div class="col-md-4">

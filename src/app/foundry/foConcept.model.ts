@@ -10,8 +10,7 @@ import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
-
-
+import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 export class foConcept<T extends foNode> extends foKnowledge {
@@ -124,6 +123,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = this._create(spec, subcomponents, parent) as T;
         result.myClass = this.myName;
         result.initialize();
+        Lifecycle.created(result);
         return result;
     }
 

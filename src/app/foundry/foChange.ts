@@ -1,4 +1,5 @@
 import { Action } from './foInterface'
+import { Tools } from './foTools';
 
 import { foObject } from './foObject.model';
 import { Observable } from 'rxjs/Observable';
@@ -29,6 +30,14 @@ export class foChangeEvent {
 
     get myName() {
         return this.object.myName;
+    }
+
+    isNamed(name:string){
+        return Tools.matches(name,this.myName)
+    }
+
+    isCmd(cmd:string){
+        return Tools.matches(cmd,this.cmd)
     }
 
     constructor(cmd: string, obj: foObject, count: number = 0, value?: any) {
@@ -118,6 +127,10 @@ export class foChange {
         return this;
     }
 
+    changed(name:string, obj: foObject, value?: any) {
+        this.emit.next(new foChangeEvent(name, obj, counter++, value))
+        return this;
+    }
 
 }
 

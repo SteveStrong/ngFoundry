@@ -1,11 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { foPage } from "../../foundry/foPage.model";
-import { Tools } from "../../foundry/foTools";
-import { foKnowledge } from "../../foundry/foKnowledge.model";
-import { Stencil } from "../../foundry/foStencil";
+import { foLibrary } from 'app/foundry/foLibrary.model';
+import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
+import { foModel } from "../../foundry/foModel.model";
 
-import { Knowcycle } from "../../foundry/foLifecycle";
 
 @Component({
   selector: 'fo-concept',
@@ -13,6 +11,9 @@ import { Knowcycle } from "../../foundry/foLifecycle";
   styleUrls: ['./fo-concept.component.css']
 })
 export class foConceptComponent implements OnInit {
+  rootWorkspace: foWorkspace = globalWorkspace;
+  rootModel: foModel;
+  list:Array<foLibrary> = new Array<foLibrary>();
 
 
   constructor() { }
@@ -20,11 +21,12 @@ export class foConceptComponent implements OnInit {
 
 
   ngOnInit() {
+    this.rootModel = this.rootWorkspace.model.getItem('default')
+
+    this.list = this.rootWorkspace.library.members;
 
   }
 
-  doCreate(concept){
 
-  }
 
 }

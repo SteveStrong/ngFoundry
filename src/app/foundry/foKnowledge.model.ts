@@ -1,5 +1,7 @@
 import { Tools, foNames } from './foTools'
 
+import { WhereClause } from "./foInterface";
+
 import { foObject } from './foObject.model'
 
 
@@ -43,7 +45,17 @@ export class foKnowledge extends foObject {
     set displayName(value:string){
         this._displayName = value;
     }
+
+    select(where:WhereClause<foKnowledge>, list?:foCollection<foKnowledge>, deep:boolean=true): foCollection<foKnowledge> {
+        let result = list ? list : new foCollection<foKnowledge>();
+        let self = <foKnowledge>this;
+        if ( where(self) ) {
+            result.addMember(self)
+        }
+        return result;
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';
+import { foCollection } from 'app/foundry/foCollection.model';
 RuntimeType.knowledge(foKnowledge);

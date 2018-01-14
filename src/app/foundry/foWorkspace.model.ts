@@ -5,6 +5,8 @@ import { foDocument } from './foDocument.model'
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { foObject } from 'app/foundry/foObject.model';
 
+import { foCollection } from './foCollection.model'
+import { WhereClause } from "./foInterface";
 
 // Feature detect + local reference
 export let storage = (function () {
@@ -19,28 +21,50 @@ export let storage = (function () {
 }());
 
 class LibraryDictionary extends foDictionary<foLibrary>{
-    public establish = (name:string):foLibrary => {
+    public establish = (name: string): foLibrary => {
         this.findItem(name, () => {
-            this.addItem(name, new foLibrary({myName:name}))
+            this.addItem(name, new foLibrary({ myName: name }))
         })
         return this.getItem(name);
     }
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
+    }
+
+    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
+        let result = list ? list : new foCollection<foKnowledge>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            value.select(where, result, deep);
+        })
+
+        return result;
     }
 }
 
 class ModelDictionary extends foDictionary<foModel>{
-    public establish = (name:string):foModel => {
+    public establish = (name: string): foModel => {
         this.findItem(name, () => {
-            this.addItem(name, new foModel({myName:name}))
+            this.addItem(name, new foModel({ myName: name }))
         })
         return this.getItem(name);
     }
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, parent);
+    }
+
+    selectComponent(where: WhereClause<foObject>, list?: foCollection<foObject>, deep: boolean = true): foCollection<foObject> {
+        let result = list ? list : new foCollection<foObject>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            value.select(where, result, deep);
+        })
+
+        return result;
     }
 }
 
@@ -55,6 +79,20 @@ export class foWorkspace extends foKnowledge {
         super(spec);
     }
 
+    get activePage() {
+        return this._document.currentPage
+    }
+
+    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
+        let result = super.select(where, list, deep);
+
+        this.library.select(where, result, deep);
+
+        this.stencil.select(where, result, deep);
+  
+        return result;
+    }
+
     get document() {
         return this._document;
     }
@@ -66,6 +104,7 @@ export class foWorkspace extends foKnowledge {
     get library() {
         return this._library;
     }
+
     get stencil() {
         return this._stencil;
     }

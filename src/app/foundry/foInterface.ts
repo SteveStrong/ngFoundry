@@ -12,6 +12,10 @@ export interface Func<T, TResult> {
     (item: T): TResult;
 }
 
+export interface WhereClause<T> {
+    (item: T): boolean;
+}
+
 export interface Spec<T> {
     (spec?: any): T;
 }

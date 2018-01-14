@@ -11,6 +11,11 @@ export class foDictionary<T extends iObject> extends foObject {
         super(properties, parent);
     }
 
+    find(key: string): T {
+        let result: T = this._lookup[key];
+        return result;
+    }
+
     add(obj: T): T {
         return this.addItem(obj.myName, obj);
     }
@@ -61,15 +66,15 @@ export class foDictionary<T extends iObject> extends foObject {
         this._lookup = {};
     }
 
-    get count() {
+    get count():number {
         return Object.keys(this._lookup).length;
     }
 
-    get keys() {
+    get keys():Array<string> {
         return Object.keys(this._lookup);
     }
 
-    get members() {
+    get members():Array<T> {
         let keys = this.keys;
         let list = keys.map(key => this._lookup[key]);
         return list;
