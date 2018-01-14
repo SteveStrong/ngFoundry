@@ -11,13 +11,13 @@ import { foConnectionPoint } from '../foundry/foConnectionPoint'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
-import { foGlyph } from '../foundry/foGlyph2D.model'
+import { foGlyph2D } from '../foundry/foGlyph2D.model'
 
 import { Lifecycle } from './foLifecycle';
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
-export class foGlyph3D extends foGlyph {
+export class foGlyph3D extends foGlyph2D {
 
     protected _z: number;
     protected _depth: number;

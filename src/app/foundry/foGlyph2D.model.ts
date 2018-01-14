@@ -15,7 +15,7 @@ import { foNode } from './foNode.model';
 import { Lifecycle } from './foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlyph extends foNode implements iShape {
+export class foGlyph2D extends foNode implements iShape {
 
     static DEG_TO_RAD = Math.PI / 180;
     static RAD_TO_DEG = 180 / Math.PI;
@@ -41,7 +41,7 @@ export class foGlyph extends foNode implements iShape {
 
 
 
-    protected _subcomponents: foCollection<foGlyph>;
+    protected _subcomponents: foCollection<foGlyph2D>;
     protected _x: number;
     protected _y: number;
     protected _width: number;
@@ -224,7 +224,7 @@ export class foGlyph extends foNode implements iShape {
         return obj;
     }
 
-    get nodes(): foCollection<foGlyph> {
+    get nodes(): foCollection<foGlyph2D> {
         return this._subcomponents;
     }
 
@@ -301,7 +301,7 @@ export class foGlyph extends foNode implements iShape {
 
     getGlobalMatrix() {
         let mtx = new Matrix2D(this.getMatrix());
-        let parent = this.myParent && <foGlyph>this.myParent()
+        let parent = this.myParent && <foGlyph2D>this.myParent()
         if (parent) {
             mtx.prependMatrix(parent.getGlobalMatrix());
         }
@@ -354,7 +354,7 @@ export class foGlyph extends foNode implements iShape {
         return frame;
     };
 
-    localToLocal(x: number, y: number, target: foGlyph, pt?: cPoint): cPoint {
+    localToLocal(x: number, y: number, target: foGlyph2D, pt?: cPoint): cPoint {
         pt = this.localToGlobal(x, y, pt);
         return target.globalToLocal(pt.x, pt.y, pt);
     };
@@ -392,16 +392,16 @@ export class foGlyph extends foNode implements iShape {
         return this.opacity;
     };
 
-    unSelect(deep: boolean = true, exclude: foGlyph = null) {
+    unSelect(deep: boolean = true, exclude: foGlyph2D = null) {
         this.isSelected = this == exclude ? this.isSelected : false;
         this._handles && this._handles.forEach(item => item.color = 'black')
         deep && this.Subcomponents.forEach(item => {
-            (<foGlyph>item).unSelect(deep, exclude);
+            (<foGlyph2D>item).unSelect(deep, exclude);
         })
     }
 
-    findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
-        let found: foGlyph = this.hitTest(hit, ctx) ? this : undefined;
+    findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
+        let found: foGlyph2D = this.hitTest(hit, ctx) ? this : undefined;
 
         if (deep) {
             let child = this.findChildObjectUnderPoint(hit, ctx);
@@ -410,11 +410,11 @@ export class foGlyph extends foNode implements iShape {
         return found;
     }
 
-    protected findChildObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph {
+    protected findChildObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph2D {
         let children = this.nodes;
         if (children.isSelectable) {
             for (let i: number = 0; i < children.length; i++) {
-                let child: foGlyph = children.getMember(i);
+                let child: foGlyph2D = children.getMember(i);
                 let found = child.findChildObjectUnderPoint(hit, ctx);
                 if (found) return found;
             }
@@ -427,8 +427,8 @@ export class foGlyph extends foNode implements iShape {
 
 
 
-    findObjectUnderFrame(source: foGlyph, hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph {
-        let found: foGlyph = this.overlapTest(hit, ctx) ? this : undefined;
+    findObjectUnderFrame(source: foGlyph2D, hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
+        let found: foGlyph2D = this.overlapTest(hit, ctx) ? this : undefined;
 
         if (deep) {
             let child = this.findChildObjectUnderFrame(source, hit, ctx);
@@ -437,11 +437,11 @@ export class foGlyph extends foNode implements iShape {
         return found;
     }
 
-    protected findChildObjectUnderFrame(source: foGlyph, hit: iFrame, ctx: CanvasRenderingContext2D): foGlyph {
+    protected findChildObjectUnderFrame(source: foGlyph2D, hit: iFrame, ctx: CanvasRenderingContext2D): foGlyph2D {
         let children = this.nodes;
         if (children.isSelectable) {
             for (let i: number = 0; i < children.length; i++) {
-                let child: foGlyph = children.getMember(i);
+                let child: foGlyph2D = children.getMember(i);
                 if (source.hasAncestor(child)) continue;
                 let found = child.findChildObjectUnderFrame(source, hit, ctx);
                 if (found) return found;
@@ -778,6 +778,6 @@ export class foGlyph extends foNode implements iShape {
 }
 
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.define(foGlyph);
+RuntimeType.define(foGlyph2D);
 
 

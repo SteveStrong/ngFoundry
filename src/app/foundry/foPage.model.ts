@@ -11,7 +11,7 @@ import { foNode } from '../foundry/foNode.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foGlyph } from '../foundry/foGlyph2D.model'
+import { foGlyph2D } from '../foundry/foGlyph2D.model'
 import { foShape2D } from '../foundry/foShape2D.model'
 import { foHandle } from 'app/foundry/foHandle';
 import { Lifecycle } from 'app/foundry/foLifecycle';
@@ -76,11 +76,11 @@ export class foPage extends foShape2D {
     get centerY(): number { return this.height / 2; }
 
 
-    findItem<T extends foGlyph>(key: string, onMissing?: Action<T>, onFound?: Action<T>): T {
+    findItem<T extends foGlyph2D>(key: string, onMissing?: Action<T>, onFound?: Action<T>): T {
         return this._dictionary.findItem(key, onMissing, onFound) as T;
     }
 
-    found<T extends foGlyph>(key: string, onFound?: Action<T>, onMissing?: Action<T>): T {
+    found<T extends foGlyph2D>(key: string, onFound?: Action<T>, onMissing?: Action<T>): T {
         return this._dictionary.found(key, onFound, onMissing) as T;
     }
 
@@ -92,20 +92,20 @@ export class foPage extends foShape2D {
         return this._matrix;
     };
 
-    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
-        let found: foGlyph = undefined;
+    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
+        let found: foGlyph2D = undefined;
         for (var i: number = 0; i < this.nodes.length; i++) {
-            let shape: foGlyph = this.nodes.getMember(i);
+            let shape: foGlyph2D = this.nodes.getMember(i);
             if (shape == exclude) continue;
             found = shape.findObjectUnderPoint(hit, deep, this._ctx);
             if (found) return found;
         }
     }
 
-    findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+    findShapeUnder(source: foGlyph2D, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
         let frame = source.boundryFrame;
         for (var i: number = 0; i < this.nodes.length; i++) {
-            let shape: foGlyph = this.nodes.getMember(i);
+            let shape: foGlyph2D = this.nodes.getMember(i);
             if (source.hasAncestor(shape) || shape == exclude) continue;
             if (shape.findObjectUnderFrame(source, frame, deep, this._ctx)) {
                 return shape;
@@ -142,7 +142,7 @@ export class foPage extends foShape2D {
     removeSubcomponent(obj: foNode) {
         let guid = obj.myGuid;
         this._dictionary.found(guid, () => {
-            (<foGlyph>obj).isSelected = false;
+            (<foGlyph2D>obj).isSelected = false;
             this._dictionary.removeItem(guid);
             super.removeSubcomponent(obj);
         });
@@ -160,7 +160,7 @@ export class foPage extends foShape2D {
         this._dictionary.clearAll();
     }
 
-    deleteSelected(onComplete?: Action<foGlyph>) {
+    deleteSelected(onComplete?: Action<foGlyph2D>) {
         let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
         if (found) {
             this.destroyed(found);
@@ -195,9 +195,9 @@ export class foPage extends foShape2D {
     }
 
     setupMouseEvents() {
-        let shape: foGlyph = null;
-        let shapeUnder: foGlyph = null;
-        let hovershape: foGlyph = null;
+        let shape: foGlyph2D = null;
+        let shapeUnder: foGlyph2D = null;
+        let hovershape: foGlyph2D = null;
         let offset: iPoint = null;
         let handles: foCollection<foHandle> = new foCollection<foHandle>()
         let grab: foHandle = null;
@@ -361,22 +361,22 @@ export class foPage extends foShape2D {
         this.mouseLoc.keys = keys;
     }
 
-    public onItemChangedParent = (shape: foGlyph): void => {
+    public onItemChangedParent = (shape: foGlyph2D): void => {
     }
 
-    public onItemChangedPosition = (shape: foGlyph): void => {
+    public onItemChangedPosition = (shape: foGlyph2D): void => {
     }
 
-    public onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    public onItemOverlapEnter = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
     }
 
-    public onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    public onItemOverlapExit = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
     }
 
-    public onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    public onItemHoverEnter = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
     }
 
-    public onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    public onItemHoverExit = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
     }
 
     public onHandleHoverEnter = (loc: cPoint, handle: foHandle, keys?: any): void => {

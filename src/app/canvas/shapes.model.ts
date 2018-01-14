@@ -1,4 +1,4 @@
-import { foGlyph } from "../foundry/foGlyph2D.model";
+import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
@@ -57,19 +57,19 @@ ShapeStencil.define<foImage>('Image', foImage, {
   height: 250
 });
 
-ShapeStencil.factory<foGlyph>('doAddSubGlyph', (spec?: any) => {
-  let shape = RuntimeType.create(foGlyph, {
+ShapeStencil.factory<foGlyph2D>('doAddSubGlyph', (spec?: any) => {
+  let shape = RuntimeType.create(foGlyph2D, {
     color: 'purple',
     height: 150,
     width: 200,
   });
 
-  RuntimeType.create(foGlyph, {
+  RuntimeType.create(foGlyph2D, {
     color: 'blue',
     x: 25,
     y: 25,
     height: 50,
     width: 300,
   }).addAsSubcomponent(shape);
-  return <foGlyph>shape;
+  return <foGlyph2D>shape;
 });

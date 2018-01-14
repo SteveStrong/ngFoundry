@@ -7,7 +7,7 @@ import { RuntimeType } from '../foundry/foRuntimeType';
 import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
-import { foGlyph } from "../foundry/foGlyph2D.model";
+import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foShape2D } from "../foundry/foShape2D.model";
 
 
@@ -97,17 +97,17 @@ export class SharingService {
 
 
 
-  public destroyed(shape: foGlyph) {
+  public destroyed(shape: foGlyph2D) {
     this.signalR.pubCommand("destroyed", { guid: shape.myGuid });
     return this;
   }
 
-  public dropped(shape: foGlyph) {
+  public dropped(shape: foGlyph2D) {
     this.signalR.pubCommand("dropShape", { guid: shape.myGuid }, shape.getLocation());
     return this;
   }
 
-  public moved(shape: foGlyph, value?: any) {
+  public moved(shape: foGlyph2D, value?: any) {
     this.signalR.pubCommand("moveShape", { guid: shape.myGuid }, value ? value : shape.getLocation());
     return this;
   }
@@ -128,22 +128,22 @@ export class SharingService {
     return this;
   }
 
-  public handle(shape: foGlyph, value?: any) {
+  public handle(shape: foGlyph2D, value?: any) {
     let parentGuid = shape.myParent().myGuid;
     this.signalR.pubCommand("syncHandle", { guid: shape.myGuid, parentGuid: parentGuid, value: value }, shape.asJson);
     return this;
   }
 
-  public easeTo(shape: foGlyph, value?: any) {
+  public easeTo(shape: foGlyph2D, value?: any) {
     this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, value ? value : shape.getLocation());
   }
 
-  public easeTween(shape: foGlyph, value?: any) {
+  public easeTween(shape: foGlyph2D, value?: any) {
     this.signalR.pubCommand("easeTween", { guid: shape.myGuid }, value);
   }
 
 
-  public selected(shape: foGlyph) {
+  public selected(shape: foGlyph2D) {
     this.signalR.pubCommand("selectShape", { guid: shape.myGuid }, shape.isSelected);
     return this;
   }

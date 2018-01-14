@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foGlyph } from "../../foundry/foGlyph2D.model";
+import { foGlyph2D } from "../../foundry/foGlyph2D.model";
 
 @Component({
   selector: 'fo-page-panel',
@@ -12,7 +12,7 @@ export class foPagePanelComponent implements OnInit {
   showDetails = false;
   
   @Input()
-  public node: foGlyph;
+  public node: foGlyph2D;
   public commands: Array<string>;
 
   constructor() { }

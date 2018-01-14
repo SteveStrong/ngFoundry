@@ -8,7 +8,7 @@ import { Screen2D } from "../foundryDrivers/canvasDriver";
 import { BroadcastChange } from '../foundry/foChange';
 
 import { cPoint } from '../foundry/foGeometry2D';
-import { foGlyph } from "../foundry/foGlyph2D.model";
+import { foGlyph2D } from "../foundry/foGlyph2D.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
@@ -159,7 +159,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   addEventHooks(page: foPage) {
 
-    page.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    page.onItemHoverEnter = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
       if (shape) {
         shape.drawHover = function (ctx: CanvasRenderingContext2D) {
           ctx.strokeStyle = "yellow";
@@ -169,13 +169,13 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       }
     }
 
-    page.onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    page.onItemHoverExit = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
       if (shape) {
         shape.drawHover = undefined;
       }
     }
 
-    page.onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    page.onItemOverlapEnter = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       if (shapeUnder) {
         shapeUnder.drawHover = function (ctx: CanvasRenderingContext2D) {
@@ -189,7 +189,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       }
     }
 
-    page.onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    page.onItemOverlapExit = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       if (shapeUnder) {
         shapeUnder.drawHover = undefined;

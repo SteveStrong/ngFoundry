@@ -9,7 +9,7 @@ import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
 import { foComponent } from './foComponent.model';
 
-import { foGlyph } from './foGlyph2D.model';
+import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 
@@ -97,7 +97,7 @@ export class foHandle extends foNode {
 
     getGlobalMatrix() {
         let mtx = new Matrix2D(this.getMatrix());
-        let parent = <foGlyph>this.myParent()
+        let parent = <foGlyph2D>this.myParent()
         if (parent) {
             mtx.prependMatrix(parent.getGlobalMatrix());
         }

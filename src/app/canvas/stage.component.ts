@@ -17,7 +17,7 @@ import { foPage } from "../foundry/foPage.model";
 import { foHandle } from "../foundry/foHandle";
 
 
-import { foGlyph } from "../foundry/foGlyph2D.model";
+import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
@@ -95,7 +95,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   addEventHooks() {
-    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
@@ -111,7 +111,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemHoverExit = (loc: cPoint, shape: foGlyph, keys?: any): void => {
+    this.onItemHoverExit = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
@@ -123,7 +123,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Enter`);
@@ -142,7 +142,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph, shapeUnder: foGlyph, keys?: any): void => {
+    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Exit`);
@@ -262,7 +262,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).addCommands("doStart", "doStop", "doRotate");
 
 
-    let shape = <foGlyph>def.newInstance();
+    let shape = <foGlyph2D>def.newInstance();
 
     shape.dropAt(500, 500).addAsSubcomponent(this)
       .then(item => {
@@ -579,7 +579,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddGlyph() {
-    RuntimeType.create(foGlyph, {
+    RuntimeType.create(foGlyph2D, {
       color: 'cyan',
       x: 150,
       y: 100,
@@ -590,13 +590,13 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddSubGlyph() {
-    let shape = RuntimeType.create(foGlyph, {
+    let shape = RuntimeType.create(foGlyph2D, {
       color: 'purple',
       height: 150,
       width: 200,
     }).addAsSubcomponent(this);
 
-    RuntimeType.create(foGlyph, {
+    RuntimeType.create(foGlyph2D, {
       color: 'blue',
       x: 25,
       y: 25,
