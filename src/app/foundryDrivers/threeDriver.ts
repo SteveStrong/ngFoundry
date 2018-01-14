@@ -28,7 +28,13 @@ export class Screen3D {
         doAnimate(this);
     }
 
-    setRoot(nativeElement) {
+    setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {
+        // this.canvas = nativeElement;
+
+        // // set the width and height
+        // this.canvas.width = width;
+        // this.canvas.height = height;
+
         this.scene = new THREE.Scene();
 
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
@@ -43,7 +49,8 @@ export class Screen3D {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-        nativeElement.append(this.renderer.domElement);
+        nativeElement.appendChild(this.renderer.domElement);
+        return nativeElement;
     }
 
     init(id) {

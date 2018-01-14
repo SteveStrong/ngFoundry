@@ -13,7 +13,7 @@ export class TestSceen1Component implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mySceen.setRoot(this.vcr.element.nativeElement);
+    this.mySceen.setRoot(this.vcr.element.nativeElement,0,0);
     this.mySceen.go();
   }
 
