@@ -76,7 +76,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
     //   page.render(ctx);
     // }
 
-    this.screen3D.go();
+   // this.screen3D.go();
   }
 
 }

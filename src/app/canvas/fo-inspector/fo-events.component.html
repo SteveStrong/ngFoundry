@@ -6,7 +6,7 @@
     <span class="col-sm-2">{{event.myName}}</span>
     <span class="col-sm-2">{{event.simpleGuid}}</span>
     <div *ngIf="event.value" class="row" [ngClass]="{ oddChange: odd, evenChange: even }">
-      <span class="col-sm-12">{{event.value | json}}</span>
+      <span class="col-sm-offset-1 col-sm-11">{{event.value | json}}</span>
     </div>
   </div>
 </div>
@@ -19,7 +19,7 @@
     <span class="col-sm-2">{{event.myName}}</span>
     <span class="col-sm-2">{{event.simpleGuid}}</span>
     <div *ngIf="event.value" class="row" [ngClass]="{ oddChange: odd, evenChange: even }">
-      <span class="col-sm-12">{{event.value | json}}</span>
+      <span class="col-sm-offset-1 col-sm-11">{{event.value | json}}</span>
     </div>
   </div>
 </div>

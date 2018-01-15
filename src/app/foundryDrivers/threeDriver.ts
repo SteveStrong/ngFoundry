@@ -1,6 +1,8 @@
 
 import { Scene, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
 
+import { NgZone } from '@angular/core';
+
 class block3D {
     mesh: Mesh;
     constructor(width: number, height: number, depth: number) {
@@ -15,12 +17,6 @@ class block3D {
         sceen.add(this.mesh);
     }
 
-    doRotation(x, y, z) {
-        this.mesh.rotation.x += 0.01;
-        this.mesh.rotation.y += 0.02;
-
-        //this.renderer.render(this.scene, this.camera);
-    }
 
     preRender3D = () => {
         this.mesh.rotation.x += 0.01;
@@ -58,6 +54,9 @@ export class Screen3D {
 
 
     public doAnimate = (): void => {
+        // if ( NgZone.assertInAngularZone() ) {
+        //     console.log('Screen3D: in the zone')
+        // }
         this.preRender3D(this);
         this.renderer.render(this.scene, this.camera);
         this._request = this.requestAnimation(this.doAnimate);

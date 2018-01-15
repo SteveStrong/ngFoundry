@@ -13,6 +13,7 @@ import { WebglviewComponent } from './webglview/webglview.component';
 import { SwimlaneviewComponent } from './swimlaneview/swimlaneview.component';
 import { TestSvgComponent } from './networkview/test-svg.component';
 import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
+import { ZoneTestComponent } from './zone-test/zone-test.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'welcome' },
@@ -27,7 +28,8 @@ const routes: Routes = [
   { path: 'tree', component: TreeviewComponent },
   { path: 'list', component: ListviewComponent },
   { path: 'swim', component: SwimlaneviewComponent },
-  { path: 'network', component: NetworkviewComponent }
+  { path: 'network', component: NetworkviewComponent },
+  { path: 'zone', component: ZoneTestComponent }
 ];
 
 @NgModule({
