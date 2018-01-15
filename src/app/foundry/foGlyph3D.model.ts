@@ -20,15 +20,13 @@ import { Lifecycle } from './foLifecycle';
 export class foGlyph3D extends foGlyph2D {
 
     protected _z: number;
-    protected _depth: number;
-
-
     get z(): number { return this._z || 0.0; }
     set z(value: number) {
         this.smash();
         this._z = value;
     }
 
+    protected _depth: number;
     get depth(): number { return this._depth || 0.0; }
     set depth(value: number) { this._depth = value; }
 

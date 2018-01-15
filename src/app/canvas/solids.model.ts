@@ -15,8 +15,9 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
 export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName();
 
-ShapeStencil.define<foShape2D>('shape', foShape2D, {
-    color: 'gray',
+SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
+    color: 'green',
     width: 50,
-    height: 25
+    height: 25,
+    depth: 15
   });
