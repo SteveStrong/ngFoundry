@@ -81,7 +81,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   doSubShape(page: foPage) {
 
     let result = ShapeStencil.factories.getItem('doAddSubGlyph').run();
-    result.addAsSubcomponent(page)
+    result.forEach(item => { item.addAsSubcomponent(page) });
   }
 
 

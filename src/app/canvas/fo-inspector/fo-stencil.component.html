@@ -1,6 +1,7 @@
 <accordion>
-    <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="false">
-        <fo-stencil-card *ngFor="let concept of item.concepts.members" [rootPage]="rootPage" [concept]="concept"></fo-stencil-card>
+    <accordion-group *ngFor="let item of stencils" [heading]="item.displayName" [isOpen]="false">
+        <fo-stencil-card *ngFor="let concept of item.concepts.members" [knowledge]="concept"></fo-stencil-card>
+        <fo-stencil-card *ngFor="let factory of item.factories.members" [knowledge]="factory"></fo-stencil-card>
     </accordion-group>
-</accordion>
 
+</accordion>

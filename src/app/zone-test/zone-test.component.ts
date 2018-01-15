@@ -90,19 +90,21 @@ export class ZoneTestComponent implements OnInit, AfterViewInit {
     this.label = 'outside';
     this.progress = 0;
 
-    let page = this.workspace.document.currentPage;
-    let last: any = 0;
-    let context = this.context;
-    let requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame; // || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
-    let cancelAnimation = window.cancelAnimationFrame; // || window.mozCancelAnimationFrame;
 
-
-    function doAnimate() {
-      page.render(context);
-      last = requestAnimation(doAnimate);
-    }
 
     this._ngZone.runOutsideAngular(() => {
+
+      let page = this.workspace.document.currentPage;
+      let last: any = 0;
+      let context = this.context;
+      let requestAnimation = window.requestAnimationFrame || window.webkitRequestAnimationFrame; // || window.mozRequestAnimationFrame || window.msRequestAnimationFrame;;
+      let cancelAnimation = window.cancelAnimationFrame; // || window.mozCancelAnimationFrame;
+  
+  
+      function doAnimate() {
+        page.render(context);
+        last = requestAnimation(doAnimate);
+      }
 
       doAnimate();
       this._increaseProgress(() => {

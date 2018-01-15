@@ -197,7 +197,7 @@ export class Matrix2D {
         let c1 = this.c;
         let d1 = this.d;
         let tx1 = this.tx;
-        let ty1 = this.ty;
+        //let ty1 = this.ty;
         let n = a1 * d1 - b1 * c1;
 
         this.a = d1 / n;

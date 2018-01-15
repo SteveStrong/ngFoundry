@@ -6,11 +6,11 @@
     <canvas (click)="doCreate()" #canvas width=170 height=100></canvas>
 
     <div class="card-body">
-      <ng-container *ngFor="let cmd of concept.commands; let i = index; let isOdd = odd">
+      <ng-container *ngFor="let cmd of knowledge.commands; let i = index; let isOdd = odd">
         <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
       </ng-container>
 
-      <pre *ngIf="showDetails" class="well">{{concept.asJson | json }}</pre>
+      <pre *ngIf="showDetails" class="well">{{knowledge.asJson | json }}</pre>
     </div>
   </div>
 </div>

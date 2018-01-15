@@ -13,11 +13,11 @@ import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
 })
 export class foStencilComponent implements OnInit {
   rootWorkspace: foWorkspace = globalWorkspace;
-  list:Array<foLibrary> = new Array<foLibrary>();
+  stencils:Array<foLibrary> = new Array<foLibrary>();
 
   constructor() { }
 
   ngOnInit() {
-    this.list = this.rootWorkspace.stencil.members;
+    this.stencils = this.rootWorkspace.stencil.members;
   }
 }
