@@ -1,6 +1,6 @@
 
 import { Tools } from './foTools';
-import { cPoint, cRect } from './foGeometry';
+import { cPoint, cRect } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
 import { iObject, iNode, iShape, iPoint, iSize, Action, iRect } from './foInterface';

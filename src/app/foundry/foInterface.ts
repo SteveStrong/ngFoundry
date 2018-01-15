@@ -8,8 +8,8 @@ export interface ModelRef<T> {
     (): T;
 }
 
-export interface Func<T, TResult> {
-    (item: T): TResult;
+export interface Func<T, R> {
+    (item: T): R;
 }
 
 export interface WhereClause<T> {
@@ -17,7 +17,7 @@ export interface WhereClause<T> {
 }
 
 export interface Spec<T> {
-    (spec?: any): T;
+    (spec?: any): Array<T>;
 }
 
 export interface iObject {

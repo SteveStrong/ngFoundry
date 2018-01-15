@@ -1,6 +1,6 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint } from '../foundry/foGeometry2D';
 import { iPoint, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
@@ -10,7 +10,7 @@ import { foConnectionPoint } from '../foundry/foConnectionPoint'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
-import { foGlyph } from '../foundry/foGlyph.model'
+import { foGlyph2D } from '../foundry/foGlyph2D.model'
 
 import { Lifecycle } from './foLifecycle';
 
@@ -24,7 +24,7 @@ export enum shape2DNames {
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
-export class foShape2D extends foGlyph {
+export class foShape2D extends foGlyph2D {
 
     protected _angle: number;
     get angle(): number { return this._angle || 0.0; }

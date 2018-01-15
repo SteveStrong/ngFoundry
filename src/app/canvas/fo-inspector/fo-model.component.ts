@@ -10,13 +10,13 @@ import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
   styleUrls: ['./fo-model.component.css']
 })
 export class foModelComponent implements OnInit {
-  rootWorkspace: foWorkspace = globalWorkspace;
-  rootModel: foModel;
+  workspace: foWorkspace = globalWorkspace;
+  model: foModel;
   
   constructor() { }
 
   ngOnInit() {
-    this.rootModel = this.rootWorkspace.model.getItem('default')
+    this.model = this.workspace.model.getItem('default')
   }
 
 }

@@ -1,29 +1,34 @@
-import { foObject } from './foObject.model'
+
+import { foKnowledge } from './foKnowledge.model'
 import { foNode } from './foNode.model'
-import {  Action, Spec } from '../foundry/foInterface';
+import { Action, Spec } from '../foundry/foInterface';
 
-export class foMethod<T extends foNode> extends foObject {
+export class foMethod<T extends foNode> extends foKnowledge {
 
-  funct:Action<T>
+  funct: Action<T>
 
-  constructor(funct:Action<T>, spec?:any) {
-    super(spec);
-    this.funct = funct;
-  }
-  
-}
-
-export class foFactory<T extends foNode> extends foObject {
-
-  funct:Spec<T>
-
-  constructor(funct:Spec<T>, spec?:any) {
+  constructor(funct: Action<T>, spec?: any) {
     super(spec);
     this.funct = funct;
   }
 
-  run(context?:any) {
+  run(context?: any) {
     return this.funct(context);
   }
-  
+
+}
+
+export class foFactory<T extends foNode> extends foKnowledge {
+
+  funct: Spec<T>
+
+  constructor(funct: Spec<T>, spec?: any) {
+    super(spec);
+    this.funct = funct;
+  }
+
+  run(context?: any) {
+    return this.funct(context);
+  }
+
 }

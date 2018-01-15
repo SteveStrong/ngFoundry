@@ -1,0 +1,16 @@
+<h2>Demo: NgZone</h2>
+
+<p>Progress: {{progress}} of {{maxProgress}}</p>
+    <p *ngIf="progress >= maxProgress">Done processing {{label}} of Angular zone!</p>
+
+    <button (click)="processWithinAngularZone()">Process within Angular zone</button>
+    <button (click)="processOutsideOfAngularZone()">Process outside of Angular zone</button>
+
+    <div class="row">
+
+      <div class="col-md-8">
+        <canvas #canvas></canvas>
+      </div>
+
+
+    </div>

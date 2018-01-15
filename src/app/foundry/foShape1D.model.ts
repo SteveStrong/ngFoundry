@@ -1,6 +1,6 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from "../foundry/foGeometry";
+import { cPoint } from '../foundry/foGeometry2D';
 import { iPoint } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
@@ -10,7 +10,7 @@ import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
 import { foShape2D } from '../foundry/foShape2D.model'
-import { foGlyph } from '../foundry/foGlyph.model'
+import { foGlyph2D } from '../foundry/foGlyph2D.model'
 import { Lifecycle } from './foLifecycle';
 
 
@@ -123,7 +123,7 @@ export class foShape1D extends foShape2D {
         let dX = x2 - x1;
         let dY = y2 - y1;
         return {
-            angle: foGlyph.RAD_TO_DEG * Math.atan2(dY, dX),
+            angle: foGlyph2D.RAD_TO_DEG * Math.atan2(dY, dX),
             length: Math.sqrt(dX * dX + dY * dY),
             cX: (x2 + x1) / 2,
             cY: (y2 + y1) / 2,

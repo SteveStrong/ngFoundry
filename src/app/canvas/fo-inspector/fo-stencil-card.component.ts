@@ -15,13 +15,12 @@ import { globalWorkspace } from 'app/foundry/foWorkspace.model';
 export class foStencilCardComponent implements OnInit, AfterViewInit {
   lastCreated: foNode;
   showDetails = false;
+
   @ViewChild('canvas')
   public canvasRef: ElementRef;
   @Input()
-  public concept: foKnowledge;
+  public knowledge: foKnowledge;
 
-  @Input()
-  public rootPage: foPage;
 
   constructor() { }
 
@@ -35,7 +34,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
 
   drawName(text: string, ctx: CanvasRenderingContext2D) {
     ctx.save();
-    ctx.font = '50pt Calibri';
+    ctx.font = '40pt Calibri';
     ctx.lineWidth = 3;
     ctx.strokeStyle = 'blue';
     ctx.strokeText(text, 10, 50);
@@ -46,8 +45,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
     let canvas = nativeElement;
     let context = canvas.getContext("2d");
 
-    this.drawName(this.concept.myName, context)
-
+    this.drawName(this.knowledge.myName, context)
   }
 
   doToggleDetails() {
@@ -56,13 +54,25 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
 
   doCreate() {
     let page = globalWorkspace.activePage;
+    let result;
 
-    this.lastCreated = this.concept.newInstance().defaultName()
-    .dropAt(page.centerX, page.centerY)
-      .addAsSubcomponent(page);
+    if ( this.knowledge['run'] ) {
+      let list = this.knowledge['run']();
+      let names = list.map(element => {
+        element.addAsSubcomponent(page);
+        return element.displayName;
+      });
 
-
-    Toast.info("Created", this.lastCreated.displayName)
+      result = list[0];
+      Toast.info("Created", names.join(','))
+    } else {
+      result = this.knowledge.newInstance().defaultName()
+      .dropAt(page.centerX, page.centerY)
+        .addAsSubcomponent(page);
+  
+      Toast.info("Created", result.displayName)
+    }
+    this.lastCreated = result;
   }
 
   doCommand(cmd: string) {
