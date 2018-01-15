@@ -1,9 +1,9 @@
 
 import { Tools } from './foTools';
-import { cPoint, cRect } from './foGeometry2D';
+import { cPoint2D, cRect } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iObject, iNode, iShape, iPoint, iSize, Action, iRect } from './foInterface';
+import { iObject, iNode, iShape, iPoint2D, iSize, Action, iRect } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
@@ -70,7 +70,7 @@ export class foDisplay2D extends foShape2D {
     };
 
 
-    public hitTestWithDraw = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+    public hitTestWithDraw = (hit: iPoint2D, ctx: CanvasRenderingContext2D): boolean => {
         let x = hit.x;
         let y = hit.y;
         ///var ctx = DisplayObject._hitTestContext;

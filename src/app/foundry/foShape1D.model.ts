@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from '../foundry/foGeometry2D';
-import { iPoint } from '../foundry/foInterface'
+import { cPoint2D } from '../foundry/foGeometry2D';
+import { iPoint2D } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -71,16 +71,16 @@ export class foShape1D extends foShape2D {
     public pinY = (): number => { return 0.5 * this.height; };
     public rotation = (): number => { return this.angle; }
 
-    public begin = (name?: string): cPoint => {
-        return new cPoint(this.startX, this.startY, name)
+    public begin = (name?: string): cPoint2D => {
+        return new cPoint2D(this.startX, this.startY, name)
     }
 
-    public end = (name?: string): cPoint => {
-        return new cPoint(this.finishX, this.finishY, name)
+    public end = (name?: string): cPoint2D => {
+        return new cPoint2D(this.finishX, this.finishY, name)
     }
 
-    public center = (name?: string): cPoint => {
-        return new cPoint((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
+    public center = (name?: string): cPoint2D => {
+        return new cPoint2D((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
     }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
@@ -97,7 +97,7 @@ export class foShape1D extends foShape2D {
         });
     }
 
-    private setStart(point: iPoint) {
+    private setStart(point: iPoint2D) {
         this.startX = point.x;
         this.startY = point.y;
         let { x: cX, y: cY } = this.center();
@@ -106,7 +106,7 @@ export class foShape1D extends foShape2D {
         this.width = 0;
     }
 
-    private setFinish(point: iPoint) {
+    private setFinish(point: iPoint2D) {
         this.finishX = point.x;
         this.finishY = point.y;
         let { x: cX, y: cY } = this.center();
@@ -215,7 +215,7 @@ export class foShape1D extends foShape2D {
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint2D): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -230,7 +230,7 @@ export class foShape1D extends foShape2D {
     }
 
 
-    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 

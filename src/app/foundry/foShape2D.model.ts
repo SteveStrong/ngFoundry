@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from '../foundry/foGeometry2D';
-import { iPoint, iFrame } from '../foundry/foInterface'
+import { cPoint2D } from '../foundry/foGeometry2D';
+import { iPoint2D, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -110,7 +110,7 @@ export class foShape2D extends foGlyph2D {
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint2D): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -124,7 +124,7 @@ export class foShape2D extends foGlyph2D {
     }
 
 
-    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -221,7 +221,7 @@ export class foShape2D extends foGlyph2D {
         return this.connectionPoints.findMember(name);
     }
 
-    public findConnectionPoint(loc: cPoint, e): foConnectionPoint {
+    public findConnectionPoint(loc: cPoint2D, e): foConnectionPoint {
         if (!this._connectionPoints) return;
 
         for (var i: number = 0; i < this.connectionPoints.length; i++) {

@@ -1,6 +1,6 @@
 import { foShape2D } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
-import { cPoint, cRect } from '../foundry/foGeometry2D';
+import { cPoint2D, cRect } from '../foundry/foGeometry2D';
 import { foHandle } from '../foundry/foHandle';
 import { foCollection } from '../foundry/foCollection.model';
 //import { RuntimeType } from '../foundry/foRuntimeType';

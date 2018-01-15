@@ -5,7 +5,7 @@ import { Screen2D } from "../foundryDrivers/canvasDriver";
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 
-import { cPoint, cMargin } from '../foundry/foGeometry2D';
+import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
 import { Tools } from "../foundry/foTools";
 
 import { foCollection } from "../foundry/foCollection.model";
@@ -81,21 +81,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doVert() {
-    let pt = new cPoint(100, 150);
+    let pt = new cPoint2D(100, 150);
     this.layoutSubcomponentsVertical(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
     })
   }
 
   doHorz() {
-    let pt = new cPoint(100, 150);
+    let pt = new cPoint2D(100, 150);
     this.layoutSubcomponentsHorizontal(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
     })
   }
 
   addEventHooks() {
-    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
+    this.onItemHoverEnter = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
@@ -111,7 +111,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemHoverExit = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
+    this.onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
@@ -123,7 +123,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+    this.onItemOverlapEnter = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Enter`);
@@ -142,7 +142,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+    this.onItemOverlapExit = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Exit`);
@@ -154,7 +154,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onHandleHoverEnter = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    this.onHandleHoverEnter = (loc: cPoint2D, handle: foHandle, keys?: any): void => {
       //let shape = handle.myParentGlyph();
 
       this.message = [];
@@ -166,7 +166,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(handle);
     }
 
-    this.onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
+    this.onTrackHandles = (loc: cPoint2D, handles: foCollection<foHandle>, keys?: any): void => {
       this.message = [];
       handles.forEach(handle => {
         //if (handle.hitTest(loc)) {
@@ -178,7 +178,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     }
 
-    this.onHandleMoving = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    this.onHandleMoving = (loc: cPoint2D, handle: foHandle, keys?: any): void => {
       //let shape = handle.myParentGlyph();
 
       this.message = [];
@@ -190,7 +190,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(handle);
     }
 
-    this.onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    this.onHandleHoverExit = (loc: cPoint2D, handle: foHandle, keys?: any): void => {
       //let shape = handle.myParentGlyph();
 
       this.message = [];
@@ -224,7 +224,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   //this.sharing.moveTo(shape, shape.getLocation());
     // }
 
-    this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
+    this.onMouseLocationChanged = (loc: cPoint2D, state: string, keys?: any): void => {
       this.mouseLoc = loc;
       this.mouseLoc.state = state; 212
       this.mouseLoc.keys = keys;

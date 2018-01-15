@@ -1,8 +1,8 @@
 import { Scene, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from '../foundry/foGeometry2D';
-import { iPoint, iFrame } from '../foundry/foInterface'
+import { cPoint2D } from '../foundry/foGeometry2D';
+import { iPoint2D, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
