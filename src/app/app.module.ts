@@ -19,7 +19,6 @@ import { TreeitemComponent } from './treeview/treeitem.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { WebglviewComponent } from './webglview/webglview.component';
 import { TestForcediagramComponent } from './networkview/test-forcediagram.component';
-import { TestSceen1Component } from './webglview/test-sceen1.component';
 
 import { DockerecosystemComponent } from './networkview/dockerecosystem.component';
 import { DockerecosystemService } from "./networkview/dockerecosystem.service";
@@ -73,7 +72,7 @@ import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
     WelcomeComponent,
     WebglviewComponent,
     TestForcediagramComponent,
-    TestSceen1Component,
+
     DockerecosystemComponent,
     SwimlaneviewComponent,
     SwimlaneComponent,

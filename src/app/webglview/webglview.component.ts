@@ -1,5 +1,5 @@
-//import { element } from 'protractor/built';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { Screen3D } from "../foundryDrivers/threeDriver";
 
 
 @Component({
@@ -8,14 +8,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./webglview.component.css']
 })
 export class WebglviewComponent implements OnInit {
+  mySceen: Screen3D = new Screen3D();
 
-
-  //https://www.npmjs.com/package/three
-
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(
+    private vcr: ViewContainerRef) {  
   }
 
-
+  ngOnInit(): void {
+    this.mySceen.setRoot(this.vcr.element.nativeElement);
+    this.mySceen.addBlock(100,400,900);
+    this.mySceen.go();
+  }
 }
