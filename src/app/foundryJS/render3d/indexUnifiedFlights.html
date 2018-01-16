@@ -1,0 +1,592 @@
+﻿<!DOCTYPE html>
+<html  >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Unified Flights</title>
+    
+    <link rel="stylesheet" href="assets/libs/Cesium/Widgets/widgets.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <link href="vendor/vender.css" rel="stylesheet" />
+    <script src="vendor/vender.js"></script>
+
+
+    <!--<script type="text/javascript" src="assets/libs/ui-bootstrap-tpls-0.13.4.js"></script>-->
+
+    <script src="foundry/version.js"></script>
+    <script src="foundry/foundry.core.extensions.js"></script>
+    <script src="foundry/foundry.core.tools.js"></script>
+    <script src="foundry/foundry.core.dto.js"></script>
+    <script src="foundry/foundry.core.node.js"></script>
+    <script src="foundry/foundry.core.link.js"></script>
+    <script src="foundry/foundry.core.component.js"></script>
+    <script src="foundry/foundry.core.pubsub.js"></script>
+    <script src="foundry/foundry.core.property.js"></script>
+    <script src="foundry/foundry.core.collection.js"></script>
+
+    <script src="foundry/foundry.core.meta.js"></script>
+    <script src="foundry/foundry.core.factory.js"></script>
+    <script src="foundry/foundry.core.factoryrelate.js"></script>
+    <script src="foundry/foundry.core.entitydb.js"></script>
+    <script src="foundry/foundry.core.listops.js"></script>
+    <script src="foundry/foundry.core.clienthub.js"></script>
+    <script src="foundry/foundry.core.workspace.js"></script>
+
+
+        
+</head>
+<body ng-app="foApp" >
+    <div data-ng-controller="workspaceController as ws">
+
+        <!--<h1>{{ws.title}}</h1>-->
+
+        <!-- main container -->
+        <div class="main-container container-fluid" >
+            <div class="row">
+                <div class="col-lg-2">
+                   <button class="btn btn-success" ng-click="ws.doGetFlights()">Get Flights</button>
+
+                    <div ng-repeat="obj in ws.conveyanceDB.items" >
+                        <p>{{obj.aircraftId}}</p>
+                    </div>
+                    <div ng-repeat="obj in ws.flightDB.items">
+                        <p>{{obj.aircraftId}}</p>
+                    </div>
+                    <div ng-repeat="obj in ws.airportDB.items">
+                        <p>{{obj.name}}</p>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+
+                        <div class="entity-layer-control">
+                            <!--<p class="layer-control-title" style="background-color: none;">
+                                <span class="cursor-pointer" ng-click="ws.reconfigureContext()">
+                                    <img src="images/icn-edit-data-set.png" class="edit-data-set" title="Open Search Dialog">{{ws.title}}<span class="font-size-68pct light-grey margin-left-12px">FLIGHTS</span><span class="font-size-84pct margin-left-4px">{{ws.totalFlights}}</span><span class="font-size-68pct margin-left-12px light-grey">AIRPORTS</span><span class="font-size-84pct margin-left-4px">{{ws.totalAirports}}</span>
+                                </span>
+                            </p>-->
+                        </div>
+
+                        <div >
+
+                            <!--<p >SEARCH CRITERIA</p>
+                            <div ng-repeat="search in ws.Subcomponents.elements" class="flight-search-criteria"><span class="delete-criteria" title="Delete Search Criteria" ng-click="ws.deleteFlightSearch(search)">X</span>{{search.title}}</div>-->
+
+                            <p >ARRIVAL AIRPORTS <span >(MOST ACTIVE)</span></p>
+                            <table  cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th >AIRPORT</th>
+                                    <th >FLIGHTS</th>
+                                </tr>
+                                <tr ng-if="!ws.mostActiveArrivalAirports.length">
+                                    <td colspan="2" >NO DATA</td>
+                                </tr>
+                                <tr ng-repeat="item in ws.mostActiveArrivalAirports" ng-class-odd="'tab-odd'" ng-class-even="'tab-even'">
+                                    <td ><a href="#" ng-click="ws.gotoPort(item)">{{item.name}} ({{item.iataCode}})</a></td>
+                                    <td >{{item.arrivalCount}}</td>
+                                </tr>
+                            </table>
+
+                            <p >DEPARTURE AIRPORTS <span >(MOST ACTIVE)</span></p>
+                            <table  cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th >AIRPORT</th>
+                                    <th >FLIGHTS</th>
+                                </tr>
+                                <tr ng-if="!ws.mostActiveDepartureAirports.length">
+                                    <td colspan="2" >NO DATA</td>
+                                </tr>
+                                <tr ng-repeat="item in ws.mostActiveDepartureAirports" ng-class-odd="'tab-odd'" ng-class-even="'tab-even'">
+                                    <td ><a href="#" ng-click="ws.gotoPort(item)">{{item.name}} ({{item.iataCode}})</a></td>
+                                    <td >{{item.departureCount}}</td>
+                                </tr>
+                            </table>
+
+                            <p >LANDING SOON</p>
+                            <table  cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th >FLIGHT NUMBER</th>
+                                    <th >DEPART</th>
+                                    <th >ARRIVE</th>
+                                    <th >LANDING IN</th>
+                                </tr>
+                                <tr ng-if="!ws.mostActiveArrivalAirports.length">
+                                    <td colspan="4" >NO DATA</td>
+                                </tr>
+                                <tr ng-repeat="item in ws.flightsArrivingSoon" ng-class-odd="'tab-odd'" ng-class-even="'tab-even'">
+                                    <td ><a href="#" ng-click="ws.gotoPort(item)">{{item.flightNumber}}</a></td>
+                                    <td >{{item.departureAirport.iataCode}}</td>
+                                    <td >{{item.arrivalAirport.iataCode}}</td>
+                                    <td >{{item.minutesLeftInFlight | toMins}} <span >min.</span></td>
+                                </tr>
+                            </table>
+
+
+                            <p >TAKING OFF SOON</p>
+                            <table class="tab-table width-98pct" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <th >FLIGHT NUMBER</th>
+                                    <th >DEPART</th>
+                                    <th >ARRIVE</th>
+                                    <th >TAKING OFF IN</th>
+                                </tr>
+                                <tr ng-if="!ws.mostActiveArrivalAirports.length">
+                                    <td colspan="4" >NO DATA</td>
+                                </tr>
+                                <tr ng-repeat="item in ws.flightsDepartingSoon" ng-class-odd="'tab-odd'" ng-class-even="'tab-even'">
+                                    <td ><a href="#" ng-click="ws.gotoPort(item)">{{item.flightNumber}}</a></td>
+                                    <td >{{item.departureAirport.iataCode}}</td>
+                                    <td >{{item.arrivalAirport.iataCode}}</td>
+                                    <td >{{item.TimeTillDepartureInMinutes | toMins}} <span >min.</span></td>
+                                </tr>
+                            </table>
+
+                        </div>
+
+                </div>
+                <div class="col-lg-8">
+                    <div id="cesiumContainer" style="height:800px"></div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+	
+    
+    <!-- js files -->
+    <script type="text/javascript" src="assets/libs/Cesium/cesium.js"></script>
+    <script type="text/javascript" src="assets/js/aisGlobe.js"></script>
+
+    <script src="indexUnifiedFlights.js"></script>
+    <script src="foundry/foundry.ui.ngdialog.js"></script>
+
+    <script src="endpointService.js"></script>
+    <script src="dataService.js"></script>
+    <script src="geoCalculations.js"></script>
+    <script src="ontologyCoreModel.js"></script>
+    <script src="geoRenderService.js"></script>
+
+
+    <!-- template files -->
+    <script id="editEntityHeader.html" type="text/ng-template">
+        <p>Query for a flight</p>
+    </script>
+
+    <script id="editEntityFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+
+    <script type="text/ng-template" id="queryFlights.html">
+        <form>
+            <div style="border:1px solid black; padding:4px">
+                <label for="departureIataCodes" class="control-label">Departure Iata Codes:</label>
+                <input id="departureIataCodes" class="form-control" ng-model="context.flightByLocation.departureIataCodes" placeholder="departure iata codes" />
+                <label for="arrivalIataCodes" class="control-label">Arrival Iata Codes:</label>
+                <input id="arrivalIataCodes" class="form-control" ng-model="context.flightByLocation.arrivalIataCodes" placeholder="arrival iata codes" />
+
+                <label for="departureCountryIsoCodes" class="control-label">Departure Country:</label>
+                <input id="departureCountryIsoCodes" class="form-control" ng-model="context.flightByLocation.departureCountryIsoCodes" placeholder="departure country" />
+                <label for="arrivalCountryIsoCodes" class="control-label">Arrival Country:</label>
+                <input id="arrivalCountryIsoCodes" class="form-control" ng-model="context.flightByLocation.arrivalCountryIsoCodes" placeholder="arrival country" />
+            </div>
+            <div style="border:1px solid black; padding:4px">
+                <label for="carrierIataCodes" class="control-label">Carrier Iata Codes:</label>
+                <input id="carrierIataCodes" class="form-control" ng-model="context.flightByName.carrierIataCodes" placeholder="carrier iata codes" />
+                <label for="flightNumbers" class="control-label">Flight Number:</label>
+                <input id="flightNumbers" class="form-control" ng-model="context.flightByName.flightNumbers" placeholder="flight numbers" />
+                <label for="aircraftIds" class="control-label">Tail Number:</label>
+                <input id="aircraftIds" class="form-control" ng-model="context.flightByName.aircraftIds" placeholder="tail numbers" />
+            </div>
+        </form>
+    </script>
+
+    <script type="text/ng-template" id="flightByName.html">
+        <form>
+            <label for="carrierIataCodes" class="control-label">Carrier Iata Codes:</label>
+            <input id="carrierIataCodes" class="form-control" ng-model="context.carrierIataCodes" placeholder="carrier iata codes" />
+            <label for="flightNumbers" class="control-label">Flight Number:</label>
+            <input id="flightNumbers" class="form-control" ng-model="context.flightNumbers" placeholder="flight numbers" />
+            <label for="aircraftIds" class="control-label">Tail Number:</label>
+            <input id="aircraftIds" class="form-control" ng-model="context.aircraftIds" placeholder="tail numbers" />
+        </form>
+    </script>
+
+    <script type="text/ng-template" id="flightByLocation.html">
+        <form>
+            <label for="departureIataCodes" class="control-label">Departure Iata Codes:</label>
+            <input id="departureIataCodes" class="form-control" ng-model="context.departureIataCodes" placeholder="departure iata codes" />
+            <label for="arrivalIataCodes" class="control-label">Arrival Iata Codes:</label>
+            <input id="arrivalIataCodes" class="form-control" ng-model="context.arrivalIataCodes" placeholder="arrival iata codes" />
+
+            <label for="departureCountryIsoCodes" class="control-label">Departure Country:</label>
+            <input id="departureCountryIsoCodes" class="form-control" ng-model="context.departureCountryIsoCodes" placeholder="departure country" />
+            <label for="arrivalCountryIsoCodes" class="control-label">Arrival Country:</label>
+            <input id="arrivalCountryIsoCodes" class="form-control" ng-model="context.arrivalCountryIsoCodes" placeholder="arrival country" />
+        </form>
+    </script>
+
+
+    <script id="airportBanner.html" type="text/ng-template">
+
+        <div class="icn"><img ng-src="{{item.icon}}" width="32" height="32"></div>
+        <div class="bottom-right-corner-info">{{item.LL}}</div>
+        <div ng-click="space.toggleResearch(item)" ng-show="item.inResearch && item.isSelected" class="entity-add-delete-icon"><img src="images/entitydelete-v5.png" title="Remove Item" /></div>
+        <div ng-click="space.toggleResearch(item)" ng-show="!item.inResearch && item.isSelected" class="entity-add-delete-icon"><img src="images/entityadd-v5.png" title="Add Item" /></div>
+
+        <div class="entTxt">
+            <!--<div class="entity-main">D:{{item.depth()}} - {{item.type  | vaasPretty}}</div>-->
+            <div class="entity-main">{{item.type  | vaasPretty}}</div>
+            <div>{{item.portName  | vaasPretty}}</div>
+            <div>{{item.iataCode  | vaasPretty}} <span class="font-size-96pct font-normal">({{item.countryCode  | vaasPretty}})</span></div>
+        </div>
+        <div class="star-bar" ng-click="item.toggleIsFavorite;space.refresh($event);">
+            <img ng-src="images/icn-star{{item.favoriteState}}.png" />
+        </div>
+
+    </script>
+
+    <script id="flightBanner.html" type="text/ng-template">
+        <div class="icn"><img ng-src="{{::item.icon}}" width="32" height="32"></div>
+        <div ng-click="space.toggleResearch(item)" ng-show="item.inResearch && item.isSelected" class="entity-add-delete-icon"><img src="images/entitydelete-v5.png" title="Remove Item" /></div>
+        <div ng-click="space.toggleResearch(item)" ng-show="!item.inResearch && item.isSelected" class="entity-add-delete-icon"><img src="images/entityadd-v5.png" title="Add Item" /></div>
+        <div class="top-right-corner-info"></div>
+        <div class="entTxt">
+            <div class="entity-main"><span class="data-label margin-left-0px">FLIGHT</span>{{::item.carrierCode}} {{::item.conveyanceNumber}} <span class="font-size-96pct light-grey font-normal">({{::item.travelNexus}})</span></div>
+            <div><span class="data-label margin-left-0px">DEPART</span>{{::item.departureAirport.iataCode}} <span class="font-size-96pct">({{::item.departureAirport.countryCode  | vaasPretty}})</span> - {{::item.scheduledDepartureTime | vaasFlightDate}} at {{::item.scheduledDepartureTime | vaasFlightTime}}</div>
+            <div><span class="data-label margin-left-0px">ARRIVE</span>{{::item.arrivalAirport.iataCode}} <span class="font-size-96pct">({{::item.arrivalAirport.countryCode  | vaasPretty}})</span> - {{::item.scheduledArrivalTime | vaasFlightDate}} at {{::item.scheduledArrivalTime | vaasFlightTime}}</div>
+        </div>
+        <div ng-if="item.isSelected" class="bio-data-container">
+            <ul class="bio-data-tabs width-360px">
+                <!--<li ng-class="{'bio-data-tab-selected': item.isTabOpen('Conveyance')}" ng-click="item.setTab('Conveyance'); $event.stopPropagation();">CONVEYANCE</li>
+                <li ng-class="{'bio-data-tab-selected': item.isTabOpen('Geographic')}" ng-click="item.setTab('Geographic'); $event.stopPropagation();">GEOGRAPHIC</li>-->
+                <li ng-class="{'bio-data-tab-selected': item.isTabOpen('Links')}" ng-click="item.setTab('Links'); $event.stopPropagation();" ng-if="item.linksList.length">LINKS</li>
+                <li ng-class="{'bio-data-tab-selected': item.isTabOpen('Manifest')}" ng-click="item.setTab('Manifest'); $event.stopPropagation();" ng-if="item.manifestList.length">HISTORY</li>
+            </ul>
+            <!--<div class="bio-data-div width-360px" ng-show="item.isTabOpen('Conveyance')">
+                <dl class="data-label-holder">
+                    <div>
+                        <dt>CREW COUNTS</dt><dd>{{ item.crewCounts }}</dd>
+                    </div>
+                    <div>
+                        <dt>PAX COUNTS</dt><dd>{{ item.paxCounts }}</dd>
+                    </div>
+                    <div>
+                        <dt>FLAG COUNTRY</dt><dd>{{ item.flagCountry }}</dd>
+                    </div>
+                    <div>
+                        <dt>CARGO ONBOARD</dt><dd>{{ item.cargoOnboard }}</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="bio-data-div width-360px" ng-show="item.isTabOpen('Geographic')">
+                <dl class="data-label-holder">
+                    <div>
+                        <dt>LOCATION</dt><dd>{{ item.position[1] | number : 4 }}, {{ item.position[0] | number : 4 }}</dd>
+                    </div>
+                    <div>
+                        <dt>HEADING</dt><dd>{{ item.heading }}</dd>
+                    </div>
+                    <div>
+                        <dt>SPEED</dt><dd>{{ item.speed }}</dd>
+                    </div>
+                </dl>
+            </div>-->
+            <div class="bio-data-div width-360px" ng-show="item.isTabOpen('Links')">
+                <dl class="data-label-holder" data-ng-repeat="link in item.linksList">
+                    <dt>{{link.description | vaasTitle }}</dt>
+                    <dd><a ng-href="{{link.url}}" target="_blank">{{item.carrierCode}} {{item.conveyanceNumber}}</a></dd>
+                </dl>
+            </div>
+
+            <div class="bio-data-div width-360px" ng-show="item.isTabOpen('Manifest')">
+                <table class="tab-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th class="text-align-left">DEPARTURE <span class="float-right">DATE - TIME</span></th>
+                        <th class="text-align-left no-border">ARRIVAL <span class="float-right">DATE - TIME</span></th>
+                    </tr>
+                    <tr ng-repeat="item in item.manifestList" ng-class-odd="'tab-odd'" ng-class-even="'tab-even'">
+                        <td class="text-align-right padding-right-3px"><a href="{{item.upaxLink.url}}" target="_blank" class="float-left">{{item.departureAirport.iataCode}}</a> {{::item.scheduledDepartureTime | vaasFlightDate}} {{::item.scheduledDepartureTime | vaasFlightTime}}</td>
+                        <td class="text-align-right no-border"><a href="{{item.upaxLink.url}}" target="_blank" class="float-left">{{item.arrivalAirport.iataCode}}</a> {{::item.scheduledArrivalTime | vaasFlightDate}} {{::item.scheduledArrivalTime | vaasFlightTime}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- favorite -->
+        <div class="star-bar" ng-click="item.toggleIsFavorite;space.refresh($event);">
+            <img ng-src="images/icn-star{{item.favoriteState}}.png" />
+        </div>
+    </script>
+
+    <!-- other template files -->   
+    <script id="dialogTemplate.html" type="text/ng-template">
+        <div class="modal-content">
+            <div class="modal-header" ng-show="showHeader">
+                <button type="button" ng-click="doCancel()" class=" close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div ng-include=" 'dialogHeader.html' "></div>
+            </div>
+            <div class="modal-body" ng-show="showBody">
+                <div ng-include=" 'dialogBody.html' "></div>
+            </div>
+            <div class="modal-footer" ng-show="showFooter">
+                <div ng-include=" 'dialogFooter.html' "></div>
+            </div>
+        </div>
+    </script>
+    <script id="dialogHeader.html" type="text/ng-template">
+    </script>
+    <script id="dialogBody.html" type="text/ng-template">
+        <p>replace the dialog body</p>
+    </script>
+    <script id="dialogFooter.html" type="text/ng-template">
+        <button class="btn btn-default pull-left" ng-click="doMore()">{{labelMore || 'More...'}}</button>
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">{{labelOK || 'OK' }}</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">{{labelCancel || 'Cancel'}}</button>
+    </script>
+    <script id="OkCancelFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <script id="MoreOkCancelFooter.html" type="text/ng-template">
+        <button class="btn btn-default pull-left" ng-click="doMore()">More...</button>
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <script id="YesNoFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">Yes</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">No</button>
+    </script>
+    <script id="NoYesFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">No</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Yes</button>
+    </script>
+    <script id="CloseFooter.html" type="text/ng-template">
+        <button class='btn btn-success ' data-dismiss='modal' ng-click="doCancel()">Close</button>
+    </script>
+    <script id="noteHeader.html" type="text/ng-template">
+        <p>by {{context.author}}</p>
+    </script>
+    <!--     data-bind="show: hasNoteUri"  class="btn btn-default glyphicon glyphicon-link"-->
+    <!--http://blog.teamtreehouse.com/accepting-speech-input-html5-forms-->
+    <script id="noteBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <div class="form-group notePanel-formGroup" style="margin-left:2px">
+                <label for="IDTextSummary" class="control-label">Headline:</label>
+                <input id="IDTextSummary" x-webkit-speech class="form-control" style="display:inline" capture-focus="true" ng-model="context.headerText" placeholder="the note headline" />
+            </div>
+            <!--http://jsfiddle.net/nicolasmoise/XaL9r/1/   ng-animate=""  -->
+            <div class="panel-collapse" collapse="!showDetails">
+                <div class="form-group notePanel-formGroup" style="margin-left:2px">
+                    <label for="IDTextNote" class="control-label">Details:</label>
+                    <textarea class="form-control" id="IDTextNote" rows="5" ng-model="context.noteText" placeholder="the note text"></textarea>
+                </div>
+                <div class="form-group notePanel-formGroup" style="margin-left:2px">
+                    <label for="IDTextURI" class="control-label"> <a href="#" target="_blank" ng-disable="!context.hasNoteUri" ng-href="{{context.noteUri}}">Link: </a>(ex. http://www.knowtshare.com)</label>
+                    <input class="form-control" id="IDTextURI" ng-model="context.noteUri" placeholder="the note uri" />
+                    <img ng-show="context.hasImageUri" ng-src="{{context.noteUri}}" alt="image missing" height="100" />
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="noteFooter.html" type="text/ng-template">
+        <button class="btn btn-default pull-left" ng-click="doMore()">More...</button>
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+
+    <!--templates to support clear All dialog-->
+    <script id="ClearAllHeader.html" type="text/ng-template">
+        <!--<p>Clear All</p>-->
+    </script>
+    <script id="ClearAllBody.html" type="text/ng-template">
+        <div>
+            <p>Do you want to...</p>
+            <button ng-click="ClearNotes()" style="margin:10px" class="btn btn-info">clear all notes</button>
+            <button ng-click="SaveDocumentFirst()" style="margin:10px" class="btn btn-info">save this document</button>
+            <button ng-click="doCancel()" style="margin:10px" class='btn btn-default '>Cancel</button>
+        </div>
+    </script>
+    <script id="ClearAllFooter.html" type="text/ng-template">
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <!--templates to support movetopage page dialog-->
+    <script id="MoveToPageHeader.html" type="text/ng-template">
+        <!--<p>by {{context.author}}</p>-->
+    </script>
+    <script id="MoveToPageBody.html" type="text/ng-template">
+        <p>Do you want to...</p>
+        <button ng-click="CreatePageFromNote()" style="margin:10px" class="btn btn-info">create page from note</button>
+        <p>or move selected shape to a different page...</p>
+        <select ng-model="context.targetPage" ng-options="page.title for page in context.pages">
+            <option value="">-- choose page --</option>
+        </select>
+    </script>
+    <script id="MoveToPageFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <!--templates to support rename page dialog-->
+    <script id="RenamePageHeader.html" type="text/ng-template">
+        <p>
+            rename this page
+        </p>
+    </script>
+    <script id="RenamePageBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <div class="form-group notePanel-formGroup" style="margin-left:2px">
+                <label for="IDTextSummary" class="control-label">Page name:</label>
+                <input id="IDTextSummary" x-webkit-speech class="form-control" style="display:inline" capture-focus="true" ng-model="context.headerText" placeholder="the page title" />
+            </div>
+        </div>
+    </script>
+    <script id="RenamePageFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <!--templates to support delete page dialog-->
+    <script id="DeletePageHeader.html" type="text/ng-template">
+        <p>Delete Confirmation</p>
+    </script>
+    <script id="DeletePageBody.html" type="text/ng-template">
+        <div>
+            <p>Do you want to...</p>
+            <button ng-click="DeletePage()" style="margin:10px" class="btn btn-info">delete current page</button>
+            <button ng-click="doCancel()" style="margin:10px" class='btn btn-default '>Cancel</button>
+        </div>
+    </script>
+    <script id="DeletePageFooter.html" type="text/ng-template">
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+
+    <!--templates to support clear All dialog-->
+    <script id="ClearOrMergeHeader.html" type="text/ng-template">
+        <!--<p>Clear All</p>-->
+    </script>
+    <script id="ClearOrMergeBody.html" type="text/ng-template">
+        <div>
+            <p>Do you want to...</p>
+            <button ng-click="ClearNotes()" style="margin:10px" class="btn btn-info">clear existing notes</button>
+            <button ng-click="MergeNotes()" style="margin:10px" class="btn btn-info">merge file with existing notes</button>
+            <button ng-click="doCancel()" style="margin:10px" class='btn btn-default '>Cancel</button>
+        </div>
+    </script>
+    <script id="ClearOrMergeFooter.html" type="text/ng-template">
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+
+    <!--templates to support Clear File Drop dialog-->
+    <script id="ClearFileDropHeader.html" type="text/ng-template">
+        <p>File Merge</p>
+    </script>
+    <script id="ClearFileDropBody.html" type="text/ng-template">
+        <div>
+            <p>Do you want to...</p>
+            <button ng-click="ClearExistingNotes()" style="margin:10px" class="btn btn-info">clear existing notes</button>
+            <button ng-click="MergeNotes()" style="margin:10px" class="btn btn-info">add new notes to existing notes</button>
+            <!--<button ng-click="SaveThenClear()" style="margin:10px" class="btn btn-info">save, then clear existing notes</button>-->
+        </div>
+    </script>
+    <script id="ClearFileDropFooter.html" type="text/ng-template">
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <!--templates to support Confirm Delete dialog-->
+    <script id="ConfirnDeleteHeader.html" type="text/ng-template">
+        <p>Delete Confirmation</p>
+    </script>
+    <script id="ConfirnDeleteBody.html" type="text/ng-template">
+        <div>
+            <p>Do you want to delete the...</p>
+            <button ng-click="SaveAttached()" style="margin:10px" class="btn btn-info">selected note only</button>
+            <button ng-click="DeleteAll()" style="margin:10px" class="btn btn-info">selected note and attached notes</button>
+        </div>
+    </script>
+    <script id="ConfirmDeleteFooter.html" type="text/ng-template">
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+
+    <script id="sessionJoinHeader.html" type="text/ng-template">
+        <p>Enter the Session that you want to join.</p>
+    </script>
+    <script id="sessionJoinBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <h4>Other collaborators can join you by entering this session.</h4>
+            <div class="form-group">
+                <label for="IDSessionKey" class="control-label"></label>
+                <input autofocus id="IDSessionKey" class="form-control" type="text" ng-model="context.sessionKey" placeholder="type a shareable Session word or phrase" />
+            </div>
+        </div>
+    </script>
+    <script id="sessionCreateHeader.html" type="text/ng-template">
+        <p>Enter the session that you want to create.</p>
+    </script>
+    <script id="sessionCreateBody.html" type="text/ng-template">
+        <div class="form-horizontal" role="form">
+            <h4>Other collaborators can join you by entering this session.</h4>
+            <div class="form-group">
+                <label for="IDSessionKey" class="control-label"></label>
+                <input autofocus id="IDSessionKey" class="form-control" type="text" ng-model="context.sessionKey" placeholder="type a shareable Session word or phrase" />
+                <button class="btn btn-primary" ng-click="context.doGenerateSessionKey" ng-disable="!context.canDoGenerateSessionKey">generate key</button>
+            </div>
+            <!--<div class="checkbox">
+                <label>
+                    <input type="checkbox" data-bind="value: presenter" />
+                    <b>Presenter:Audience</b>&nbsp;&mdash;&nbsp;<em>subscribers can only view your presentation</em>
+                </label>
+            </div>-->
+        </div>
+    </script>
+
+    <script id="saveFileHeader.html" type="text/ng-template">
+        <p>There are changes. You should save your data before you continue.</p>
+    </script>
+    <script id="saveFileBody.html" type="text/ng-template">
+        <label for="IDSaveFile" class="control-label">The browser will export you data to this file:</label>
+        <input x-webkit-speech class="form-control" style="display:inline" id="IDSaveFile" type="text" ng-model="context.documentName" placeholder="type in the file name">
+    </script>
+    <script id="saveFileFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+    <script id="invitationBody.html" type="text/ng-template">
+        <div data-context="target">
+            <p>Cut and paste this URL and send it to a friend.</p>
+            <textarea rows="5" cols="50" data-bind="value: invitationUrl"></textarea>
+        </div>
+    </script>
+    <script id="nickNameBody.html" type="text/ng-template">
+        <div>
+            <p>Create or change your nick name:</p>
+            <input type="text" data-bind="value: nickName" data-update="keyup" placeholder="ie: James Bond">
+        </div>
+    </script>
+    <script id="messageBox.html" type="text/ng-template">
+        <div data-height="200" data-width="400" data-caption="Message">
+            <p data-bind="text: message"></p>
+        </div>
+    </script>
+    <script id="contentMessageBox.html" type="text/ng-template">
+        <div data-height="200" data-width="400" data-caption="Message">
+            <div data-bind="html: content"></div>
+        </div>
+    </script>
+
+    <script id="loginHeader.html" type="text/ng-template">
+        <p>login is required.</p>
+    </script>
+    <script id="loginBody.html" type="text/ng-template">
+        <label for="IDUserName" class="control-label">username:</label>
+        <input class="form-control" style="display:inline" id="IDUserName" type="text" ng-model="context.username" placeholder="username">
+        <label for="IDPassword" class="control-label">username:</label>
+        <input class="form-control" style="display:inline" id="IDPassword" type="text" ng-model="context.password" placeholder="password">
+    </script>
+    <script id="loginFooter.html" type="text/ng-template">
+        <button class='btn btn-success' data-dismiss='modal' ng-click="doOK()">OK</button>
+        <button class='btn btn-default ' data-dismiss='modal' ng-click="doCancel()">Cancel</button>
+    </script>
+
+    	
+</body>
+</html>

@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8" />
+    <title>Particle.js</title>
+    <link href="vendor/vender.css" rel="stylesheet" />
+    <script src="vendor/vender.js"></script>
+
+    <script src="foundry/version.js"></script>
+    <script src="foundry/foundry.core.extensions.js"></script>
+    <script src="foundry/foundry.core.tools.js"></script>
+    <script src="foundry/foundry.core.dto.js"></script>
+    <script src="foundry/foundry.core.node.js"></script>
+    <script src="foundry/foundry.core.link.js"></script>
+
+    <script src="foundry/foundry.core.component.js"></script>
+    <script src="foundry/foundry.core.pubsub.js"></script>
+    <script src="foundry/foundry.core.property.js"></script>
+    <script src="foundry/foundry.core.collection.js"></script>
+
+
+    <script src="foundry/foundry.core.meta.js"></script>
+    <script src="foundry/foundry.core.factory.js"></script>
+    <script src="foundry/foundry.core.entitydb.js"></script>
+    <script src="foundry/foundry.core.listops.js"></script>
+
+
+
+</head>
+<body >
+    <h1>Particle Engine</h1>
+
+    <script>
+        var camera, renderer, controls;
+        var geometry, material;
+        var engine;
+
+        var geometry = new THREE.BoxGeometry(10, 5, 5);
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xff0000,
+            wireframe: false
+        });
+
+        //var particleDB = fo.db.getEntityDB('spike::particle');
+        var particleType = fo.establishType('spike::particle', {
+            x: 0,
+            y: 0,
+            z: 0,
+            vx: 0,
+            vy: 0,
+            vz: 0,
+            mesh: function once () {
+                var mesh = new THREE.Mesh(geometry, material);
+                mesh.position.setX(this.x);
+                mesh.position.setY(this.y);
+                mesh.position.setZ(this.z);
+                return mesh;
+            },
+            move: function () {
+                var g = this.myParent.gravity;
+
+                // The particles simply go upwards It MUST come down, so lets apply gravity
+                this.vy += g;
+                this.vz += g;
+
+                // Adding velocity to x and y axis  this is how velocity works to change a things position
+                this.x += this.vx;
+                this.y += this.vy;
+                this.z += this.vz;
+
+                if (this.isOffCanvasX || this.isOffCanvasY || this.isOffCanvasZ) {
+                    // If any of the above conditions are met then we need to re-position the particles on the base :)
+                    this.reset;
+                }
+                else {
+                    var mesh = this.mesh;
+                    mesh.position.setX(this.x);
+                    mesh.position.setY(this.y);
+                    mesh.position.setZ(this.z);
+                }
+
+
+            },
+            isOffCanvasX: function () { // off the right side off the left side off the bottom
+                return this.x > this.myParent.W || this.x < -this.myParent.W;
+            },
+            isOffCanvasY: function () { // off the right side off the left side off the bottom
+                return this.y > this.myParent.H || this.y < -this.myParent.H;
+            },
+            isOffCanvasZ: function () { // off the right side off the left side off the bottom
+                return this.z > this.myParent.D || this.y < -this.myParent.D;
+            },
+            reset: function () {
+                this.vx = Math.random() * 4 - 2;  // Random Initial Velocities
+                this.vy = Math.random() * -4 - 2; // vy should be negative initially then only will it move upwards first and then later come downwards when our gravity is added to it.
+                this.vz = Math.random() * 4 - 2; // vy should be negative initially then only will it move upwards first and then later come downwards when our gravity is added to it.
+                this.x = this.y = this.z = 0;
+            },
+        });
+
+
+        var engineType = fo.establishType('spike::engine', {
+            // Let's set our gravity
+            gravity: 0.09,
+            particleCount: 100,
+
+            W: 500,
+            H: 600,
+            D: 700,
+
+            doCreate: function () {
+                var parent = this;
+                for (var i = 0; i < this.particleCount; i++) {
+                    var particle = particleType.newInstance({
+                        vx: Math.random() * 4 - 2,  // Random Initial Velocities
+                        vy: Math.random() * -4 - 2, // vy should be negative initially then only will it move upwards first and then later come downwards when our gravity is added to it.
+                        vz: Math.random() * 4 - 2, // vy should be negative initially then only will it move upwards first and then later come downwards when our gravity is added to it.
+
+                        mesh: new THREE.Mesh(geometry, material),
+
+                    });
+                    parent.addSubcomponent(particle);
+                    parent.scene.add(particle.mesh);
+
+                }
+
+
+            },
+
+            doRender: function () {
+                // Clearing screen to prevent trails
+                this.context.clearRect(0, 0, this.W, this.H);
+
+                this.Subcomponents.forEach(function (particle) {
+                    particle.move;
+                    particle.draw;
+                });
+            },
+
+            doDelete: function () {
+                this.Subcomponents.clear();
+            },
+
+            mesh: function once() {
+                var geometry = new THREE.BoxGeometry(this.W, this.H, this.D);
+                var material = new THREE.MeshBasicMaterial({
+                    color: 0xff00ff,
+                    wireframe: true
+                });
+                var mesh = new THREE.Mesh(geometry, material);
+                return mesh;
+            },
+
+        });
+
+
+
+
+
+        //https://aerotwist.com/tutorials/creating-particles-with-three-js/
+        init();
+        animate();
+
+ 
+        function init() {
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 1000;
+
+            engine = engineType.newInstance({
+                scene: new THREE.Scene(),
+            });
+
+            engine.scene.add(engine.mesh);
+
+            engine.doCreate;
+
+            engine.animate = function () {
+                this.subcomponents && this.subcomponents.forEach(function (item) {
+                    item.move;
+                });
+            },
+
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            document.body.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = true;
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+
+            controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+
+            engine.animate && engine.animate();
+
+            renderer.render(engine.scene, camera);
+
+        }
+
+
+        //var ParticleSpec = {
+        //    //create a random color
+        //    radius: 5,
+        //    x: 0,
+        //    y: 0,
+        //    vx: 0,
+        //    vy: 0,
+        //    color: 'rgb(255,255,255)',
+
+        //    draw: function () {
+        //        var ctx = this.myParent.context;
+
+        //        ctx.fillStyle = this.color;
+
+        //        ctx.beginPath();
+
+        //        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        //        ctx.fill();
+
+        //        ctx.closePath();
+        //    },
+        //    move: function () {
+        //        var g = this.myParent.gravity;
+
+        //        // The particles simply go upwards It MUST come down, so lets apply gravity
+        //        this.vy += g;
+
+        //        // Adding velocity to x and y axis  this is how velocity works to change a things position
+        //        this.x += this.vx;
+        //        this.y += this.vy;
+
+        //        if (this.isOffCanvasX || this.isOffCanvasY) {
+        //            // If any of the above conditions are met then we need to re-position the particles on the base :)
+        //            this.reset();
+        //        }
+        //    },
+        //    isOffCanvasX: function () { // off the right side off the left side off the bottom
+        //        return this.x + this.radius > this.myParent.W || this.x - this.radius < 0;
+        //    },
+        //    isOffCanvasY: function () { // off the right side off the left side off the bottom
+        //        return this.y + this.radius > this.myParent.H;
+        //    },
+        //    reset: function () { //this function return a function to reset
+        //        return function () {
+        //            this.x = this.myParent.W / 2;
+        //            this.y = this.myParent.H - this.radius;
+        //            this.vx = Math.random() * 4 - 2; // Random Initial Velocities
+        //            this.vy = Math.random() * -14 - 7; // vy should be negative initially then only will it move upwards first and then later come downwards when our gravity is added to it.
+        //            if (this.myParent.color) {
+        //                this.color = this.myParent.color;
+        //            }
+        //            else {
+        //                this.color = 'rgb(' + parseInt(Math.random() * 255) + ',' + parseInt(Math.random() * 255) + ',' + parseInt(Math.random() * 255) + ')';
+        //            }
+        //        };
+        //    }
+        //}
+
+
+ 
+    </script>
+
+</body>
+</html>

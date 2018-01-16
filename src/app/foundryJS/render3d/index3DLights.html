@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html ng-app='foApp'>
+<head>
+    <meta charset="utf-8" />
+    <title>World Simulator</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta property="og:title" content="flight path simulation using foundry.js & three.js" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://foundryx.azurewebsites.net/index3DModelfly.html" />
+    <meta property="og:image" content="http://foundryx.azurewebsites.net/images/world.png" />
+
+    <link href="vendor/vender.css" rel="stylesheet" />
+    <script src="vendor/vender.js"></script>
+
+    <script src="foundry/version.js"></script>
+    <script src="foundry/foundry.core.extensions.js"></script>
+    <script src="foundry/foundry.core.tools.js"></script>
+    <script src="foundry/foundry.core.dto.js"></script>
+    <script src="foundry/foundry.core.node.js"></script>
+    <script src="foundry/foundry.core.link.js"></script>
+
+    <script src="foundry/foundry.core.component.js"></script>
+    <script src="foundry/foundry.core.pubsub.js"></script>
+    <script src="foundry/foundry.core.property.js"></script>
+    <script src="foundry/foundry.core.collection.js"></script>
+
+
+    <script src="foundry/foundry.core.meta.js"></script>
+    <script src="foundry/foundry.core.factory.js"></script>
+    <script src="foundry/foundry.core.factorymixin.js"></script>
+    <script src="foundry/foundry.core.factoryrelate.js"></script>
+    <script src="foundry/foundry.core.entitydb.js"></script>
+    <script src="foundry/foundry.core.listops.js"></script>
+
+    <script src="foundry/foundry.core.workspace.js"></script>
+
+    <script src="index3DLights.js"></script>
+    <script src="dataservice.js"></script>
+    <script src="render3dserviceAll.js"></script>
+
+    <script src="vendor/three.js"></script>
+    <script src="vendor/orbitcontrols.js"></script>
+
+
+</head>
+<body ng-controller="workspaceController as ws" >
+    <div class="container well">
+        <h1>{{ws.title}}</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-1">
+            <button class="btn btn-success" ng-click="ws.doStart()">Start</button>
+            <button class="btn btn-success" ng-click="ws.doHigher()">Larger</button>
+            <button class="btn btn-success" ng-click="ws.doSquare()">Square</button>
+            <button class="btn btn-success" ng-click="ws.doChangeMaterial()">Material</button>
+        </div>
+        <div class="col-lg-9">
+            <div id="stage" style="height:900px">
+            </div>
+        </div>
+        <div class="col-lg-2">
+
+        </div>
+
+    </div>
+
+</body>
+</html>

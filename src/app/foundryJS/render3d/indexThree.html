@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8" />
+    <title>Three.js</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <link href="vendor/vender.css" rel="stylesheet" />
+    <script src="vendor/vender.js"></script>
+
+</head>
+<body >
+    <h1>Three JS</h1>
+
+    <script>
+        var camera, scene, renderer;
+        var geometry, material, mesh;
+        var list = [];
+
+        //declared once at the top of your code
+        var axis = new THREE.Vector3(0.5, 0.5, 0);//tilted a bit on x and y - feel free to plug your different axis here
+        //in your update/draw function
+        //rad += radIncrement;
+        //object.rotateOnAxis(axis, rad);
+
+
+        //https://aerotwist.com/tutorials/creating-particles-with-three-js/
+        init();
+        animate();
+
+        //renderer.render(scene, camera);
+
+        function init() {
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.z = 1000;
+
+            scene = new THREE.Scene();
+
+            var color = [0xff0000, 0x00ff00, 0x0000ff, 0x111111];
+
+
+            for (var i = 1; i < 4; i++) {
+                geometry = new THREE.BoxGeometry(i *100, i * 100, i * 100);
+                material = new THREE.MeshBasicMaterial({
+                    color: color[i-1],
+                    wireframe: true
+                });
+
+                mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+                mesh.position.setX((i-1) * 200);
+                list.push(mesh);
+            }
+
+            //mesh.rotateOnAxis(axis, 1);
+
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            document.body.appendChild(renderer.domElement);
+
+        }
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+
+            list.forEach(function(item){
+                item.rotation.x += 0.01;
+                item.rotation.y += 0.02;
+
+            })
+
+            renderer.render(scene, camera);
+
+        }
+    </script>
+
+</body>
+</html>
