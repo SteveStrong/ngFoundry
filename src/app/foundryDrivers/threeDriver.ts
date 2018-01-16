@@ -16,7 +16,7 @@ class block3D {
     }
 
 
-    preRender3D = () => {
+    render3D = () => {
         this.mesh.rotation.x += 0.01;
         this.mesh.rotation.y += 0.02;
     };
@@ -37,25 +37,14 @@ export class Screen3D {
     camera: PerspectiveCamera;
     renderer: WebGLRenderer;
 
-    list: Array<any> = new Array();
-
-    preRender3D: (screen:Screen3D, deep: boolean = true) => void;
+    render3D = (screen:Screen3D, deep: boolean = true) => void {};
 
     constructor() {
-
-        // this.preRender3D = (screen) => {
-        //     this.list.forEach(item => {
-        //         item.preRender3D(screen)
-        //     })
-        // };
     }
 
 
     public doAnimate = (): void => {
-        // if ( NgZone.assertInAngularZone() ) {
-        //     console.log('Screen3D: in the zone')
-        // }
-        this.preRender3D(this);
+        this.render3D(this);
         this.renderer.render(this.scene, this.camera);
         this._request = this.requestAnimation(this.doAnimate);
     }
@@ -103,7 +92,6 @@ export class Screen3D {
     }
 
     addToScene(obj: any) {
-        this.list.push(obj);
         this.scene.add(obj.mesh);
     }
 

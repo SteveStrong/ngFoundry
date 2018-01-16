@@ -158,10 +158,10 @@ export class foStage extends foGlyph3D {
         this.scaleZ *= zoom;
     }
 
-    preRender3D = (screen:Screen3D, deep: boolean = true) => {
+    render3D = (screen:Screen3D, deep: boolean = true) => {
 
         deep && this._subcomponents.forEach(item => {
-            item.preRender3D(screen, deep);
+            item.render3D(screen, deep);
         });
     }
 

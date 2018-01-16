@@ -17,7 +17,7 @@ export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName()
 
 SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
     color: 'green',
-    width: 50,
-    height: 25,
-    depth: 15
+    width: 100,
+    height: 400,
+    depth: 900
   });

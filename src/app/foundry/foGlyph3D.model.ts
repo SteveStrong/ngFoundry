@@ -42,14 +42,14 @@ export class foGlyph3D extends foGlyph2D {
     is3D() { return true; }
 
     protected _mesh: Mesh;
-    get mesh(): Mesh { 
-        if ( !this.mesh) {
+    get mesh(): Mesh {
+        if (!this._mesh) {
             let geometry: BoxGeometry = new BoxGeometry(this.width, this.height, this.depth);
             let material: MeshBasicMaterial = new MeshBasicMaterial({ color: 0x990033, wireframe: false });
-    
+
             this._mesh = new Mesh(geometry, material);
         }
-        return this._mesh; 
+        return this._mesh;
     }
     set mesh(value: Mesh) { this._mesh = value; }
 
@@ -60,20 +60,29 @@ export class foGlyph3D extends foGlyph2D {
         });
     }
 
-    addToScene(sceen: Scene) {
-        sceen.add(this.mesh);
+    addAsSubcomponent(parent: foNode, properties?: any) {
+        let result = super.addAsSubcomponent(parent, properties);
+        return result;
     }
 
-    draw3D = (screen:Screen3D, deep: boolean = true) => {
+
+    preRender3D = (screen: Screen3D) => {
+        if ( this._mesh) {
+            screen.addToScene(this);
+        }
+    }
+
+    draw3D = (screen: Screen3D, deep: boolean = true) => {
         let rot = this.mesh.rotation;
         rot.x += 0.01;
         rot.y += 0.02;
     };
 
-    preRender3D = (screen:Screen3D, deep: boolean = true) => {
+    render3D = (screen: Screen3D, deep: boolean = true) => {
+        this.preRender3D && this.preRender3D(screen)
         this.draw3D && this.draw3D(screen)
         deep && this._subcomponents.forEach(item => {
-            item.preRender3D(screen, deep);
+            item.render3D(screen, deep);
         });
     }
 

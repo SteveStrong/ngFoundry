@@ -78,6 +78,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
       if ( result.is3D() ) {
         result.dropAt(stage.centerX, stage.centerY)
         .addAsSubcomponent(stage);
+        
       }
   
       Toast.info("Created", result.displayName)

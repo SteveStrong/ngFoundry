@@ -108,8 +108,8 @@ export class WorldComponent implements OnInit, AfterViewInit {
     //1) render a single page
     //2) render pages like layers
     //3) render pages side by side
-    this.screen3D.preRender3D = (screen:Screen3D, deep: boolean = true) => {
-      stage.preRender3D(screen);
+    this.screen3D.render3D = (screen:Screen3D, deep: boolean = true) => {
+      stage.render3D(screen);
     }
     this.screen3D.go();
 
@@ -128,7 +128,9 @@ export class WorldComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.screen3D.addBlock(100,400,900)
+    this.doSetCurrentStage(this.currentStudio.currentStage);
+
+    //this.screen3D.addBlock(100,400,900)
 
     //with the render function you could
     //1) render a single page
