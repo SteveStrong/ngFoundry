@@ -12,9 +12,8 @@ import { foNode } from '../foundry/foNode.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foComponent } from '../foundry/foComponent.model'
 
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
 import { foGlyph3D } from '../foundry/foGlyph3D.model'
-import { foHandle } from 'app/foundry/foHandle';
+import { foHandle2D } from 'app/foundry/foHandle2D';
 import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
@@ -98,13 +97,73 @@ export class foStage extends foGlyph3D {
         return this._dictionary.found(key, onFound, onMissing) as T;
     }
 
+    establishInDictionary(obj: foNode) {
+        let guid = obj.myGuid;
+        this._dictionary.findItem(guid, () => {
+            this._dictionary.addItem(guid, obj);
+        });
+        return obj;
+    }
+
+    removeFromDictionary(obj: foNode) {
+        let guid = obj.myGuid;
+        this._dictionary.found(guid, () => {
+            this._dictionary.removeItem(guid);
+        });
+        return obj;
+    }
+
+    addSubcomponent(obj: foNode, properties?: any) {
+        let guid = obj.myGuid;
+        this._dictionary.findItem(guid, () => {
+            this._dictionary.addItem(guid, obj);
+            super.addSubcomponent(obj, properties);
+        });
+        return obj;
+    }
+
+
+    removeSubcomponent(obj: foNode) {
+        let guid = obj.myGuid;
+        this._dictionary.found(guid, () => {
+            (<foGlyph3D>obj).isSelected = false;
+            this._dictionary.removeItem(guid);
+            super.removeSubcomponent(obj);
+        });
+        return obj;
+    }
+
+
     clearStage() {
-
+        //simulate delete lifecycle in bulk via events
+        this.nodes.forEach(item => {
+            Lifecycle.unparent(item);
+            Lifecycle.destroyed(item);
+        })
+        this._subcomponents.clearAll();
+        this._dictionary.clearAll();
     }
 
-    deleteSelected() {
-        
+    deleteSelected(onComplete?: Action<foGlyph3D>) {
+        let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
+        if (found) {
+            this.destroyed(found);
+            onComplete && onComplete(found);
+        }
     }
 
-    preRender3D: (screen:Screen3D) => void;
+    zoomBy(zoom: number) {
+        this.scaleX *= zoom;
+        this.scaleY *= zoom;
+        this.scaleZ *= zoom;
+    }
+
+    preRender3D = (screen:Screen3D, deep: boolean = true) => {
+
+        deep && this._subcomponents.forEach(item => {
+            item.preRender3D(screen, deep);
+        });
+    }
+
+
 }

@@ -13,7 +13,7 @@ import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph2D } from '../foundry/foGlyph2D.model'
 import { foShape2D } from '../foundry/foShape2D.model'
-import { foHandle } from 'app/foundry/foHandle';
+import { foHandle2D } from 'app/foundry/foHandle2D';
 import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
@@ -171,7 +171,6 @@ export class foPage extends foShape2D {
     zoomBy(zoom: number) {
         this.scaleX *= zoom;
         this.scaleY *= zoom;
-
     }
 
     zoomToCenter(g: cPoint2D, zoom: number, e: WheelEvent) {
@@ -199,13 +198,13 @@ export class foPage extends foShape2D {
         let shapeUnder: foGlyph2D = null;
         let hovershape: foGlyph2D = null;
         let offset: iPoint2D = null;
-        let handles: foCollection<foHandle> = new foCollection<foHandle>()
-        let grab: foHandle = null;
-        let float: foHandle = null;
+        let handles: foCollection<foHandle2D> = new foCollection<foHandle2D>()
+        let grab: foHandle2D = null;
+        let float: foHandle2D = null;
 
-        function findHandle(loc: cPoint2D): foHandle {
+        function findHandle(loc: cPoint2D): foHandle2D {
             for (var i: number = 0; i < handles.length; i++) {
-                let handle: foHandle = handles.getChildAt(i);
+                let handle: foHandle2D = handles.getChildAt(i);
                 if (handle.hitTest(loc)) {
                     return handle;
                 }
@@ -379,16 +378,16 @@ export class foPage extends foShape2D {
     public onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
     }
 
-    public onHandleHoverEnter = (loc: cPoint2D, handle: foHandle, keys?: any): void => {
+    public onHandleHoverEnter = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
     }
 
-    public onHandleMoving = (loc: cPoint2D, handle: foHandle, keys?: any): void => {
+    public onHandleMoving = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
     }
 
-    public onHandleHoverExit = (loc: cPoint2D, handle: foHandle, keys?: any): void => {
+    public onHandleHoverExit = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
     }
 
-    public onTrackHandles = (loc: cPoint2D, handles: foCollection<foHandle>, keys?: any): void => {
+    public onTrackHandles = (loc: cPoint2D, handles: foCollection<foHandle2D>, keys?: any): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {

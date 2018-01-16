@@ -108,7 +108,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
     //1) render a single page
     //2) render pages like layers
     //3) render pages side by side
-    this.screen3D.preRender3D = (screen:Screen3D) => {
+    this.screen3D.preRender3D = (screen:Screen3D, deep: boolean = true) => {
       stage.preRender3D(screen);
     }
     this.screen3D.go();

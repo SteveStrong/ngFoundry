@@ -39,7 +39,7 @@ export class Screen3D {
 
     list: Array<any> = new Array();
 
-    preRender3D: (screen:Screen3D) => void;
+    preRender3D: (screen:Screen3D, deep: boolean = true) => void;
 
     constructor() {
 

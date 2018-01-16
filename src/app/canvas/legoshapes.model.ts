@@ -1,7 +1,7 @@
 import { foShape2D } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { cPoint2D, cRect } from '../foundry/foGeometry2D';
-import { foHandle } from '../foundry/foHandle';
+import { foHandle2D } from '../foundry/foHandle2D';
 import { foCollection } from '../foundry/foCollection.model';
 //import { RuntimeType } from '../foundry/foRuntimeType';
 
@@ -95,7 +95,7 @@ export class ThreeByThreeCircle extends legoCore {
     this.size = '3:3';
   }
 
-  public createHandles(): foCollection<foHandle> {
+  public createHandles(): foCollection<foHandle2D> {
     let DEG_TO_RAD = Math.PI / 180;
     let cx = this.width / 2;
     let cy = this.height / 2;

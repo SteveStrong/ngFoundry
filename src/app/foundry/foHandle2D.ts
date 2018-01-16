@@ -14,7 +14,7 @@ import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foHandle extends foNode {
+export class foHandle2D extends foNode {
 
     protected _x: number;
     protected _y: number;

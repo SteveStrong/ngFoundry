@@ -5,7 +5,7 @@ import { iPoint2D } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle } from '../foundry/foHandle'
+import { foHandle2D } from '../foundry/foHandle2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
@@ -268,7 +268,7 @@ export class foShape1D extends foShape2D {
         ctx.restore();
     }
 
-    public createHandles(): foCollection<foHandle> {
+    public createHandles(): foCollection<foHandle2D> {
 
         let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
         let center = this.globalToLocalPoint(this.center(shape1DNames.center));

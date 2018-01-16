@@ -7,7 +7,7 @@ import { TweenLite, Back } from "gsap";
 
 import { iShape, iPoint2D, iRect, iFrame } from './foInterface';
 
-import { foHandle } from './foHandle';
+import { foHandle2D } from './foHandle2D';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
 import { foNode } from './foNode.model';
@@ -78,8 +78,8 @@ export class foGlyph2D extends foNode implements iShape {
         this._color = value;
     }
 
-    get handles(): foCollection<foHandle> { return this._handles || this.createHandles(); }
-    protected _handles: foCollection<foHandle>;
+    get handles(): foCollection<foHandle2D> { return this._handles || this.createHandles(); }
+    protected _handles: foCollection<foHandle2D>;
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -593,13 +593,13 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
 
-    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle> {
+    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle2D> {
 
         let i = 0;
         if (!this._handles) {
-            this._handles = new foCollection<foHandle>()
+            this._handles = new foCollection<foHandle2D>()
             spec.forEach(item => {
-                let type = item.myType ? item.myType : RuntimeType.define(foHandle)
+                let type = item.myType ? item.myType : RuntimeType.define(foHandle2D)
                 let handle = new type(item, undefined, this);
                 handle.doMoveProxy = proxy && proxy[i]
                 this._handles.addMember(handle);
@@ -616,10 +616,10 @@ export class foGlyph2D extends foNode implements iShape {
         return this._handles;
     }
 
-    public createHandles(): foCollection<foHandle> {
+    public createHandles(): foCollection<foHandle2D> {
 
         let spec = [
-            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle) },
+            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle2D) },
             { x: this.width, y: 0, myName: "W:0" },
             { x: this.width, y: this.height, myName: "W:H" },
             { x: 0, y: this.height, myName: "0:H" },
@@ -628,16 +628,16 @@ export class foGlyph2D extends foNode implements iShape {
         return this.generateHandles(spec);
     }
 
-    getHandle(name: string): foHandle {
+    getHandle(name: string): foHandle2D {
         if (!this._handles) return;
         return this._handles.findMember(name);
     }
 
-    public findHandle(loc: cPoint2D, e): foHandle {
+    public findHandle(loc: cPoint2D, e): foHandle2D {
         if (!this._handles) return;
 
         for (var i: number = 0; i < this.handles.length; i++) {
-            let handle: foHandle = this.handles.getChildAt(i);
+            let handle: foHandle2D = this.handles.getChildAt(i);
             if (handle.hitTest(loc)) {
                 return handle;
             }

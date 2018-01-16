@@ -5,7 +5,7 @@ import { iShape, iPoint2D, iSize, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle } from '../foundry/foHandle'
+import { foHandle2D } from '../foundry/foHandle2D'
 import { foGlue } from '../foundry/foGlue'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'

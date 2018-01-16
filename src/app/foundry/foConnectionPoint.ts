@@ -4,12 +4,12 @@ import { Matrix2D } from './foMatrix2D';
 import { foObject } from './foObject.model';
 import { foComponent } from './foComponent.model';
 
-import { foHandle } from './foHandle';
+import { foHandle2D } from './foHandle2D';
 //import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foConnectionPoint extends foHandle {
+export class foConnectionPoint extends foHandle2D {
 
     protected _angle: number;
     get angle(): number { return this._angle || 0.0; }

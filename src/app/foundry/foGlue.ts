@@ -5,7 +5,7 @@ import { ModelRef, iPoint2D } from './foInterface'
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
 import { foShape2D } from './foShape2D.model';
-import { foHandle } from './foHandle';
+import { foHandle2D } from './foHandle2D';
 import { Lifecycle } from './foLifecycle';
 
 
@@ -15,9 +15,9 @@ export class foGlue extends foNode {
     myTarget: ModelRef<foShape2D>;
     mySource: ModelRef<foShape2D>;
 
-    protected _targetHandle: foHandle;
-    get targetHandle(): foHandle { return this._targetHandle; }
-    set targetHandle(value: foHandle) {
+    protected _targetHandle: foHandle2D;
+    get targetHandle(): foHandle2D { return this._targetHandle; }
+    set targetHandle(value: foHandle2D) {
         this._targetHandle = value;
     }
 

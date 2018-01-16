@@ -22,6 +22,7 @@ import { Lifecycle } from './foLifecycle';
 //and have all the same properties
 export class foGlyph3D extends foGlyph2D {
 
+    protected _subcomponents: foCollection<foGlyph3D>;
     protected _z: number;
     get z(): number { return this._z || 0.0; }
     set z(value: number) {
@@ -63,10 +64,17 @@ export class foGlyph3D extends foGlyph2D {
         sceen.add(this.mesh);
     }
 
-    preRender3D = (screen:Screen3D) => {
+    draw3D = (screen:Screen3D, deep: boolean = true) => {
         let rot = this.mesh.rotation;
         rot.x += 0.01;
         rot.y += 0.02;
     };
+
+    preRender3D = (screen:Screen3D, deep: boolean = true) => {
+        this.draw3D && this.draw3D(screen)
+        deep && this._subcomponents.forEach(item => {
+            item.preRender3D(screen, deep);
+        });
+    }
 
 }
