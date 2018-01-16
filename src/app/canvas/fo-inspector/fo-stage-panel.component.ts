@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foGlyph3D } from "../../foundry/foGlyph2D.model";
+import { foGlyph3D } from "../../foundry/foGlyph3D.model";
 
 @Component({
   selector: 'fo-stage-panel',

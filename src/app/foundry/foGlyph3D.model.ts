@@ -12,8 +12,11 @@ import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
 import { foGlyph2D } from '../foundry/foGlyph2D.model'
+import { Screen3D } from "../foundryDrivers/threeDriver";
+
 
 import { Lifecycle } from './foLifecycle';
+
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -36,4 +39,34 @@ export class foGlyph3D extends foGlyph2D {
 
     is2D() { return false; }
     is3D() { return true; }
+
+    protected _mesh: Mesh;
+    get mesh(): Mesh { 
+        if ( !this.mesh) {
+            let geometry: BoxGeometry = new BoxGeometry(this.width, this.height, this.depth);
+            let material: MeshBasicMaterial = new MeshBasicMaterial({ color: 0x990033, wireframe: false });
+    
+            this._mesh = new Mesh(geometry, material);
+        }
+        return this._mesh; 
+    }
+    set mesh(value: Mesh) { this._mesh = value; }
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            z: this.z,
+            depth: this.depth,
+        });
+    }
+
+    addToScene(sceen: Scene) {
+        sceen.add(this.mesh);
+    }
+
+    preRender3D = (screen:Screen3D) => {
+        let rot = this.mesh.rotation;
+        rot.x += 0.01;
+        rot.y += 0.02;
+    };
+
 }

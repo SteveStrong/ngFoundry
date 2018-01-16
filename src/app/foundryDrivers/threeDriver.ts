@@ -1,8 +1,6 @@
 
 import { Scene, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
 
-import { NgZone } from '@angular/core';
-
 class block3D {
     mesh: Mesh;
     constructor(width: number, height: number, depth: number) {
@@ -45,11 +43,11 @@ export class Screen3D {
 
     constructor() {
 
-        this.preRender3D = (screen) => {
-            this.list.forEach(item => {
-                item.preRender3D(screen)
-            })
-        };
+        // this.preRender3D = (screen) => {
+        //     this.list.forEach(item => {
+        //         item.preRender3D(screen)
+        //     })
+        // };
     }
 
 
