@@ -2,6 +2,7 @@
 import { PubSub } from "../foundry/foPubSub";
 import { cPoint2D, cFrame } from '../foundry/foGeometry2D';
 import { iPoint2D, Action } from '../foundry/foInterface'
+import { Screen3D } from "../foundryDrivers/threeDriver";
 
 import { foObject } from '../foundry/foObject.model'
 import { foCollection } from '../foundry/foCollection.model'
@@ -96,4 +97,14 @@ export class foStage extends foGlyph3D {
     found<T extends foGlyph3D>(key: string, onFound?: Action<T>, onMissing?: Action<T>): T {
         return this._dictionary.found(key, onFound, onMissing) as T;
     }
+
+    clearStage() {
+
+    }
+
+    deleteSelected() {
+        
+    }
+
+    preRender3D: (screen:Screen3D) => void;
 }

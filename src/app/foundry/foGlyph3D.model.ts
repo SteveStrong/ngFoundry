@@ -33,4 +33,7 @@ export class foGlyph3D extends foGlyph2D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
+
+    is2D() { return false; }
+    is3D() { return true; }
 }

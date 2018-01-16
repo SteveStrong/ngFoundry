@@ -135,6 +135,9 @@ export class foGlyph2D extends foNode implements iShape {
         super(properties, subcomponents, parent);
     }
 
+    is2D() { return true; }
+    is3D() { return false; }
+
     set(x: number, y: number, width: number, height: number): iRect {
         this.x = x;
         this.y = y;

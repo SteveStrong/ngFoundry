@@ -8,8 +8,8 @@ import { Screen3D } from "../foundryDrivers/threeDriver";
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { BroadcastChange, foChangeEvent } from '../foundry/foChange';
-import { foDocument } from 'app/foundry/foDocument.model';
-
+import { foStudio } from 'app/foundry/foStudio.model';
+import { foStage } from 'app/foundry/foStage.model';
 
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
@@ -23,6 +23,7 @@ import { SolidStencil } from "./solids.model";
   styleUrls: ['./world.component.css']
 })
 export class WorldComponent implements OnInit, AfterViewInit {
+  label: string = 'Off';
   lifecycleEvent: Array<foLifecycleEvent> = new Array<foLifecycleEvent>()
   changeEvent: Array<foChangeEvent> = new Array<foChangeEvent>()
 
@@ -37,18 +38,39 @@ export class WorldComponent implements OnInit, AfterViewInit {
 
 
   screen3D: Screen3D = new Screen3D();
-  currentDocument: foDocument;
+  currentStudio: foStudio;
 
   constructor(
     private sharing: SharingService) {
   }
 
+  doClear() {
+    this.currentStudio.currentStage.clearStage();
+    this.sharing.clearPage();
+  }
+
+  doDelete() {
+    this.currentStudio.currentStage.deleteSelected();
+  }
+
+  doOnOff() {
+    this.label = this.screen3D.toggleOnOff() ? "On" : "Off"
+  }
+
   ngOnInit() {
 
-    this.currentDocument = this.rootWorkspace.document.override({
-      pageWidth: this.pageWidth,
-      pageHeight: this.pageHeight,
+    this.currentStudio = this.rootWorkspace.studio.override({
+      stageWidth: 1000,
+      stageHeight: 1000,
+      stageDepth: 1000,
     });
+
+    
+    this.currentStudio.currentStage
+      .then(stage => {
+        //this.doParticleEngine(page);
+        //this.doSubShape(page);
+      });
 
     Lifecycle.observable.subscribe(event => {
       console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
@@ -64,11 +86,47 @@ export class WorldComponent implements OnInit, AfterViewInit {
 
   }
 
+  doAddStage() {
+    this.currentStudio.createStage();
+  }
+
+  doDeleteStage() {
+
+  }
+
+  doGoToStage(stage: foStage) {
+    this.currentStudio.currentStage = stage;
+  }
+
+
+
+  doSetCurrentStage(stage: foStage) {
+
+    //this.screen3D.clear();
+    
+    //with the render function you could
+    //1) render a single page
+    //2) render pages like layers
+    //3) render pages side by side
+    this.screen3D.preRender3D = (screen:Screen3D) => {
+      stage.preRender3D(screen);
+    }
+    this.screen3D.go();
+
+    //this.addEventHooks(page);
+  }
+
   public ngAfterViewInit() {
 
 
     this.screen3D.setRoot(this.worldRef.nativeElement, this.pageWidth, this.pageHeight);
     this.sharing.startSharing();
+
+    BroadcastChange.observable.subscribe(item => {
+      if ( item.isCmd('currentStage')) {
+        this.doSetCurrentStage(this.currentStudio.currentStage);
+      }
+    });
 
     this.screen3D.addBlock(100,400,900)
 
@@ -82,5 +140,46 @@ export class WorldComponent implements OnInit, AfterViewInit {
 
    // this.screen3D.go();
   }
+
+  // addEventHooks(page: foPage) {
+
+  //   page.onItemHoverEnter = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
+  //     if (shape) {
+  //       shape.drawHover = function (ctx: CanvasRenderingContext2D) {
+  //         ctx.strokeStyle = "yellow";
+  //         ctx.lineWidth = 4;
+  //         shape.drawOutline(ctx);
+  //       }
+  //     }
+  //   }
+
+  //   page.onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
+  //     if (shape) {
+  //       shape.drawHover = undefined;
+  //     }
+  //   }
+
+  //   page.onItemOverlapEnter = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+
+  //     if (shapeUnder) {
+  //       shapeUnder.drawHover = function (ctx: CanvasRenderingContext2D) {
+  //         ctx.strokeStyle = "green";
+  //         ctx.lineWidth = 8;
+  //         shapeUnder.drawOutline(ctx);
+  //         ctx.strokeStyle = "yellow";
+  //         ctx.lineWidth = 4;
+  //         shapeUnder.drawOutline(ctx);
+  //       }
+  //     }
+  //   }
+
+  //   page.onItemOverlapExit = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+
+  //     if (shapeUnder) {
+  //       shapeUnder.drawHover = undefined;
+  //     }
+  //   }
+
+  // }
 
 }

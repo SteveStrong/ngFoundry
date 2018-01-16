@@ -98,7 +98,7 @@ export class foTools {
         return myNamespace;
     };
 
-    getType(obj) {
+    getType(obj):string {
         let myType = obj.myType ? obj.myType.split('::') : [''];
         myType = myType.length == 2 ? myType[1] : myType[0];
         return myType;

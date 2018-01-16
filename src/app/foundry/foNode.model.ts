@@ -153,7 +153,29 @@ export class foNode extends foObject implements iNode {
         let list = this.nodes;
         return list && list.hasMembers;
     }
+
+    isInstanceOf(type) {
+        return this instanceof type ? true : false;
+    }
+
+    isType(type) {
+        if (type === this.myType) return true;
+        if (!this.myType) return false;
+        //remember a type may be preceeded with a namespace  knowtshare::note
+        return type && Tools.matches(type,this.myType);
+    }
+
+    isOfType(type) {
+        var found = this.isType(type);
+        if (found) return true;
+        //var myType = Tools.getType(this);
+        return type && Tools.matches(type,this.myType);
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';
 RuntimeType.define<foNode>(foNode);
+
+Tools['isaNode'] = function (obj) {
+    return obj && obj.isInstanceOf(foNode);
+};

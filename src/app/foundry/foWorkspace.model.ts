@@ -1,7 +1,10 @@
+import { Tools, foNames } from './foTools'
+
 import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
 import { foDictionary } from './foDictionary.model'
 import { foDocument } from './foDocument.model'
+import { foStudio } from './foStudio.model'
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { foObject } from 'app/foundry/foObject.model';
 
@@ -74,6 +77,7 @@ export class foWorkspace extends foKnowledge {
     private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
     private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
     private _document: foDocument = new foDocument({}, [], this);
+    private _studio: foStudio = new foStudio({}, [], this);
 
     constructor(spec?: any) {
         super(spec);
@@ -81,6 +85,10 @@ export class foWorkspace extends foKnowledge {
 
     get activePage() {
         return this._document.currentPage
+    }
+
+    get activeStage() {
+        return this._studio.currentStage
     }
 
     select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
@@ -91,6 +99,10 @@ export class foWorkspace extends foKnowledge {
         this.stencil.select(where, result, deep);
   
         return result;
+    }
+
+    get studio() {
+        return this._studio;
     }
 
     get document() {
@@ -112,3 +124,7 @@ export class foWorkspace extends foKnowledge {
 }
 
 export let globalWorkspace: foWorkspace = new foWorkspace();
+
+Tools['isaWorkspace'] = function (obj) {
+    return obj && obj.isInstanceOf(foWorkspace);
+};

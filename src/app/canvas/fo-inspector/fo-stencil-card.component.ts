@@ -53,8 +53,11 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
   }
 
   doCreate() {
-    let page = globalWorkspace.activePage;
     let result;
+
+    let page = globalWorkspace.activePage;
+    let stage = globalWorkspace.activeStage;
+
 
     if ( this.knowledge['run'] ) {
       let list = this.knowledge['run']();
@@ -66,9 +69,16 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
       result = list[0];
       Toast.info("Created", names.join(','))
     } else {
-      result = this.knowledge.newInstance().defaultName()
-      .dropAt(page.centerX, page.centerY)
+      result = this.knowledge.newInstance().defaultName();
+
+      if ( result.is2D() ) {
+        result.dropAt(page.centerX, page.centerY)
         .addAsSubcomponent(page);
+      }
+      if ( result.is3D() ) {
+        result.dropAt(stage.centerX, stage.centerY)
+        .addAsSubcomponent(stage);
+      }
   
       Toast.info("Created", result.displayName)
     }
