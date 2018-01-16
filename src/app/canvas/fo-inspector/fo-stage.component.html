@@ -1,0 +1,8 @@
+<ng-container>
+  <div class="panel panel-default">
+    <div (click)="gotoStage()" class="panel-body">{{stage.displayName}}</div>
+    <ng-container *ngFor="let node of stage.nodes.members; let i = index; let isOdd = odd">
+      <fo-stage-panel [node]="node"></fo-stage-panel>
+    </ng-container>
+  </div>
+</ng-container>

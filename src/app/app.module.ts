@@ -57,6 +57,9 @@ import { foConceptCardComponent } from './canvas/fo-inspector/fo-concept-card.co
 import { WorldComponent } from './canvas/world.component';
 import { foEventsComponent } from './canvas/fo-inspector/fo-events.component';
 import { ZoneTestComponent } from './zone-test/zone-test.component';
+import { foStagePanelComponent } from './canvas/fo-inspector/fo-stage-panel.component';
+import { foStageComponent } from './canvas/fo-inspector/fo-stage.component';
+import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +102,10 @@ import { ZoneTestComponent } from './zone-test/zone-test.component';
     foConceptCardComponent,
     WorldComponent,
     foEventsComponent,
-    ZoneTestComponent
+    ZoneTestComponent,
+    foStagePanelComponent,
+    foStageComponent,
+    foStudioComponent
   ],
   imports: [
     BrowserAnimationsModule,

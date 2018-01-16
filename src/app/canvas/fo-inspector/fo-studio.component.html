@@ -1,0 +1,10 @@
+<ng-container>
+  <div class="panel panel-default">
+    <div class="panel-body">{{studio.displayName}}</div>
+    <tabset type="pills">
+      <tab [heading]='stage.myName' *ngFor="let stage of studio.stages.members; let i = index; let isOdd = odd">
+          <fo-stage [stage]="stage"></fo-stage>
+      </tab>
+    </tabset>
+  </div>
+</ng-container>
