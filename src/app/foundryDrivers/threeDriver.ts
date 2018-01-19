@@ -1,7 +1,7 @@
 
 import { Scene, PerspectiveCamera, OrthographicCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
 
-import { Vector3, Vector2, Quaternion, EventDispatcher, OrbitControls } from 'three';
+import { Vector3, Vector2, Object3D, Quaternion, EventDispatcher } from 'three';
 
 let STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
 
@@ -14,10 +14,10 @@ let MOUSEBUTTONS = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
 
 
 export class OrbitConstraint {
-    object;
+    camera;
 
-    constructor(obj) {
-        this.object = obj
+    constructor(camera) {
+        this.camera = camera;
     }
 
 
@@ -86,7 +86,7 @@ export class OrbitConstraint {
     panLeft(distance: number = 0) {
 
         let v = new Vector3();
-        let te = this.object.matrix.elements;
+        let te = this.camera.matrix.elements;
         // get X column of matrix
         v.set(te[0], te[1], te[2]);
         v.multiplyScalar(- distance);
@@ -97,7 +97,7 @@ export class OrbitConstraint {
     // pass in distance in world space to move up
     panUp(distance: number = 0) {
         let v = new Vector3();
-        let te = this.object.matrix.elements;
+        let te = this.camera.matrix.elements;
 
         // get Y column of matrix
         v.set(te[4], te[5], te[6]);
@@ -110,25 +110,25 @@ export class OrbitConstraint {
     // right and down are positive
     pan(deltaX: number, deltaY: number, screenWidth: number, screenHeight: number) {
 
-        if (this.object instanceof PerspectiveCamera) {
+        if (this.camera instanceof PerspectiveCamera) {
 
             // perspective
-            let position = this.object.position;
+            let position = this.camera.position;
             let offset = position.clone().sub(this.target);
             let targetDistance = offset.length();
 
             // half of the fov is center to top of screen
-            targetDistance *= Math.tan((this.object.fov / 2) * Math.PI / 180.0);
+            targetDistance *= Math.tan((this.camera.fov / 2) * Math.PI / 180.0);
 
             // we actually don't use screenWidth, since perspective camera is fixed to screen height
             this.panLeft(2 * deltaX * targetDistance / screenHeight);
             this.panUp(2 * deltaY * targetDistance / screenHeight);
 
-        } else if (this.object instanceof OrthographicCamera) {
+        } else if (this.camera instanceof OrthographicCamera) {
 
             // orthographic
-            this.panLeft(deltaX * (this.object.right - this.object.left) / screenWidth);
-            this.panUp(deltaY * (this.object.top - this.object.bottom) / screenHeight);
+            this.panLeft(deltaX * (this.camera.right - this.camera.left) / screenWidth);
+            this.panUp(deltaY * (this.camera.top - this.camera.bottom) / screenHeight);
 
         } else {
 
@@ -141,14 +141,14 @@ export class OrbitConstraint {
 
     dollyIn(dollyScale: number) {
 
-        if (this.object instanceof PerspectiveCamera) {
+        if (this.camera instanceof PerspectiveCamera) {
 
             this.scale /= dollyScale;
 
-        } else if (this.object instanceof OrthographicCamera) {
+        } else if (this.camera instanceof OrthographicCamera) {
 
-            this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom * dollyScale));
-            this.object.updateProjectionMatrix();
+            this.camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.camera.zoom * dollyScale));
+            this.camera.updateProjectionMatrix();
             this.zoomChanged = true;
 
         } else {
@@ -161,14 +161,14 @@ export class OrbitConstraint {
 
     dollyOut(dollyScale: number) {
 
-        if (this.object instanceof PerspectiveCamera) {
+        if (this.camera instanceof PerspectiveCamera) {
 
             this.scale *= dollyScale;
 
-        } else if (this.object instanceof OrthographicCamera) {
+        } else if (this.camera instanceof OrthographicCamera) {
 
-            this.object.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.object.zoom / dollyScale));
-            this.object.updateProjectionMatrix();
+            this.camera.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.camera.zoom / dollyScale));
+            this.camera.updateProjectionMatrix();
             this.zoomChanged = true;
 
         } else {
@@ -184,100 +184,89 @@ export class OrbitConstraint {
         let offset = new Vector3();
 
         // so camera.up is the orbit axis
-        let quat = new Quaternion().setFromUnitVectors(this.object.up, new Vector3(0, 1, 0));
+        let quat = new Quaternion().setFromUnitVectors(this.camera.up, new Vector3(0, 1, 0));
         let quatInverse = quat.clone().inverse();
 
         let lastPosition = new Vector3();
         let lastQuaternion = new Quaternion();
 
-        return () => {
 
-            let position = this.object.position;
+        let position = this.camera.position;
 
-            offset.copy(position).sub(this.target);
+        offset.copy(position).sub(this.target);
 
-            // rotate offset to "y-axis-is-up" space
-            offset.applyQuaternion(quat);
+        // rotate offset to "y-axis-is-up" space
+        offset.applyQuaternion(quat);
 
-            // angle from z-axis around y-axis
+        // angle from z-axis around y-axis
 
-            this.theta = Math.atan2(offset.x, offset.z);
+        this.theta = Math.atan2(offset.x, offset.z);
 
-            // angle from y-axis
+        // angle from y-axis
 
-            this.phi = Math.atan2(Math.sqrt(offset.x * offset.x + offset.z * offset.z), offset.y);
+        this.phi = Math.atan2(Math.sqrt(offset.x * offset.x + offset.z * offset.z), offset.y);
 
-            this.theta += this.thetaDelta;
-            this.phi += this.phiDelta;
+        this.theta += this.thetaDelta;
+        this.phi += this.phiDelta;
 
-            // restrict theta to be between desired limits
-            this.theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this.theta));
+        // restrict theta to be between desired limits
+        this.theta = Math.max(this.minAzimuthAngle, Math.min(this.maxAzimuthAngle, this.theta));
 
-            // restrict phi to be between desired limits
-            this.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this.phi));
+        // restrict phi to be between desired limits
+        this.phi = Math.max(this.minPolarAngle, Math.min(this.maxPolarAngle, this.phi));
 
-            // restrict phi to be between EPS and PI-EPS
-            this.phi = Math.max(this.EPS, Math.min(Math.PI - this.EPS, this.phi));
+        // restrict phi to be between EPS and PI-EPS
+        this.phi = Math.max(this.EPS, Math.min(Math.PI - this.EPS, this.phi));
 
-            var radius = offset.length() * this.scale;
+        var radius = offset.length() * this.scale;
 
-            // restrict radius to be between desired limits
-            radius = Math.max(this.minDistance, Math.min(this.maxDistance, radius));
+        // restrict radius to be between desired limits
+        radius = Math.max(this.minDistance, Math.min(this.maxDistance, radius));
 
-            // move target to panned location
-            this.target.add(this.panOffset);
+        // move target to panned location
+        this.target.add(this.panOffset);
 
-            offset.x = radius * Math.sin(this.phi) * Math.sin(this.theta);
-            offset.y = radius * Math.cos(this.phi);
-            offset.z = radius * Math.sin(this.phi) * Math.cos(this.theta);
+        offset.x = radius * Math.sin(this.phi) * Math.sin(this.theta);
+        offset.y = radius * Math.cos(this.phi);
+        offset.z = radius * Math.sin(this.phi) * Math.cos(this.theta);
 
-            // rotate offset back to "camera-up-vector-is-up" space
-            offset.applyQuaternion(quatInverse);
+        // rotate offset back to "camera-up-vector-is-up" space
+        offset.applyQuaternion(quatInverse);
 
-            position.copy(this.target).add(offset);
+        position.copy(this.target).add(offset);
 
-            this.object.lookAt(this.target);
+        this.camera.lookAt(this.target);
 
-            if (this.enableDamping === true) {
+        if (this.enableDamping === true) {
+            this.thetaDelta *= (1 - this.dampingFactor);
+            this.phiDelta *= (1 - this.dampingFactor);
 
-                this.thetaDelta *= (1 - this.dampingFactor);
-                this.phiDelta *= (1 - this.dampingFactor);
+        } else {
+            this.thetaDelta = 0;
+            this.phiDelta = 0;
+        }
 
-            } else {
+        this.scale = 1;
+        this.panOffset.set(0, 0, 0);
 
-                this.thetaDelta = 0;
-                this.phiDelta = 0;
+        // update condition is:
+        // min(camera displacement, camera rotation in radians)^2 > EPS
+        // using small-angle approximation cos(x/2) = 1 - x^2 / 8
 
-            }
+        if (this.zoomChanged ||
+            lastPosition.distanceToSquared(this.camera.position) > this.EPS ||
+            8 * (1 - lastQuaternion.dot(this.camera.quaternion)) > this.EPS) {
 
-            this.scale = 1;
-            this.panOffset.set(0, 0, 0);
-
-            // update condition is:
-            // min(camera displacement, camera rotation in radians)^2 > EPS
-            // using small-angle approximation cos(x/2) = 1 - x^2 / 8
-
-            if (this.zoomChanged ||
-                lastPosition.distanceToSquared(this.object.position) > this.EPS ||
-                8 * (1 - lastQuaternion.dot(this.object.quaternion)) > this.EPS) {
-
-                lastPosition.copy(this.object.position);
-                lastQuaternion.copy(this.object.quaternion);
-                this.zoomChanged = false;
-
-                return true;
-
-            }
-
-            return false;
-
-        };
-
+            lastPosition.copy(this.camera.position);
+            lastQuaternion.copy(this.camera.quaternion);
+            this.zoomChanged = false;
+        }
+        return true;
     }
 
 };
 
-export class OrbitingControls extends EventDispatcher {
+export class CustomOrbitControls extends EventDispatcher {
 
     // This set of controls performs orbiting, dollying (zooming), and panning. It maintains
     // the "up" direction as +Y, unlike the TrackballControls. Touch on tablet and phones is
@@ -288,42 +277,27 @@ export class OrbitingControls extends EventDispatcher {
     //    Pan - right mouse, or arrow keys / touch: three finger swipe
 
     constraint: OrbitConstraint;
-    object:any;
-    target:any;
+    camera: any;
+    target: any;
 
     domElement;
-    constructor(object, domElement) {
-        super()
-        this.constraint = new OrbitConstraint(object);
 
-        this.domElement = domElement !== undefined ? domElement : document;
+    rotateStart = new Vector2();
+    rotateEnd = new Vector2();
+    rotateDelta = new Vector2();
 
-        this.domElement.addEventListener('contextmenu', this.contextmenu, false);
+    panStart = new Vector2();
+    panEnd = new Vector2();
+    panDelta = new Vector2();
 
-        this.domElement.addEventListener('mousedown', this.onMouseDown, false);
-        this.domElement.addEventListener('mousewheel', this.onMouseWheel, false);
-        this.domElement.addEventListener('DOMMouseScroll', this.onMouseWheel, false); // firefox
+    dollyStart = new Vector2();
+    dollyEnd = new Vector2();
+    dollyDelta = new Vector2();
 
-        this.domElement.addEventListener('touchstart', this.touchstart, false);
-        this.domElement.addEventListener('touchend', this.touchend, false);
-        this.domElement.addEventListener('touchmove', this.touchmove, false);
-
-        window.addEventListener('keydown', this.onKeyDown, false);
-    }
-
-    getPolarAngle() {
-        return this.constraint.getPolarAngle();
-    };
-
-    getAzimuthalAngle() {
-        return this.constraint.getAzimuthalAngle();
-    };
+    state = STATE.NONE;
 
     // Set to false to disable this control
     enabled = true;
-
-    // center is old, deprecated; use "target" instead
-    center = this.target;
 
     // This option actually enables dollying in and out; left as "zoom" for
     // backwards compatibility.
@@ -347,32 +321,34 @@ export class OrbitingControls extends EventDispatcher {
     // Set to false to disable use of the keys
     enableKeys = true;
 
+    constructor(camera, domElement) {
+        super()
+        this.constraint = new OrbitConstraint(camera);
 
+        this.domElement = domElement !== undefined ? domElement : document;
 
-    ////////////
-    // internals
+        this.domElement.addEventListener('contextmenu', this.contextmenu, false);
 
-    rotateStart = new Vector2();
-    rotateEnd = new Vector2();
-    rotateDelta = new Vector2();
+        this.domElement.addEventListener('mousedown', this.onMouseDown.bind(this), false);
+        this.domElement.addEventListener('mousewheel', this.onMouseWheel.bind(this), false);
+        this.domElement.addEventListener('DOMMouseScroll', this.onMouseWheel.bind(this), false); // firefox
 
-    panStart = new Vector2();
-    panEnd = new Vector2();
-    panDelta = new Vector2();
+        this.domElement.addEventListener('touchstart', this.touchstart.bind(this), false);
+        this.domElement.addEventListener('touchend', this.touchend.bind(this), false);
+        this.domElement.addEventListener('touchmove', this.touchmove.bind(this), false);
 
-    dollyStart = new Vector2();
-    dollyEnd = new Vector2();
-    dollyDelta = new Vector2();
+        window.addEventListener('keydown', this.onKeyDown.bind(this), false);
 
+    }
 
+    getPolarAngle() {
+        return this.constraint.getPolarAngle();
+    };
 
-    state = STATE.NONE;
+    getAzimuthalAngle() {
+        return this.constraint.getAzimuthalAngle();
+    };
 
-    // for reset
-
-    target0 = this.target.clone();
-    position0 = this.object.position.clone();
-    zoom0 = this.object.zoom;
 
     // events
 
@@ -401,11 +377,7 @@ export class OrbitingControls extends EventDispatcher {
 
         this.state = STATE.NONE;
 
-        this.target.copy(this.target0);
-        this.object.position.copy(this.position0);
-        this.object.zoom = this.zoom0;
-
-        this.object.updateProjectionMatrix();
+        this.camera.updateProjectionMatrix();
         this.dispatchEvent(this.changeEvent);
 
         this.update();
@@ -454,8 +426,8 @@ export class OrbitingControls extends EventDispatcher {
 
         if (this.state !== STATE.NONE) {
 
-            document.addEventListener('mousemove', this.onMouseMove, false);
-            document.addEventListener('mouseup', this.onMouseUp, false);
+            document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
+            document.addEventListener('mouseup', this.onMouseUp.bind(this), false);
             this.dispatchEvent(this.startEvent);
 
         }
@@ -517,7 +489,9 @@ export class OrbitingControls extends EventDispatcher {
 
         }
 
-        if (this.state !== STATE.NONE) this.update();
+        if (this.state !== STATE.NONE) {
+            this.update();
+        }
 
     }
 
@@ -746,8 +720,8 @@ export class OrbitingControls extends EventDispatcher {
 
 
 
-// force an update at start
-//update();
+    // force an update at start
+    //update();
 
 };
 
@@ -782,7 +756,8 @@ export class Screen3D {
     scene: Scene;
     camera: PerspectiveCamera;
     renderer: WebGLRenderer;
-    controls: OrbitControls;
+    controls: any;
+    body: Object3D = new Object3D();
 
     render3D = (screen: Screen3D, deep: boolean = true) => void {};
 
@@ -792,8 +767,9 @@ export class Screen3D {
 
     public doAnimate = (): void => {
         this.render3D(this);
-        this.controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
+        //this.controls.update(); // required if controls.enableDamping = true, or if controls.autoRotate = true
 
+        //this.body.animate && this.body.animate();
         this.renderer.render(this.scene, this.camera);
         this._request = this.requestAnimation(this.doAnimate);
     }
@@ -829,6 +805,7 @@ export class Screen3D {
         this.height = Number.isNaN(height) ? window.innerHeight : height;
 
         this.scene = new Scene();
+        this.scene.add(this.body)
 
         this.camera = new PerspectiveCamera(75, this.width / this.height, 1, 10000);
         this.camera.position.z = 1000;
@@ -836,7 +813,8 @@ export class Screen3D {
         this.renderer = new WebGLRenderer();
         this.renderer.setSize(this.width, this.height);
 
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls = new CustomOrbitControls(this.camera, this.renderer.domElement);
+        //this.controls.addEventListener('change', this.renderer); // add this only if there is no animation loop (requestAnimationFrame)
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.25;
         this.controls.enableZoom = true;
@@ -846,7 +824,8 @@ export class Screen3D {
     }
 
     addToScene(obj: any) {
-        this.scene.add(obj.mesh);
+        this.body.add(obj.mesh);
+        //this.scene.add(obj.mesh);
     }
 
     addBlock(width: number, height: number, depth: number) {

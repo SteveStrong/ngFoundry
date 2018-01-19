@@ -53,6 +53,8 @@ export class WorldComponent implements OnInit, AfterViewInit {
     this.currentStudio.currentStage.deleteSelected();
   }
 
+
+
   doOnOff() {
     this.label = this.screen3D.toggleOnOff() ? "On" : "Off"
   }
@@ -114,6 +116,10 @@ export class WorldComponent implements OnInit, AfterViewInit {
     this.screen3D.go();
 
     //this.addEventHooks(page);
+  }
+
+  doPan() {
+    this.screen3D.camera.position.z -= 100;
   }
 
   public ngAfterViewInit() {
