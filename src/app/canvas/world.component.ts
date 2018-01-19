@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
+import { TweenLite, Back } from "gsap";
+
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foModel } from "../foundry/foModel.model";
 
@@ -67,7 +69,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
       stageDepth: 1000,
     });
 
-    
+
     this.currentStudio.currentStage
       .then(stage => {
         //this.doParticleEngine(page);
@@ -105,12 +107,12 @@ export class WorldComponent implements OnInit, AfterViewInit {
   doSetCurrentStage(stage: foStage) {
 
     //this.screen3D.clear();
-    
+
     //with the render function you could
     //1) render a single page
     //2) render pages like layers
     //3) render pages side by side
-    this.screen3D.render3D = (screen:Screen3D, deep: boolean = true) => {
+    this.screen3D.render3D = (screen: Screen3D, deep: boolean = true) => {
       stage.render3D(screen);
     }
     this.screen3D.go();
@@ -118,8 +120,33 @@ export class WorldComponent implements OnInit, AfterViewInit {
     //this.addEventHooks(page);
   }
 
-  doPan() {
-    this.screen3D.camera.position.z -= 100;
+  doAxis() {
+
+
+
+    this.screen3D.addAxisHelper(1100)
+      .addGridHelper(1000, 50, helper => {
+
+        //let rot = this.screen3D.euler(Math.PI / 2, 0, 0);
+
+      //   TweenLite.to(helper.location, 2000, {
+      //     x: rot.x,
+      //     y: rot.y,
+      //     z: rot.z,
+      //     ease: Back.ease
+      //  });
+       helper.rotation.copy(this.screen3D.euler(Math.PI / 2, 0, 0));
+      })
+      .addGridHelper(1000, 50, helper => {
+        helper.rotation.copy(this.screen3D.euler(0, Math.PI / 2, 0));
+      })
+      .addGridHelper(1000, 50, helper => {
+        helper.rotation.copy(this.screen3D.euler(0, 0, Math.PI / 2));
+      })
+  }
+
+  doWorld() {
+    this.screen3D.addGlobe();
   }
 
   public ngAfterViewInit() {
@@ -128,13 +155,29 @@ export class WorldComponent implements OnInit, AfterViewInit {
     this.screen3D.setRoot(this.worldRef.nativeElement, this.pageWidth, this.pageHeight);
     this.sharing.startSharing();
 
+
+
     BroadcastChange.observable.subscribe(item => {
-      if ( item.isCmd('currentStage')) {
+      if (item.isCmd('currentStage')) {
         this.doSetCurrentStage(this.currentStudio.currentStage);
       }
     });
 
     this.doSetCurrentStage(this.currentStudio.currentStage);
+
+
+    // this.screen3D.addAxisHelper(1100)
+    //   .addGridHelper(1000, 50, helper => {
+    //     helper.rotation.copy(this.screen3D.euler(Math.PI / 2, 0, 0));
+    //   })
+    //   .addGridHelper(1000, 50, helper => {
+    //     helper.rotation.copy(this.screen3D.euler(0, Math.PI / 2, 0));
+    //   })
+    //   .addGridHelper(1000, 50, helper => {
+    //     helper.rotation.copy(this.screen3D.euler(0, 0, Math.PI / 2));
+    //   })
+
+
 
     //this.screen3D.addBlock(100,400,900)
 
@@ -146,7 +189,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
     //   page.render(ctx);
     // }
 
-   // this.screen3D.go();
+    // this.screen3D.go();
   }
 
   // addEventHooks(page: foPage) {

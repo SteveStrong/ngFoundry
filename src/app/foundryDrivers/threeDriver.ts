@@ -1,7 +1,7 @@
 
-import { Scene, PerspectiveCamera, OrthographicCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
+import { Scene, PerspectiveCamera, OrthographicCamera, BoxGeometry, MeshBasicMaterial, MeshPhongMaterial, Mesh, WebGLRenderer } from 'three';
 
-import { Vector3, Vector2, Object3D, Quaternion, EventDispatcher } from 'three';
+import { Vector3, Vector2, Object3D, Quaternion, GridHelper, AxisHelper, SphereGeometry, TextureLoader, Euler, EventDispatcher } from 'three';
 
 let STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
 
@@ -798,6 +798,74 @@ export class Screen3D {
         this.scene = new Scene();
     }
 
+    cameraPosition(x: number, y: number, z: number) {
+        var pos = this.camera.position;
+        pos.x = x || 0;
+        pos.y = y || 0;
+        pos.z = z || 0;
+        return this;
+    }
+
+    zoomToPosition(pos) {
+        this.camera.position.set(pos.x, pos.y, pos.z);
+        return this;
+    }
+
+    lookAtPosition(pos) {
+        this.camera.lookAt(pos);
+        return this;
+    }
+
+    addGridHelper(size?: number, step?: number, onCompete?) {
+        let gridHelper = new GridHelper(size || 100, step || 10);
+        var scene = this.scene;
+        scene.add(gridHelper);
+        onCompete && onCompete(gridHelper, scene);
+        return this;
+    }
+
+    addAxisHelper(size?: number, onCompete?) {
+        var axisHelper = new AxisHelper(size || 50);
+        var scene = this.scene;
+        scene.add(axisHelper);
+        onCompete && onCompete(axisHelper, scene);
+        return this;
+    }
+
+    euler(rx: number, ry: number, rz: number) {
+        return new Euler(rx, ry, rz)
+    }
+
+    EARTH_RADIUS: number = 637;
+    globeMesh: Mesh;
+    addGlobe(noTexture?, radius?) {
+        if (this.globeMesh) {
+            return this.globeMesh;
+        }
+
+        var material;
+        var spGeo = new SphereGeometry(radius || this.EARTH_RADIUS, 50, 50);
+
+        //https://threejs.org/docs/#api/loaders/TextureLoader
+        if (!noTexture) {
+            var planetTexture = new TextureLoader().load('https://jessicadrossin.com/2015/06/commercial-gallery-pic-11/'); //"assets/world-big-2-grey.jpg");
+            material = new MeshPhongMaterial({
+                map: planetTexture,
+                shininess: 0.8
+            });
+        } else {
+            material = new MeshBasicMaterial({
+                color: 0x11ff11,
+                wireframe: true
+            });
+        }
+
+        this.globeMesh = new Mesh(spGeo, material);
+        this.scene.add(this.globeMesh);
+
+        return this;
+    }
+
     setRoot(nativeElement: HTMLElement, width: number = Number.NaN, height: number = Number.NaN): HTMLElement {
 
         // // set the width and height
@@ -805,7 +873,7 @@ export class Screen3D {
         this.height = Number.isNaN(height) ? window.innerHeight : height;
 
         this.scene = new Scene();
-        this.scene.add(this.body)
+        //this.scene.add(this.body)
 
         this.camera = new PerspectiveCamera(75, this.width / this.height, 1, 10000);
         this.camera.position.z = 1000;
@@ -820,12 +888,30 @@ export class Screen3D {
         this.controls.enableZoom = true;
 
         nativeElement.appendChild(this.renderer.domElement);
+
+        let onWindowResize = () => {
+            let element = nativeElement;
+            if (element) {
+                this.camera.aspect = element.offsetWidth / element.offsetHeight;
+                this.renderer.setSize(element.offsetWidth, element.offsetHeight);
+            } else {
+              this.camera.aspect = window.innerWidth / window.innerHeight;
+              this.renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            this.camera.updateProjectionMatrix();
+        }
+
+
+        window.addEventListener('resize', onWindowResize, false);
+
         return nativeElement;
     }
 
+
+
     addToScene(obj: any) {
-        this.body.add(obj.mesh);
-        //this.scene.add(obj.mesh);
+        //this.body.add(obj.mesh);
+        this.scene.add(obj.mesh);
     }
 
     addBlock(width: number, height: number, depth: number) {
