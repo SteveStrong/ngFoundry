@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { Tools } from "../../foundry/foTools";
+
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
 import { foGlyph2D } from "../../foundry/foGlyph2D.model";
 
@@ -19,7 +21,7 @@ export class foPagePanelComponent implements OnInit {
 
   ngOnInit() {
     let myClass = this.node.myClass;
-    let spec = globalWorkspace.library.establish('stencil').concepts.findItem(myClass);
+    let spec = globalWorkspace.select(item => Tools.matches(item.myName, myClass)).first();
     if (spec) {
       this.commands = spec.commands;
     }

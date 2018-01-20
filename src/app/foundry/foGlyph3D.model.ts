@@ -66,6 +66,13 @@ export class foGlyph3D extends foGlyph2D {
     is2D() { return false; }
     is3D() { return true; }
 
+    smash() {
+        super.smash();
+        //add code to remove from model
+        //this._obj3D.remove(this._mesh);
+        this._mesh = undefined;
+        this._obj3D = undefined;
+    }
 
     geometry = (spec?:any):Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);

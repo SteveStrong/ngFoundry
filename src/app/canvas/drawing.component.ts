@@ -116,6 +116,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
     let moved = Lifecycle2D.pipe(filter(e => e.isCmd('moved')));
     let dropped = Lifecycle2D.pipe(filter(e => e.isCmd('dropped')));
+    let reparent = Lifecycle2D.pipe(filter(e => e.isCmd('reparent')));
     let created = Lifecycle2D.pipe(filter(e => e.isCmd('created') && e.value));
 
     moved.subscribe(event => {
@@ -128,23 +129,31 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     });
 
     dropped.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
-
       this.currentStudio.currentStage.found(event.myGuid, item => {
         let { x, y, angle } = event.value;
         item.dropAt(x, y, angle);
       })
     });
 
-    created.subscribe(event => {
+    reparent.subscribe(event => {
       console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      
+      this.currentStudio.currentStage.found(event.myGuid, shape => {
+        let parent = event.object.myParent();
+        parent && this.currentStudio.currentStage.found(parent.myGuid, 
+          (item) => {shape.reParent(item)},
+          (miss)=> {shape.reParent(this.currentStudio.currentStage)}
+        )
+      })
+    });
 
+    created.subscribe(event => {
       let stage = this.currentStudio.currentStage;
       stage.findItem(event.myGuid, () => {
         let knowledge = event.value;
         knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
-          let result = concept.newInstance(event.object.asJson)
-          result.addAsSubcomponent(stage);
+          let result = concept.newInstance(event.object.asJson);
+          stage.establishInDictionary(result);
         })
       })
 
