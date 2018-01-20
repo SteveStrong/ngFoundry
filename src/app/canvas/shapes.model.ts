@@ -1,5 +1,5 @@
 import { Tools } from '../foundry/foTools';
-import { cPoint, cMargin } from '../foundry/foGeometry2D';
+import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
 import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";

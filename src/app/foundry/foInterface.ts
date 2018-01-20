@@ -41,13 +41,13 @@ export interface iKnowledge extends iObject {
 }
 
 //FOR GLYPHS and SHAPES
-export interface iPoint {
+export interface iPoint2D {
     x: number;
     y: number;
     myName: string;
 
-    set(x: number, y: number): iPoint
-    add(x: number, y: number): iPoint
+    set(x: number, y: number): iPoint2D
+    add(x: number, y: number): iPoint2D
 }
 
 export interface iMargin {
@@ -83,7 +83,7 @@ export interface iFrame {
     set(x1: number, y1: number, x2: number, y2: number): iFrame;
     contains(x: number, y: number): boolean;
     merge(obj: iFrame): iFrame;
-    minmax(obj: iPoint): iFrame;
+    minmax(obj: iPoint2D): iFrame;
 }
 
 export interface iBox extends iRect {
@@ -105,13 +105,13 @@ export interface iShape extends iRect, iNode {
     render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
-    hitTest(hit: iPoint, ctx: CanvasRenderingContext2D): boolean;
+    hitTest(hit: iPoint2D, ctx: CanvasRenderingContext2D): boolean;
     overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
 
-    getOffset(loc: iPoint): iPoint;
-    getLocation(): iPoint;
-    moveTo(loc: iPoint, offset?: iPoint);
-    moveBy(loc: iPoint, offset?: iPoint)
+    getOffset(loc: iPoint2D): iPoint2D;
+    getLocation(): iPoint2D;
+    moveTo(loc: iPoint2D, offset?: iPoint2D);
+    moveBy(loc: iPoint2D, offset?: iPoint2D)
 
     setColor(color: string): string;
     setOpacity(opacity: number): number;

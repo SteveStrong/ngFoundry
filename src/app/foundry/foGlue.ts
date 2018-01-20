@@ -1,11 +1,11 @@
 
 import { Tools } from './foTools';
-import { ModelRef, iPoint } from './foInterface'
+import { ModelRef, iPoint2D } from './foInterface'
 
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
 import { foShape2D } from './foShape2D.model';
-import { foHandle } from './foHandle';
+import { foHandle2D } from './foHandle2D';
 import { Lifecycle } from './foLifecycle';
 
 
@@ -15,9 +15,9 @@ export class foGlue extends foNode {
     myTarget: ModelRef<foShape2D>;
     mySource: ModelRef<foShape2D>;
 
-    protected _targetHandle: foHandle;
-    get targetHandle(): foHandle { return this._targetHandle; }
-    set targetHandle(value: foHandle) {
+    protected _targetHandle: foHandle2D;
+    get targetHandle(): foHandle2D { return this._targetHandle; }
+    set targetHandle(value: foHandle2D) {
         this._targetHandle = value;
     }
 
@@ -32,8 +32,8 @@ export class foGlue extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (loc: iPoint) => void;
-    public doTargetMoveProxy: (loc: iPoint) => void;
+    public doSourceMoveProxy: (loc: iPoint2D) => void;
+    public doTargetMoveProxy: (loc: iPoint2D) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -68,11 +68,11 @@ export class foGlue extends foNode {
         return this;
     }
 
-    sourceMoved(loc: iPoint) {
+    sourceMoved(loc: iPoint2D) {
         this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
     }
 
-    targetMoved(loc: iPoint) {  
+    targetMoved(loc: iPoint2D) {  
         let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
         this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
     }

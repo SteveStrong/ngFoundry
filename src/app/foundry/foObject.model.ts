@@ -66,6 +66,9 @@ export class foObject implements iObject {
         this._displayName = value;
     }
 
+    is2D() { return false; }
+    is3D() { return false; }
+
     asReference(): string {
         let parent = this.myParent && this.myParent();
         if (!parent) {

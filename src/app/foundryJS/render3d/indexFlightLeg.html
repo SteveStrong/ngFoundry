@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html ng-app='foApp'>
+<head>
+    <meta charset="utf-8" />
+    <title>World Simulator</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <link href="vendor/vender.css" rel="stylesheet" />
+    <script src="vendor/vender.js"></script>
+
+    <script src="foundry/version.js"></script>
+    <script src="foundry/foundry.core.extensions.js"></script>
+    <script src="foundry/foundry.core.tools.js"></script>
+    <script src="foundry/foundry.core.dto.js"></script>
+    <script src="foundry/foundry.core.node.js"></script>
+    <script src="foundry/foundry.core.link.js"></script>
+
+    <script src="foundry/foundry.core.component.js"></script>
+    <script src="foundry/foundry.core.pubsub.js"></script>
+    <script src="foundry/foundry.core.property.js"></script>
+    <script src="foundry/foundry.core.collection.js"></script>
+
+
+    <script src="foundry/foundry.core.meta.js"></script>
+    <script src="foundry/foundry.core.factory.js"></script>
+    <script src="foundry/foundry.core.factoryrelate.js"></script>
+    <script src="foundry/foundry.core.entitydb.js"></script>
+    <script src="foundry/foundry.core.listops.js"></script>
+
+    <script src="geocalculations.js"></script>
+
+
+    <script src="indexFlightLeg.js"></script>
+    <script src="dataservice.js"></script>
+    <script src="ontologyflightmodel.js"></script>
+    <script src="render3dservice.js"></script>
+    <script src="timelinerenderservice.js"></script>
+
+
+
+</head>
+<body ng-controller="viewerController as vc">
+    <div class="row" style="height:100px">
+        <h1>{{ws.title}}</h1>
+        <div class="box" id="timeLine"></div>
+    </div>
+
+    <div class="row" >
+        <div id="earth" style="height:800px">
+        </div>
+    </div>
+
+
+</body>
+</html>

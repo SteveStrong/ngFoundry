@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foundry/foPubSub";
-import { cPoint, cFrame } from '../foundry/foGeometry2D';
-import { iPoint, Action } from '../foundry/foInterface'
+import { cPoint2D, cFrame } from '../foundry/foGeometry2D';
+import { iPoint2D, Action } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { foCollection } from '../foundry/foCollection.model'
@@ -13,7 +13,7 @@ import { foComponent } from '../foundry/foComponent.model'
 
 import { foGlyph2D } from '../foundry/foGlyph2D.model'
 import { foShape2D } from '../foundry/foShape2D.model'
-import { foHandle } from 'app/foundry/foHandle';
+import { foHandle2D } from 'app/foundry/foHandle2D';
 import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
@@ -55,7 +55,7 @@ export class foPage extends foShape2D {
 
     public pinX = (): number => { return 0 * this.width; }
     public pinY = (): number => { return 0 * this.height; }
-    public rotation = (): number => { return this.angle; }
+    public rotationZ = (): number => { return this.angle; }
 
     mouseLoc: any = {};
 
@@ -87,12 +87,12 @@ export class foPage extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.marginX + this.x, this.marginY + this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.marginX + this.x, this.marginY + this.y, this.scaleX, this.scaleY, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
 
-    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
+    findHitShape(hit: iPoint2D, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
         let found: foGlyph2D = undefined;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape: foGlyph2D = this.nodes.getMember(i);
@@ -134,6 +134,8 @@ export class foPage extends foShape2D {
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
             super.addSubcomponent(obj, properties);
+        }, child => { 
+            super.addSubcomponent(obj, properties)
         });
         return obj;
     }
@@ -171,10 +173,9 @@ export class foPage extends foShape2D {
     zoomBy(zoom: number) {
         this.scaleX *= zoom;
         this.scaleY *= zoom;
-
     }
 
-    zoomToCenter(g: cPoint, zoom: number, e: WheelEvent) {
+    zoomToCenter(g: cPoint2D, zoom: number, e: WheelEvent) {
 
         //you need to track this position in global space
         //so you can return it to the same location on the screen
@@ -198,14 +199,14 @@ export class foPage extends foShape2D {
         let shape: foGlyph2D = null;
         let shapeUnder: foGlyph2D = null;
         let hovershape: foGlyph2D = null;
-        let offset: iPoint = null;
-        let handles: foCollection<foHandle> = new foCollection<foHandle>()
-        let grab: foHandle = null;
-        let float: foHandle = null;
+        let offset: iPoint2D = null;
+        let handles: foCollection<foHandle2D> = new foCollection<foHandle2D>()
+        let grab: foHandle2D = null;
+        let float: foHandle2D = null;
 
-        function findHandle(loc: cPoint): foHandle {
+        function findHandle(loc: cPoint2D): foHandle2D {
             for (var i: number = 0; i < handles.length; i++) {
-                let handle: foHandle = handles.getChildAt(i);
+                let handle: foHandle2D = handles.getChildAt(i);
                 if (handle.hitTest(loc)) {
                     return handle;
                 }
@@ -216,7 +217,7 @@ export class foPage extends foShape2D {
             alert('code:' + keys.code)
         });
 
-        PubSub.Sub('mousedown', (loc: cPoint, e: MouseEvent, keys) => {
+        PubSub.Sub('mousedown', (loc: cPoint2D, e: MouseEvent, keys) => {
             this.onMouseLocationChanged(loc, "down", keys);
 
             grab = findHandle(loc);
@@ -245,7 +246,7 @@ export class foPage extends foShape2D {
 
         });
 
-        PubSub.Sub('mousemove', (loc: cPoint, e: MouseEvent, keys) => {
+        PubSub.Sub('mousemove', (loc: cPoint2D, e: MouseEvent, keys) => {
             if (findHandle(loc) && handles.length) {
                 //this.onHandleMoving(loc, handles.first(), keys);
                 this.onTrackHandles(loc, handles, keys);
@@ -314,7 +315,7 @@ export class foPage extends foShape2D {
             }
         });
 
-        PubSub.Sub('mouseup', (loc: cPoint, e: MouseEvent, keys) => {
+        PubSub.Sub('mouseup', (loc: cPoint2D, e: MouseEvent, keys) => {
             grab = null;
             this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
@@ -347,7 +348,7 @@ export class foPage extends foShape2D {
 
         });
 
-        PubSub.Sub('wheel', (loc: cPoint, g: cPoint, zoom: number, e: WheelEvent, keys) => {
+        PubSub.Sub('wheel', (loc: cPoint2D, g: cPoint2D, zoom: number, e: WheelEvent, keys) => {
             this.onMouseLocationChanged(loc, "wheel", keys);
             if (keys.shift && keys.ctrl) {
                 this.zoomToCenter(g, zoom, e);
@@ -355,7 +356,7 @@ export class foPage extends foShape2D {
         });
     }
 
-    public onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
+    public onMouseLocationChanged = (loc: cPoint2D, state: string, keys?: any): void => {
         this.mouseLoc = loc;
         this.mouseLoc.state = state;
         this.mouseLoc.keys = keys;
@@ -367,28 +368,28 @@ export class foPage extends foShape2D {
     public onItemChangedPosition = (shape: foGlyph2D): void => {
     }
 
-    public onItemOverlapEnter = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+    public onItemOverlapEnter = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
     }
 
-    public onItemOverlapExit = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+    public onItemOverlapExit = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
     }
 
-    public onItemHoverEnter = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
+    public onItemHoverEnter = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
     }
 
-    public onItemHoverExit = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
+    public onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
     }
 
-    public onHandleHoverEnter = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    public onHandleHoverEnter = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
     }
 
-    public onHandleMoving = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    public onHandleMoving = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
     }
 
-    public onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    public onHandleHoverExit = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
     }
 
-    public onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
+    public onTrackHandles = (loc: cPoint2D, handles: foCollection<foHandle2D>, keys?: any): void => {
     }
 
     drawGrid(ctx: CanvasRenderingContext2D) {

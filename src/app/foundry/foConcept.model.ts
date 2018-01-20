@@ -4,6 +4,7 @@ import { PubSub } from './foPubSub'
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
 import { foAttribute, foViewAttribute } from './foAttribute.model'
+import { Action } from "./foInterface";
 
 import { foObject } from './foObject.model'
 //import { foComponent } from './foComponent.model'
@@ -72,6 +73,17 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
+    usingRuntimeType(type:string, action:Action<foKnowledge>){
+        let found = RuntimeType.find(type);
+        let hold = this._create;
+        this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
+            return new found(properties, subcomponents, parent);
+        }
+        action(this);
+        this._create = hold;
+        return this;
+    }
+
 
     establishAttribute(key: string, spec?: any) {
         let attributes = this.attributes;
@@ -123,7 +135,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = this._create(spec, subcomponents, parent) as T;
         result.myClass = this.myName;
         result.initialize();
-        Lifecycle.created(result);
+        Lifecycle.created(result, this);
         return result;
     }
 

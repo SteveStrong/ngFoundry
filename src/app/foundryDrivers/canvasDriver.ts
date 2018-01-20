@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foundry/foPubSub";
 
-import { cPoint } from '../foundry/foGeometry2D';
+import { cPoint2D } from '../foundry/foGeometry2D';
 
 import { NgZone } from '@angular/core';
 
@@ -71,9 +71,9 @@ export class Screen2D {
     pubMouseEvents(canvas: HTMLCanvasElement) {
         let rect = canvas.getBoundingClientRect();
         //let body = canvas.ownerDocument.body;
-        let pt = new cPoint();
+        let pt = new cPoint2D();
 
-        function getMousePos(event: MouseEvent): cPoint {
+        function getMousePos(event: MouseEvent): cPoint2D {
             //let px = event.pageX;
             //let py = event.pageY;
 
@@ -132,7 +132,7 @@ export class Screen2D {
             let scale = 1.1;
             let zoom = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail))) > 0 ? scale : 1 / scale;
 
-            let g = new cPoint(e.offsetX, e.offsetY)
+            let g = new cPoint2D(e.offsetX, e.offsetY)
 
             PubSub.Pub('wheel', loc, g, zoom, e, keys);
         });

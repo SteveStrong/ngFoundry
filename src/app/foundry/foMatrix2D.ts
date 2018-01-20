@@ -19,7 +19,7 @@
  * @constructor
  **/
 
-import { cPoint } from './foGeometry2D';
+import { cPoint2D } from './foGeometry2D';
 
 
 export class Matrix2D {
@@ -230,14 +230,14 @@ export class Matrix2D {
  * @param {Point | Object} [pt] An object to copy the result into. If omitted a generic object with x/y properties will be returned.
  * @return {Point} This matrix. Useful for chaining method calls.
  **/
-    transformPoint(x: number, y: number, pt?: cPoint): cPoint {
-        pt = pt || new cPoint();
+    transformPoint(x: number, y: number, pt?: cPoint2D): cPoint2D {
+        pt = pt || new cPoint2D();
         pt.x = x * this.a + y * this.c + this.tx;
         pt.y = x * this.b + y * this.d + this.ty;
         return pt;
     };
 
-    invertPoint(x: number, y: number, pt?: cPoint): cPoint {
+    invertPoint(x: number, y: number, pt?: cPoint2D): cPoint2D {
         let inv = this.invertCopy();
         return inv.transformPoint(x, y, pt);
     };

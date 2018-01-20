@@ -1,0 +1,16 @@
+<div class="panel panel-default">
+  <div (click)="doToggleDetails()" class="panel-body">{{node.displayName}}</div>
+  <pre *ngIf="showDetails" class="well">{{node.asJson | json }}</pre>
+
+  <ng-container *ngFor="let cmd of commands; let i = index; let isOdd = odd">
+    <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
+  </ng-container>
+
+  <ng-container *ngIf="!node.nodes.isHidden ">
+    <p *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
+      <fo-page-panel [node]="node"></fo-page-panel>
+    </p>
+  </ng-container>
+
+
+</div>

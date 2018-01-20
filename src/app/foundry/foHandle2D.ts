@@ -1,9 +1,9 @@
 
 
-import { cPoint } from './foGeometry2D';
+import { cPoint2D } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iPoint } from './foInterface';
+import { iPoint2D } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
@@ -14,7 +14,7 @@ import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foHandle extends foNode {
+export class foHandle2D extends foNode {
 
     protected _x: number;
     protected _y: number;
@@ -46,7 +46,7 @@ export class foHandle extends foNode {
         this._color = value;
     }
 
-    public doMoveProxy: (loc: iPoint) => void;
+    public doMoveProxy: (loc: iPoint2D) => void;
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -78,7 +78,7 @@ export class foHandle extends foNode {
         return this;
     }
 
-    public moveTo(loc: iPoint, offset?: iPoint) {
+    public moveTo(loc: iPoint2D, offset?: iPoint2D) {
         //let x = loc.x + (offset ? offset.x : 0);
         //let y = loc.y + (offset ? offset.y : 0);
   
@@ -120,36 +120,36 @@ export class foHandle extends foNode {
         return this._invMatrix;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint) {
+    localToGlobal(x: number, y: number, pt?: cPoint2D) {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y, pt);
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint) {
+    globalToLocal(x: number, y: number, pt?: cPoint2D) {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt);
     };
 
-    localToGlobalPoint(pt: cPoint): cPoint {
+    localToGlobalPoint(pt: cPoint2D): cPoint2D {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(pt.x, pt.y, pt);
     };
 
-    globalCenter(): cPoint {
+    globalCenter(): cPoint2D {
         let {x, y} = this.pinLocation();
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y);
     };
 
-    public getOffset = (loc: iPoint): iPoint => {
+    public getOffset = (loc: iPoint2D): iPoint2D => {
         let x = this.x;
         let y = this.y;
-        return new cPoint(x - loc.x, y - loc.y);
+        return new cPoint2D(x - loc.x, y - loc.y);
     }
 
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint2D): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -162,7 +162,7 @@ export class foHandle extends foNode {
         return true;
     }
 
-    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 

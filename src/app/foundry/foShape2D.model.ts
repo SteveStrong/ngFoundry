@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from '../foundry/foGeometry2D';
-import { iPoint, iFrame } from '../foundry/foInterface'
+import { cPoint2D } from '../foundry/foGeometry2D';
+import { iPoint2D, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -46,7 +46,7 @@ export class foShape2D extends foGlyph2D {
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
-    public rotation = (): number => { return this.angle; }
+    public rotationZ = (): number => { return this.angle; }
 
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
@@ -104,13 +104,13 @@ export class foShape2D extends foGlyph2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint2D): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -124,7 +124,7 @@ export class foShape2D extends foGlyph2D {
     }
 
 
-    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -221,7 +221,7 @@ export class foShape2D extends foGlyph2D {
         return this.connectionPoints.findMember(name);
     }
 
-    public findConnectionPoint(loc: cPoint, e): foConnectionPoint {
+    public findConnectionPoint(loc: cPoint2D, e): foConnectionPoint {
         if (!this._connectionPoints) return;
 
         for (var i: number = 0; i < this.connectionPoints.length; i++) {

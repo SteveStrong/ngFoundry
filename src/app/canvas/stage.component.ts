@@ -1,33 +1,33 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Screen2D } from "../foundryDrivers/canvasDriver";
+import { Screen2D } from '../foundryDrivers/canvasDriver';
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 
-import { cPoint, cMargin } from '../foundry/foGeometry2D';
-import { Tools } from "../foundry/foTools";
+import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
+import { Tools } from '../foundry/foTools';
 
-import { foCollection } from "../foundry/foCollection.model";
+import { foCollection } from '../foundry/foCollection.model';
 
-import { Stencil } from "../foundry/foStencil";
+import { Stencil } from '../foundry/foStencil';
 
-import { foPage } from "../foundry/foPage.model";
+import { foPage } from '../foundry/foPage.model';
 
-import { foHandle } from "../foundry/foHandle";
-
-
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
-import { foShape1D } from "../foundry/foShape1D.model";
-import { foText2D } from "../foundry/foText2D.model";
-import { foImage } from "../foundry/foImage.model";
-import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
-import { particleEngine } from "./particle.model";
+import { foHandle2D } from '../foundry/foHandle2D';
 
 
-import { dRectangle, dGlue } from "./displayshapes.model";
-import { SharingService } from "../common/sharing.service";
+import { foGlyph2D } from '../foundry/foGlyph2D.model';
+import { foShape2D, shape2DNames } from '../foundry/foShape2D.model';
+import { foShape1D } from '../foundry/foShape1D.model';
+import { foText2D } from '../foundry/foText2D.model';
+import { foImage } from '../foundry/foImage.model';
+import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from './legoshapes.model';
+import { particleEngine } from './particle.model';
+
+
+import { dRectangle, dGlue } from './displayshapes.model';
+import { SharingService } from '../common/sharing.service';
 
 import { Lifecycle } from '../foundry/foLifecycle';
 import { globalWorkspace } from 'app/foundry/foWorkspace.model';
@@ -60,7 +60,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     private http: Http) {
     super();
 
-    this.myName = "Page 1"
+    this.myName = 'Page 1'
     globalWorkspace.document.currentPage = this;
   }
 
@@ -81,21 +81,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doVert() {
-    let pt = new cPoint(100, 150);
+    let pt = new cPoint2D(100, 150);
     this.layoutSubcomponentsVertical(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
     })
   }
 
   doHorz() {
-    let pt = new cPoint(100, 150);
+    let pt = new cPoint2D(100, 150);
     this.layoutSubcomponentsHorizontal(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
     })
   }
 
   addEventHooks() {
-    this.onItemHoverEnter = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
+    this.onItemHoverEnter = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Enter`);
@@ -104,14 +104,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       if (shape) {
         shape.drawHover = function (ctx: CanvasRenderingContext2D) {
-          ctx.strokeStyle = "yellow";
+          ctx.strokeStyle = 'yellow';
           ctx.lineWidth = 4;
           shape.drawOutline(ctx);
         }
       }
     }
 
-    this.onItemHoverExit = (loc: cPoint, shape: foGlyph2D, keys?: any): void => {
+    this.onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Hover (${loc.x},${loc.y}) Exit`);
@@ -123,7 +123,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onItemOverlapEnter = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+    this.onItemOverlapEnter = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Enter`);
@@ -132,17 +132,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
       if (shapeUnder) {
         shapeUnder.drawHover = function (ctx: CanvasRenderingContext2D) {
-          ctx.strokeStyle = "green";
+          ctx.strokeStyle = 'green';
           ctx.lineWidth = 8;
           shapeUnder.drawOutline(ctx);
-          ctx.strokeStyle = "yellow";
+          ctx.strokeStyle = 'yellow';
           ctx.lineWidth = 4;
           shapeUnder.drawOutline(ctx);
         }
       }
     }
 
-    this.onItemOverlapExit = (loc: cPoint, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
+    this.onItemOverlapExit = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       this.message = [];
       this.message.push(`Overlap (${loc.x},${loc.y}) Exit`);
@@ -154,7 +154,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }
     }
 
-    this.onHandleHoverEnter = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    this.onHandleHoverEnter = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
       //let shape = handle.myParentGlyph();
 
       this.message = [];
@@ -166,7 +166,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(handle);
     }
 
-    this.onTrackHandles = (loc: cPoint, handles: foCollection<foHandle>, keys?: any): void => {
+    this.onTrackHandles = (loc: cPoint2D, handles: foCollection<foHandle2D>, keys?: any): void => {
       this.message = [];
       handles.forEach(handle => {
         //if (handle.hitTest(loc)) {
@@ -178,7 +178,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     }
 
-    this.onHandleMoving = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    this.onHandleMoving = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
       //let shape = handle.myParentGlyph();
 
       this.message = [];
@@ -190,7 +190,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       //this.message.push(handle);
     }
 
-    this.onHandleHoverExit = (loc: cPoint, handle: foHandle, keys?: any): void => {
+    this.onHandleHoverExit = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
       //let shape = handle.myParentGlyph();
 
       this.message = [];
@@ -224,7 +224,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     //   //this.sharing.moveTo(shape, shape.getLocation());
     // }
 
-    this.onMouseLocationChanged = (loc: cPoint, state: string, keys?: any): void => {
+    this.onMouseLocationChanged = (loc: cPoint2D, state: string, keys?: any): void => {
       this.mouseLoc = loc;
       this.mouseLoc.state = state; 212
       this.mouseLoc.keys = keys;
@@ -259,7 +259,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       opacity: .1,
       width: 700,
       height: 700,
-    }).addCommands("doStart", "doStop", "doRotate");
+    }).addCommands('doStart', 'doStop', 'doRotate');
 
 
     let shape = <foGlyph2D>def.newInstance();
@@ -332,7 +332,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doImage() {
     let def = Stencil.define<foImage>('blocks::block2d', foImage, {
       background: 'green',
-      imageURL: "https://lorempixel.com/900/500?r=2",
+      imageURL: 'https://lorempixel.com/900/500?r=2',
       width: 100,
       height: 50
     });
@@ -365,7 +365,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       margin: new cMargin(10, 10, 10, 10),
       width: 80,
       height: 80,
-      imageURL: "http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg",
+      imageURL: 'http://backyardnaturalist.ca/wp-content/uploads/2011/06/goldfinch-feeder.jpg',
       angle: Tools.randomInt(-30, 30)
     }).LifecycleCreated().dropAt(330, 330).addAsSubcomponent(this);
 
@@ -475,7 +475,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         Tools.forEachKeyValue(item, (key, value) => {
           let attr = attribute.newInstance({
             context: key,
-            text: function () { return this.context + " : " }
+            text: function () { return this.context + ' : ' }
           }).addAsSubcomponent(body);
 
           formula.newInstance({
@@ -637,7 +637,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     RuntimeType.create(TwoByTwo, {
       color: 'pink',
-      myName: "main shape"
+      myName: 'main shape'
     }).dropAt(200, 200).addAsSubcomponent(this);
   }
 

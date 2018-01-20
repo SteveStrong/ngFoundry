@@ -19,7 +19,6 @@ import { TreeitemComponent } from './treeview/treeitem.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { WebglviewComponent } from './webglview/webglview.component';
 import { TestForcediagramComponent } from './networkview/test-forcediagram.component';
-import { TestSceen1Component } from './webglview/test-sceen1.component';
 
 import { DockerecosystemComponent } from './networkview/dockerecosystem.component';
 import { DockerecosystemService } from "./networkview/dockerecosystem.service";
@@ -57,6 +56,9 @@ import { foConceptCardComponent } from './canvas/fo-inspector/fo-concept-card.co
 import { WorldComponent } from './canvas/world.component';
 import { foEventsComponent } from './canvas/fo-inspector/fo-events.component';
 import { ZoneTestComponent } from './zone-test/zone-test.component';
+import { foStagePanelComponent } from './canvas/fo-inspector/fo-stage-panel.component';
+import { foStageComponent } from './canvas/fo-inspector/fo-stage.component';
+import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +72,7 @@ import { ZoneTestComponent } from './zone-test/zone-test.component';
     WelcomeComponent,
     WebglviewComponent,
     TestForcediagramComponent,
-    TestSceen1Component,
+
     DockerecosystemComponent,
     SwimlaneviewComponent,
     SwimlaneComponent,
@@ -99,7 +101,10 @@ import { ZoneTestComponent } from './zone-test/zone-test.component';
     foConceptCardComponent,
     WorldComponent,
     foEventsComponent,
-    ZoneTestComponent
+    ZoneTestComponent,
+    foStagePanelComponent,
+    foStageComponent,
+    foStudioComponent
   ],
   imports: [
     BrowserAnimationsModule,

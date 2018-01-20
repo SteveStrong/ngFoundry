@@ -1,6 +1,6 @@
 import { TestBed, async } from '@angular/core/testing';
 
-import { cPoint  } from '../foundry/foGeometry2D';
+import { cPoint2D  } from '../foundry/foGeometry2D';
 import { Matrix2D, Identity  } from '../foundry/foMatrix2D';
 
 
@@ -31,7 +31,7 @@ describe('Matrix2D', () => {
   it(`can translate a point`, async(() => {
     const obj = new Matrix2D();
     obj.translate(10,10);
-    let pt1 = new cPoint(10,20);
+    let pt1 = new cPoint2D(10,20);
 
     expect(pt1.x).toEqual(10);
     expect(pt1.y).toEqual(20);
@@ -46,7 +46,7 @@ describe('Matrix2D', () => {
   it(`can rotate a point`, async(() => {
     const obj = new Matrix2D();
     obj.rotate(90);
-    let pt1 = new cPoint(10,0);
+    let pt1 = new cPoint2D(10,0);
 
     expect(pt1.x).toEqual(10);
     expect(pt1.y).toEqual(0);

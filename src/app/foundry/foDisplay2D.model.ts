@@ -1,9 +1,9 @@
 
 import { Tools } from './foTools';
-import { cPoint, cRect } from './foGeometry2D';
+import { cPoint2D, cRect } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iObject, iNode, iShape, iPoint, iSize, Action, iRect } from './foInterface';
+import { iObject, iNode, iShape, iPoint2D, iSize, Action, iRect } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
@@ -63,14 +63,14 @@ export class foDisplay2D extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
              //console.log('getMatrix');
         }
         return this._matrix;
     };
 
 
-    public hitTestWithDraw = (hit: iPoint, ctx: CanvasRenderingContext2D): boolean => {
+    public hitTestWithDraw = (hit: iPoint2D, ctx: CanvasRenderingContext2D): boolean => {
         let x = hit.x;
         let y = hit.y;
         ///var ctx = DisplayObject._hitTestContext;

@@ -9,6 +9,18 @@ export enum foNames {
     ROOT = 'root'
 };
 
+// Converts numeric degrees to radians
+// if (typeof (Number.prototype.toRad) === "undefined") {
+//     Number.prototype.toRad = function () {
+//         return this * Math.PI / 180;
+//     }
+// }
+// if (typeof (Number.prototype.toDeg) === "undefined") {
+//     Number.prototype.toDeg = function () {
+//         return this * 180 / Math.PI;
+//     }
+// }
+
 export class foTools {
 
     // Speed up calls to hasOwnProperty
@@ -98,7 +110,7 @@ export class foTools {
         return myNamespace;
     };
 
-    getType(obj) {
+    getType(obj): string {
         let myType = obj.myType ? obj.myType.split('::') : [''];
         myType = myType.length == 2 ? myType[1] : myType[0];
         return myType;
@@ -124,12 +136,12 @@ export class foTools {
         return `rgb(${r},${g},${b})`;
     }
 
-    matches(str1:string,str2:string) {
-        if ( str1 === str2) return true;
+    matches(str1: string, str2: string) {
+        if (str1 === str2) return true;
         return str1 && str2 && str1.toLocaleLowerCase() == str2.toLocaleLowerCase();
     }
 
-    capitalizeFirstLetter (str1:string) {
+    capitalizeFirstLetter(str1: string) {
         return str1.charAt(0).toUpperCase() + str1.slice(1);
     }
 

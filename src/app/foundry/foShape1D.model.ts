@@ -1,11 +1,11 @@
 
 import { Tools } from '../foundry/foTools'
-import { cPoint } from '../foundry/foGeometry2D';
-import { iPoint } from '../foundry/foInterface'
+import { cPoint2D } from '../foundry/foGeometry2D';
+import { iPoint2D } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle } from '../foundry/foHandle'
+import { foHandle2D } from '../foundry/foHandle2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
@@ -69,18 +69,18 @@ export class foShape1D extends foShape2D {
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; };
-    public rotation = (): number => { return this.angle; }
+    public rotationZ = (): number => { return this.angle; }
 
-    public begin = (name?: string): cPoint => {
-        return new cPoint(this.startX, this.startY, name)
+    public begin = (name?: string): cPoint2D => {
+        return new cPoint2D(this.startX, this.startY, name)
     }
 
-    public end = (name?: string): cPoint => {
-        return new cPoint(this.finishX, this.finishY, name)
+    public end = (name?: string): cPoint2D => {
+        return new cPoint2D(this.finishX, this.finishY, name)
     }
 
-    public center = (name?: string): cPoint => {
-        return new cPoint((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
+    public center = (name?: string): cPoint2D => {
+        return new cPoint2D((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
     }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
@@ -97,7 +97,7 @@ export class foShape1D extends foShape2D {
         });
     }
 
-    private setStart(point: iPoint) {
+    private setStart(point: iPoint2D) {
         this.startX = point.x;
         this.startY = point.y;
         let { x: cX, y: cY } = this.center();
@@ -106,7 +106,7 @@ export class foShape1D extends foShape2D {
         this.width = 0;
     }
 
-    private setFinish(point: iPoint) {
+    private setFinish(point: iPoint2D) {
         this.finishX = point.x;
         this.finishY = point.y;
         let { x: cX, y: cY } = this.center();
@@ -159,7 +159,7 @@ export class foShape1D extends foShape2D {
         this.y = Number.isNaN(y) ? cY : y;
 
         let mtx = new Matrix2D();
-        mtx.appendTransform(this.x, this.y, 1, 1, ang + this.rotation(), 0, 0, cX, cY);
+        mtx.appendTransform(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
         let start = mtx.transformPoint(this.startX, this.startY);
         let finish = mtx.transformPoint(this.finishX, this.finishY);
         this.startX = start.x;
@@ -209,13 +209,13 @@ export class foShape1D extends foShape2D {
 
             let { angle } = this.angleDistance();
 
-            this._matrix.appendTransform(this.x, this.y, 1, 1, angle + this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, 1, 1, angle + this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint2D): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -230,7 +230,7 @@ export class foShape1D extends foShape2D {
     }
 
 
-    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -268,7 +268,7 @@ export class foShape1D extends foShape2D {
         ctx.restore();
     }
 
-    public createHandles(): foCollection<foHandle> {
+    public createHandles(): foCollection<foHandle2D> {
 
         let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
         let center = this.globalToLocalPoint(this.center(shape1DNames.center));

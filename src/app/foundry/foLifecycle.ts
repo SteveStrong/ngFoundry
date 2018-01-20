@@ -6,7 +6,7 @@ import { Tools } from './foTools';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { debounceTime, } from 'rxjs/operators';
+import { debounceTime, filter } from 'rxjs/operators';
 
 
 let counter = 0;
@@ -34,12 +34,12 @@ export class foLifecycleEvent {
         return this.object.myName;
     }
 
-    isNamed(name:string){
-        return Tools.matches(name,this.myName)
+    isNamed(name: string) {
+        return Tools.matches(name, this.myName)
     }
 
-    isCmd(cmd:string){
-        return Tools.matches(cmd,this.cmd)
+    isCmd(cmd: string) {
+        return Tools.matches(cmd, this.cmd)
     }
 
     constructor(cmd: string, obj: foObject, count: number = 0, value?: any) {
@@ -118,7 +118,9 @@ export class foLifecycle {
             event.id = counter++;
             this.emit.next(event);
         });
+
     }
+
 
     primitive(obj: foObject, value?: any) {
         this.emit.next(new foLifecycleEvent('primitive', obj, counter++, value))
@@ -130,13 +132,13 @@ export class foLifecycle {
         return this;
     }
 
-    event(eventName:string, obj: foObject, value?: any) {
+    event(eventName: string, obj: foObject, value?: any) {
         this.emit.next(new foLifecycleEvent(eventName, obj, counter++, value))
         return this;
     }
 
-    created(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('created', obj, counter++))
+    created(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('created', obj, counter++, value))
         return this;
     }
 

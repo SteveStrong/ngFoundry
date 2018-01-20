@@ -1,13 +1,13 @@
 
 import { Tools } from './foTools';
-import { cPoint, cFrame } from './foGeometry2D';
+import { cPoint2D, cFrame } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import { iShape, iPoint, iRect, iFrame } from './foInterface';
+import { iShape, iPoint2D, iRect, iFrame } from './foInterface';
 
-import { foHandle } from './foHandle';
+import { foHandle2D } from './foHandle2D';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
 import { foNode } from './foNode.model';
@@ -78,8 +78,10 @@ export class foGlyph2D extends foNode implements iShape {
         this._color = value;
     }
 
-    get handles(): foCollection<foHandle> { return this._handles || this.createHandles(); }
-    protected _handles: foCollection<foHandle>;
+    public rotationZ = (): number => { return 0; }
+
+    get handles(): foCollection<foHandle2D> { return this._handles || this.createHandles(); }
+    protected _handles: foCollection<foHandle2D>;
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -134,6 +136,9 @@ export class foGlyph2D extends foNode implements iShape {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
+
+    is2D() { return true; }
+    is3D() { return false; }
 
     set(x: number, y: number, width: number, height: number): iRect {
         this.x = x;
@@ -281,13 +286,13 @@ export class foGlyph2D extends foNode implements iShape {
         return this;
     }
 
-    public moveTo(loc: iPoint, offset?: iPoint) {
+    public moveTo(loc: iPoint2D, offset?: iPoint2D) {
         let x = loc.x + (offset ? offset.x : 0);
         let y = loc.y + (offset ? offset.y : 0);
         return this.move(x, y);
     }
 
-    public moveBy(loc: iPoint, offset?: iPoint) {
+    public moveBy(loc: iPoint2D, offset?: iPoint2D) {
         let x = this.x + loc.x + (offset ? offset.x : 0);
         let y = this.y + loc.y + (offset ? offset.y : 0);
         return this.move(x, y);
@@ -323,22 +328,22 @@ export class foGlyph2D extends foNode implements iShape {
         return this._invMatrix;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint) {
+    localToGlobal(x: number, y: number, pt?: cPoint2D) {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y, pt);
     };
 
-    localToGlobalPoint(pt: cPoint): cPoint {
+    localToGlobalPoint(pt: cPoint2D): cPoint2D {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(pt.x, pt.y, pt);
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint): cPoint {
+    globalToLocal(x: number, y: number, pt?: cPoint2D): cPoint2D {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt);
     };
 
-    globalToLocalPoint(pt: cPoint): cPoint {
+    globalToLocalPoint(pt: cPoint2D): cPoint2D {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(pt.x, pt.y, pt);
     };
@@ -354,29 +359,29 @@ export class foGlyph2D extends foNode implements iShape {
         return frame;
     };
 
-    localToLocal(x: number, y: number, target: foGlyph2D, pt?: cPoint): cPoint {
+    localToLocal(x: number, y: number, target: foGlyph2D, pt?: cPoint2D): cPoint2D {
         pt = this.localToGlobal(x, y, pt);
         return target.globalToLocal(pt.x, pt.y, pt);
     };
 
-    globalCenter(): cPoint {
+    globalCenter(): cPoint2D {
         let { x, y } = this.pinLocation();
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y);
     };
 
-    public getOffset = (loc: iPoint): iPoint => {
+    public getOffset = (loc: iPoint2D): iPoint2D => {
         let x = this.x;
         let y = this.y;
-        return new cPoint(x - loc.x, y - loc.y);
+        return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = (): iPoint => {
+    public getLocation = (): iPoint2D => {
         let x = this.x;
         let y = this.y;
-        return new cPoint(x, y);
+        return new cPoint2D(x, y);
     }
-    public setLocation = (loc?: iPoint) => {
+    public setLocation = (loc?: iPoint2D) => {
         this.x = loc ? loc.x : 0;
         this.y = loc ? loc.y : 0;
     }
@@ -400,7 +405,7 @@ export class foGlyph2D extends foNode implements iShape {
         })
     }
 
-    findObjectUnderPoint(hit: iPoint, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
+    findObjectUnderPoint(hit: iPoint2D, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
         let found: foGlyph2D = this.hitTest(hit, ctx) ? this : undefined;
 
         if (deep) {
@@ -410,7 +415,7 @@ export class foGlyph2D extends foNode implements iShape {
         return found;
     }
 
-    protected findChildObjectUnderPoint(hit: iPoint, ctx: CanvasRenderingContext2D): foGlyph2D {
+    protected findChildObjectUnderPoint(hit: iPoint2D, ctx: CanvasRenderingContext2D): foGlyph2D {
         let children = this.nodes;
         if (children.isSelectable) {
             for (let i: number = 0; i < children.length; i++) {
@@ -454,7 +459,7 @@ export class foGlyph2D extends foNode implements iShape {
 
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: iPoint2D): boolean => {
 
         let loc = this.globalToLocal(hit.x, hit.y);
 
@@ -466,7 +471,7 @@ export class foGlyph2D extends foNode implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -590,13 +595,13 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
 
-    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle> {
+    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle2D> {
 
         let i = 0;
         if (!this._handles) {
-            this._handles = new foCollection<foHandle>()
+            this._handles = new foCollection<foHandle2D>()
             spec.forEach(item => {
-                let type = item.myType ? item.myType : RuntimeType.define(foHandle)
+                let type = item.myType ? item.myType : RuntimeType.define(foHandle2D)
                 let handle = new type(item, undefined, this);
                 handle.doMoveProxy = proxy && proxy[i]
                 this._handles.addMember(handle);
@@ -613,10 +618,10 @@ export class foGlyph2D extends foNode implements iShape {
         return this._handles;
     }
 
-    public createHandles(): foCollection<foHandle> {
+    public createHandles(): foCollection<foHandle2D> {
 
         let spec = [
-            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle) },
+            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle2D) },
             { x: this.width, y: 0, myName: "W:0" },
             { x: this.width, y: this.height, myName: "W:H" },
             { x: 0, y: this.height, myName: "0:H" },
@@ -625,16 +630,16 @@ export class foGlyph2D extends foNode implements iShape {
         return this.generateHandles(spec);
     }
 
-    getHandle(name: string): foHandle {
+    getHandle(name: string): foHandle2D {
         if (!this._handles) return;
         return this._handles.findMember(name);
     }
 
-    public findHandle(loc: cPoint, e): foHandle {
+    public findHandle(loc: cPoint2D, e): foHandle2D {
         if (!this._handles) return;
 
         for (var i: number = 0; i < this.handles.length; i++) {
-            let handle: foHandle = this.handles.getChildAt(i);
+            let handle: foHandle2D = this.handles.getChildAt(i);
             if (handle.hitTest(loc)) {
                 return handle;
             }

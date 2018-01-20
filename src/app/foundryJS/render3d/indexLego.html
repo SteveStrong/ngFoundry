@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html ng-app='foApp'>
+<head>
+    <meta charset="utf-8" />
+    <title>CAD</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <link href="vendor/vender.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    <script src="vendor/vender.js"></script>
+
+
+    <script src="foundry/version.js"></script>
+    <script src="foundry/foundry.core.extensions.js"></script>
+    <script src="foundry/foundry.core.tools.js"></script>
+    <script src="foundry/foundry.core.dto.js"></script>
+    <script src="foundry/foundry.core.node.js"></script>
+    <script src="foundry/foundry.core.link.js"></script>
+
+    <script src="foundry/foundry.core.component.js"></script>
+    <script src="foundry/foundry.core.pubsub.js"></script>
+    <script src="foundry/foundry.core.property.js"></script>
+    <script src="foundry/foundry.core.collection.js"></script>
+
+
+    <script src="foundry/foundry.core.meta.js"></script>
+    <script src="foundry/foundry.core.factory.js"></script>
+    <script src="foundry/foundry.core.factoryrelate.js"></script>
+    <script src="foundry/foundry.core.entitydb.js"></script>
+    <script src="foundry/foundry.core.listops.js"></script>
+
+    <script src="foundry/foundry.core.workspace.js"></script>
+
+    <script src="indexLego.js"></script>
+    <script src="ontologycadmodel.js"></script>
+    <script src="render3dservice.js"></script>
+    <script src="filesaver.js"></script>
+    <script src="foundryspec/dat.gui.js"></script>
+
+    <!--<script src="foundry/foundry.ui.ngdialog.html" type="text/ng-template"></script>-->
+    <script src="foundry/foundry.ui.ngdialog.js"></script>
+
+    <style type="text/css">
+        #mynetwork {
+            width: 1000px;
+            height: 800px;
+            border: 1px solid lightgray;
+        }
+        #cadWorld {
+            width: 1000px;
+            height: 800px;
+            border: 1px solid lightgray;
+        }
+    </style>
+
+</head>
+<body ng-controller="workspaceController as ws">
+    <div class="container well">
+        <h1>{{ws.title}}</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-1">
+            <div class="well well-sm">
+                <h3>Build</h3>
+                <div ng-repeat="obj in ws.space.customPrimitives" style="padding:2px">
+                    <button class="btn btn-success" style="padding:2px; width: 100%" ng-click="ws.doAddCustoms(obj)">{{obj | buttonLabel}}</button><br />
+                </div>
+            </div>
+            <div class="well well-sm">
+                <h3>Tools</h3>
+                <button class="btn btn-warning" style="margin:2px; width: 100%" ng-click="ws.doRender()">
+                    Render
+                </button><br />
+                <button class="btn btn-warning" style="margin:2px; width: 100%" ng-click="ws.doExport()">
+                    Export STL
+                </button><br />
+                <a class="btn btn-warning" style="margin:2px; width: 100%" href="http://www.viewstl.com/" target="_blank">
+                    View STL
+                </a><br />
+                <a class="btn btn-warning" style="margin:2px; width: 100%" href="http://visjs.org/" target="_blank">
+                    visjs.org
+                </a><br />
+                <a class="btn btn-info" style="margin:2px; width: 100%" ng-click="ws.doDrawNetwork()">
+                    Network
+                </a><br />
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div id="cadWorld">
+            </div>
+            <h3>{{::ws.space.rootModel.myName}}</h3>
+            <ul>
+                <li ng-repeat="obj in ws.space.rootModel.mySubcomponents()" ng-include=" 'modelTreeItem.html' "></li>
+            </ul>
+        </div>
+        <div class="col-sm-6">
+            <div id="mynetwork">
+            </div>
+            <h3>{{::ws.viewModel.myName}}</h3>
+            <ul>
+                <li ng-repeat="obj in ws.viewModel.mySubcomponents()" ng-include=" 'entityTreeItem.html' "></li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

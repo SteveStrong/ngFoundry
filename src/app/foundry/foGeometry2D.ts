@@ -1,7 +1,7 @@
 
-import { iPoint, iRect, iBox, iMargin, iFrame } from './foInterface';
+import { iPoint2D, iRect, iBox, iMargin, iFrame } from './foInterface';
 
-export class cPoint implements iPoint {
+export class cPoint2D implements iPoint2D {
     public x: number;
     public y: number;
     public myName: string;
@@ -19,7 +19,7 @@ export class cPoint implements iPoint {
     }
 
     clone() {
-        return new cPoint(this.x, this.y, this.myName);
+        return new cPoint2D(this.x, this.y, this.myName);
     }
 
     add(x: number = 0, y: number = 0) {
@@ -34,10 +34,10 @@ export class cPoint implements iPoint {
         return this;
     }
 
-    midpoint(pt: cPoint) {
+    midpoint(pt: cPoint2D) {
         let x = (this.x + pt.x) / 2;
         let y = (this.y + pt.y) / 2;
-        return new cPoint(x, y);
+        return new cPoint2D(x, y);
     }
 }
 
@@ -113,7 +113,7 @@ export class cFrame implements iFrame {
     public x2: number;
     public y2: number;
 
-    public point:cPoint = new cPoint();
+    public point:cPoint2D = new cPoint2D();
     public source:any;
 
     constructor(source?:any){
@@ -128,7 +128,7 @@ export class cFrame implements iFrame {
         return this;
     }
 
-    init(obj:iPoint): iFrame {
+    init(obj:iPoint2D): iFrame {
         this.x1 = obj.x;
         this.y1 = obj.y;
         this.x2 = obj.x;
@@ -144,7 +144,7 @@ export class cFrame implements iFrame {
         return this;
     }
 
-    minmax(obj:iPoint): iFrame {
+    minmax(obj:iPoint2D): iFrame {
         this.x1 = Math.min(this.x1,obj.x);
         this.y1 = Math.min(this.y1,obj.y);
         this.x2 = Math.max(this.x2,obj.x);

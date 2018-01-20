@@ -3,8 +3,18 @@
   <div class="col-xs-12 col-12">
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group mr-2" role="group">
+        <button (click)="doClear()" type="button" class="btn btn-danger">Clear</button>
+        <button (click)="doDelete()" type="button" class="btn btn-warning">Delete</button>
+        <button (click)="doOnOff()" type="button" class="btn btn-success">{{label}}</button>
+        <button (click)="doAxis()" type="button" class="btn btn-success">Axis</button>
+        <button (click)="doWorld()" type="button" class="btn btn-success">World</button>
       </div>
       <div class="btn-group mr-2 pull-right" role="group">
+        <ng-container *ngFor="let stage of currentStudio.stages.members">
+          <button (click)="doGoToStage(stage)" type="button" class="btn btn-info">{{stage.myName}}</button>
+        </ng-container>
+        <button (click)="doAddStage()" type="button" class="btn btn-success">New Stage</button>
+        <button (click)="doDeleteStage()" type="button" class="btn btn-danger">Delete Stage</button>
       </div>
       <h4 style="margin-left:30px">{{rootWorkspace.myName}}</h4>
     </div>
@@ -25,8 +35,11 @@
       <tab heading='Stencil'>
         <fo-stencil></fo-stencil>
       </tab>
-      <tab heading='Drawing'>
+      <!-- <tab heading='Drawing'>
         <fo-drawing></fo-drawing>
+      </tab> -->
+      <tab heading='Studio'>
+        <fo-studio></fo-studio>
       </tab>
       <tab heading='Concepts'>
         <fo-concept></fo-concept>

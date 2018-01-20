@@ -18,8 +18,8 @@ export class foModelPanelComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    //let myClass = this.node.myClass;
-    // let spec = globalWorkspace.library.establish('stencil').concepts.findItem(myClass);
+    // let myClass = this.node.myClass;
+    // let spec = globalWorkspace.select(item => Tools.matches(item.myName, myClass)).first();
     // if (spec) {
     //   this.commands = spec.commands;
     // }
