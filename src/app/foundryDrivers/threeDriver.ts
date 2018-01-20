@@ -799,6 +799,8 @@ export class Screen3D {
 
     clear() {
         this.scene = new Scene();
+        this.addLight().addLights();
+        return this.scene;
     }
 
     cameraPosition(x: number, y: number, z: number) {
@@ -981,8 +983,7 @@ export class Screen3D {
         this.width = Number.isNaN(width) ? window.innerWidth : width;
         this.height = Number.isNaN(height) ? window.innerHeight : height;
 
-        this.scene = new Scene();
-        //this.scene.add(this.body)
+        this.scene = this.clear();
 
         this.camera = new PerspectiveCamera(75, this.width / this.height, 1, 10000);
         this.camera.position.z = 1000;

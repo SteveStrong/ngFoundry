@@ -26,7 +26,7 @@ import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
 import { foObject } from 'app/foundry/foObject.model';
 import { filter } from 'rxjs/operators';
-import { setTimeout } from 'timers';
+
 
 @Component({
   selector: 'foundry-drawing',

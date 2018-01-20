@@ -12,7 +12,7 @@ import { foStencilLibrary } from "../foundry/foStencil";
 import { RuntimeType } from '../foundry/foRuntimeType';
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
-import { SphereGeometry, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { SphereGeometry, JSONLoader, MultiMaterial, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName();
 
@@ -24,7 +24,7 @@ SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
 });
 
 export class Sphere extends foGlyph3D {
-  radius:number;
+  radius: number;
   geometry = (spec?: any): Geometry => {
     return new SphereGeometry(this.radius);
   }
@@ -56,3 +56,33 @@ SolidStencil.define<Sphere>('sphere', Sphere, {
   height: function () { return this.radius },
   depth: function () { return this.radius },
 }).addCommands("doBigger", "doSmaller", "doX", "doY");
+
+export class Model3D extends foGlyph3D {
+  url: string = "assets/models/707.js";
+  private _geometry;
+  private _material;
+
+  geometry = (spec?: any): Geometry => {
+    return this._geometry;
+  }
+
+  material = (spec?: any): Material => {
+    return new MultiMaterial(this._material);
+  }
+
+  //deep hook for syncing matrix2d with geometry 
+  public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+    let self = this;
+    new JSONLoader().load(this.url, (geometry, materials) => {
+      self._geometry = geometry;
+      self._material = materials;
+      self.smash();
+    });
+    return this;
+  };
+
+
+}
+
+SolidStencil.define<Model3D>('Model3D', Model3D, {
+});
