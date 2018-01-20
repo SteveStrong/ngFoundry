@@ -159,4 +159,4 @@ ShapeStencil.factory<foGlyph2D>('doText', (spec?: any) => {
 
   return results;
 
-}
+});

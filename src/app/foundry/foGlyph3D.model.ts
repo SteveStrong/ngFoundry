@@ -61,15 +61,17 @@ export class foGlyph3D extends foGlyph2D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw();
     }
 
     is2D() { return false; }
     is3D() { return true; }
 
-    private _isDirty:boolean = true;
+
     smash() {
         super.smash();
-        this._isDirty = true;
+        this.setupPreDraw();
 
     }
 
@@ -125,20 +127,27 @@ export class foGlyph3D extends foGlyph2D {
     }
 
 
-    preRender3D = (screen: Screen3D) => {
-        if ( this._isDirty && this._obj3D) {
-            this._isDirty = false;
-            this._obj3D.remove(this._mesh)
-            screen.removeFromScene(this._obj3D);
-            
-            this._obj3D = this._mesh = undefined;
+    setupPreDraw() {
+
+        let preDraw = (screen: Screen3D) => {
+            if ( this._obj3D) {
+                this._obj3D.remove(this._mesh)
+                screen.removeFromScene(this._obj3D);
+                
+                this._obj3D = this._mesh = undefined;
+            }
+            if ( !this._obj3D) {
+                this.obj3D.position.set(this.x, this.y, this.z);
+                this.obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
+                screen.addToScene(this.obj3D);
+            }
+            this.preDraw3D = undefined;
         }
-        if ( !this._obj3D) {
-            this.obj3D.position.set(this.x, this.y, this.z);
-            this.obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
-            screen.addToScene(this.obj3D);
-        }
+
+        this.preDraw3D = preDraw;
     }
+
+    preDraw3D: (screen: Screen3D) => void;
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
         let obj = this.obj3D;
@@ -152,7 +161,7 @@ export class foGlyph3D extends foGlyph2D {
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
-        this.preRender3D && this.preRender3D(screen)
+        this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen)
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
