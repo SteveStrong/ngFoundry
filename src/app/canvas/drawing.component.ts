@@ -113,19 +113,42 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     });
 
 
+    let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
+    let moved = Lifecycle2D.pipe(filter(e => e.isCmd('moved')));
+    let dropped = Lifecycle2D.pipe(filter(e => e.isCmd('dropped')));
+    let created = Lifecycle2D.pipe(filter(e => e.isCmd('created') && e.value));
 
-    Lifecycle.observable.pipe(filter(e => e.object.is2D()))
-      .subscribe(event => {
-        if (event.isCmd('moved')) {
-          console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+    moved.subscribe(event => {
+      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
 
-          this.currentStudio.currentStage.found(event.myGuid, item => {
-            let { x, y } = event.value;
-            item.move(x, y);
-          })
-        };
-        //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      this.currentStudio.currentStage.found(event.myGuid, item => {
+        let { x, y } = event.value;
+        item.move(x, y);
       })
+    });
+
+    dropped.subscribe(event => {
+      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+
+      this.currentStudio.currentStage.found(event.myGuid, item => {
+        let { x, y, angle } = event.value;
+        item.dropAt(x, y, angle);
+      })
+    });
+
+    created.subscribe(event => {
+      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+
+      let stage = this.currentStudio.currentStage;
+      stage.findItem(event.myGuid, () => {
+        let knowledge = event.value;
+        knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
+          let result = concept.newInstance(event.object.asJson)
+          result.addAsSubcomponent(stage);
+        })
+      })
+
+    });
 
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";

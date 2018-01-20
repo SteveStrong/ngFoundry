@@ -134,6 +134,8 @@ export class foPage extends foShape2D {
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
             super.addSubcomponent(obj, properties);
+        }, child => { 
+            super.addSubcomponent(obj, properties)
         });
         return obj;
     }

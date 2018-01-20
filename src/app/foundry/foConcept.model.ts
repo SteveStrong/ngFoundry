@@ -135,7 +135,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = this._create(spec, subcomponents, parent) as T;
         result.myClass = this.myName;
         result.initialize();
-        Lifecycle.created(result);
+        Lifecycle.created(result, this);
         return result;
     }
 

@@ -45,20 +45,14 @@ export class foDictionary<T extends iObject> extends foObject {
         if (!found && onMissing) {
             onMissing(key);
             found = this.getItem(key);
-        } else if (found) {
-            onFound && onFound(found);
+        } else if (found && onFound) {
+            onFound(found);
         }
         return found;
     }
 
     found(key: string, onFound?, onMissing?): T {
-        let found = this.getItem(key);
-        if (found && onFound) {
-            onFound(found);
-            found = this.getItem(key);
-        } else if (!found) {
-            onMissing && onMissing(key);
-        }
+        let found = this.findItem(key, onMissing, onFound);
         return found;
     }
 

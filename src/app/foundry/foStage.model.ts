@@ -118,6 +118,8 @@ export class foStage extends foGlyph3D {
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
             super.addSubcomponent(obj, properties);
+        }, child => { 
+            super.addSubcomponent(obj, properties)
         });
         return obj;
     }

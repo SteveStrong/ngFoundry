@@ -137,8 +137,8 @@ export class foLifecycle {
         return this;
     }
 
-    created(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('created', obj, counter++))
+    created(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('created', obj, counter++, value))
         return this;
     }
 
