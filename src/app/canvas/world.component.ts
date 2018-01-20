@@ -126,29 +126,22 @@ export class WorldComponent implements OnInit, AfterViewInit {
 
     this.screen3D.addAxisHelper(1100)
       .addGridHelper(1000, 50, helper => {
-
-        //let rot = this.screen3D.euler(Math.PI / 2, 0, 0);
-
-      //   TweenLite.to(helper.location, 2000, {
-      //     x: rot.x,
-      //     y: rot.y,
-      //     z: rot.z,
-      //     ease: Back.ease
-      //  });
-       helper.rotation.copy(this.screen3D.euler(Math.PI / 2, 0, 0));
+        helper.rotateX(Math.PI / 2);
       })
       .addGridHelper(1000, 50, helper => {
-        helper.rotation.copy(this.screen3D.euler(0, Math.PI / 2, 0));
+        helper.rotateY(Math.PI / 2);
       })
       .addGridHelper(1000, 50, helper => {
-        helper.rotation.copy(this.screen3D.euler(0, 0, Math.PI / 2));
+        helper.rotateZ(Math.PI / 2);
       })
   }
 
   doWorld() {
-   
-    this.screen3D.addLight().addLights().loadModels();
-    //this.screen3D.addEarth().addLight().addLights();
+    this.screen3D.addEarth().addLight().addLights();
+  }
+
+  doLight() {
+    this.screen3D.addLight().addLights();
   }
 
   public ngAfterViewInit() {

@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
+import { Tools } from "../foundry/foTools";
+
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
@@ -26,6 +28,7 @@ import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
 import { foObject } from 'app/foundry/foObject.model';
 import { filter } from 'rxjs/operators';
+import { SolidStencil } from "./solids.model";
 
 
 @Component({
@@ -165,10 +168,21 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       let stage = this.currentStudio.currentStage;
       stage.findItem(event.myGuid, () => {
         let knowledge = event.value;
-        knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
+
+        let myClass = event.myClass.replace('2D::', '3D::');
+        let concept = globalWorkspace.select(item => Tools.matches(item.myName, myClass)).first();
+        if ( concept ) {
           let result = concept.newInstance(event.object.asJson);
-          stage.establishInDictionary(result);
-        })
+          stage.establishInDictionary(result);       
+          alert(myClass)
+        }
+        else {
+          knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
+            let result = concept.newInstance(event.object.asJson);
+            stage.establishInDictionary(result);
+          })
+        }
+
       })
 
     });
@@ -176,6 +190,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
+    libs.add(SolidStencil).displayName = "Solid";
 
     this.rootWorkspace.library.add(PersonDomain);
     this.rootWorkspace.model.addItem('default', new foModel({}))

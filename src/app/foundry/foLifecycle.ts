@@ -30,6 +30,10 @@ export class foLifecycleEvent {
         return this.object.myType;
     }
 
+    get myClass() {
+        return this.object['myClass'];
+    }
+
     get myName() {
         return this.object.myName;
     }

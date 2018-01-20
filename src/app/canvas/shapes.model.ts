@@ -41,7 +41,7 @@ ShapeStencil.define<foShape2D>('block', foShape2D, {
   height: 50
 });
 
-ShapeStencil.define<foText2D>('text', foText2D, {
+ShapeStencil.define<foText2D>('2D::Text', foText2D, {
   color: 'black',
   background: 'grey',
   context: 'HELLO',

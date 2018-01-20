@@ -145,80 +145,80 @@ export class foText2D extends foShape2D {
         ctx.fillText(this.text, this.pinX() + left, this.pinY() + top);
     }
 
-    drawSample(ctx) {
-        ctx.translate(-10, 25);
-        ctx.scale(1.2, 0.8);
-        ctx.rotate(5 * Math.PI / 180);
+    // drawSample(ctx) {
+    //     ctx.translate(-10, 25);
+    //     ctx.scale(1.2, 0.8);
+    //     ctx.rotate(5 * Math.PI / 180);
 
-        var fillText = "fillText";
-        var strokeText = "strokeText";
+    //     var fillText = "fillText";
+    //     var strokeText = "strokeText";
 
-        ctx.textBaseline = "top";
-        ctx.font = "32pt Arial";
+    //     ctx.textBaseline = "top";
+    //     ctx.font = "32pt Arial";
 
-        ctx.fillStyle = "orange";  // shadow color
-        ctx.fillText(fillText, 22, 22);
-        ctx.fillStyle = "red";
-        ctx.fillText(fillText, 20, 20);
+    //     ctx.fillStyle = "orange";  // shadow color
+    //     ctx.fillText(fillText, 22, 22);
+    //     ctx.fillStyle = "red";
+    //     ctx.fillText(fillText, 20, 20);
 
-        ctx.strokeStyle = "blue";
-        ctx.strokeText(strokeText, 20, 80);
-    }
+    //     ctx.strokeStyle = "blue";
+    //     ctx.strokeText(strokeText, 20, 80);
+    // }
 
-    //http://tutorials.jenkov.com/html5-canvas/text.html
-    /// expand with color, background etc.
-    drawTextBG(ctx: CanvasRenderingContext2D, txt: string, font: string, x: number, y: number) {
+    // //http://tutorials.jenkov.com/html5-canvas/text.html
+    // /// expand with color, background etc.
+    // drawTextBG(ctx: CanvasRenderingContext2D, txt: string, font: string, x: number, y: number) {
 
-        ctx.save();
+    //     ctx.save();
 
-        ctx.font = font;
+    //     ctx.font = font;
 
-        /// draw text from top - makes life easier at the moment
-        ctx.textBaseline = 'top';
+    //     /// draw text from top - makes life easier at the moment
+    //     ctx.textBaseline = 'top';
 
-        /// color for background
-        ctx.fillStyle = '#f50';
+    //     /// color for background
+    //     ctx.fillStyle = '#f50';
 
-        /// get width of text
-        var width = ctx.measureText(txt).width;
+    //     /// get width of text
+    //     var width = ctx.measureText(txt).width;
 
-        /// draw background rect assuming height of font
-        ctx.fillRect(x, y, width, parseInt(font, 10));
+    //     /// draw background rect assuming height of font
+    //     ctx.fillRect(x, y, width, parseInt(font, 10));
 
-        ctx.fillStyle = '#000';
+    //     ctx.fillStyle = '#000';
 
-        /// draw text on top
-        ctx.fillText(txt, x, y);
+    //     /// draw text on top
+    //     ctx.fillText(txt, x, y);
 
-        ctx.restore();
-    }
+    //     ctx.restore();
+    // }
 
 
-    drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
+    // drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
 
-        //let textMetrics = ctx.measureText(text);
+    //     //let textMetrics = ctx.measureText(text);
 
-        ctx.textAlign = "left" || "right" || "center" || "start" || "end";
+    //     ctx.textAlign = "left" || "right" || "center" || "start" || "end";
 
-        ctx.textBaseline = "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom";
+    //     ctx.textBaseline = "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom";
 
-        ctx.font = '48px serif';
-        ctx.font = "20px Georgia";
-        ctx.font = "italic 10pt Courier";
-        ctx.font = "bold 10pt Courier";
-        ctx.font = "italic bold 10pt Courier";
+    //     ctx.font = '48px serif';
+    //     ctx.font = "20px Georgia";
+    //     ctx.font = "italic 10pt Courier";
+    //     ctx.font = "bold 10pt Courier";
+    //     ctx.font = "italic bold 10pt Courier";
 
-        //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
-        let fontsize = 60;
-        let array = text.split('|');
-        let dx = 10;
-        let dy = 20;
-        for (var i = 0; i < array.length; i++) {
-            ctx.fillText(array[i], dx, dy);
-            dy += (fontsize + 4);
-        }
+    //     //http://junerockwell.com/end-of-line-or-line-break-in-html5-canvas/
+    //     let fontsize = 60;
+    //     let array = text.split('|');
+    //     let dx = 10;
+    //     let dy = 20;
+    //     for (var i = 0; i < array.length; i++) {
+    //         ctx.fillText(array[i], dx, dy);
+    //         dy += (fontsize + 4);
+    //     }
 
-    }
+    // }
 }
 
 import { RuntimeType } from './foRuntimeType';
