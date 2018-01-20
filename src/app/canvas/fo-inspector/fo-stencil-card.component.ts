@@ -74,6 +74,13 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
       if ( result.is2D() ) {
         result.dropAt(page.centerX, page.centerY)
         .addAsSubcomponent(page);
+
+        this.knowledge.usingRuntimeType('foGlyph3D', concept => {
+          result = concept.newInstance(result.asJson)
+          result.dropAt(stage.centerX, stage.centerY)
+          .addAsSubcomponent(stage);
+        })
+
       }
       if ( result.is3D() ) {
         result.dropAt(stage.centerX, stage.centerY)

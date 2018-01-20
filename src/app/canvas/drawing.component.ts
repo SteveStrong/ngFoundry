@@ -5,6 +5,8 @@ import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
 import { Screen2D } from "../foundryDrivers/canvasDriver";
+import { Screen3D } from "../foundryDrivers/threeDriver";
+
 import { BroadcastChange } from '../foundry/foChange';
 
 import { cPoint2D } from '../foundry/foGeometry2D';
@@ -15,6 +17,8 @@ import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { foChangeEvent } from '../foundry/foChange';
 
 import { foDocument } from 'app/foundry/foDocument.model';
+import { foStudio } from 'app/foundry/foStudio.model';
+import { foStage } from 'app/foundry/foStage.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";
@@ -37,13 +41,19 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
+  @ViewChild('world')
+  public worldRef: ElementRef;
+
   @Input()
   public pageWidth = 1400;
   @Input()
-  public pageHeight = 1000;
+  public pageHeight = 800;
 
   screen2D: Screen2D = new Screen2D();
   currentDocument: foDocument;
+
+  screen3D: Screen3D = new Screen3D();
+  currentStudio: foStudio;
 
   //https://stackoverflow.com/questions/37362488/how-can-i-listen-for-keypress-event-on-the-whole-page
   @HostListener('document:keypress', ['$event'])
@@ -57,11 +67,15 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doClear() {
     this.currentDocument.currentPage.clearPage();
+    this.currentStudio.currentStage.clearStage();
+
     this.sharing.clearPage();
   }
 
   doDelete() {
     this.currentDocument.currentPage.deleteSelected();
+    this.currentStudio.currentStage.deleteSelected();
+
   }
 
   doOnOff() {
@@ -92,7 +106,11 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       pageHeight: this.pageHeight,
     });
 
-
+    this.currentStudio = this.rootWorkspace.studio.override({
+      stageWidth: 1000,
+      stageHeight: 1000,
+      stageDepth: 1000,
+    });
 
     this.currentDocument.currentPage
       .then(page => {
@@ -115,6 +133,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doAddPage() {
     this.currentDocument.createPage();
+    this.currentStudio.createStage();
   }
 
   doDeletePage() {
@@ -125,7 +144,9 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.currentDocument.currentPage = page;
   }
 
-
+  doGoToStage(stage: foStage) {
+    this.currentStudio.currentStage = stage;
+  }
 
   doSetCurrentPage(page: foPage) {
 
@@ -142,19 +163,42 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.addEventHooks(page);
   }
 
+  doSetCurrentStage(stage: foStage) {
+
+    //this.screen3D.clear();
+
+    //with the render function you could
+    //1) render a single page
+    //2) render pages like layers
+    //3) render pages side by side
+    this.screen3D.render3D = (screen: Screen3D, deep: boolean = true) => {
+      stage.render3D(screen);
+    }
+    this.screen3D.go();
+
+    //this.addEventHooks(page);
+  }
+
   public ngAfterViewInit() {
 
     this.screen2D.setRoot(this.canvasRef.nativeElement, this.pageWidth, this.pageHeight);
+    this.screen3D.setRoot(this.worldRef.nativeElement, this.pageWidth, this.pageHeight);
+
     this.sharing.startSharing();
 
     BroadcastChange.observable.subscribe(item => {
       if ( item.isCmd('currentPage')) {
         this.doSetCurrentPage(this.currentDocument.currentPage);
       }
+      if (item.isCmd('currentStage')) {
+        this.doSetCurrentStage(this.currentStudio.currentStage);
+      }
     });
 
     this.doSetCurrentPage(this.currentDocument.currentPage);
+    this.doSetCurrentStage(this.currentStudio.currentStage);
 
+    this.screen3D.addAxisHelper(1100).addBack(1000, 50);
   }
 
   addEventHooks(page: foPage) {

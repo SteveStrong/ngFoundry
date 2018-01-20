@@ -146,7 +146,9 @@ export class WorldComponent implements OnInit, AfterViewInit {
   }
 
   doWorld() {
-    this.screen3D.addGlobe();
+   
+    this.screen3D.addLight().addLights().loadModels();
+    //this.screen3D.addEarth().addLight().addLights();
   }
 
   public ngAfterViewInit() {

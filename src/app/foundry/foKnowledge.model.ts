@@ -1,6 +1,6 @@
 import { Tools, foNames } from './foTools'
 
-import { WhereClause } from "./foInterface";
+import { WhereClause, Action } from "./foInterface";
 
 import { foObject } from './foObject.model'
 
@@ -14,6 +14,11 @@ export class foKnowledge extends foObject {
     }
        
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+        return this;
+    }
+
+    usingRuntimeType(type:string, action:Action<foKnowledge>){
+        action(this);
         return this;
     }
 

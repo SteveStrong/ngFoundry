@@ -1,7 +1,7 @@
 
-import { Scene, PerspectiveCamera, OrthographicCamera, BoxGeometry, MeshBasicMaterial, MeshPhongMaterial, Mesh, WebGLRenderer } from 'three';
+import { Scene, DirectionalLight, AmbientLight, PerspectiveCamera, OrthographicCamera, BoxGeometry, MeshBasicMaterial, MeshPhongMaterial, Mesh, WebGLRenderer } from 'three';
 
-import { Vector3, Vector2, Object3D, Quaternion, GridHelper, AxisHelper, SphereGeometry, TextureLoader, Euler, EventDispatcher } from 'three';
+import { MeshFaceMaterial, JSONLoader, Vector3, Vector2, Object3D, Quaternion, GridHelper, AxisHelper, SphereGeometry, TextureLoader, Euler, EventDispatcher } from 'three';
 
 let STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
 
@@ -728,12 +728,15 @@ export class CustomOrbitControls extends EventDispatcher {
 
 class block3D {
     mesh: Mesh;
+    object: Object3D;
     constructor(width: number, height: number, depth: number) {
 
         let geometry: BoxGeometry = new BoxGeometry(width, height, depth);
         let material: MeshBasicMaterial = new MeshBasicMaterial({ color: 0x990033, wireframe: false });
 
         this.mesh = new Mesh(geometry, material);
+        this.object = new Object3D();
+        this.object.add(this.mesh);
     }
 
     render3D = () => {
@@ -832,11 +835,47 @@ export class Screen3D {
         return this;
     }
 
+    addFloor(size?: number, step?: number, onCompete?) {
+        let gridHelper = new GridHelper(size || 100, step || 10);
+        var scene = this.scene;
+        scene.add(gridHelper);
+        onCompete && onCompete(gridHelper, scene);
+        return this;
+    }
+
+    addBack(size?: number, step?: number, onCompete?) {
+        let gridHelper = new GridHelper(size || 100, step || 10);
+        gridHelper.rotateX(Math.PI / 2)
+        var scene = this.scene;
+        scene.add(gridHelper);
+        onCompete && onCompete(gridHelper, scene);
+        return this;
+    }
+
+    addWall(size?: number, step?: number, onCompete?) {
+        let gridHelper = new GridHelper(size || 100, step || 10);
+        gridHelper.rotateZ(Math.PI / 2)
+        var scene = this.scene;
+        scene.add(gridHelper);
+        onCompete && onCompete(gridHelper, scene);
+        return this;
+    }
+
     euler(rx: number, ry: number, rz: number) {
         return new Euler(rx, ry, rz)
     }
 
     EARTH_RADIUS: number = 637;
+    POS_X = 1800;
+    POS_Y = 500;
+    POS_Z = 1800;
+    WIDTH = 1000;
+    HEIGHT = 600;
+
+    FOV = 45;
+    NEAR = 1;
+    FAR = 4000;
+
     globeMesh: Mesh;
     addGlobe(noTexture?, radius?) {
         if (this.globeMesh) {
@@ -863,6 +902,52 @@ export class Screen3D {
         this.globeMesh = new Mesh(spGeo, material);
         this.scene.add(this.globeMesh);
 
+        return this;
+    }
+
+    addEarth() {
+        var spGeo = new SphereGeometry(this.EARTH_RADIUS, 50, 50);
+        var planetTexture = new TextureLoader().load("assets/world-big-2-grey.jpg");
+        var mat2 = new MeshPhongMaterial({
+            map: planetTexture,
+            shininess: 0.2
+        });
+        var mesh = new Mesh(spGeo, mat2);
+        this.scene.add(mesh);
+        return this;
+    }
+
+    // add a simple light
+    addLights() {
+        let light = new DirectionalLight(0x3333ee, 3.5);
+        this.scene.add(light);
+        light.position.set(this.POS_X, this.POS_Y, this.POS_Z);
+        return this;
+    }
+
+
+    addLight() {
+        let light = new AmbientLight(0x808080); // soft white light
+        this.scene.add(light);
+        return this;
+    }
+
+    models = {};
+    loadModels(onComplete?) {
+        new JSONLoader().load("assets/models/707.js", (geometry, materials) => {
+            let material = new MeshFaceMaterial(materials);
+            let model = new Mesh(geometry, material);
+            //model.scale.set(10, 10, 10);
+
+            this.scene.add(model);
+
+            this.models['707'] = {
+                geometry: geometry,
+                material: new MeshFaceMaterial(materials),
+                model: new Mesh(geometry, material),
+            }
+            onComplete && onComplete(this.models)
+        });
         return this;
     }
 
@@ -895,8 +980,8 @@ export class Screen3D {
                 this.camera.aspect = element.offsetWidth / element.offsetHeight;
                 this.renderer.setSize(element.offsetWidth, element.offsetHeight);
             } else {
-              this.camera.aspect = window.innerWidth / window.innerHeight;
-              this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.camera.aspect = window.innerWidth / window.innerHeight;
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
             }
             this.camera.updateProjectionMatrix();
         }
@@ -909,14 +994,14 @@ export class Screen3D {
 
 
 
-    addToScene(obj: any) {
+    addToScene(obj: Object3D) {
         //this.body.add(obj.mesh);
-        this.scene.add(obj.mesh);
+        this.scene.add(obj);
     }
 
     addBlock(width: number, height: number, depth: number) {
         let obj = new block3D(width, height, depth);
-        this.addToScene(obj);
+        this.addToScene(obj.object);
     }
 
 }

@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, WebGLRenderer } from 'three';
+import { Object3D, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 import { Tools } from '../foundry/foTools'
 import { cPoint2D } from '../foundry/foGeometry2D';
@@ -53,6 +53,18 @@ export class foGlyph3D extends foGlyph2D {
     }
     set mesh(value: Mesh) { this._mesh = value; }
 
+
+    protected _obj3D: Object3D;
+    get obj3D(): Object3D {
+        if (!this._obj3D) {
+            this._obj3D = new Object3D();
+            this._obj3D.add(this.mesh)
+        }
+        return this._obj3D;
+    }
+    set obj3D(value: Object3D) { this.obj3D = value; }
+
+
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
             z: this.z,
@@ -67,15 +79,17 @@ export class foGlyph3D extends foGlyph2D {
 
 
     preRender3D = (screen: Screen3D) => {
-        if ( this._mesh) {
-            screen.addToScene(this);
+        if ( this._obj3D) {
+            this.obj3D.position.set(this.x, this.y, this.z);
+            screen.addToScene(this.obj3D);
         }
     }
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
-        let rot = this.mesh.rotation;
-        rot.x += 0.01;
-        rot.y += 0.02;
+        this.obj3D;
+         //let rot = this.mesh.rotation;
+        // rot.x += 0.01;
+        // rot.y += 0.02;
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
