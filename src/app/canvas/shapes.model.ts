@@ -44,7 +44,7 @@ ShapeStencil.define<foShape2D>('block', foShape2D, {
 ShapeStencil.define<foText2D>('2D::Text', foText2D, {
   color: 'black',
   background: 'grey',
-  context: 'HELLO',
+  text: 'HELLO',
   fontSize: 30,
 });
 
@@ -128,3 +128,27 @@ ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
   image.easeTween(size, 2.8, 'easeInOut');
   return result;
 });
+
+ShapeStencil.factory<foGlyph2D>('doText', (spec?: any) => {
+  let textBlock = ShapeStencil.find<foText2D>('2D::Text');
+
+
+  let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
+  let results = Array<foGlyph2D>();
+
+  let y = 100;
+  let size = 8;
+  list.forEach(item => {
+    size += 4;
+    let shape = textBlock.newInstance({
+      text: 'Hello ' + item,
+      fontSize: size,
+    }).dropAt(350, y);
+    y += 50;
+
+    results.push(shape);
+  })
+
+  return results;
+
+}

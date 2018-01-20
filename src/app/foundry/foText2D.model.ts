@@ -46,21 +46,11 @@ export class foText2D extends foShape2D {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw();
-        this.extend({
-            text: function () {
-                if (this.context && this.context.text) {
-                    return this.context.text;
-                } if (this.context && Tools.isObject(this.context)) {
-                    return JSON.stringify(this.context, undefined, 3);
-                }
-                return this.context;
-            }
-        });
     }
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
-            context: this.context,
+            text: this.text,
             background:this.background,
             fontSize:this.fontSize,
             margin:this.margin

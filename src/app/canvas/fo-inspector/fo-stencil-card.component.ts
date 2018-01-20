@@ -62,7 +62,8 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
     if ( this.knowledge['run'] ) {
       let list = this.knowledge['run']();
       let names = list.map(element => {
-        element.addAsSubcomponent(page);
+        let target = element.is2D() ? page : stage;
+        element.addAsSubcomponent(target);
         return element.displayName;
       });
 
@@ -71,22 +72,9 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
     } else {
       result = this.knowledge.newInstance().defaultName();
 
-      if ( result.is2D() ) {
-        result.dropAt(page.centerX, page.centerY)
-        .addAsSubcomponent(page);
-
-        // this.knowledge.usingRuntimeType('foGlyph3D', concept => {
-        //   result = concept.newInstance(result.asJson)
-        //   result.dropAt(stage.centerX, stage.centerY)
-        //   .addAsSubcomponent(stage);
-        // })
-
-      }
-      if ( result.is3D() ) {
-        result.dropAt(stage.centerX, stage.centerY)
-        .addAsSubcomponent(stage);
-        
-      }
+      let target = result.is2D() ? page : stage;
+        result.dropAt(target.centerX, target.centerY)
+        .addAsSubcomponent(target)
   
       Toast.info("Created", result.displayName)
     }
