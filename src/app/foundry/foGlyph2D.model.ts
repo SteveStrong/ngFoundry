@@ -78,6 +78,8 @@ export class foGlyph2D extends foNode implements iShape {
         this._color = value;
     }
 
+    public rotationZ = (): number => { return 0; }
+
     get handles(): foCollection<foHandle2D> { return this._handles || this.createHandles(); }
     protected _handles: foCollection<foHandle2D>;
 

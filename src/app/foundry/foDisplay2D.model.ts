@@ -63,7 +63,7 @@ export class foDisplay2D extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, this.scaleX, this.scaleY, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
              //console.log('getMatrix');
         }
         return this._matrix;

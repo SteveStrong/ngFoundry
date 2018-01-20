@@ -1,4 +1,4 @@
-import { Object3D, PerspectiveCamera, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { Object3D, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 import { Tools } from '../foundry/foTools'
 import { cPoint2D } from '../foundry/foGeometry2D';
@@ -55,6 +55,10 @@ export class foGlyph3D extends foGlyph2D {
         this._angleZ = value;
     }
 
+    public rotationX = (): number => { return this.angleX; }
+    public rotationY = (): number => { return this.angleY; }
+    public rotationZ = (): number => { return this.angleZ; }
+
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
@@ -62,13 +66,23 @@ export class foGlyph3D extends foGlyph2D {
     is2D() { return false; }
     is3D() { return true; }
 
+
+    geometry = (spec?:any):Geometry => {
+        return new BoxGeometry(this.width, this.height, this.depth);
+    }
+
+    material = (spec?:any):Material => {
+        let props = Tools.mixin({
+            color: this.color, 
+            wireframe: false 
+        }, spec)
+        return new MeshBasicMaterial(props);
+    }
+
     protected _mesh: Mesh;
     get mesh(): Mesh {
         if (!this._mesh) {
-            let geometry: BoxGeometry = new BoxGeometry(this.width, this.height, this.depth);
-            let material: MeshBasicMaterial = new MeshBasicMaterial({ color: this.color, wireframe: false });
-
-            this._mesh = new Mesh(geometry, material);
+            this._mesh = new Mesh(this.geometry(), this.material());
         }
         return this._mesh;
     }
@@ -79,6 +93,7 @@ export class foGlyph3D extends foGlyph2D {
     get obj3D(): Object3D {
         if (!this._obj3D) {
             this._obj3D = new Object3D();
+            this._obj3D.name = this.myGuid;
             this._obj3D.add(this.mesh)
         }
         return this._obj3D;
@@ -103,14 +118,19 @@ export class foGlyph3D extends foGlyph2D {
 
 
     preRender3D = (screen: Screen3D) => {
-        if ( this._obj3D) {
+        if ( !this._obj3D) {
             this.obj3D.position.set(this.x, this.y, this.z);
+            this.obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
             screen.addToScene(this.obj3D);
         }
     }
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
-        this.obj3D;
+        let obj = this.obj3D;
+
+        obj.position.set(this.x, this.y, this.z);
+        obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+        //make changes that support animation here
          //let rot = this.mesh.rotation;
         // rot.x += 0.01;
         // rot.y += 0.02;
@@ -123,5 +143,12 @@ export class foGlyph3D extends foGlyph2D {
             item.render3D(screen, deep);
         });
     }
+
+    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        super.move(x,y,angle);
+        this.obj3D.position.set(this.x, this.y, this.z);
+        return this;
+    }
+
 
 }

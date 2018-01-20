@@ -25,7 +25,7 @@ import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
 import { foObject } from 'app/foundry/foObject.model';
-
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'foundry-drawing',
@@ -112,15 +112,20 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       stageDepth: 1000,
     });
 
-    this.currentDocument.currentPage
-      .then(page => {
-        //this.doParticleEngine(page);
-        //this.doSubShape(page);
-      });
 
-    Lifecycle.observable.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
-    })
+
+    Lifecycle.observable.pipe(filter(e => e.object.is2D()))
+      .subscribe(event => {
+        if (event.isCmd('moved')) {
+          console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+
+          this.currentStudio.currentStage.found(event.myGuid, item => {
+            let { x, y } = event.value;
+            item.move(x, y);
+          })
+        };
+        //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      })
 
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
@@ -165,18 +170,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doSetCurrentStage(stage: foStage) {
 
-    //this.screen3D.clear();
+    this.screen3D.clear();
 
-    //with the render function you could
-    //1) render a single page
-    //2) render pages like layers
-    //3) render pages side by side
     this.screen3D.render3D = (screen: Screen3D, deep: boolean = true) => {
       stage.render3D(screen);
     }
     this.screen3D.go();
-
-    //this.addEventHooks(page);
   }
 
   public ngAfterViewInit() {
@@ -187,7 +186,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     this.sharing.startSharing();
 
     BroadcastChange.observable.subscribe(item => {
-      if ( item.isCmd('currentPage')) {
+      if (item.isCmd('currentPage')) {
         this.doSetCurrentPage(this.currentDocument.currentPage);
       }
       if (item.isCmd('currentStage')) {

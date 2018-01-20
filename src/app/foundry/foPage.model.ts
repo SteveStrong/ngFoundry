@@ -55,7 +55,7 @@ export class foPage extends foShape2D {
 
     public pinX = (): number => { return 0 * this.width; }
     public pinY = (): number => { return 0 * this.height; }
-    public rotation = (): number => { return this.angle; }
+    public rotationZ = (): number => { return this.angle; }
 
     mouseLoc: any = {};
 
@@ -87,7 +87,7 @@ export class foPage extends foShape2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.marginX + this.x, this.marginY + this.y, this.scaleX, this.scaleY, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.marginX + this.x, this.marginY + this.y, this.scaleX, this.scaleY, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };

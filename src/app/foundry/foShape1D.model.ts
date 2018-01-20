@@ -69,7 +69,7 @@ export class foShape1D extends foShape2D {
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; };
-    public rotation = (): number => { return this.angle; }
+    public rotationZ = (): number => { return this.angle; }
 
     public begin = (name?: string): cPoint2D => {
         return new cPoint2D(this.startX, this.startY, name)
@@ -159,7 +159,7 @@ export class foShape1D extends foShape2D {
         this.y = Number.isNaN(y) ? cY : y;
 
         let mtx = new Matrix2D();
-        mtx.appendTransform(this.x, this.y, 1, 1, ang + this.rotation(), 0, 0, cX, cY);
+        mtx.appendTransform(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
         let start = mtx.transformPoint(this.startX, this.startY);
         let finish = mtx.transformPoint(this.finishX, this.finishY);
         this.startX = start.x;
@@ -209,7 +209,7 @@ export class foShape1D extends foShape2D {
 
             let { angle } = this.angleDistance();
 
-            this._matrix.appendTransform(this.x, this.y, 1, 1, angle + this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, 1, 1, angle + this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };

@@ -46,7 +46,7 @@ export class foShape2D extends foGlyph2D {
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
-    public rotation = (): number => { return this.angle; }
+    public rotationZ = (): number => { return this.angle; }
 
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
@@ -104,7 +104,7 @@ export class foShape2D extends foGlyph2D {
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, this.pinX(), this.pinY());
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
     };
