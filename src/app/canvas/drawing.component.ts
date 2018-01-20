@@ -174,7 +174,6 @@ export class DrawingComponent implements OnInit, AfterViewInit {
         if ( concept ) {
           let result = concept.newInstance(event.object.asJson);
           stage.establishInDictionary(result);       
-          alert(myClass)
         }
         else {
           knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
