@@ -10,6 +10,7 @@ import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, 
 import { foStencilLibrary } from "../foundry/foStencil";
 import { RuntimeType } from '../foundry/foRuntimeType';
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
+import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 export let ShapeStencil: foStencilLibrary = new foStencilLibrary().defaultName();
@@ -41,12 +42,19 @@ ShapeStencil.define<foShape2D>('block', foShape2D, {
   height: 50
 });
 
-ShapeStencil.define<foText2D>('2D::Text', foText2D, {
+class Test2D extends foText2D {
+  doChange() {
+    this.text += ' more ';
+    this.setupPreDraw();
+    Lifecycle.changed(this, { text: this.text })
+  }
+}
+ShapeStencil.define<foText2D>('2D::Text', Test2D, {
   color: 'black',
   background: 'grey',
   text: 'HELLO',
   fontSize: 30,
-});
+}).addCommands('doChange')
 
 ShapeStencil.define<foShape2D>('cyan', foShape2D, {
   color: 'cyan',
@@ -89,23 +97,23 @@ ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
   let result = new Array<foGlyph2D>();
 
   for (let i = 0; i < 8; i++) {
-      let picture = def.newInstance({
-        angle: Tools.randomInt(0, 300)
-      }).defaultName();
+    let picture = def.newInstance({
+      angle: Tools.randomInt(0, 300)
+    }).defaultName();
 
-      result.push(picture);
-      let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
-      picture.easeTween(place, 1.5);
+    result.push(picture);
+    let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
+    picture.easeTween(place, 1.5);
   }
 
   for (let i = 0; i < 8; i++) {
-      let picture = def.newInstance().defaultName();
-      result.push(picture);
-      picture.angle = Tools.randomInt(0, 300);
+    let picture = def.newInstance().defaultName();
+    result.push(picture);
+    picture.angle = Tools.randomInt(0, 300);
 
-      //created forces a broadast of latest state
-      let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
-      picture.easeTween(place, 2.5);
+    //created forces a broadast of latest state
+    let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
+    picture.easeTween(place, 2.5);
   }
 
 

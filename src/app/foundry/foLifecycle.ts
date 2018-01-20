@@ -184,6 +184,12 @@ export class foLifecycle {
         return this;
     }
 
+    changed(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('changed', obj, counter++, value))
+        return this;
+    }
+
+
     glued(obj: foObject, value: any) {
         this.emit.next(new foLifecycleEvent('glued', obj, counter++, value))
         return this;

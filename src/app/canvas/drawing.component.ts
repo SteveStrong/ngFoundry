@@ -135,6 +135,16 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     let dropped = Lifecycle2D.pipe(filter(e => e.isCmd('dropped')));
     let reparent = Lifecycle2D.pipe(filter(e => e.isCmd('reparent')));
     let created = Lifecycle2D.pipe(filter(e => e.isCmd('created') && e.value));
+    let changed = Lifecycle2D.pipe(filter(e => e.isCmd('changed') && e.value));
+
+    changed.subscribe(event => {
+      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+
+      this.currentStudio.currentStage.found(event.myGuid, item => {
+        item.override(event.value);
+        item.smash();
+      })
+    });
 
     moved.subscribe(event => {
       console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
