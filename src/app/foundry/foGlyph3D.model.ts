@@ -66,12 +66,11 @@ export class foGlyph3D extends foGlyph2D {
     is2D() { return false; }
     is3D() { return true; }
 
+    private _isDirty:boolean = true;
     smash() {
         super.smash();
-        //add code to remove from model
-        //this._obj3D.remove(this._mesh);
-        this._mesh = undefined;
-        this._obj3D = undefined;
+        this._isDirty = true;
+
     }
 
     geometry = (spec?:any):Geometry => {
@@ -125,6 +124,13 @@ export class foGlyph3D extends foGlyph2D {
 
 
     preRender3D = (screen: Screen3D) => {
+        if ( this._isDirty && this._obj3D) {
+            this._isDirty = false;
+            this._obj3D.remove(this._mesh)
+            screen.removeFromScene(this._obj3D);
+            
+            this._obj3D = this._mesh = undefined;
+        }
         if ( !this._obj3D) {
             this.obj3D.position.set(this.x, this.y, this.z);
             this.obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);

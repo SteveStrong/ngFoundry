@@ -26,6 +26,7 @@ import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
 import { foObject } from 'app/foundry/foObject.model';
 import { filter } from 'rxjs/operators';
+import { setTimeout } from 'timers';
 
 @Component({
   selector: 'foundry-drawing',
@@ -80,6 +81,19 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
   doOnOff() {
     this.label = this.screen2D.toggleOnOff() ? "On" : "Off"
+  }
+
+  doCamera() {
+    let x =  0;
+    let y =  0;
+    let z =  0;
+    let xxx = this.screen3D;
+    function spin(){
+      xxx.cameraSpin(x,y,z);
+      y += 1 * foGlyph2D.DEG_TO_RAD;
+      y < 360 && setTimeout(spin, 100)
+    }  
+    spin() 
   }
 
   doParticleEngine(page: foPage) {

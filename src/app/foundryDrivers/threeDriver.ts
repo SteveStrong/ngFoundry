@@ -809,6 +809,30 @@ export class Screen3D {
         return this;
     }
 
+    cameraMoveBy(x: number, y: number, z: number) {
+        var pos = this.camera.position;
+        pos.x += x || 0;
+        pos.y += y || 0;
+        pos.z += z || 0;
+        return this;
+    }
+
+    cameraRotation(x: number, y: number, z: number) {
+        var rot = this.camera.rotation;
+        rot.x = x || 0;
+        rot.y = y || 0;
+        rot.z = z || 0;
+        return this;
+    }
+
+    cameraSpin(x: number, y: number, z: number) {
+        var rot = this.camera.rotation;
+        rot.x += x || 0;
+        rot.y += y || 0;
+        rot.z += z || 0;
+        return this;
+    }
+
     zoomToPosition(pos) {
         this.camera.position.set(pos.x, pos.y, pos.z);
         return this;
@@ -995,8 +1019,11 @@ export class Screen3D {
 
 
     addToScene(obj: Object3D) {
-        //this.body.add(obj.mesh);
         this.scene.add(obj);
+    }
+
+    removeFromScene(obj: Object3D) {
+        this.scene.remove(obj);
     }
 
     addBlock(width: number, height: number, depth: number) {
