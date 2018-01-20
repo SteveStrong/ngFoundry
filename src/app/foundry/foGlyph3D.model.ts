@@ -34,6 +34,27 @@ export class foGlyph3D extends foGlyph2D {
     get depth(): number { return this._depth || 0.0; }
     set depth(value: number) { this._depth = value; }
 
+    protected _angleX: number;
+    get angleX(): number { return this._angleX || 0.0; }
+    set angleX(value: number) {
+        this.smash();
+        this._angleX = value;
+    }
+
+    protected _angleY: number;
+    get angleY(): number { return this._angleY || 0.0; }
+    set angleY(value: number) {
+        this.smash();
+        this._angleY = value;
+    }
+
+    protected _angleZ: number;
+    get angleZ(): number { return this._angleZ || 0.0; }
+    set angleZ(value: number) {
+        this.smash();
+        this._angleZ = value;
+    }
+
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
@@ -45,7 +66,7 @@ export class foGlyph3D extends foGlyph2D {
     get mesh(): Mesh {
         if (!this._mesh) {
             let geometry: BoxGeometry = new BoxGeometry(this.width, this.height, this.depth);
-            let material: MeshBasicMaterial = new MeshBasicMaterial({ color: 0x990033, wireframe: false });
+            let material: MeshBasicMaterial = new MeshBasicMaterial({ color: this.color, wireframe: false });
 
             this._mesh = new Mesh(geometry, material);
         }
@@ -69,6 +90,9 @@ export class foGlyph3D extends foGlyph2D {
         return Tools.mixin(super.toJson(), {
             z: this.z,
             depth: this.depth,
+            angleX: this.angleX,
+            angleY: this.angleY,
+            angleZ: this.angleZ,
         });
     }
 
