@@ -47,11 +47,14 @@ export class foShape3D extends foGlyph3D {
         super(properties, subcomponents, parent);
     }
 
-    protected toJson(): any {
-        return Tools.mixin(super.toJson(), {
-            glue: this._glue && Tools.asArray(this.glue.asJson)
-        });
-    }
+    // protected toJson(): any {
+    //     return Tools.mixin(super.toJson(), {
+    //         angleX: this.angleX,
+    //         angleY: this.angleY,
+    //         angleZ: this.angleZ,
+    //        // glue: this._glue && Tools.asArray(this.glue.asJson)
+    //     });
+    // }
 
 
 

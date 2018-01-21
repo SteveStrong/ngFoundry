@@ -93,7 +93,7 @@ export class foShape1D extends foShape2D {
             startY: this.startY,
             finishX: this.finishX,
             finishY: this.finishY,
-            glue: this._glue && Tools.asArray(this.glue.asJson)
+           // glue: this._glue && Tools.asArray(this.glue.asJson)
         });
     }
 

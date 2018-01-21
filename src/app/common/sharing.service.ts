@@ -15,7 +15,7 @@ import { foShape2D } from "../foundry/foShape2D.model";
 import { Back } from "gsap";
 import { foObject } from 'app/foundry/foObject.model';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
-import { foGlue } from 'app/foundry/foGlue';
+import { foGlue, iGlueSignature } from 'app/foundry/foGlue';
 
 @Injectable()
 export class SharingService {
@@ -113,18 +113,12 @@ export class SharingService {
   }
 
   public glued(glue: foGlue) {
-    this.signalR.pubCommand("syncGlue", {
-      sourceGuid: glue.mySource().myGuid,
-      targetGuid: glue.myTarget().myGuid,
-    }, glue.asJson);
+    this.signalR.pubCommand("syncGlue", glue.signature, glue.asJson);
     return this;
   }
 
   public unglued(glue: foGlue) {
-    this.signalR.pubCommand("syncUnGlue", { 
-      sourceGuid: glue.mySource().myGuid,
-      targetGuid: glue.myTarget().myGuid,
-    }, glue.asJson);
+    this.signalR.pubCommand("syncUnGlue", glue.signature, glue.asJson);
     return this;
   }
 
@@ -343,9 +337,9 @@ export class SharingService {
 
       this.signalR.subCommand("syncGlue", (cmd, data) => {
         //foObject.jsonAlert(data);
-        let { sourceName, targetName } = data;
-        this.workspace.activePage.found<foShape2D>(cmd.sourceGuid, (source) => {
-          this.workspace.activePage.found<foShape2D>(cmd.targetGuid, (target) => {
+        let { sourceGuid, sourceName, targetGuid, targetName } = cmd as iGlueSignature;
+        this.workspace.activePage.found<foShape2D>(sourceGuid, (source) => {
+          this.workspace.activePage.found<foShape2D>(targetGuid, (target) => {
             source.establishGlue(sourceName, target, targetName);
           });
         });
