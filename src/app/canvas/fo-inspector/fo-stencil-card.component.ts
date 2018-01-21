@@ -34,7 +34,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
 
   drawName(text: string, ctx: CanvasRenderingContext2D) {
     ctx.save();
-    ctx.font = '40pt Calibri';
+    ctx.font = '20pt Calibri';
     ctx.lineWidth = 3;
     ctx.strokeStyle = 'blue';
     ctx.strokeText(text, 10, 50);

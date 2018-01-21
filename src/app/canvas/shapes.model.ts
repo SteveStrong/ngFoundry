@@ -4,7 +4,7 @@ import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
-import { foImage } from "../foundry/foImage.model";
+import { foImage2D } from "../foundry/foImage2D.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 import { foStencilLibrary } from "../foundry/foStencil";
@@ -62,7 +62,7 @@ ShapeStencil.define<foShape2D>('cyan', foShape2D, {
   height: 50
 });
 
-ShapeStencil.define<foImage>('Image', foImage, {
+ShapeStencil.define<foImage2D>('2D:Image', foImage2D, {
   background: 'green',
   imageURL: "https://lorempixel.com/900/500?r=2",
   width: 400,
@@ -86,8 +86,8 @@ ShapeStencil.factory<foGlyph2D>('doAddSubGlyph', (spec?: any) => {
   return [<foGlyph2D>shape];
 });
 
-ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
-  let def = ShapeStencil.define<foImage>('image', foImage, {
+ShapeStencil.factory<foGlyph2D>('doImages', (spec?: any) => {
+  let def = ShapeStencil.define<foImage2D>('image', foImage2D, {
     background: 'green',
     imageURL: "https://lorempixel.com/900/500?r=2",
     width: 100,
@@ -117,7 +117,7 @@ ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
   }
 
 
-  let image = new foImage({
+  let image = new foImage2D({
     background: 'blue',
     margin: new cMargin(10, 10, 10, 10),
     width: 80,

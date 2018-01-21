@@ -138,16 +138,16 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     let changed = Lifecycle2D.pipe(filter(e => e.isCmd('changed') && e.value));
 
     changed.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
 
       this.currentStudio.currentStage.found(event.myGuid, item => {
         item.override(event.value);
-        item.smash();
+        item.setupPreDraw();
       })
     });
 
     moved.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
 
       this.currentStudio.currentStage.found(event.myGuid, item => {
         let { x, y } = event.value;

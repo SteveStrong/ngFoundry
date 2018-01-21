@@ -14,7 +14,7 @@ import { foNode } from '../foundry/foNode.model'
 import { foShape2D } from '../foundry/foShape2D.model'
 
 
-export class foImage extends foShape2D {
+export class foImage2D extends foShape2D {
     protected _loaded: boolean = false;
 
     public margin: cMargin;
@@ -126,4 +126,4 @@ export class foImage extends foShape2D {
 
 
 import { RuntimeType } from './foRuntimeType';
-RuntimeType.define(foImage);
+RuntimeType.define(foImage2D);

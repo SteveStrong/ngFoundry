@@ -21,7 +21,7 @@ import { foGlyph2D } from '../foundry/foGlyph2D.model';
 import { foShape2D, shape2DNames } from '../foundry/foShape2D.model';
 import { foShape1D } from '../foundry/foShape1D.model';
 import { foText2D } from '../foundry/foText2D.model';
-import { foImage } from '../foundry/foImage.model';
+import { foImage2D } from '../foundry/foImage2D.model';
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from './legoshapes.model';
 import { particleEngine } from './particle.model';
 
@@ -330,7 +330,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doImage() {
-    let def = Stencil.define<foImage>('blocks::block2d', foImage, {
+    let def = Stencil.define<foImage2D>('blocks::block2d', foImage2D, {
       background: 'green',
       imageURL: 'https://lorempixel.com/900/500?r=2',
       width: 100,
@@ -360,7 +360,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }
 
 
-    let image = new foImage({
+    let image = new foImage2D({
       background: 'blue',
       margin: new cMargin(10, 10, 10, 10),
       width: 80,
