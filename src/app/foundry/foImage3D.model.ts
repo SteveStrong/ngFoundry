@@ -1,76 +1,94 @@
 import { Tools } from '../foundry/foTools';
 import { cMargin } from '../foundry/foGeometry2D';
 
-import { foGlyph3D } from "../foundry/foGlyph3D.model";
+import { foShape3D } from "../foundry/foShape3D.model";
 
 import { foNode } from "../foundry/foNode.model";
 import { foObject } from "../foundry/foObject.model";
 
-import { Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { Material, Geometry, TextureLoader, ImageLoader, BoxGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { Screen3D } from "../foundryDrivers/threeDriver";
 
 
-export class foImage3D extends foGlyph3D {
-    public fontURL: string;
-    public text: string;
-  
-    public margin: cMargin;
-    public fontSize: number;
-    public font: Font;
-    public height: number;
-  
-    protected _background: string;
-    get background(): string {
-      return this._background;
-    }
-    set background(value: string) {
-      this._background = value;
-    }
-  
-    
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
-      super(properties, subcomponents, parent);
-  
-      this.setupPreDraw();
-    }
-  
-  
-    get size(): number {
-      return (this.fontSize || 12);
-    }
-  
-    geometry = (spec?: any): Geometry => {
-      if (!this.font) return undefined;
-  
-      return new TextGeometry(this.text, {
-        font: this.font,
-        size: this.fontSize || 80,
-        height: this.height || 5,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 8
-      });
-    }
-  
-    material = (spec?: any): Material => {
-      let props = Tools.mixin({
-        color: this.color || 'white',
-        specular: 0xffffff
-      }, spec)
-      return new MeshPhongMaterial(props);
-    }
-  
-  
-    //deep hook for syncing matrix2d with geometry 
-    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-      let self = this;
-      let url = this.fontURL || 'assets/fonts/helvetiker_regular.typeface.json';
-      new FontLoader().load(url, (font: Font) => {
-        self.font = font;
-        self.smash();
-      });
-      return this;
-    };
-  
-  
+export class foImage3D extends foShape3D {
+
+  protected _texture: any;
+
+  public margin: cMargin;
+
+  protected _imageURL: string;
+  get imageURL(): string { return this._imageURL; }
+  set imageURL(value: string) {
+    this._imageURL = value;
   }
+
+  protected _background: string;
+  get background(): string {
+    return this._background;
+  }
+  set background(value: string) {
+    this._background = value;
+  }
+
+
+  constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    super(properties, subcomponents, parent);
+  }
+
+  protected toJson(): any {
+    return Tools.mixin(super.toJson(), {
+      background: this.background,
+      imageURL: this.imageURL,
+      margin: this.margin,
+    })
+  }
+
+  public override(properties?: any) {
+    if (properties && properties.margin) {
+      let m = properties.margin;
+      properties.margin = new cMargin(m.left, m.top, m.right, m.bottom);
+    }
+    return super.override(properties);
+  }
+
+  get mesh(): Mesh {
+    if (!this._mesh && this._texture) {
+      let geom = this.geometry()
+      let mat = this.material()
+      this._mesh = (geom && mat) && new Mesh(geom, this.material());
+    }
+    return this._mesh;
+  }
+  set mesh(value: Mesh) { this._mesh = value; }
+
+  geometry = (spec?: any): Geometry => {
+    return this._texture && new BoxGeometry(this.width, this.height, this.depth);
+  }
+
+  material = (spec?: any): Material => {
+    let props = Tools.mixin({
+      color: this.background || 'white',
+      shininess: 0.9,
+      map: this._texture
+    }, spec)
+
+    return this._texture && new MeshBasicMaterial(props);
+  }
+
+
+  //deep hook for syncing matrix2d with geometry 
+  public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
+    let self = this;
+    let url = this.imageURL || 'assets/edwards.png';
+    let loader = new TextureLoader();
+    loader.setCrossOrigin("anonymous");
+    loader.load(url, texture => {
+      self._texture = texture;
+    });
+    return this;
+  };
+
+
+
+
+}

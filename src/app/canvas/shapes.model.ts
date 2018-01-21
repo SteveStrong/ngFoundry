@@ -62,7 +62,7 @@ ShapeStencil.define<foShape2D>('cyan', foShape2D, {
   height: 50
 });
 
-ShapeStencil.define<foImage2D>('2D:Image', foImage2D, {
+ShapeStencil.define<foImage2D>('2D::Image', foImage2D, {
   background: 'green',
   imageURL: "https://lorempixel.com/900/500?r=2",
   width: 400,

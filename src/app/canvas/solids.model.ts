@@ -72,8 +72,7 @@ SolidStencil.define<foText3D>('3D::Text', foText3D, {
 });
 
 SolidStencil.define<foImage3D>('3D::Image', foImage3D, {
-  color: 'green',
-  background: 'grey',
-  text: 'HELLO STEVE',
-  fontSize: 30,
+  background: 'green',
+  width: 400,
+  height: 250
 });

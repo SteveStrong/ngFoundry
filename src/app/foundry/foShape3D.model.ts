@@ -1,6 +1,6 @@
 
 import { foGlyph3D } from "../foundry/foGlyph3D.model";
-import { JSONLoader, MultiMaterial, Material, Geometry } from 'three';
+import { JSONLoader, MultiMaterial, Material, Geometry, Mesh } from 'three';
 
 import { SphereGeometry } from 'three';
 
@@ -24,6 +24,17 @@ export class foModel3D extends foShape3D {
     private _geometry;
     private _material;
 
+
+    get mesh(): Mesh {
+        if (!this._mesh && this._geometry && this._material) {
+          let geom = this.geometry()
+          let mat = this.material()
+          this._mesh = (geom && mat) && new Mesh(geom, this.material());
+        }
+        return this._mesh;
+      }
+      set mesh(value: Mesh) { this._mesh = value; }
+
     geometry = (spec?: any): Geometry => {
         return this._geometry;
     }
@@ -31,6 +42,8 @@ export class foModel3D extends foShape3D {
     material = (spec?: any): Material => {
         return new MultiMaterial(this._material);
     }
+
+
 
     //deep hook for syncing matrix2d with geometry 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {

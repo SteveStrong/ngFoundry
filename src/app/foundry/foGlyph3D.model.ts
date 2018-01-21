@@ -75,14 +75,14 @@ export class foGlyph3D extends foGlyph2D {
 
     }
 
-    geometry = (spec?:any):Geometry => {
+    geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);
     }
 
-    material = (spec?:any):Material => {
+    material = (spec?: any): Material => {
         let props = Tools.mixin({
-            color: this.color, 
-            wireframe: false 
+            color: this.color,
+            wireframe: false
         }, spec)
         return new MeshBasicMaterial(props);
     }
@@ -130,18 +130,20 @@ export class foGlyph3D extends foGlyph2D {
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
-            if ( this._obj3D) {
+            if (this._obj3D) {
                 this._obj3D.remove(this._mesh)
                 screen.removeFromScene(this._obj3D);
-                
+
                 this._obj3D = this._mesh = undefined;
             }
-            if ( !this._obj3D) {
-                this.obj3D.position.set(this.x, this.y, this.z);
-                this.obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
-                screen.addToScene(this.obj3D);
+            let obj3D = this.obj3D;
+            if (obj3D) {
+                obj3D.position.set(this.x, this.y, this.z);
+                obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
+                screen.addToScene(obj3D);
+                this.preDraw3D = undefined;
             }
-            this.preDraw3D = undefined;
+
         }
 
         this.preDraw3D = preDraw;
@@ -151,11 +153,11 @@ export class foGlyph3D extends foGlyph2D {
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
         let obj = this.obj3D;
-
+        if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         //make changes that support animation here
-         //let rot = this.mesh.rotation;
+        //let rot = this.mesh.rotation;
         // rot.x += 0.01;
         // rot.y += 0.02;
     };
@@ -169,7 +171,7 @@ export class foGlyph3D extends foGlyph2D {
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        super.move(x,y,angle);
+        super.move(x, y, angle);
         this.obj3D.position.set(this.x, this.y, this.z);
         return this;
     }
