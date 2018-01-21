@@ -20,7 +20,7 @@ class Line extends foShape1D {
 }
 
 ShapeStencil.define<Line>('line', Line, {
-  color: 'Red',
+  color: 'red',
   height: 15,
   opacity: 1,
   thickness: 10,
@@ -178,10 +178,10 @@ ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
   let shape2 = def.newInstance().dropAt(600, 200).pushTo(results);
 
   let cord = ShapeStencil.define<foShape1D>('2D::glueLine', foShape1D, {
-    color: 'Red',
+    color: 'red',
     height: 15,
   });
-  
+
   ShapeStencil.isVisible = true;
   
   let wire = cord.newInstance().pushTo(results);

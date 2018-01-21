@@ -347,7 +347,6 @@ export class SharingService {
         this.workspace.activePage.found<foShape2D>(cmd.sourceGuid, (source) => {
           this.workspace.activePage.found<foShape2D>(cmd.targetGuid, (target) => {
             source.establishGlue(sourceName, target, targetName);
-            //(<foShape2D>target).dropAt();
           });
         });
       });

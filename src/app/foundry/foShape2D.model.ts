@@ -56,7 +56,7 @@ export class foShape2D extends foGlyph2D {
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
             angle: this.angle,
-            glue: this._glue && Tools.asArray(this.glue.asJson)
+           // glue: this._glue && Tools.asArray(this.glue.asJson)
         });
     }
 

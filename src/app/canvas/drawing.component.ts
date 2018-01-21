@@ -13,6 +13,7 @@ import { BroadcastChange } from '../foundry/foChange';
 
 import { cPoint2D } from '../foundry/foGeometry2D';
 import { foGlyph2D } from "../foundry/foGlyph2D.model";
+import { foShape3D } from "../foundry/foShape3D.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
@@ -26,7 +27,7 @@ import { foStage } from 'app/foundry/foStage.model';
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
-import { foObject } from 'app/foundry/foObject.model';
+import { foGlue } from 'app/foundry/foGlue';
 import { filter } from 'rxjs/operators';
 import { SolidStencil } from "./solids.model";
 
@@ -136,6 +137,20 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     let reparent = Lifecycle2D.pipe(filter(e => e.isCmd('reparent')));
     let created = Lifecycle2D.pipe(filter(e => e.isCmd('created') && e.value));
     let changed = Lifecycle2D.pipe(filter(e => e.isCmd('changed') && e.value));
+    let glued = Lifecycle2D.pipe(filter(e => e.isCmd('glued')));
+
+    glued.subscribe(event => {
+      let glue = event.object as foGlue;
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      let sourceName = glue.mySource().myGuid;
+      let targetName = glue.myTarget().myGuid;
+      this.rootWorkspace.activeStage.found<foShape3D>(sourceName, (source) => {
+        this.rootWorkspace.activeStage.found<foShape3D>(targetName, (target) => {
+          source.establishGlue(sourceName, target, targetName);
+        });
+      });
+
+    });
 
     changed.subscribe(event => {
       //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));

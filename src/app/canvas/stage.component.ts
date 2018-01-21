@@ -567,7 +567,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let shape2 = def.newInstance().dropAt(600, 200).addAsSubcomponent(this);
 
     let cord = Stencil.define<foShape1D>('glue::line', foShape1D, {
-      color: 'Red',
+      color: 'red',
       height: 15,
     });
 
