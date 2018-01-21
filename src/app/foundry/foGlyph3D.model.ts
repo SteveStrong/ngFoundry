@@ -72,7 +72,6 @@ export class foGlyph3D extends foGlyph2D {
     smash() {
         super.smash();
         this.setupPreDraw();
-
     }
 
     geometry = (spec?: any): Geometry => {
@@ -120,12 +119,6 @@ export class foGlyph3D extends foGlyph2D {
             angleZ: this.angleZ,
         });
     }
-
-    addAsSubcomponent(parent: foNode, properties?: any) {
-        let result = super.addAsSubcomponent(parent, properties);
-        return result;
-    }
-
 
     setupPreDraw() {
 

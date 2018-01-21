@@ -50,6 +50,16 @@ export interface iPoint2D {
     add(x: number, y: number): iPoint2D
 }
 
+export interface iPoint3D {
+    x: number;
+    y: number;
+    z: number;
+    myName: string;
+
+    set(x: number, y: number, z: number): iPoint3D
+    add(x: number, y: number, z: number): iPoint3D
+}
+
 export interface iMargin {
     left: number;
     top: number;
