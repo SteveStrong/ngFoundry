@@ -1,6 +1,7 @@
 import { Tools } from '../foundry/foTools'
 
 import { foGlyph3D } from "../foundry/foGlyph3D.model";
+import { foShape2D } from "../foundry/foShape2D.model";
 
 
 import { foGlue } from '../foundry/foGlue'
@@ -99,9 +100,9 @@ export class foShape3D extends foGlyph3D {
         return glue;
     }
 
-    public establishGlue(name: string, target: foShape3D, handleName?: string) {
+    public establishGlue(name: string, target: any, handleName?: string) {
         let glue = this.getGlue(name)
-        //glue.glueTo(target, handleName);
+        glue.glueTo(target, handleName);
         return glue;
     }
 

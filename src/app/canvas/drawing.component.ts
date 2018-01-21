@@ -131,25 +131,24 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     });
 
 
+
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
 
-    Lifecycle2D.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+    // Lifecycle2D.subscribe(event => {
+    //   console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+    // });
 
-    });
-
+    let glued = Lifecycle2D.pipe(filter(e => e.isCmd('glued')));
     let moved = Lifecycle2D.pipe(filter(e => e.isCmd('moved')));
     let dropped = Lifecycle2D.pipe(filter(e => e.isCmd('dropped')));
     let reparent = Lifecycle2D.pipe(filter(e => e.isCmd('reparent')));
     let created = Lifecycle2D.pipe(filter(e => e.isCmd('created') && e.value));
     let changed = Lifecycle2D.pipe(filter(e => e.isCmd('changed') && e.value));
-    let glued = Lifecycle2D.pipe(filter(e => e.isCmd('glued')));
+
+
 
     glued.subscribe(event => {
-      alert('glue EVENT')
       let glue = event.object as foGlue;
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
-
       let { sourceGuid, sourceName, targetGuid, targetName } = glue.signature;
 
       this.rootWorkspace.activeStage.found<foShape3D>(sourceGuid, (source) => {

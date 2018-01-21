@@ -55,7 +55,10 @@ export class foGlue extends foNode {
         }
     }
 
-    glueTo(target: foShape2D, handleName: string) {
+    is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
+    is3D() { return this.mySource && this.mySource() && this.mySource().is3D(); }
+
+    glueTo(target: any, handleName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape2D>this.myParent(); };
         this.targetName = handleName;

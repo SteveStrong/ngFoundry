@@ -191,7 +191,6 @@ export class foLifecycle {
 
 
     glued(obj: foObject, value: any) {
-        alert('glued')
         this.emit.next(new foLifecycleEvent('glued', obj, counter++, value))
         return this;
     }
