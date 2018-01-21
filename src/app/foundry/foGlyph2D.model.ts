@@ -5,7 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import { iShape, iPoint2D, iRect, iFrame } from './foInterface';
+import { iShape, iPoint,  iPoint2D, iRect, iFrame } from './foInterface';
 
 import { foHandle2D } from './foHandle2D';
 import { foObject } from './foObject.model';
@@ -376,7 +376,7 @@ export class foGlyph2D extends foNode implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = (): iPoint2D => {
+    public getLocation = (): iPoint => {
         let x = this.x;
         let y = this.y;
         return new cPoint2D(x, y);
@@ -674,14 +674,14 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         if (resize) {
             self.height = self.width = 0;
             loc.x = loc.y = 0;
         } else {
-            loc = this.nodes.first().getLocation();
+            loc = this.nodes.first().getLocation() as cPoint2D;;
         }
 
         this.nodes.forEach(item => {
@@ -706,14 +706,14 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutSubcomponentsHorizontal(resize: boolean = true, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         if (resize) {
             self.height = self.width = 0;
             loc.x = loc.y = 0;
         } else {
-            loc = this.nodes.first().getLocation();
+            loc = this.nodes.first().getLocation() as cPoint2D;
         }
 
         this.nodes.forEach(item => {
@@ -738,7 +738,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutMarginRight(resize: boolean = false, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         loc.x = (space + this.width);
@@ -760,7 +760,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutMarginTop(resize: boolean = false, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         loc.x = 10;

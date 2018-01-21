@@ -41,20 +41,22 @@ export interface iKnowledge extends iObject {
 }
 
 //FOR GLYPHS and SHAPES
-export interface iPoint2D {
+export interface iPoint {
+    myName: string;
+}
+
+export interface iPoint2D extends iPoint {
     x: number;
     y: number;
-    myName: string;
 
     set(x: number, y: number): iPoint2D
     add(x: number, y: number): iPoint2D
 }
 
-export interface iPoint3D {
+export interface iPoint3D extends iPoint {
     x: number;
     y: number;
     z: number;
-    myName: string;
 
     set(x: number, y: number, z: number): iPoint3D
     add(x: number, y: number, z: number): iPoint3D
@@ -119,7 +121,7 @@ export interface iShape extends iRect, iNode {
     overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
 
     getOffset(loc: iPoint2D): iPoint2D;
-    getLocation(): iPoint2D;
+    getLocation(): iPoint;
     moveTo(loc: iPoint2D, offset?: iPoint2D);
     moveBy(loc: iPoint2D, offset?: iPoint2D)
 

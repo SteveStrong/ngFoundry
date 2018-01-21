@@ -68,10 +68,10 @@ export class foPipe3D extends foShape3D {
     }
 
     get width(): number {
-        // if (!this._width) {
-        //     let { length } = this.angleDistance();
-        //     this._width = length;
-        // }
+        if (!this._width) {
+            let { length } = this.angleDistance();
+            this._width = length;
+        }
         return this._width || 0.0;
     }
     set width(value: number) { this._width = value; }
@@ -117,18 +117,22 @@ export class foPipe3D extends foShape3D {
     private setStart(point: iPoint3D) {
         this.startX = point.x;
         this.startY = point.y;
-        let { x: cX, y: cY } = this.center();
+        this.startZ = point.z;
+        let { x: cX, y: cY, z: cZ } = this.center();
         this.x = cX;
         this.y = cY;
+        this.z = cZ;
         this.width = 0;
     }
 
     private setFinish(point: iPoint3D) {
         this.finishX = point.x;
         this.finishY = point.y;
-        let { x: cX, y: cY } = this.center();
+        this.finishZ = point.z;
+        let { x: cX, y: cY, z: cZ } = this.center();
         this.x = cX;
         this.y = cY;
+        this.z = cZ;
         this.width = 0;
     }
 
@@ -141,7 +145,6 @@ export class foPipe3D extends foShape3D {
         let dY = y2 - y1;
         let dZ = z2 - z1;
         return {
-           // angle: foGlyph2D.RAD_TO_DEG * Math.atan2(dY, dX),
             length: Math.sqrt(dX * dX + dY * dY + dZ * dZ),
             cX: (x2 + x1) / 2,
             cY: (y2 + y1) / 2,

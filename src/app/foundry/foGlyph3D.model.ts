@@ -1,8 +1,8 @@
 import { Object3D, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 import { Tools } from '../foundry/foTools'
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D, iFrame } from '../foundry/foInterface'
+import { cPoint3D } from '../foundry/foGeometry3D';
+import { iPoint, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -68,6 +68,12 @@ export class foGlyph3D extends foGlyph2D {
     is2D() { return false; }
     is3D() { return true; }
 
+    public getLocation = (): iPoint => {
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+        return new cPoint3D(x, y, z);
+    }
 
     smash() {
         super.smash();

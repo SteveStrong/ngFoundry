@@ -9,6 +9,12 @@ export class foObject implements iObject {
     myName: string = foNames.UNKNOWN;
     myParent: ModelRef<iObject>;
 
+    private _isVisible:boolean = true;
+    get isVisible(): boolean { return this._isVisible; }
+    set isVisible(value: boolean) { this._isVisible = value; }
+    get isInvisible(): boolean { return !this._isVisible; }
+    set isInvisible(value: boolean) { this._isVisible = !value; }
+
     constructor(properties?: any, parent?: foObject) {
         if (parent) {
             this.myParent = () => { return parent };

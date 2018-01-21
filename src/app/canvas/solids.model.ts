@@ -4,7 +4,7 @@ import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foGlyph3D } from "../foundry/foGlyph3D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
-import { foShape3D, foModel3D, foSphere } from "../foundry/foShape3D.model";
+import { foShape3D, foModel3D, foSphere, shape3DNames } from "../foundry/foShape3D.model";
 import { foText3D } from "../foundry/foText3D.model";
 import { foImage3D } from "../foundry/foImage3D.model";
 import { foPipe3D } from "../foundry/foPipe3D.model";
@@ -104,4 +104,44 @@ SolidStencil.define<foPipe3D>('3D::Pipe', Pipe3d, {
   finishX: 100,
   finishY: 100,
   finishZ: 100
+});
+
+
+SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
+  depth: 100
+});
+
+SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
+  depth: 15,
+});
+
+SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
+  SolidStencil.isVisible = false;
+  let results = Array<foGlyph3D>();
+
+  let def = SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
+    color: 'blue',
+    width: 200,
+    height: 150,
+    depth: 100,
+  });
+
+  let shape1 = def.newInstance({color:'green'}).dropAt(300, 200).pushTo(results);
+  let shape2 = def.newInstance().dropAt(600, 200).pushTo(results);
+
+  let cord = SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
+    color: 'red',
+    height: 15,
+    depth: 15,
+  });
+  SolidStencil.isVisible = true;
+  
+  let wire = cord.newInstance().pushTo(results);
+
+
+  wire.glueStartTo(shape1, shape3DNames.right);
+  wire.glueFinishTo(shape2, shape3DNames.left);
+
+  return results;
+
 });
