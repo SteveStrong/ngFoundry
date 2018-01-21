@@ -160,3 +160,32 @@ ShapeStencil.factory<foGlyph2D>('doText', (spec?: any) => {
   return results;
 
 });
+
+
+ShapeStencil.factory<foGlyph2D>('doGlue', (spec?: any) => {
+
+  let results = Array<foGlyph2D>();
+
+  let def = ShapeStencil.define<foShape2D>('2D::glueShape', foShape2D, {
+    color: 'blue',
+    width: 200,
+    height: 150,
+  });
+
+  let shape1 = def.newInstance({color:'green'}).dropAt(300, 200).pushTo(results);
+  let shape2 = def.newInstance().dropAt(600, 200).pushTo(results);
+
+  let cord = ShapeStencil.define<foShape1D>('2D::glueLine', foShape1D, {
+    color: 'Red',
+    height: 15,
+  });
+
+  let wire = cord.newInstance().pushTo(results);
+
+
+  wire.glueStartTo(shape1, shape2DNames.right);
+  wire.glueFinishTo(shape2, shape2DNames.left);
+
+  return results;
+
+});

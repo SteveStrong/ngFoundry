@@ -2,6 +2,7 @@ import { Tools } from '../foundry/foTools'
 
 import { foGlyph3D } from "../foundry/foGlyph3D.model";
 
+
 import { foGlue } from '../foundry/foGlue'
 import { foConnectionPoint } from '../foundry/foConnectionPoint'
 import { foCollection } from '../foundry/foCollection.model'
@@ -12,7 +13,7 @@ import { Lifecycle } from './foLifecycle';
 
 import { JSONLoader, MultiMaterial, Material, Geometry, Mesh } from 'three';
 
-import { SphereGeometry, LineCurve3 } from 'three';
+import { SphereGeometry } from 'three';
 
 export enum shape3DNames {
     left = "left",
