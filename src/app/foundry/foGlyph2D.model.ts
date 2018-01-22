@@ -432,7 +432,7 @@ export class foGlyph2D extends foNode implements iShape {
 
 
     findObjectUnderFrame(source: foGlyph2D, hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let found: foGlyph2D = this.overlapTest(hit, ctx) ? this : undefined;
+        let found: foGlyph2D = this.overlapTest(hit) ? this : undefined;
 
         if (deep) {
             let child = this.findChildObjectUnderFrame(source, hit, ctx);
@@ -451,7 +451,7 @@ export class foGlyph2D extends foNode implements iShape {
                 if (found) return found;
             }
         }
-        if (this.overlapTest(hit, ctx)) {
+        if (this.overlapTest(hit)) {
             return this;
         }
     }
@@ -474,9 +474,7 @@ export class foGlyph2D extends foNode implements iShape {
         return this.localHitTest(hit);
     }
 
-
-
-    public overlapTest = (hit: iFrame, ctx: CanvasRenderingContext2D): boolean => {
+    public overlapTest = (hit: iFrame): boolean => {
         let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
         if (this.localContains(frame.x1, frame.y1)) return true;

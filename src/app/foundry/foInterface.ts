@@ -117,8 +117,9 @@ export interface iShape extends iRect, iNode {
     render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
-    hitTest(hit: iPoint2D, ctx: CanvasRenderingContext2D): boolean;
-    overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
+    
+    hitTest(hit: iPoint): boolean;
+    overlapTest(hit: iFrame): boolean;
 
     getOffset(loc: iPoint2D): iPoint2D;
     getLocation(): iPoint;
