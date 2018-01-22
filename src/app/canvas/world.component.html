@@ -8,6 +8,7 @@
         <button (click)="doOnOff()" type="button" class="btn btn-success">{{label}}</button>
         <button (click)="doAxis()" type="button" class="btn btn-success">Axis</button>
         <button (click)="doWorld()" type="button" class="btn btn-success">World</button>
+        <button (click)="doLight()" type="button" class="btn btn-success">Lights</button>
       </div>
       <div class="btn-group mr-2 pull-right" role="group">
         <ng-container *ngFor="let stage of currentStudio.stages.members">

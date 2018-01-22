@@ -50,6 +50,11 @@ export class foNode extends foObject implements iNode {
         });
     }
 
+    public pushTo(list){
+        list.push(this);
+        return this;
+    }
+
     //deep hook for syncing matrix2d with geometry 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         return this;

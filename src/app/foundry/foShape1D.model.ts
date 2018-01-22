@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
 import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D } from '../foundry/foInterface'
+import { iPoint2D, iPoint } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -93,7 +93,7 @@ export class foShape1D extends foShape2D {
             startY: this.startY,
             finishX: this.finishX,
             finishY: this.finishY,
-            glue: this._glue && Tools.asArray(this.glue.asJson)
+            // glue: this._glue && Tools.asArray(this.glue.asJson)
         });
     }
 
@@ -131,7 +131,7 @@ export class foShape1D extends foShape2D {
     }
 
     glueStartTo(target: foShape2D, handleName?: string) {
-        let glue =  this.establishGlue(shape1DNames.start, target, handleName);
+        let glue = this.establishGlue(shape1DNames.start, target, handleName);
         glue.doTargetMoveProxy = this.setStart.bind(this);
         glue.targetMoved(target.getLocation());
         return glue;
@@ -215,9 +215,9 @@ export class foShape1D extends foShape2D {
     };
 
 
-    protected localHitTest = (hit: iPoint2D): boolean => {
-
-        let loc = this.globalToLocal(hit.x, hit.y);
+    protected localHitTest = (hit: iPoint): boolean => {
+        let { x, y } = hit as iPoint2D
+        let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -230,7 +230,7 @@ export class foShape1D extends foShape2D {
     }
 
 
-    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint): boolean => {
         return this.localHitTest(hit);
     }
 

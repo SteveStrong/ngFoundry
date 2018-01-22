@@ -40,14 +40,32 @@ export interface iNode {
 export interface iKnowledge extends iObject {
 }
 
+export interface iConnectionPoint extends iObject {
+    doMoveProxy: (loc: iPoint) => void;
+    hitTest: (hit: iPoint2D) => boolean 
+    render(ctx: CanvasRenderingContext2D);
+}
+
 //FOR GLYPHS and SHAPES
-export interface iPoint2D {
+export interface iPoint {
+    myName: string;
+}
+
+export interface iPoint2D extends iPoint {
     x: number;
     y: number;
-    myName: string;
 
     set(x: number, y: number): iPoint2D
     add(x: number, y: number): iPoint2D
+}
+
+export interface iPoint3D extends iPoint {
+    x: number;
+    y: number;
+    z: number;
+
+    set(x: number, y: number, z: number): iPoint3D
+    add(x: number, y: number, z: number): iPoint3D
 }
 
 export interface iMargin {
@@ -105,11 +123,12 @@ export interface iShape extends iRect, iNode {
     render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
-    hitTest(hit: iPoint2D, ctx: CanvasRenderingContext2D): boolean;
-    overlapTest(hit: iFrame, ctx: CanvasRenderingContext2D): boolean;
+    
+    hitTest(hit: iPoint): boolean;
+    overlapTest(hit: iFrame): boolean;
 
     getOffset(loc: iPoint2D): iPoint2D;
-    getLocation(): iPoint2D;
+    getLocation(): iPoint;
     moveTo(loc: iPoint2D, offset?: iPoint2D);
     moveBy(loc: iPoint2D, offset?: iPoint2D)
 

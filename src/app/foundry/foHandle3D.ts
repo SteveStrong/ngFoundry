@@ -1,0 +1,168 @@
+
+
+import { cPoint2D } from './foGeometry2D';
+import { Matrix2D } from './foMatrix2D';
+
+import { iPoint2D, iPoint } from './foInterface';
+
+import { foObject } from './foObject.model';
+import { foNode } from './foNode.model';
+import { foComponent } from './foComponent.model';
+
+import { foGlyph2D } from './foGlyph2D.model';
+import { Lifecycle } from './foLifecycle';
+import { BroadcastChange } from './foChange';
+
+import { foHandle } from './foHandle2D';
+
+
+export class foHandle3D extends foHandle {
+
+    protected _x: number;
+    protected _y: number;
+    protected _z: number;
+
+    get x(): number { return this._x || 0.0; }
+    set x(value: number) {
+        this._x = value;
+    }
+    get y(): number { return this._y || 0.0 }
+    set y(value: number) {
+        this._y = value;
+    }
+    get z(): number { return this._z || 0.0 }
+    set z(value: number) {
+        this._z = value;
+    }
+
+
+    public drawHover: (ctx: CanvasRenderingContext2D) => void;
+    public preDraw: (ctx: CanvasRenderingContext2D) => void;
+    public postDraw: (ctx: CanvasRenderingContext2D) => void;
+
+    protected _matrix: Matrix2D;
+    protected _invMatrix: Matrix2D;
+    smash() {
+        //console.log('smash matrix')
+        this._matrix = undefined;
+        this._invMatrix = undefined;
+    }
+
+
+    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+        super(properties, subcomponents, parent);
+    }
+
+
+
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+        if (!Number.isNaN(x)) this.x = x;
+        if (!Number.isNaN(y)) this.y = y;
+        return this;
+    }
+
+    public moveTo(loc: iPoint2D, offset?: iPoint2D) {
+        //let x = loc.x + (offset ? offset.x : 0);
+        //let y = loc.y + (offset ? offset.y : 0);
+
+        this.doMoveProxy && this.doMoveProxy(loc);
+        BroadcastChange.moved(this, loc)
+        Lifecycle.handle(this, loc);
+        return this;
+    }
+
+
+    getGlobalMatrix() {
+        let mtx = new Matrix2D(this.getMatrix());
+        let parent = <foGlyph2D>this.myParent()
+        if (parent) {
+            mtx.prependMatrix(parent.getGlobalMatrix());
+        }
+        return mtx;
+    };
+
+    getMatrix() {
+        if (this._matrix === undefined) {
+            this._matrix = new Matrix2D();
+            let delta = this.size / 2;
+            this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
+        }
+        return this._matrix;
+    };
+
+    getInvMatrix() {
+        if (this._invMatrix === undefined) {
+            this._invMatrix = this.getMatrix().invertCopy();
+        }
+        return this._invMatrix;
+    };
+
+    localToGlobal(x: number, y: number, pt?: cPoint2D) {
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y, pt);
+    };
+
+    globalToLocal(x: number, y: number, pt?: cPoint2D) {
+        let inv = this.getGlobalMatrix().invertCopy();
+        return inv.transformPoint(x, y, pt);
+    };
+
+    localToGlobalPoint(pt: cPoint2D): cPoint2D {
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(pt.x, pt.y, pt);
+    };
+
+    globalCenter(): cPoint2D {
+        let { x, y } = this.pinLocation();
+        let mtx = this.getGlobalMatrix();
+        return mtx.transformPoint(x, y);
+    };
+
+    public getOffset = (loc: iPoint2D): iPoint2D => {
+        let x = this.x;
+        let y = this.y;
+        return new cPoint2D(x - loc.x, y - loc.y);
+    }
+
+
+
+    protected localHitTest = (hit: iPoint): boolean => {
+        let { x, y } = hit as iPoint2D
+        let loc = this.globalToLocal(x, y);
+
+        if (loc.x < 0) return false;
+        if (loc.x > this.size) return false;
+
+        if (loc.y < 0) return false;
+        if (loc.y > this.size) return false;
+        //foObject.beep();
+        return true;
+    }
+
+    public hitTest = (hit: iPoint): boolean => {
+        return this.localHitTest(hit);
+    }
+
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        ctx.save();
+
+
+        this.preDraw && this.preDraw(ctx);
+        this.draw(ctx);
+        this.drawHover && this.drawHover(ctx);
+        this.postDraw && this.postDraw(ctx);
+
+        ctx.restore();
+    }
+
+    public draw = (ctx: CanvasRenderingContext2D): void => {
+        ctx.fillStyle = this.color;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = this.opacity;
+
+        ctx.fillRect(0, 0, this.size, this.size);
+    }
+
+}
+
+

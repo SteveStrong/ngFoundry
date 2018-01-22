@@ -324,7 +324,7 @@ export class foPage extends foShape2D {
 
             if (shapeUnder && keys.ctrl) {
                 //foObject.beep();
-                let { x, y } = shape.getLocation();
+                let { x, y } = shape.getLocation() as cPoint2D;
                 let drop = shapeUnder.globalToLocal(x, y);
                 shapeUnder.addSubcomponent(shape.removeFromParent());
                 shape.easeTo(drop.x, drop.y);

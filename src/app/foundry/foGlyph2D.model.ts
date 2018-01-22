@@ -5,7 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import { iShape, iPoint2D, iRect, iFrame } from './foInterface';
+import { iShape, iPoint,  iPoint2D, iRect, iFrame } from './foInterface';
 
 import { foHandle2D } from './foHandle2D';
 import { foObject } from './foObject.model';
@@ -29,16 +29,6 @@ export class foGlyph2D extends foNode implements iShape {
         };
 
     }
-
-
-    protected _visible: boolean = true;
-    get visible(): boolean { return this._visible; }
-    set visible(value: boolean) { this._visible = value; }
-
-    public get isVisible() {
-        return !!(this.visible && this.opacity > 0);
-    };
-
 
 
     protected _subcomponents: foCollection<foGlyph2D>;
@@ -168,7 +158,6 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-        Lifecycle.created(this)
         return this;
     }
 
@@ -376,7 +365,7 @@ export class foGlyph2D extends foNode implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = (): iPoint2D => {
+    public getLocation = (): iPoint => {
         let x = this.x;
         let y = this.y;
         return new cPoint2D(x, y);
@@ -406,7 +395,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     findObjectUnderPoint(hit: iPoint2D, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let found: foGlyph2D = this.hitTest(hit, ctx) ? this : undefined;
+        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
 
         if (deep) {
             let child = this.findChildObjectUnderPoint(hit, ctx);
@@ -425,7 +414,7 @@ export class foGlyph2D extends foNode implements iShape {
             }
         }
 
-        if (this.hitTest(hit, ctx)) {
+        if (this.hitTest(hit)) {
             return this;
         }
     }
@@ -433,7 +422,7 @@ export class foGlyph2D extends foNode implements iShape {
 
 
     findObjectUnderFrame(source: foGlyph2D, hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let found: foGlyph2D = this.overlapTest(hit, ctx) ? this : undefined;
+        let found: foGlyph2D = this.overlapTest(hit) ? this : undefined;
 
         if (deep) {
             let child = this.findChildObjectUnderFrame(source, hit, ctx);
@@ -452,16 +441,16 @@ export class foGlyph2D extends foNode implements iShape {
                 if (found) return found;
             }
         }
-        if (this.overlapTest(hit, ctx)) {
+        if (this.overlapTest(hit)) {
             return this;
         }
     }
 
 
 
-    protected localHitTest = (hit: iPoint2D): boolean => {
-
-        let loc = this.globalToLocal(hit.x, hit.y);
+    protected localHitTest = (hit: iPoint): boolean => {
+        let { x, y } = hit as iPoint2D
+        let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -471,13 +460,11 @@ export class foGlyph2D extends foNode implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint): boolean => {
         return this.localHitTest(hit);
     }
 
-
-
-    public overlapTest = (hit: iFrame, ctx: CanvasRenderingContext2D): boolean => {
+    public overlapTest = (hit: iFrame): boolean => {
         let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
         if (this.localContains(frame.x1, frame.y1)) return true;
@@ -674,14 +661,14 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutSubcomponentsVertical(resize: boolean = true, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         if (resize) {
             self.height = self.width = 0;
             loc.x = loc.y = 0;
         } else {
-            loc = this.nodes.first().getLocation();
+            loc = this.nodes.first().getLocation() as cPoint2D;;
         }
 
         this.nodes.forEach(item => {
@@ -706,14 +693,14 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutSubcomponentsHorizontal(resize: boolean = true, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         if (resize) {
             self.height = self.width = 0;
             loc.x = loc.y = 0;
         } else {
-            loc = this.nodes.first().getLocation();
+            loc = this.nodes.first().getLocation() as cPoint2D;
         }
 
         this.nodes.forEach(item => {
@@ -738,7 +725,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutMarginRight(resize: boolean = false, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         loc.x = (space + this.width);
@@ -760,7 +747,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     layoutMarginTop(resize: boolean = false, space: number = 0) {
-        let loc = this.getLocation();
+        let loc = this.getLocation() as cPoint2D;
         let self = this;
 
         loc.x = 10;

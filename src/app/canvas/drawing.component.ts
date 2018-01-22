@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 
+import { Tools } from "../foundry/foTools";
+
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foPage } from "../foundry/foPage.model";
 import { foModel } from "../foundry/foModel.model";
@@ -11,6 +13,7 @@ import { BroadcastChange } from '../foundry/foChange';
 
 import { cPoint2D } from '../foundry/foGeometry2D';
 import { foGlyph2D } from "../foundry/foGlyph2D.model";
+import { foShape3D } from "../foundry/foShape3D.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
@@ -24,8 +27,9 @@ import { foStage } from 'app/foundry/foStage.model';
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
-import { foObject } from 'app/foundry/foObject.model';
+import { foGlue } from 'app/foundry/foGlue';
 import { filter } from 'rxjs/operators';
+import { SolidStencil } from "./solids.model";
 
 
 @Component({
@@ -84,16 +88,16 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
   doCamera() {
-    let x =  0;
-    let y =  0;
-    let z =  0;
+    let x = 0;
+    let y = 0;
+    let z = 0;
     let xxx = this.screen3D;
-    function spin(){
-      xxx.cameraSpin(x,y,z);
+    function spin() {
+      xxx.cameraSpin(x, y, z);
       y += 1 * foGlyph2D.DEG_TO_RAD;
       y < 360 && setTimeout(spin, 100)
-    }  
-    spin() 
+    }
+    spin()
   }
 
   doParticleEngine(page: foPage) {
@@ -127,14 +131,45 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     });
 
 
+
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
+
+    // Lifecycle2D.subscribe(event => {
+    //   console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+    // });
+
+    let glued = Lifecycle2D.pipe(filter(e => e.isCmd('glued')));
     let moved = Lifecycle2D.pipe(filter(e => e.isCmd('moved')));
     let dropped = Lifecycle2D.pipe(filter(e => e.isCmd('dropped')));
     let reparent = Lifecycle2D.pipe(filter(e => e.isCmd('reparent')));
     let created = Lifecycle2D.pipe(filter(e => e.isCmd('created') && e.value));
+    let changed = Lifecycle2D.pipe(filter(e => e.isCmd('changed') && e.value));
+
+
+
+    glued.subscribe(event => {
+      let glue = event.object as foGlue;
+      let { sourceGuid, sourceName, targetGuid, targetName } = glue.signature;
+
+      this.rootWorkspace.activeStage.found<foShape3D>(sourceGuid, (source) => {
+        this.rootWorkspace.activeStage.found<foShape3D>(targetGuid, (target) => {
+          source.establishGlue(sourceName, target, targetName);
+        });
+      });
+
+    });
+
+    changed.subscribe(event => {
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+
+      this.currentStudio.currentStage.found(event.myGuid, item => {
+        item.override(event.value);
+        item.setupPreDraw();
+      })
+    });
 
     moved.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
 
       this.currentStudio.currentStage.found(event.myGuid, item => {
         let { x, y } = event.value;
@@ -151,12 +186,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
     reparent.subscribe(event => {
       console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
-      
+
       this.currentStudio.currentStage.found(event.myGuid, shape => {
         let parent = event.object.myParent();
-        parent && this.currentStudio.currentStage.found(parent.myGuid, 
-          (item) => {shape.reParent(item)},
-          (miss)=> {shape.reParent(this.currentStudio.currentStage)}
+        parent && this.currentStudio.currentStage.found(parent.myGuid,
+          (item) => { shape.reParent(item) },
+          (miss) => { shape.reParent(this.currentStudio.currentStage) }
         )
       })
     });
@@ -165,10 +200,20 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       let stage = this.currentStudio.currentStage;
       stage.findItem(event.myGuid, () => {
         let knowledge = event.value;
-        knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
+
+        let myClass = event.myClass.replace('2D::', '3D::');
+        let concept = globalWorkspace.select(item => Tools.matches(item.myName, myClass)).first();
+        if (concept) {
           let result = concept.newInstance(event.object.asJson);
           stage.establishInDictionary(result);
-        })
+        }
+        else {
+          knowledge && knowledge.usingRuntimeType('foGlyph3D', concept => {
+            let result = concept.newInstance(event.object.asJson);
+            stage.establishInDictionary(result);
+          })
+        }
+
       })
 
     });
@@ -176,6 +221,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
+    libs.add(SolidStencil).displayName = "Solid";
 
     this.rootWorkspace.library.add(PersonDomain);
     this.rootWorkspace.model.addItem('default', new foModel({}))

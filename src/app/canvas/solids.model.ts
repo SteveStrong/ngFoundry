@@ -4,15 +4,19 @@ import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foGlyph3D } from "../foundry/foGlyph3D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
-import { foText2D } from "../foundry/foText2D.model";
-import { foImage } from "../foundry/foImage.model";
+import { foShape3D, foModel3D, foSphere, shape3DNames } from "../foundry/foShape3D.model";
+import { foText3D } from "../foundry/foText3D.model";
+import { foImage3D } from "../foundry/foImage3D.model";
+import { foPipe3D } from "../foundry/foPipe3D.model";
+import { foNode } from "../foundry/foNode.model";
+import { foObject } from "../foundry/foObject.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 import { foStencilLibrary } from "../foundry/foStencil";
 import { RuntimeType } from '../foundry/foRuntimeType';
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
-import { SphereGeometry, JSONLoader, MultiMaterial, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { LineCurve3, TubeGeometry, BoxGeometry, MultiMaterial, Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName();
 
@@ -23,12 +27,7 @@ SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
   depth: 900
 });
 
-export class Sphere extends foGlyph3D {
-  radius: number;
-  geometry = (spec?: any): Geometry => {
-    return new SphereGeometry(this.radius);
-  }
-
+export class Sphere extends foSphere {
   doBigger() {
     this.radius += 30;
     this.smash();
@@ -51,38 +50,103 @@ export class Sphere extends foGlyph3D {
 
 SolidStencil.define<Sphere>('sphere', Sphere, {
   color: 'orange',
+  //opacity: .5,
   radius: 100,
   width: function () { return this.radius },
   height: function () { return this.radius },
   depth: function () { return this.radius },
 }).addCommands("doBigger", "doSmaller", "doX", "doY");
 
-export class Model3D extends foGlyph3D {
-  url: string = "assets/models/707.js";
-  private _geometry;
-  private _material;
 
+
+SolidStencil.define<foModel3D>('Model3D', foModel3D, {
+  url: "assets/models/707.js"
+});
+
+
+
+
+SolidStencil.define<foText3D>('3D::Text', foText3D, {
+  color: 'green',
+  background: 'grey',
+  text: 'HELLO STEVE',
+  fontSize: 30,
+});
+
+SolidStencil.define<foImage3D>('3D::Image', foImage3D, {
+  background: 'green',
+  width: 400,
+  height: 250
+});
+
+class Pipe3d extends foPipe3D {
+  //https://threejs.org/docs/#api/geometries/TubeGeometry
   geometry = (spec?: any): Geometry => {
-    return this._geometry;
+    let begin = this.begin().asVector();
+    let end = this.end().asVector();
+    let curve = new LineCurve3(begin, end)
+    return new TubeGeometry(curve, 20, 2, 8, false);
   }
 
   material = (spec?: any): Material => {
-    return new MultiMaterial(this._material);
+    let props = Tools.mixin({
+      color: this.color,
+      wireframe: false
+    }, spec)
+    return new MeshBasicMaterial(props);
   }
-
-  //deep hook for syncing matrix2d with geometry 
-  public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-    let self = this;
-    new JSONLoader().load(this.url, (geometry, materials) => {
-      self._geometry = geometry;
-      self._material = materials;
-      self.smash();
-    });
-    return this;
-  };
-
-
 }
 
-SolidStencil.define<Model3D>('Model3D', Model3D, {
+SolidStencil.define<foPipe3D>('3D::Pipe', Pipe3d, {
+  color: 'blue',
+  width: 100,
+  height: 20,
+  depth: 20,
+  finishX: 100,
+  finishY: 100,
+  finishZ: 100
+});
+
+
+SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
+  depth: 100
+});
+
+SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
+  depth: 15,
+});
+
+SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
+  SolidStencil.isVisible = false;
+  let results = Array<foGlyph3D>();
+
+  let def = SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
+    color: 'blue',
+    opacity: .4,
+    width: 200,
+    height: 150,
+    depth: 100,
+  });
+
+  let shape1 = def.newInstance({color:'green'}).dropAt(300, 200).pushTo(results);
+  let shape2 = def.newInstance().dropAt(600, 200).pushTo(results);
+
+  let cord = SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
+    color: 'red',
+    height: 15,
+    depth: 15,
+  });
+  SolidStencil.isVisible = true;
+  
+  let wire = cord.newInstance().pushTo(results);
+
+
+ // wire.glueStartTo(shape1, shape3DNames.right);
+ // wire.glueFinishTo(shape2, shape3DNames.left);
+
+  wire.glueStartTo(shape1, shape3DNames.center);
+  wire.glueFinishTo(shape2, shape3DNames.center);
+
+  return results;
+
 });

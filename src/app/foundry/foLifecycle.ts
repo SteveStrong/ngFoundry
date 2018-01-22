@@ -30,6 +30,10 @@ export class foLifecycleEvent {
         return this.object.myType;
     }
 
+    get myClass() {
+        return this.object['myClass'];
+    }
+
     get myName() {
         return this.object.myName;
     }
@@ -180,13 +184,19 @@ export class foLifecycle {
         return this;
     }
 
+    changed(obj: foObject, value?: any) {
+        this.emit.next(new foLifecycleEvent('changed', obj, counter++, value))
+        return this;
+    }
+
+
     glued(obj: foObject, value: any) {
         this.emit.next(new foLifecycleEvent('glued', obj, counter++, value))
         return this;
     }
 
-    unglued(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('unglued', obj, counter++))
+    unglued(obj: foObject, value: any) {
+        this.emit.next(new foLifecycleEvent('unglued', obj, counter++, value))
         return this;
     }
 

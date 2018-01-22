@@ -4,12 +4,13 @@ import { foGlyph2D } from "../foundry/foGlyph2D.model";
 import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
 import { foShape1D } from "../foundry/foShape1D.model";
 import { foText2D } from "../foundry/foText2D.model";
-import { foImage } from "../foundry/foImage.model";
+import { foImage2D } from "../foundry/foImage2D.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 import { foStencilLibrary } from "../foundry/foStencil";
 import { RuntimeType } from '../foundry/foRuntimeType';
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
+import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
 export let ShapeStencil: foStencilLibrary = new foStencilLibrary().defaultName();
@@ -19,7 +20,7 @@ class Line extends foShape1D {
 }
 
 ShapeStencil.define<Line>('line', Line, {
-  color: 'Red',
+  color: 'red',
   height: 15,
   opacity: 1,
   thickness: 10,
@@ -41,12 +42,19 @@ ShapeStencil.define<foShape2D>('block', foShape2D, {
   height: 50
 });
 
-ShapeStencil.define<foText2D>('text', foText2D, {
+class Test2D extends foText2D {
+  doChange() {
+    this.text += ' more ';
+    this.setupPreDraw();
+    Lifecycle.changed(this, { text: this.text })
+  }
+}
+ShapeStencil.define<foText2D>('2D::Text', Test2D, {
   color: 'black',
   background: 'grey',
-  context: 'HELLO',
+  text: 'HELLO',
   fontSize: 30,
-});
+}).addCommands('doChange')
 
 ShapeStencil.define<foShape2D>('cyan', foShape2D, {
   color: 'cyan',
@@ -54,7 +62,7 @@ ShapeStencil.define<foShape2D>('cyan', foShape2D, {
   height: 50
 });
 
-ShapeStencil.define<foImage>('Image', foImage, {
+ShapeStencil.define<foImage2D>('2D::Image', foImage2D, {
   background: 'green',
   imageURL: "https://lorempixel.com/900/500?r=2",
   width: 400,
@@ -78,8 +86,8 @@ ShapeStencil.factory<foGlyph2D>('doAddSubGlyph', (spec?: any) => {
   return [<foGlyph2D>shape];
 });
 
-ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
-  let def = ShapeStencil.define<foImage>('image', foImage, {
+ShapeStencil.factory<foGlyph2D>('doImages', (spec?: any) => {
+  let def = ShapeStencil.define<foImage2D>('image', foImage2D, {
     background: 'green',
     imageURL: "https://lorempixel.com/900/500?r=2",
     width: 100,
@@ -89,27 +97,27 @@ ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
   let result = new Array<foGlyph2D>();
 
   for (let i = 0; i < 8; i++) {
-      let picture = def.newInstance({
-        angle: Tools.randomInt(0, 300)
-      }).defaultName();
+    let picture = def.newInstance({
+      angle: Tools.randomInt(0, 300)
+    }).defaultName();
 
-      result.push(picture);
-      let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
-      picture.easeTween(place, 1.5);
+    result.push(picture);
+    let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
+    picture.easeTween(place, 1.5);
   }
 
   for (let i = 0; i < 8; i++) {
-      let picture = def.newInstance().defaultName();
-      result.push(picture);
-      picture.angle = Tools.randomInt(0, 300);
+    let picture = def.newInstance().defaultName();
+    result.push(picture);
+    picture.angle = Tools.randomInt(0, 300);
 
-      //created forces a broadast of latest state
-      let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
-      picture.easeTween(place, 2.5);
+    //created forces a broadast of latest state
+    let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
+    picture.easeTween(place, 2.5);
   }
 
 
-  let image = new foImage({
+  let image = new foImage2D({
     background: 'blue',
     margin: new cMargin(10, 10, 10, 10),
     width: 80,
@@ -127,4 +135,65 @@ ShapeStencil.factory<foGlyph2D>('doImage', (spec?: any) => {
 
   image.easeTween(size, 2.8, 'easeInOut');
   return result;
+});
+
+ShapeStencil.factory<foGlyph2D>('doText', (spec?: any) => {
+  let textBlock = ShapeStencil.find<foText2D>('2D::Text');
+
+
+  let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
+  let results = Array<foGlyph2D>();
+
+  let y = 100;
+  let size = 8;
+  list.forEach(item => {
+    size += 4;
+    let shape = textBlock.newInstance({
+      text: 'Hello ' + item,
+      fontSize: size,
+    }).dropAt(350, y);
+    y += 50;
+
+    results.push(shape);
+  })
+
+  return results;
+
+});
+
+
+ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
+
+  ShapeStencil.isVisible = false;
+  let results = Array<foGlyph2D>();
+
+  let def = ShapeStencil.define<foShape2D>('2D::glueShape', foShape2D, {
+    color: 'blue',
+    opacity: .5,
+    width: 200,
+    height: 150,
+  });
+
+
+  let shape1 = def.newInstance({color:'green'}).dropAt(300, 200).pushTo(results);
+  let shape2 = def.newInstance().dropAt(600, 200).pushTo(results);
+
+  let cord = ShapeStencil.define<foShape1D>('2D::glueLine', foShape1D, {
+    color: 'red',
+    height: 15,
+  });
+
+  ShapeStencil.isVisible = true;
+  
+  let wire = cord.newInstance().pushTo(results);
+
+
+  //wire.glueStartTo(shape1, shape2DNames.right);
+  //wire.glueFinishTo(shape2, shape2DNames.left);
+
+  wire.glueStartTo(shape1, shape2DNames.center);
+  wire.glueFinishTo(shape2, shape2DNames.center);
+
+  return results;
+
 });

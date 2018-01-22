@@ -74,7 +74,6 @@ export class foStage extends foGlyph3D {
 
 
 
-
     _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
 
 
@@ -161,11 +160,11 @@ export class foStage extends foGlyph3D {
     }
 
     render3D = (screen:Screen3D, deep: boolean = true) => {
-
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
         });
     }
-
-
 }
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foStage);

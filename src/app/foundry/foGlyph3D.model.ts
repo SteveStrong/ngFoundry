@@ -1,13 +1,13 @@
 import { Object3D, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 import { Tools } from '../foundry/foTools'
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D, iFrame } from '../foundry/foInterface'
+import { cPoint3D } from '../foundry/foGeometry3D';
+import { iPoint, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint } from '../foundry/foConnectionPoint'
+import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
@@ -17,6 +17,58 @@ import { Screen3D } from "../foundryDrivers/threeDriver";
 
 import { Lifecycle } from './foLifecycle';
 
+// export class foBody3D {
+//     protected _opacity: number;
+//     protected _color: string;
+
+//     get opacity(): number { return this._opacity || 1; }
+//     set opacity(value: number) { this._opacity = value; }
+
+//     get color(): string {
+//         return this._color || 'black';
+//     }
+//     set color(value: string) {
+//         this._color = value;
+//     }
+
+//     geometry = (spec?: any): Geometry => {
+//         return new BoxGeometry(1, 1, 1);
+//     }
+
+//     material = (spec?: any): Material => {
+//         let props = Tools.mixin({
+//             color: this.color,
+//             opacity: this.opacity,
+//             transparent: this.opacity < 1 ? true : false,
+//             wireframe: false
+//         }, spec)
+//         return new MeshBasicMaterial(props);
+//     }
+
+//     protected _mesh: Mesh;
+//     get mesh(): Mesh {
+//         if (!this._mesh) {
+//             let geom = this.geometry()
+//             let mat = this.material()
+//             this._mesh = (geom && mat) && new Mesh(geom, this.material());
+//         }
+//         return this._mesh;
+//     }
+//     set mesh(value: Mesh) { this._mesh = value; }
+
+
+//     protected _obj3D: Object3D;
+//     get obj3D(): Object3D {
+//         if (!this._obj3D && this.mesh) {
+//             this._obj3D = new Object3D();
+//             this._obj3D.name = this.myGuid;
+//             this._obj3D.add(this.mesh)
+//         }
+//         return this._obj3D;
+//     }
+//     set obj3D(value: Object3D) { this.obj3D = value; }
+
+// }
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -61,26 +113,35 @@ export class foGlyph3D extends foGlyph2D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw();
     }
 
     is2D() { return false; }
     is3D() { return true; }
 
-    private _isDirty:boolean = true;
-    smash() {
-        super.smash();
-        this._isDirty = true;
-
+    public getLocation = (): iPoint => {
+        let x = this.x;
+        let y = this.y;
+        let z = this.z;
+        return new cPoint3D(x, y, z);
     }
 
-    geometry = (spec?:any):Geometry => {
+    smash() {
+        super.smash();
+        this.setupPreDraw();
+    }
+
+    geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);
     }
 
-    material = (spec?:any):Material => {
+    material = (spec?: any): Material => {
         let props = Tools.mixin({
-            color: this.color, 
-            wireframe: false 
+            color: this.color,
+            opacity: this.opacity,
+            transparent: this.opacity < 1 ? true : false,
+            wireframe: false
         }, spec)
         return new MeshBasicMaterial(props);
     }
@@ -88,7 +149,9 @@ export class foGlyph3D extends foGlyph2D {
     protected _mesh: Mesh;
     get mesh(): Mesh {
         if (!this._mesh) {
-            this._mesh = new Mesh(this.geometry(), this.material());
+            let geom = this.geometry()
+            let mat = this.material()
+            this._mesh = (geom && mat) && new Mesh(geom, this.material());
         }
         return this._mesh;
     }
@@ -97,7 +160,7 @@ export class foGlyph3D extends foGlyph2D {
 
     protected _obj3D: Object3D;
     get obj3D(): Object3D {
-        if (!this._obj3D) {
+        if (!this._obj3D && this.mesh) {
             this._obj3D = new Object3D();
             this._obj3D.name = this.myGuid;
             this._obj3D.add(this.mesh)
@@ -117,40 +180,43 @@ export class foGlyph3D extends foGlyph2D {
         });
     }
 
-    addAsSubcomponent(parent: foNode, properties?: any) {
-        let result = super.addAsSubcomponent(parent, properties);
-        return result;
+    setupPreDraw() {
+
+        let preDraw = (screen: Screen3D) => {
+            if (this._obj3D) {
+                this._obj3D.remove(this._mesh)
+                screen.removeFromScene(this._obj3D);
+
+                this._obj3D = this._mesh = undefined;
+            }
+            let obj3D = this.obj3D;
+            if (obj3D) {
+                obj3D.position.set(this.x, this.y, this.z);
+                obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
+                screen.addToScene(obj3D);
+                this.preDraw3D = undefined;
+            }
+
+        }
+
+        this.preDraw3D = preDraw;
     }
 
-
-    preRender3D = (screen: Screen3D) => {
-        if ( this._isDirty && this._obj3D) {
-            this._isDirty = false;
-            this._obj3D.remove(this._mesh)
-            screen.removeFromScene(this._obj3D);
-            
-            this._obj3D = this._mesh = undefined;
-        }
-        if ( !this._obj3D) {
-            this.obj3D.position.set(this.x, this.y, this.z);
-            this.obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
-            screen.addToScene(this.obj3D);
-        }
-    }
+    preDraw3D: (screen: Screen3D) => void;
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
         let obj = this.obj3D;
-
+        if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         //make changes that support animation here
-         //let rot = this.mesh.rotation;
+        //let rot = this.mesh.rotation;
         // rot.x += 0.01;
         // rot.y += 0.02;
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
-        this.preRender3D && this.preRender3D(screen)
+        this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen)
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
@@ -158,10 +224,17 @@ export class foGlyph3D extends foGlyph2D {
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        super.move(x,y,angle);
+        super.move(x, y, angle);
         this.obj3D.position.set(this.x, this.y, this.z);
         return this;
     }
 
 
 }
+
+//https://www.typescriptlang.org/docs/handbook/mixins.html
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foGlyph3D);
+
+//RuntimeType.applyMixins(foGlyph3D, [foGlyph2D, foBody3D]);
