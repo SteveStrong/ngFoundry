@@ -31,16 +31,6 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
 
-    protected _visible: boolean = true;
-    get visible(): boolean { return this._visible; }
-    set visible(value: boolean) { this._visible = value; }
-
-    public get isVisible() {
-        return !!(this.visible && this.opacity > 0);
-    };
-
-
-
     protected _subcomponents: foCollection<foGlyph2D>;
     protected _x: number;
     protected _y: number;

@@ -6,7 +6,7 @@ import { iPoint2D, iPoint, iFrame } from '../foundry/foInterface'
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint2D, iConnectionPoint } from '../foundry/foConnectionPoint2D'
+import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
@@ -41,8 +41,8 @@ export class foShape2D extends foGlyph2D {
     }
     protected _glue: foCollection<foGlue>;
 
-    get connectionPoints(): foCollection<iConnectionPoint> { return this._connectionPoints || this.createConnectionPoints(); }
-    protected _connectionPoints: foCollection<iConnectionPoint>;
+    get connectionPoints(): foCollection<foConnectionPoint2D> { return this._connectionPoints || this.createConnectionPoints(); }
+    protected _connectionPoints: foCollection<foConnectionPoint2D>;
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
@@ -56,7 +56,7 @@ export class foShape2D extends foGlyph2D {
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
             angle: this.angle,
-           // glue: this._glue && Tools.asArray(this.glue.asJson)
+            // glue: this._glue && Tools.asArray(this.glue.asJson)
         });
     }
 
@@ -182,11 +182,11 @@ export class foShape2D extends foGlyph2D {
         return glue;
     }
 
-    protected generateConnectionPoints(spec: Array<any>, proxy?: Array<any>): foCollection<iConnectionPoint> {
+    protected generateConnectionPoints(spec: Array<any>, proxy?: Array<any>): foCollection<foConnectionPoint2D> {
 
         let i = 0;
         if (!this._connectionPoints) {
-            this._connectionPoints = new foCollection<iConnectionPoint>()
+            this._connectionPoints = new foCollection<foConnectionPoint2D>()
             spec.forEach(item => {
                 let type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint2D);
                 let point = new type(item, undefined, this);
@@ -205,7 +205,7 @@ export class foShape2D extends foGlyph2D {
         return this._connectionPoints;
     }
 
-    public createConnectionPoints(): foCollection<iConnectionPoint> {
+    public createConnectionPoints(): foCollection<foConnectionPoint2D> {
 
         let spec = [
             { x: this.width / 2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint2D) },
@@ -217,15 +217,15 @@ export class foShape2D extends foGlyph2D {
         return this.generateConnectionPoints(spec);
     }
 
-    getConnectionPoint(name: string): iConnectionPoint {
+    getConnectionPoint(name: string): foConnectionPoint2D {
         return this.connectionPoints.findMember(name);
     }
 
-    public findConnectionPoint(loc: cPoint2D, e): iConnectionPoint {
+    public findConnectionPoint(loc: cPoint2D, e): foConnectionPoint2D {
         if (!this._connectionPoints) return;
 
         for (var i: number = 0; i < this.connectionPoints.length; i++) {
-            let point: iConnectionPoint = this.connectionPoints.getChildAt(i);
+            let point: foConnectionPoint2D = this.connectionPoints.getChildAt(i);
             if (point.hitTest(loc)) {
                 return point;
             }

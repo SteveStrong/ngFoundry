@@ -4,6 +4,7 @@ import { foObject } from './foObject.model'
 import { foPage } from './foPage.model'
 import { foNode } from './foNode.model'
 import { foDictionary } from './foDictionary.model'
+import { Lifecycle } from 'app/foundry/foLifecycle';
 
 import { BroadcastChange } from './foChange';
 
@@ -67,5 +68,4 @@ export class foDocument extends foNode {
 }
 
 import { RuntimeType } from './foRuntimeType';
-import { Lifecycle } from 'app/foundry/foLifecycle';
 RuntimeType.define(foDocument);

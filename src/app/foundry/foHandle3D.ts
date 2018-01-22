@@ -13,63 +13,26 @@ import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 
-import { iConnectionPoint } from './foInterface';
+import { foHandle } from './foHandle2D';
 
-export class foHandle extends foNode implements iConnectionPoint {
-    protected _size: number;
-    protected _opacity: number;
-    protected _color: string;
 
-    get size(): number { return this._size || 10.0; }
-    set size(value: number) { this._size = value; }
-
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'black';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
-
-    public doMoveProxy: (loc: iPoint) => void;
-
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-    }
-
-    public hitTest = (hit: iPoint): boolean => {
-        return false;
-    }
-
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-    }
-
-    public pinLocation() {
-        let loc = this.size / 2
-        return {
-            x: loc,
-            y: loc
-        }
-    }
-
-}
-
-export class foHandle2D extends foHandle {
+export class foHandle3D extends foHandle {
 
     protected _x: number;
     protected _y: number;
+    protected _z: number;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
-        this.smash();
         this._x = value;
     }
     get y(): number { return this._y || 0.0 }
     set y(value: number) {
-        this.smash();
         this._y = value;
+    }
+    get z(): number { return this._z || 0.0 }
+    set z(value: number) {
+        this._z = value;
     }
 
 
@@ -108,12 +71,6 @@ export class foHandle2D extends foHandle {
         return this;
     }
 
-
-    updateContext(ctx: CanvasRenderingContext2D) {
-        let mtx = this.getMatrix();
-        ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
-        ctx.globalAlpha *= this.opacity;
-    };
 
     getGlobalMatrix() {
         let mtx = new Matrix2D(this.getMatrix());
@@ -189,7 +146,6 @@ export class foHandle2D extends foHandle {
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
         ctx.save();
 
-        this.updateContext(ctx);
 
         this.preDraw && this.preDraw(ctx);
         this.draw(ctx);

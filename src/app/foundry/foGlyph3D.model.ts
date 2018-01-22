@@ -17,6 +17,58 @@ import { Screen3D } from "../foundryDrivers/threeDriver";
 
 import { Lifecycle } from './foLifecycle';
 
+// export class foBody3D {
+//     protected _opacity: number;
+//     protected _color: string;
+
+//     get opacity(): number { return this._opacity || 1; }
+//     set opacity(value: number) { this._opacity = value; }
+
+//     get color(): string {
+//         return this._color || 'black';
+//     }
+//     set color(value: string) {
+//         this._color = value;
+//     }
+
+//     geometry = (spec?: any): Geometry => {
+//         return new BoxGeometry(1, 1, 1);
+//     }
+
+//     material = (spec?: any): Material => {
+//         let props = Tools.mixin({
+//             color: this.color,
+//             opacity: this.opacity,
+//             transparent: this.opacity < 1 ? true : false,
+//             wireframe: false
+//         }, spec)
+//         return new MeshBasicMaterial(props);
+//     }
+
+//     protected _mesh: Mesh;
+//     get mesh(): Mesh {
+//         if (!this._mesh) {
+//             let geom = this.geometry()
+//             let mat = this.material()
+//             this._mesh = (geom && mat) && new Mesh(geom, this.material());
+//         }
+//         return this._mesh;
+//     }
+//     set mesh(value: Mesh) { this._mesh = value; }
+
+
+//     protected _obj3D: Object3D;
+//     get obj3D(): Object3D {
+//         if (!this._obj3D && this.mesh) {
+//             this._obj3D = new Object3D();
+//             this._obj3D.name = this.myGuid;
+//             this._obj3D.add(this.mesh)
+//         }
+//         return this._obj3D;
+//     }
+//     set obj3D(value: Object3D) { this.obj3D = value; }
+
+// }
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -179,3 +231,10 @@ export class foGlyph3D extends foGlyph2D {
 
 
 }
+
+//https://www.typescriptlang.org/docs/handbook/mixins.html
+
+import { RuntimeType } from './foRuntimeType';
+RuntimeType.define(foGlyph3D);
+
+//RuntimeType.applyMixins(foGlyph3D, [foGlyph2D, foBody3D]);

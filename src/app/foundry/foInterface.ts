@@ -40,6 +40,12 @@ export interface iNode {
 export interface iKnowledge extends iObject {
 }
 
+export interface iConnectionPoint extends iObject {
+    doMoveProxy: (loc: iPoint) => void;
+    hitTest: (hit: iPoint2D) => boolean 
+    render(ctx: CanvasRenderingContext2D);
+}
+
 //FOR GLYPHS and SHAPES
 export interface iPoint {
     myName: string;
