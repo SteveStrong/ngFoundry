@@ -458,9 +458,9 @@ export class foGlyph2D extends foNode implements iShape {
 
 
 
-    protected localHitTest = (hit: iPoint2D): boolean => {
-
-        let loc = this.globalToLocal(hit.x, hit.y);
+    protected localHitTest = (hit: iPoint): boolean => {
+        let { x, y } = hit as iPoint2D
+        let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -470,7 +470,7 @@ export class foGlyph2D extends foNode implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint2D): boolean => {
+    public hitTest = (hit: iPoint): boolean => {
         return this.localHitTest(hit);
     }
 

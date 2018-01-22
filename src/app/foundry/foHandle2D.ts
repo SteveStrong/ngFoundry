@@ -13,25 +13,10 @@ import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 
-//a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foHandle2D extends foNode {
-
-    protected _x: number;
-    protected _y: number;
+export class foHandle extends foNode {
     protected _size: number;
     protected _opacity: number;
     protected _color: string;
-
-    get x(): number { return this._x || 0.0; }
-    set x(value: number) {
-        this.smash();
-        this._x = value;
-    }
-    get y(): number { return this._y || 0.0 }
-    set y(value: number) {
-        this.smash();
-        this._y = value;
-    }
 
     get size(): number { return this._size || 10.0; }
     set size(value: number) { this._size = value; }
@@ -47,6 +32,39 @@ export class foHandle2D extends foNode {
     }
 
     public doMoveProxy: (loc: iPoint) => void;
+
+    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+        super(properties, subcomponents, parent);
+    }
+
+    public pinLocation() {
+        let loc = this.size / 2
+        return {
+            x: loc,
+            y: loc
+        }
+    }
+
+}
+
+export class foHandle2D extends foHandle {
+
+    protected _x: number;
+    protected _y: number;
+
+
+    get x(): number { return this._x || 0.0; }
+    set x(value: number) {
+        this.smash();
+        this._x = value;
+    }
+    get y(): number { return this._y || 0.0 }
+    set y(value: number) {
+        this.smash();
+        this._y = value;
+    }
+
+
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -64,13 +82,7 @@ export class foHandle2D extends foNode {
         super(properties, subcomponents, parent);
     }
 
-    public pinLocation() {
-        let loc = this.size / 2
-        return {
-            x: loc,
-            y: loc
-        }
-    }
+
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
@@ -149,9 +161,9 @@ export class foHandle2D extends foNode {
 
 
 
-    protected localHitTest = (hit: iPoint2D): boolean => {
-
-        let loc = this.globalToLocal(hit.x, hit.y);
+    protected localHitTest = (hit: iPoint): boolean => {
+        let { x, y } = hit as iPoint2D
+        let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.size) return false;
@@ -162,7 +174,7 @@ export class foHandle2D extends foNode {
         return true;
     }
 
-    public hitTest = (hit: iPoint2D): boolean => {
+    public hitTest = (hit: iPoint): boolean => {
         return this.localHitTest(hit);
     }
 

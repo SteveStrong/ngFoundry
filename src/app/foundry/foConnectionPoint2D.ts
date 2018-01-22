@@ -9,7 +9,7 @@ import { iObject, iPoint2D, iPoint } from './foInterface';
 
 export interface iConnectionPoint extends iObject {
     doMoveProxy: (loc: iPoint) => void;
-    hitTest: (hit: iPoint2D, ctx?: CanvasRenderingContext2D) => boolean 
+    hitTest: (hit: iPoint2D) => boolean 
     render(ctx: CanvasRenderingContext2D);
 }
 

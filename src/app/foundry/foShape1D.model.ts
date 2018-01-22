@@ -230,7 +230,7 @@ export class foShape1D extends foShape2D {
     }
 
 
-    public hitTest = (hit: iPoint2D): boolean => {
+    public hitTest = (hit: iPoint): boolean => {
         return this.localHitTest(hit);
     }
 

@@ -1,7 +1,7 @@
 
 import { Tools } from '../foundry/foTools'
 import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D, iFrame } from '../foundry/foInterface'
+import { iPoint2D, iPoint, iFrame } from '../foundry/foInterface'
 
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
@@ -110,9 +110,9 @@ export class foShape2D extends foGlyph2D {
     };
 
 
-    protected localHitTest = (hit: iPoint2D): boolean => {
-
-        let loc = this.globalToLocal(hit.x, hit.y);
+    protected localHitTest = (hit: iPoint): boolean => {
+        let { x, y } = hit as iPoint2D
+        let loc = this.globalToLocal(x, y);;
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -124,7 +124,7 @@ export class foShape2D extends foGlyph2D {
     }
 
 
-    public hitTest = (hit: iPoint2D): boolean => {
+    public hitTest = (hit: iPoint): boolean => {
         return this.localHitTest(hit);
     }
 
