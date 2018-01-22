@@ -124,7 +124,7 @@ export class foShape2D extends foGlyph2D {
     }
 
 
-    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D): boolean => {
         return this.localHitTest(hit);
     }
 

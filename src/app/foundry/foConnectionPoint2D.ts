@@ -5,10 +5,10 @@ import { foObject } from './foObject.model';
 import { foComponent } from './foComponent.model';
 
 import { foHandle2D } from './foHandle2D';
-import { iObject, iPoint2D } from './foInterface';
+import { iObject, iPoint2D, iPoint } from './foInterface';
 
 export interface iConnectionPoint extends iObject {
-    doMoveProxy: (loc: iPoint2D) => void;
+    doMoveProxy: (loc: iPoint) => void;
     hitTest: (hit: iPoint2D, ctx?: CanvasRenderingContext2D) => boolean 
     render(ctx: CanvasRenderingContext2D);
 }

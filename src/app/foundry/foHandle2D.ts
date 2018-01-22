@@ -3,7 +3,7 @@
 import { cPoint2D } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iPoint2D } from './foInterface';
+import { iPoint2D, iPoint } from './foInterface';
 
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
@@ -46,7 +46,7 @@ export class foHandle2D extends foNode {
         this._color = value;
     }
 
-    public doMoveProxy: (loc: iPoint2D) => void;
+    public doMoveProxy: (loc: iPoint) => void;
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
     public postDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -162,7 +162,7 @@ export class foHandle2D extends foNode {
         return true;
     }
 
-    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D): boolean => {
         return this.localHitTest(hit);
     }
 

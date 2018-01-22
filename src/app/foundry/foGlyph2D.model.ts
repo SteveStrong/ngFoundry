@@ -405,7 +405,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     findObjectUnderPoint(hit: iPoint2D, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let found: foGlyph2D = this.hitTest(hit, ctx) ? this : undefined;
+        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
 
         if (deep) {
             let child = this.findChildObjectUnderPoint(hit, ctx);
@@ -424,7 +424,7 @@ export class foGlyph2D extends foNode implements iShape {
             }
         }
 
-        if (this.hitTest(hit, ctx)) {
+        if (this.hitTest(hit)) {
             return this;
         }
     }
@@ -470,7 +470,7 @@ export class foGlyph2D extends foNode implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint2D, ctx?: CanvasRenderingContext2D): boolean => {
+    public hitTest = (hit: iPoint2D): boolean => {
         return this.localHitTest(hit);
     }
 
