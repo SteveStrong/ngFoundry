@@ -5,11 +5,16 @@ import { foObject } from './foObject.model';
 import { foComponent } from './foComponent.model';
 
 import { foHandle2D } from './foHandle2D';
-//import { Lifecycle } from 'app/foundry/foLifecycle';
+import { iObject, iPoint2D } from './foInterface';
 
+export interface iConnectionPoint extends iObject {
+    doMoveProxy: (loc: iPoint2D) => void;
+    hitTest: (hit: iPoint2D, ctx?: CanvasRenderingContext2D) => boolean 
+    render(ctx: CanvasRenderingContext2D);
+}
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foConnectionPoint extends foHandle2D {
+export class foConnectionPoint2D extends foHandle2D implements iConnectionPoint {
 
     protected _angle: number;
     get angle(): number { return this._angle || 0.0; }

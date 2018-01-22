@@ -7,7 +7,7 @@ import { iPoint, iFrame } from '../foundry/foInterface'
 import { foObject } from '../foundry/foObject.model'
 import { Matrix2D } from '../foundry/foMatrix2D'
 import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint } from '../foundry/foConnectionPoint'
+import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
 import { foCollection } from '../foundry/foCollection.model'
 import { foNode } from '../foundry/foNode.model'
 
@@ -87,6 +87,8 @@ export class foGlyph3D extends foGlyph2D {
     material = (spec?: any): Material => {
         let props = Tools.mixin({
             color: this.color,
+            opacity: this.opacity,
+            transparent: this.opacity < 1 ? true : false,
             wireframe: false
         }, spec)
         return new MeshBasicMaterial(props);

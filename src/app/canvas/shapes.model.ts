@@ -169,6 +169,7 @@ ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
 
   let def = ShapeStencil.define<foShape2D>('2D::glueShape', foShape2D, {
     color: 'blue',
+    opacity: .5,
     width: 200,
     height: 150,
   });
@@ -187,8 +188,11 @@ ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
   let wire = cord.newInstance().pushTo(results);
 
 
-  wire.glueStartTo(shape1, shape2DNames.right);
-  wire.glueFinishTo(shape2, shape2DNames.left);
+  //wire.glueStartTo(shape1, shape2DNames.right);
+  //wire.glueFinishTo(shape2, shape2DNames.left);
+
+  wire.glueStartTo(shape1, shape2DNames.center);
+  wire.glueFinishTo(shape2, shape2DNames.center);
 
   return results;
 

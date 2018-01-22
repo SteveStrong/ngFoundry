@@ -50,6 +50,7 @@ export class Sphere extends foSphere {
 
 SolidStencil.define<Sphere>('sphere', Sphere, {
   color: 'orange',
+  //opacity: .5,
   radius: 100,
   width: function () { return this.radius },
   height: function () { return this.radius },
@@ -121,6 +122,7 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
 
   let def = SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
     color: 'blue',
+    opacity: .4,
     width: 200,
     height: 150,
     depth: 100,
@@ -139,8 +141,11 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
   let wire = cord.newInstance().pushTo(results);
 
 
-  wire.glueStartTo(shape1, shape3DNames.right);
-  wire.glueFinishTo(shape2, shape3DNames.left);
+ // wire.glueStartTo(shape1, shape3DNames.right);
+ // wire.glueFinishTo(shape2, shape3DNames.left);
+
+  wire.glueStartTo(shape1, shape3DNames.center);
+  wire.glueFinishTo(shape2, shape3DNames.center);
 
   return results;
 
