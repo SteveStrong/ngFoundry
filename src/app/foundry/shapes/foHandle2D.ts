@@ -13,48 +13,8 @@ import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from './foLifecycle';
 import { BroadcastChange } from './foChange';
 
-import { iConnectionPoint } from './foInterface';
+import { foHandle } from './foGlyph';
 
-export class foHandle extends foNode implements iConnectionPoint {
-    protected _size: number;
-    protected _opacity: number;
-    protected _color: string;
-
-    get size(): number { return this._size || 10.0; }
-    set size(value: number) { this._size = value; }
-
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'black';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
-
-    public doMoveProxy: (loc: iPoint) => void;
-
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-    }
-
-    public hitTest = (hit: iPoint): boolean => {
-        return false;
-    }
-
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-    }
-
-    public pinLocation() {
-        let loc = this.size / 2
-        return {
-            x: loc,
-            y: loc
-        }
-    }
-
-}
 
 export class foHandle2D extends foHandle {
 

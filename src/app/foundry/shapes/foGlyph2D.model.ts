@@ -11,33 +11,20 @@ import { foHandle2D } from './foHandle2D';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
 import { foNode } from './foNode.model';
+import { foGlyph } from './foGlyph.model';
 
 import { Lifecycle } from './foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlyph2D extends foNode implements iShape {
-
-    static DEG_TO_RAD = Math.PI / 180;
-    static RAD_TO_DEG = 180 / Math.PI;
-
-    protected _isSelected: boolean = false;
-    get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) {
-        if (this._isSelected != value) {
-            this._isSelected = value;
-            Lifecycle.selected(this, value);
-        };
-
-    }
+export class foGlyph2D extends foGlyph implements iShape {
 
 
-    protected _subcomponents: foCollection<foGlyph2D>;
+   // protected _subcomponents: foCollection<foGlyph2D>;
     protected _x: number;
     protected _y: number;
     protected _width: number;
     protected _height: number;
-    protected _opacity: number;
-    protected _color: string;
+
 
     public context: any;
 
@@ -58,15 +45,6 @@ export class foGlyph2D extends foNode implements iShape {
     get height(): number { return this._height || 0.0; }
     set height(value: number) { this._height = value; }
 
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'black';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
 
     public rotationZ = (): number => { return 0; }
 
