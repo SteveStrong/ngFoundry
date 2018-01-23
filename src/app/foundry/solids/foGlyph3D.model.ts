@@ -74,6 +74,9 @@ import { Lifecycle } from '../foLifecycle';
 export class foGlyph3D extends foGlyph {
 
     protected _subcomponents: foCollection<foGlyph3D>;
+    get nodes(): foCollection<foGlyph3D> {
+        return this._subcomponents;
+    }
 
     protected _x: number;
     protected _y: number;

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { foPage } from "../../foundry/foPage.model";
+import { foPage } from "../../foundry/shapes/foPage.model";
 import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";

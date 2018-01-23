@@ -1,9 +1,9 @@
 import { Tools } from '../foundry/foTools';
-import { cPoint2D } from '../foundry/foGeometry2D';
+import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 
 import { iObject, iNode, iShape, iPoint2D, iSize, Action } from '../foundry/foInterface';
 
-import { foDisplay2D } from "../foundry/foDisplay2D.model";
+import { foDisplay2D } from "../foundry/shapes/foDisplay2D.model";
 
 
 export class dRectangle extends foDisplay2D {

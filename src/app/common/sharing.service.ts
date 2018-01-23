@@ -7,8 +7,8 @@ import { RuntimeType } from '../foundry/foRuntimeType';
 import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foShape2D } from "../foundry/foShape2D.model";
+import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
+import { foShape2D } from "../foundry/shapes/foShape2D.model";
 
 
 //https://greensock.com/docs/TweenMax

@@ -4,8 +4,8 @@ import { ModelRef, iPoint } from './foInterface'
 
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
-import { foShape2D } from './foShape2D.model';
-import { foHandle2D } from './foHandle2D';
+import { foShape2D } from './shapes/foShape2D.model';
+import { foHandle2D } from './shapes/foHandle2D';
 import { Lifecycle } from './foLifecycle';
 
 export interface iGlueSignature {
