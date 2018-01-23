@@ -4,18 +4,18 @@ import { Tools } from '../foundry/foTools'
 import { cPoint3D } from '../foundry/foGeometry3D';
 import { iPoint, iFrame } from '../foundry/foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
 
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
+import { foGlue } from '../foGlue'
+
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
+
+import { foGlyph } from '../foGlyph.model'
 import { Screen3D } from "../foundryDrivers/threeDriver";
 
 
-import { Lifecycle } from './foLifecycle';
+import { Lifecycle } from '../foLifecycle';
 
 // export class foBody3D {
 //     protected _opacity: number;
@@ -72,17 +72,42 @@ import { Lifecycle } from './foLifecycle';
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
-export class foGlyph3D extends foGlyph2D {
+export class foGlyph3D extends foGlyph {
 
     protected _subcomponents: foCollection<foGlyph3D>;
+
+    protected _x: number;
+    protected _y: number;
     protected _z: number;
+    protected _width: number;
+    protected _height: number;
+    protected _depth: number;
+
+    get x(): number { return this._x || 0.0; }
+    set x(value: number) {
+        this.smash();
+        this._x = value;
+    }
+    get y(): number { return this._y || 0.0 }
+    set y(value: number) {
+        this.smash();
+        this._y = value;
+    }
+    
     get z(): number { return this._z || 0.0; }
     set z(value: number) {
         this.smash();
         this._z = value;
     }
 
-    protected _depth: number;
+    get width(): number { return this._width || 0.0; }
+    set width(value: number) { this._width = value; }
+
+    get height(): number { return this._height || 0.0; }
+    set height(value: number) { this._height = value; }
+
+
+
     get depth(): number { return this._depth || 0.0; }
     set depth(value: number) { this._depth = value; }
 
@@ -117,7 +142,6 @@ export class foGlyph3D extends foGlyph2D {
         this.setupPreDraw();
     }
 
-    is2D() { return false; }
     is3D() { return true; }
 
     public getLocation = (): iPoint => {
@@ -128,7 +152,6 @@ export class foGlyph3D extends foGlyph2D {
     }
 
     smash() {
-        super.smash();
         this.setupPreDraw();
     }
 
@@ -172,7 +195,11 @@ export class foGlyph3D extends foGlyph2D {
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
+            x: this.x,
+            y: this.y,
             z: this.z,
+            width: this.width,
+            height: this.height,
             depth: this.depth,
             angleX: this.angleX,
             angleY: this.angleY,
@@ -224,7 +251,6 @@ export class foGlyph3D extends foGlyph2D {
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        super.move(x, y, angle);
         this.obj3D.position.set(this.x, this.y, this.z);
         return this;
     }
@@ -234,7 +260,7 @@ export class foGlyph3D extends foGlyph2D {
 
 //https://www.typescriptlang.org/docs/handbook/mixins.html
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foGlyph3D);
 
 //RuntimeType.applyMixins(foGlyph3D, [foGlyph2D, foBody3D]);

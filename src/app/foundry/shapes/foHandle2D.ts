@@ -3,17 +3,17 @@
 import { cPoint2D } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iPoint2D, iPoint } from './foInterface';
+import { iPoint2D, iPoint } from '../foInterface';
 
-import { foObject } from './foObject.model';
-import { foNode } from './foNode.model';
-import { foComponent } from './foComponent.model';
+import { foObject } from '../foObject.model';
+import { foNode } from '../foNode.model';
+import { foComponent } from '../foComponent.model';
 
 import { foGlyph2D } from './foGlyph2D.model';
-import { Lifecycle } from './foLifecycle';
-import { BroadcastChange } from './foChange';
+import { Lifecycle } from '../foLifecycle';
+import { BroadcastChange } from '../foChange';
 
-import { foHandle } from './foGlyph';
+import { foHandle } from '../foGlyph.model';
 
 
 export class foHandle2D extends foHandle {

@@ -1,5 +1,5 @@
 
-import { iPoint2D, iRect, iBox, iMargin, iFrame } from './foInterface';
+import { iPoint2D, iRect, iBox, iMargin, iFrame } from '../foInterface';
 
 export class cPoint2D implements iPoint2D {
     public x: number;

@@ -1,18 +1,18 @@
 
-import { Tools } from '../foundry/foTools'
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D, iPoint, iFrame } from '../foundry/foInterface'
+import { Tools } from '../foTools'
+import { cPoint2D } from './foGeometry2D';
+import { iPoint2D, iPoint, iFrame } from '../foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
+import { Matrix2D } from './foMatrix2D'
+import { foGlue } from '../foGlue'
+import { foConnectionPoint2D } from '../foConnectionPoint2D'
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
 
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
+import { foGlyph2D } from './foGlyph2D.model'
 
-import { Lifecycle } from './foLifecycle';
+import { Lifecycle } from '../foLifecycle';
 
 export enum shape2DNames {
     left = "left",

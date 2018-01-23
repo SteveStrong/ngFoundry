@@ -1,20 +1,20 @@
 
-import { PubSub } from "../foundry/foPubSub";
-import { cPoint2D, cFrame } from '../foundry/foGeometry2D';
-import { iPoint2D, Action } from '../foundry/foInterface'
+import { PubSub } from "../foPubSub";
+import { cPoint2D, cFrame } from './foGeometry2D';
+import { iPoint2D, Action } from '../foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { foCollection } from '../foundry/foCollection.model'
-import { foDictionary } from "../foundry/foDictionary.model";
+import { foObject } from '../foObject.model'
+import { foCollection } from '../foCollection.model'
+import { foDictionary } from "../foDictionary.model";
 
-import { foNode } from '../foundry/foNode.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foComponent } from '../foundry/foComponent.model'
+import { foNode } from '../foNode.model'
+import { Matrix2D } from './foMatrix2D'
+import { foComponent } from '../foComponent.model'
 
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
-import { foShape2D } from '../foundry/foShape2D.model'
-import { foHandle2D } from 'app/foundry/foHandle2D';
-import { Lifecycle } from 'app/foundry/foLifecycle';
+import { foGlyph2D } from './foGlyph2D.model'
+import { foShape2D } from './foShape2D.model'
+import { foHandle2D } from './foHandle2D';
+import { Lifecycle } from '../foLifecycle';
 
 
 //a Shape is a graphic designed to behave like a visio shape
