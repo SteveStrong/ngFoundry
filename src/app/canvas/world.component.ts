@@ -5,13 +5,13 @@ import { TweenLite, Back } from "gsap";
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foModel } from "../foundry/foModel.model";
 
-import { Screen3D } from "../foundryDrivers/threeDriver";
+import { Screen3D } from "../foundry/solids/threeDriver";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { BroadcastChange, foChangeEvent } from '../foundry/foChange';
-import { foStudio } from 'app/foundry/foStudio.model';
-import { foStage } from 'app/foundry/foStage.model';
+import { foStudio } from '../foundry/solids/foStudio.model';
+import { foStage } from '../foundry/solids/foStage.model';
 
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";

@@ -1,10 +1,10 @@
 import { Tools } from '../foundry/foTools';
-import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
-import { foShape1D } from "../foundry/foShape1D.model";
-import { foText2D } from "../foundry/foText2D.model";
-import { foImage2D } from "../foundry/foImage2D.model";
+import { cPoint2D, cMargin } from '../foundry/shapes/foGeometry2D';
+import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
+import { foShape2D, shape2DNames } from "../foundry/shapes/foShape2D.model";
+import { foShape1D } from "../foundry/shapes/foShape1D.model";
+import { foText2D } from "../foundry/shapes/foText2D.model";
+import { foImage2D } from "../foundry/shapes/foImage2D.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
 
 import { foStencilLibrary } from "../foundry/foStencil";

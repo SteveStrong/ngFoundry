@@ -3,25 +3,25 @@ import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostLis
 import { Tools } from "../foundry/foTools";
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
-import { foPage } from "../foundry/foPage.model";
+import { foPage } from "../foundry/shapes/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
-import { Screen2D } from "../foundryDrivers/canvasDriver";
-import { Screen3D } from "../foundryDrivers/threeDriver";
+import { Screen2D } from "../foundry/shapes/canvasDriver";
+import { Screen3D } from "../foundry/solids/threeDriver";
 
 import { BroadcastChange } from '../foundry/foChange';
 
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foShape3D } from "../foundry/foShape3D.model";
+import { cPoint2D } from '../foundry/shapes/foGeometry2D';
+import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
+import { foShape3D } from "../foundry/solids/foShape3D.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { foChangeEvent } from '../foundry/foChange';
 
-import { foDocument } from 'app/foundry/foDocument.model';
-import { foStudio } from 'app/foundry/foStudio.model';
-import { foStage } from 'app/foundry/foStage.model';
+import { foDocument } from 'app/foundry/shapes/foDocument.model';
+import { foStudio } from 'app/foundry/solids/foStudio.model';
+import { foStage } from 'app/foundry/solids/foStage.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";
@@ -177,12 +177,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       })
     });
 
-    dropped.subscribe(event => {
-      this.currentStudio.currentStage.found(event.myGuid, item => {
-        let { x, y, angle } = event.value;
-        item.dropAt(x, y, angle);
-      })
-    });
+    // dropped.subscribe(event => {
+    //   this.currentStudio.currentStage.found(event.myGuid, item => {
+    //     let { x, y, angle } = event.value;
+    //     item.dropAt(x, y, angle);
+    //   })
+    // });
 
     reparent.subscribe(event => {
       console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));

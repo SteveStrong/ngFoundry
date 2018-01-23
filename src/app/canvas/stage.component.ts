@@ -1,27 +1,27 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import { Http } from '@angular/http';
 
-import { Screen2D } from '../foundryDrivers/canvasDriver';
+import { Screen2D } from '../foundry/shapes/canvasDriver';
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 
-import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
+import { cPoint2D, cMargin } from '../foundry/shapes/foGeometry2D';
 import { Tools } from '../foundry/foTools';
 
 import { foCollection } from '../foundry/foCollection.model';
 
 import { Stencil } from '../foundry/foStencil';
 
-import { foPage } from '../foundry/foPage.model';
+import { foPage } from '../foundry/shapes/foPage.model';
 
-import { foHandle2D } from '../foundry/foHandle2D';
+import { foHandle2D } from '../foundry/shapes/foHandle2D';
 
 
-import { foGlyph2D } from '../foundry/foGlyph2D.model';
-import { foShape2D, shape2DNames } from '../foundry/foShape2D.model';
-import { foShape1D } from '../foundry/foShape1D.model';
-import { foText2D } from '../foundry/foText2D.model';
-import { foImage2D } from '../foundry/foImage2D.model';
+import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
+import { foShape2D, shape2DNames } from '../foundry/shapes/foShape2D.model';
+import { foShape1D } from '../foundry/shapes/foShape1D.model';
+import { foText2D } from '../foundry/shapes/foText2D.model';
+import { foImage2D } from '../foundry/shapes/foImage2D.model';
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from './legoshapes.model';
 import { particleEngine } from './particle.model';
 

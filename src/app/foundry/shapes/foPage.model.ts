@@ -94,7 +94,7 @@ export class foPage extends foShape2D {
         return this._matrix;
     };
 
-    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph2D = null): foGlyph {
         let found: foGlyph = undefined;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape = this.nodes.getMember(i);
@@ -198,7 +198,7 @@ export class foPage extends foShape2D {
     }
 
     setupMouseEvents() {
-        let shape: foGlyph = null;
+        let shape: foGlyph2D = null;
         let shapeUnder: foGlyph2D = null;
         let hovershape: foGlyph2D = null;
         let offset: iPoint = null;

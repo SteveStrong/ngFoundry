@@ -136,11 +136,6 @@ export class foGlyph2D extends foGlyph implements iShape {
     }
 
 
-
-    get nodes(): foCollection<foGlyph2D> {
-        return this._subcomponents;
-    }
-
     public easeToNoLifecycle(x: number, y: number, time: number = .5, ease: any = Back.ease) {
 
         TweenLite.to(this, time, {
@@ -329,7 +324,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         this.drawBoundry(ctx);
         ctx.restore();
 
-        deep && this.nodes.forEach(item => {
+        deep && this.nodes.forEach<foGlyph2D>(item => {
             item.afterRender(ctx, deep);
         });
     }
