@@ -67,6 +67,10 @@ export class foGlyph extends foNode {
 
 
     protected _subcomponents: foCollection<foGlyph>;
+    get nodes(): foCollection<foGlyph> {
+        return this._subcomponents;
+    }
+    
     protected _opacity: number;
     protected _color: string;
 
@@ -103,7 +107,7 @@ export class foGlyph extends foNode {
         return this;
     };
 
-    private _boundry: iFrame = new cFrame(this);
+    protected _boundry: iFrame = new cFrame(this);
     get boundryFrame(): iFrame {
         this.nodes.forEach(item => {
             this._boundry.merge(item.boundryFrame);
@@ -173,9 +177,7 @@ export class foGlyph extends foNode {
         return obj;
     }
 
-    get nodes(): foCollection<foGlyph> {
-        return this._subcomponents;
-    }
+
 
     public getLocation = () => {
         return {

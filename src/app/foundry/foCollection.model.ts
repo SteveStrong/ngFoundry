@@ -5,7 +5,7 @@ import { iObject, Action, Func } from './foInterface'
 //we want foCollection to be observable
 
 export class foCollection<T extends iObject> extends foObject {
-    private _members: Array<T>;
+    protected _members: Array<T>;
 
     isHidden: boolean = false;
     isSelectable: boolean = true;

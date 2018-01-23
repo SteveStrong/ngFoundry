@@ -19,7 +19,10 @@ import { Lifecycle } from '../foLifecycle';
 export class foGlyph2D extends foGlyph implements iShape {
 
     protected _subcomponents: foCollection<foGlyph2D>;
-    
+    get nodes(): foCollection<foGlyph2D> {
+        return this._subcomponents;
+    }
+
     protected _x: number;
     protected _y: number;
     protected _width: number;
@@ -61,7 +64,7 @@ export class foGlyph2D extends foGlyph implements iShape {
     }
 
 
-    private _boundry: cFrame = new cFrame(this);
+    protected _boundry: cFrame = new cFrame(this);
     get boundryFrame(): cFrame {
         let mtx = this.getGlobalMatrix();
         //this is a buffer so we create less garbage
@@ -279,11 +282,13 @@ export class foGlyph2D extends foGlyph implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = (): iPoint => {
-        let x = this.x;
-        let y = this.y;
-        return new cPoint2D(x, y);
+    public getLocation = () => {
+        return {
+            x: this.x,
+            y: this.y,
+        }
     }
+
     public setLocation = (loc?: iPoint2D) => {
         this.x = loc ? loc.x : 0;
         this.y = loc ? loc.y : 0;
@@ -324,7 +329,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         this.drawBoundry(ctx);
         ctx.restore();
 
-        deep && this.nodes.forEach<foGlyph2D>(item => {
+        deep && this.nodes.forEach(item => {
             item.afterRender(ctx, deep);
         });
     }
@@ -343,7 +348,7 @@ export class foGlyph2D extends foGlyph implements iShape {
 
         this.isSelected && this.drawSelected(ctx);
 
-        deep && this._subcomponents.forEach(item => {
+        deep && this.nodes.forEach(item => {
             item.render(ctx, deep);
         });
 

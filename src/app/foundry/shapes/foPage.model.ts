@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foPubSub";
 import { cPoint2D, cFrame } from './foGeometry2D';
-import { iPoint, Action } from '../foInterface'
+import { iPoint, iPoint2D, Action } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
@@ -107,7 +107,7 @@ export class foPage extends foShape2D {
     findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph2D {
         let frame = source.boundryFrame;
         for (var i: number = 0; i < this.nodes.length; i++) {
-            let shape: foGlyph2D = this.nodes.getMember(i);
+            let shape: foGlyph2D = this._subcomponents.getMember(i);
             if (source.hasAncestor(shape) || shape === exclude) continue;
             if (shape.findObjectUnderFrame(source, frame, deep)) {
                 return shape;
@@ -201,7 +201,7 @@ export class foPage extends foShape2D {
         let shape: foGlyph2D = null;
         let shapeUnder: foGlyph2D = null;
         let hovershape: foGlyph2D = null;
-        let offset: iPoint = null;
+        let offset: iPoint2D = null;
         let handles: foCollection<foHandle2D> = new foCollection<foHandle2D>()
         let grab: foHandle2D = null;
         let float: foHandle2D = null;
@@ -228,19 +228,19 @@ export class foPage extends foShape2D {
                 return;
             }
 
-            let found = this.findHitShape(loc);
+            let found = this.findHitShape(loc) as foGlyph2D;
 
             if (!keys.shift) {
                 grab = null;
                 handles.clearAll();
-                this._subcomponents.forEach(item => {
+                this.nodes.forEach(item => {
                     item.unSelect(true, found);
                 });
             }
 
             if (found) {
                 shape = found;
-                this._subcomponents.moveToTop(shape);
+                this.nodes.moveToTop(shape);
                 shape.isSelected = true;
                 offset = shape.getOffset(loc);
                 handles.copyMembers(shape.handles);
@@ -287,7 +287,7 @@ export class foPage extends foShape2D {
             } else {
                 this.onMouseLocationChanged(loc, "hover", keys);
 
-                let found = this.findHitShape(loc);
+                let found = this.findHitShape(loc) as foGlyph2D;
                 if (found && found == hovershape) {
                     this.onItemHoverEnter(loc, hovershape);
                 } else if (found) {
