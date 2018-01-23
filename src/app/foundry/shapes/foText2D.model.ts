@@ -211,5 +211,5 @@ export class foText2D extends foShape2D {
     // }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foText2D);

@@ -125,5 +125,5 @@ export class foImage2D extends foShape2D {
 }
 
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foImage2D);

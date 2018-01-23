@@ -1,20 +1,20 @@
 
-import { PubSub } from "../foundry/foPubSub";
-import { cPoint2D, cFrame } from '../foundry/foGeometry2D';
-import { iPoint2D, Action } from '../foundry/foInterface'
-import { Screen3D } from "../foundryDrivers/threeDriver";
+import { PubSub } from "../foPubSub";
 
-import { foObject } from '../foundry/foObject.model'
-import { foCollection } from '../foundry/foCollection.model'
-import { foDictionary } from "../foundry/foDictionary.model";
+import { iPoint2D, Action } from '../foInterface'
+import { Screen3D } from "./threeDriver";
 
-import { foNode } from '../foundry/foNode.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foComponent } from '../foundry/foComponent.model'
+import { foObject } from '../foObject.model'
+import { foCollection } from '../foCollection.model'
+import { foDictionary } from "../foDictionary.model";
 
-import { foGlyph3D } from '../foundry/foGlyph3D.model'
-import { foHandle2D } from 'app/foundry/foHandle2D';
-import { Lifecycle } from 'app/foundry/foLifecycle';
+import { foNode } from '../foNode.model'
+
+import { foComponent } from '../foComponent.model'
+
+import { foGlyph3D } from './foGlyph3D.model'
+import { foHandle3D } from './foHandle3D';
+import { Lifecycle } from '../foLifecycle';
 
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -166,5 +166,5 @@ export class foStage extends foGlyph3D {
     }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foStage);

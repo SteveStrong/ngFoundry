@@ -127,12 +127,9 @@ export interface iShape extends iRect, iNode {
     hitTest(hit: iPoint): boolean;
     overlapTest(hit: iFrame): boolean;
 
-    getOffset(loc: iPoint2D): iPoint2D;
-    getLocation(): iPoint;
-    moveTo(loc: iPoint2D, offset?: iPoint2D);
-    moveBy(loc: iPoint2D, offset?: iPoint2D)
-
-    setColor(color: string): string;
-    setOpacity(opacity: number): number;
+    // getOffset(loc: iPoint2D): iPoint2D;
+    // getLocation(): iPoint;
+    // moveTo(loc: iPoint2D, offset?: iPoint2D);
+    // moveBy(loc: iPoint2D, offset?: iPoint2D)
 }
 

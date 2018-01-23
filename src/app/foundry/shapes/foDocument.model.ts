@@ -67,5 +67,5 @@ export class foDocument extends foNode {
     }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foDocument);

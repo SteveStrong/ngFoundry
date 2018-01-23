@@ -1,17 +1,17 @@
 
-import { Tools } from '../foundry/foTools'
-import { cPoint3D } from '../foundry/foGeometry3D';
-import { iPoint3D } from '../foundry/foInterface'
+import { Tools } from '../foTools'
+import { cPoint3D } from './foGeometry3D';
+import { iPoint3D } from '../foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle2D } from '../foundry/foHandle2D'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
 
-import { foShape3D } from '../foundry/foShape3D.model'
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
-import { Lifecycle } from './foLifecycle';
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
+
+import { foShape3D } from './foShape3D.model'
+
+import { foHandle3D } from './foHandle3D'
+import { Lifecycle } from '../foLifecycle';
 
 
 export enum shape1DNames {
@@ -220,7 +220,7 @@ export class foPipe3D extends foShape3D {
 
 
 
-    public createHandles(): foCollection<foHandle2D> {
+    public createHandles(): foCollection<foHandle3D> {
 
         let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
         let center = this.globalToLocalPoint(this.center(shape1DNames.center));
@@ -246,7 +246,7 @@ export class foPipe3D extends foShape3D {
 }
 
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foPipe3D);
 
 

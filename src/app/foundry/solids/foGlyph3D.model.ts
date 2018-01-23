@@ -1,18 +1,17 @@
-import { Object3D, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
-import { Tools } from '../foundry/foTools'
-import { cPoint3D } from '../foundry/foGeometry3D';
-import { iPoint, iFrame } from '../foundry/foInterface'
+import { Tools } from '../foTools'
+import { cPoint3D } from './foGeometry3D';
+import { iPoint } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 
-import { foGlue } from '../foGlue'
 
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
 import { foGlyph } from '../foGlyph.model'
-import { Screen3D } from "../foundryDrivers/threeDriver";
+import { Screen3D } from "./threeDriver";
 
 
 import { Lifecycle } from '../foLifecycle';
@@ -93,7 +92,7 @@ export class foGlyph3D extends foGlyph {
         this.smash();
         this._y = value;
     }
-    
+
     get z(): number { return this._z || 0.0; }
     set z(value: number) {
         this.smash();
@@ -136,6 +135,17 @@ export class foGlyph3D extends foGlyph {
     public rotationY = (): number => { return this.angleY; }
     public rotationZ = (): number => { return this.angleZ; }
 
+
+    protected _matrix: Matrix3;
+    protected _invMatrix: Matrix3;
+    smash() {
+        //console.log('smash matrix')
+        this._matrix = undefined;
+        this._invMatrix = undefined;
+
+        this.setupPreDraw();
+    }
+
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
@@ -151,9 +161,7 @@ export class foGlyph3D extends foGlyph {
         return new cPoint3D(x, y, z);
     }
 
-    smash() {
-        this.setupPreDraw();
-    }
+
 
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);

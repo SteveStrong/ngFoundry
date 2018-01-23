@@ -1,13 +1,13 @@
-import { Tools } from '../foundry/foTools';
-import { cMargin } from '../foundry/foGeometry2D';
+import { Tools } from '../foTools';
+import { cMargin } from '../shapes/foGeometry2D';
 
-import { foShape3D } from "../foundry/foShape3D.model";
+import { foShape3D } from "./foShape3D.model";
 
-import { foNode } from "../foundry/foNode.model";
-import { foObject } from "../foundry/foObject.model";
+import { foNode } from "../foNode.model";
+import { foObject } from "../foObject.model";
 
 import { Material, Geometry, TextureLoader, ImageLoader, BoxGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
-import { Screen3D } from "../foundryDrivers/threeDriver";
+//import { Screen3D } from "./threeDriver";
 
 
 export class foImage3D extends foShape3D {

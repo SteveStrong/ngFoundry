@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foPubSub";
 import { cPoint2D, cFrame } from './foGeometry2D';
-import { iPoint2D, Action } from '../foInterface'
+import { iPoint, Action } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
@@ -10,6 +10,8 @@ import { foDictionary } from "../foDictionary.model";
 import { foNode } from '../foNode.model'
 import { Matrix2D } from './foMatrix2D'
 import { foComponent } from '../foComponent.model'
+
+import { foGlyph } from '../foGlyph.model'
 
 import { foGlyph2D } from './foGlyph2D.model'
 import { foShape2D } from './foShape2D.model'
@@ -92,22 +94,22 @@ export class foPage extends foShape2D {
         return this._matrix;
     };
 
-    findHitShape(hit: iPoint2D, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
-        let found: foGlyph2D = undefined;
+    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph = null): foGlyph {
+        let found: foGlyph = undefined;
         for (var i: number = 0; i < this.nodes.length; i++) {
-            let shape: foGlyph2D = this.nodes.getMember(i);
-            if (shape == exclude) continue;
-            found = shape.findObjectUnderPoint(hit, deep, this._ctx);
+            let shape = this.nodes.getMember(i);
+            if (shape === exclude) continue;
+            found = shape.findObjectUnderPoint(hit, deep);
             if (found) return found;
         }
     }
 
-    findShapeUnder(source: foGlyph2D, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
+    findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph2D {
         let frame = source.boundryFrame;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape: foGlyph2D = this.nodes.getMember(i);
-            if (source.hasAncestor(shape) || shape == exclude) continue;
-            if (shape.findObjectUnderFrame(source, frame, deep, this._ctx)) {
+            if (source.hasAncestor(shape) || shape === exclude) continue;
+            if (shape.findObjectUnderFrame(source, frame, deep)) {
                 return shape;
             }
         }
@@ -196,10 +198,10 @@ export class foPage extends foShape2D {
     }
 
     setupMouseEvents() {
-        let shape: foGlyph2D = null;
+        let shape: foGlyph = null;
         let shapeUnder: foGlyph2D = null;
         let hovershape: foGlyph2D = null;
-        let offset: iPoint2D = null;
+        let offset: iPoint = null;
         let handles: foCollection<foHandle2D> = new foCollection<foHandle2D>()
         let grab: foHandle2D = null;
         let float: foHandle2D = null;

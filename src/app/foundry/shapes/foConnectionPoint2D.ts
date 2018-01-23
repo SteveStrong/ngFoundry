@@ -1,8 +1,7 @@
 
-
 import { Matrix2D } from './foMatrix2D';
-import { foObject } from './foObject.model';
-import { foComponent } from './foComponent.model';
+import { foObject } from '../foObject.model';
+import { foComponent } from '../foComponent.model';
 
 import { foHandle2D } from './foHandle2D';
 

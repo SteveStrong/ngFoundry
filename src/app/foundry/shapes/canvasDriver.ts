@@ -1,9 +1,7 @@
 
-import { PubSub } from "../foundry/foPubSub";
+import { PubSub } from "../foPubSub";
+import { cPoint2D } from './foGeometry2D';
 
-import { cPoint2D } from '../foundry/foGeometry2D';
-
-import { NgZone } from '@angular/core';
 
 
 export class Screen2D {

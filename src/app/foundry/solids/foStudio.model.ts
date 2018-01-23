@@ -1,11 +1,11 @@
 
-import { Tools } from './foTools'
-import { foObject } from './foObject.model'
+import { Tools } from '../foTools'
+import { foObject } from '../foObject.model'
 import { foStage } from './foStage.model'
-import { foNode } from './foNode.model'
-import { foDictionary } from './foDictionary.model'
+import { foNode } from '../foNode.model'
+import { foDictionary } from '../foDictionary.model'
 
-import { BroadcastChange } from './foChange';
+import { BroadcastChange } from '../foChange';
 
 export class foStudio extends foNode {
 
@@ -68,6 +68,6 @@ export class foStudio extends foNode {
     }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 import { Lifecycle } from 'app/foundry/foLifecycle';
 RuntimeType.define(foStudio);

@@ -1,20 +1,19 @@
+import { Tools } from '../foTools'
+import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
+import { cPoint3D } from './foGeometry3D';
 
-import { cPoint2D } from './foGeometry2D';
-import { Matrix2D } from './foMatrix2D';
+import { iPoint3D, iPoint } from '../foInterface';
 
-import { iPoint2D, iPoint } from './foInterface';
+import { foObject } from '../foObject.model';
+import { foNode } from '../foNode.model';
+import { foComponent } from '../foComponent.model';
 
-import { foObject } from './foObject.model';
-import { foNode } from './foNode.model';
-import { foComponent } from './foComponent.model';
+import { Lifecycle } from '../foLifecycle';
+import { BroadcastChange } from '../foChange';
 
-import { foGlyph2D } from './foGlyph2D.model';
-import { Lifecycle } from './foLifecycle';
-import { BroadcastChange } from './foChange';
-
-import { foHandle } from './foHandle2D';
-
+import { foHandle } from '../foGlyph.model';
+import { Screen3D } from './threeDriver';
 
 export class foHandle3D extends foHandle {
 
@@ -36,16 +35,18 @@ export class foHandle3D extends foHandle {
     }
 
 
-    public drawHover: (ctx: CanvasRenderingContext2D) => void;
-    public preDraw: (ctx: CanvasRenderingContext2D) => void;
-    public postDraw: (ctx: CanvasRenderingContext2D) => void;
+    // public drawHover: (ctx: CanvasRenderingContext2D) => void;
+    // public preDraw: (ctx: CanvasRenderingContext2D) => void;
+    // public postDraw: (ctx: CanvasRenderingContext2D) => void;
 
-    protected _matrix: Matrix2D;
-    protected _invMatrix: Matrix2D;
+    protected _matrix: Matrix3;
+    protected _invMatrix: Matrix3;
     smash() {
         //console.log('smash matrix')
         this._matrix = undefined;
         this._invMatrix = undefined;
+
+        this.setupPreDraw();
     }
 
 
@@ -53,6 +54,43 @@ export class foHandle3D extends foHandle {
         super(properties, subcomponents, parent);
     }
 
+    geometry = (spec?: any): Geometry => {
+        return new BoxGeometry(this.size, this.size, this.size);
+    }
+
+    material = (spec?: any): Material => {
+        let props = Tools.mixin({
+            color: this.color,
+            opacity: this.opacity,
+            transparent: this.opacity < 1 ? true : false,
+            wireframe: false
+        }, spec)
+        return new MeshBasicMaterial(props);
+    }
+
+
+    protected _mesh: Mesh;
+    get mesh(): Mesh {
+        if (!this._mesh) {
+            let geom = this.geometry()
+            let mat = this.material()
+            this._mesh = (geom && mat) && new Mesh(geom, this.material());
+        }
+        return this._mesh;
+    }
+    set mesh(value: Mesh) { this._mesh = value; }
+
+
+    protected _obj3D: Object3D;
+    get obj3D(): Object3D {
+        if (!this._obj3D && this.mesh) {
+            this._obj3D = new Object3D();
+            this._obj3D.name = this.myGuid;
+            this._obj3D.add(this.mesh)
+        }
+        return this._obj3D;
+    }
+    set obj3D(value: Object3D) { this.obj3D = value; }
 
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
@@ -61,7 +99,7 @@ export class foHandle3D extends foHandle {
         return this;
     }
 
-    public moveTo(loc: iPoint2D, offset?: iPoint2D) {
+    public moveTo(loc: iPoint3D, offset?: iPoint3D) {
         //let x = loc.x + (offset ? offset.x : 0);
         //let y = loc.y + (offset ? offset.y : 0);
 
@@ -73,17 +111,17 @@ export class foHandle3D extends foHandle {
 
 
     getGlobalMatrix() {
-        let mtx = new Matrix2D(this.getMatrix());
-        let parent = <foGlyph2D>this.myParent()
-        if (parent) {
-            mtx.prependMatrix(parent.getGlobalMatrix());
-        }
-        return mtx;
+        // let mtx = new Matrix3(this.getMatrix());
+        // let parent = <foGlyph2D>this.myParent()
+        // if (parent) {
+        //     mtx.prependMatrix(parent.getGlobalMatrix());
+        // }
+        return new Matrix3();
     };
 
     getMatrix() {
         if (this._matrix === undefined) {
-            this._matrix = new Matrix2D();
+            this._matrix = new Matrix3();
             let delta = this.size / 2;
             this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
         }
@@ -97,37 +135,37 @@ export class foHandle3D extends foHandle {
         return this._invMatrix;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint2D) {
+    localToGlobal(x: number, y: number, pt?: cPoint3D) {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y, pt);
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint2D) {
+    globalToLocal(x: number, y: number, pt?: cPoint3D) {
         let inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt);
     };
 
-    localToGlobalPoint(pt: cPoint2D): cPoint2D {
+    localToGlobalPoint(pt: cPoint3D): cPoint3D {
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(pt.x, pt.y, pt);
     };
 
-    globalCenter(): cPoint2D {
+    globalCenter(): cPoint3D {
         let { x, y } = this.pinLocation();
         let mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y);
     };
 
-    public getOffset = (loc: iPoint2D): iPoint2D => {
+    public getOffset = (loc: iPoint3D): iPoint3D => {
         let x = this.x;
         let y = this.y;
-        return new cPoint2D(x - loc.x, y - loc.y);
+        return new cPoint3D(x - loc.x, y - loc.y);
     }
 
 
 
     protected localHitTest = (hit: iPoint): boolean => {
-        let { x, y } = hit as iPoint2D
+        let { x, y } = hit as iPoint3D
         let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
@@ -143,24 +181,46 @@ export class foHandle3D extends foHandle {
         return this.localHitTest(hit);
     }
 
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        ctx.save();
+    setupPreDraw() {
 
+        let preDraw = (screen: Screen3D) => {
+            if (this._obj3D) {
+                this._obj3D.remove(this._mesh)
+                screen.removeFromScene(this._obj3D);
 
-        this.preDraw && this.preDraw(ctx);
-        this.draw(ctx);
-        this.drawHover && this.drawHover(ctx);
-        this.postDraw && this.postDraw(ctx);
+                this._obj3D = this._mesh = undefined;
+            }
+            let obj3D = this.obj3D;
+            if (obj3D) {
+                obj3D.position.set(this.x, this.y, this.z);
+                screen.addToScene(obj3D);
+                this.preDraw3D = undefined;
+            }
 
-        ctx.restore();
+        }
+
+        this.preDraw3D = preDraw;
     }
 
-    public draw = (ctx: CanvasRenderingContext2D): void => {
-        ctx.fillStyle = this.color;
-        ctx.lineWidth = 1;
-        ctx.globalAlpha = this.opacity;
+    preDraw3D: (screen: Screen3D) => void;
 
-        ctx.fillRect(0, 0, this.size, this.size);
+    draw3D = (screen: Screen3D, deep: boolean = true) => {
+        let obj = this.obj3D;
+        if (!obj) return;
+        obj.position.set(this.x, this.y, this.z);
+        //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+        //make changes that support animation here
+        //let rot = this.mesh.rotation;
+        // rot.x += 0.01;
+        // rot.y += 0.02;
+    };
+
+    render3D = (screen: Screen3D, deep: boolean = true) => {
+        this.preDraw3D && this.preDraw3D(screen)
+        this.draw3D && this.draw3D(screen)
+        deep && this._subcomponents.forEach(item => {
+            item.render3D(screen, deep);
+        });
     }
 
 }

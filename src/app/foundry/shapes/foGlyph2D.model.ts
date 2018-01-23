@@ -60,20 +60,6 @@ export class foGlyph2D extends foGlyph implements iShape {
         this._invMatrix = undefined;
     }
 
-    private _layout: () => void;
-    public setLayout(func: () => void) {
-        this._layout = func;
-        return this;
-    };
-    public doLayout(deep: boolean = true) {
-        if (deep) {
-            this.nodes.forEach(item => item.doLayout());
-        }
-
-        this._layout && this.wait(1000, this._layout);
-        return this;
-    };
-
 
     private _boundry: cFrame = new cFrame(this);
     get boundryFrame(): cFrame {
@@ -624,7 +610,7 @@ export class foGlyph2D extends foGlyph implements iShape {
     }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foGlyph2D);
 
 

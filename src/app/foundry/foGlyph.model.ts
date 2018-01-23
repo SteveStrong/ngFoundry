@@ -1,9 +1,9 @@
 
 import { Tools } from './foTools';
-import { cPoint2D, cFrame } from './foGeometry2D';
 
 
-import { iShape, iPoint,  iFrame } from './foInterface';
+import { iPoint,  iFrame } from './foInterface';
+import { cFrame } from './shapes/foGeometry2D';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
@@ -89,7 +89,7 @@ export class foGlyph extends foNode {
 
 
 
-    private _layout: () => void;
+    protected _layout: () => void;
     public setLayout(func: () => void) {
         this._layout = func;
         return this;
@@ -103,7 +103,13 @@ export class foGlyph extends foNode {
         return this;
     };
 
-
+    private _boundry: iFrame = new cFrame(this);
+    get boundryFrame(): iFrame {
+        this.nodes.forEach(item => {
+            this._boundry.merge(item.boundryFrame);
+        });
+        return this._boundry;
+    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -173,8 +179,8 @@ export class foGlyph extends foNode {
 
     public getLocation = () => {
         return {
-            x: this.x,
-            y: this.y,
+            x: 0,
+            y: 0,
         }
     }
 
@@ -292,7 +298,7 @@ export class foGlyph extends foNode {
         return this._handles.findMember(name);
     }
 
-    public findHandle(loc: cPoint2D, e): foHandle {
+    public findHandle(loc: iPoint, e): foHandle {
         if (!this._handles) return;
 
         for (var i: number = 0; i < this.handles.length; i++) {

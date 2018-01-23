@@ -369,7 +369,7 @@ export class foShape1D extends foShape2D {
 }
 
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape1D);
 
 

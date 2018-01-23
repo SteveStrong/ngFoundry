@@ -6,7 +6,7 @@ import { iPoint2D, iPoint, iFrame } from '../foInterface'
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'
 import { foGlue } from '../foGlue'
-import { foConnectionPoint2D } from '../foConnectionPoint2D'
+import { foConnectionPoint2D } from './foConnectionPoint2D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
@@ -285,6 +285,6 @@ export class foShape2D extends foGlyph2D {
 
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape2D);
 
