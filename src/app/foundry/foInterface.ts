@@ -40,18 +40,18 @@ export interface iNode {
 export interface iKnowledge extends iObject {
 }
 
-export interface iConnectionPoint extends iObject {
-    doMoveProxy: (loc: iPoint) => void;
-    hitTest: (hit: iPoint2D) => boolean 
-    render(ctx: CanvasRenderingContext2D);
-}
+// export interface iConnectionPoint extends iObject {
+//     doMoveProxy: (loc: iPoint) => void;
+//     hitTest: (hit: iPoint2D) => boolean 
+//     render(ctx: CanvasRenderingContext2D);
+// }
 
 //FOR GLYPHS and SHAPES
-export interface iPoint {
+export interface iName {
     myName: string;
 }
 
-export interface iPoint2D extends iPoint {
+export interface iPoint2D extends iName {
     x: number;
     y: number;
 
@@ -59,7 +59,7 @@ export interface iPoint2D extends iPoint {
     add(x: number, y: number): iPoint2D
 }
 
-export interface iPoint3D extends iPoint {
+export interface iPoint3D extends iName {
     x: number;
     y: number;
     z: number;
@@ -116,6 +116,33 @@ export interface iBox extends iRect {
     set(x: number, y: number, width: number, height: number): iRect
 }
 
+export interface iFence {
+    x1: number;
+    y1: number;
+    z1: number;
+    x2: number;
+    y2: number;
+    z2: number;
+
+    set(x1: number, y1: number, z1:number, x2: number, y2: number, z2:number): iFence;
+    contains(x: number, y: number, z:number): boolean;
+    minmax(obj: iPoint3D): iFrame;
+}
+
+export interface iCube {
+    x: number;
+    y: number;
+    z: number;
+    width: number;
+    height: number;
+    depth: number;
+    myName: string;
+
+    set(x: number, y: number, z:number, width: number, height: number, depth:number): iCube
+    contains(x: number, y: number, z:number): boolean;
+    localContains(x: number, y: number, z:number): boolean;
+}
+
 
 export interface iShape extends iRect, iNode {
     isSelected: boolean;
@@ -124,7 +151,20 @@ export interface iShape extends iRect, iNode {
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
     
-    hitTest(hit: iPoint): boolean;
+    hitTest(hit: iPoint2D): boolean;
+    overlapTest(hit: iFence): boolean;
+
+    // getOffset(loc: iPoint2D): iPoint2D;
+    // getLocation(): iPoint;
+    // moveTo(loc: iPoint2D, offset?: iPoint2D);
+    // moveBy(loc: iPoint2D, offset?: iPoint2D)
+}
+
+export interface iSolid extends iCube, iNode {
+    isSelected: boolean;
+
+ 
+    hitTest(hit: iPoint3D): boolean;
     overlapTest(hit: iFrame): boolean;
 
     // getOffset(loc: iPoint2D): iPoint2D;
