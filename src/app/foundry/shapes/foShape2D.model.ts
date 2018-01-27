@@ -142,7 +142,8 @@ export class foShape2D extends foGlyph2D {
     public pinLocation() {
         return {
             x: this.pinX(),
-            y: this.pinY()
+            y: this.pinY(),
+            z: 0,
         }
     }
 

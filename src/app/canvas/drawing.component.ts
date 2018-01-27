@@ -117,21 +117,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
 
-
-  ngOnInit() {
-    this.currentDocument = this.rootWorkspace.document.override({
-      pageWidth: this.pageWidth,
-      pageHeight: this.pageHeight,
-    });
-
-    this.currentStudio = this.rootWorkspace.studio.override({
-      stageWidth: 1000,
-      stageHeight: 1000,
-      stageDepth: 1000,
-    });
-
-
-
+  initLifecycle() {
     Lifecycle.mute = true;
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
 
@@ -218,14 +204,32 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       })
 
     });
+  }
 
+  ngOnInit() {
+    this.currentDocument = this.rootWorkspace.document.override({
+      pageWidth: this.pageWidth,
+      pageHeight: this.pageHeight,
+    });
+
+    this.currentStudio = this.rootWorkspace.studio.override({
+      stageWidth: 1000,
+      stageHeight: 1000,
+      stageDepth: 1000,
+    });
+
+
+    this.initLifecycle();
+   
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
     libs.add(SolidStencil).displayName = "Solid";
 
     this.rootWorkspace.library.add(PersonDomain);
-    this.rootWorkspace.model.addItem('default', new foModel({}))
+    this.rootWorkspace.model.addItem('default', new foModel({}));
+
+
   }
 
 
@@ -287,10 +291,14 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.doSetCurrentPage(this.currentDocument.currentPage);
-    this.doSetCurrentStage(this.currentStudio.currentStage);
+    setTimeout( _ => {
+      this.doSetCurrentPage(this.currentDocument.currentPage);
+      this.doSetCurrentStage(this.currentStudio.currentStage);
+      this.screen3D.addAxisHelper(1100).addBack(1000, 50);
+    })
 
-    this.screen3D.addAxisHelper(1100).addBack(1000, 50);
+
+   
   }
 
   addEventHooks(page: foPage) {

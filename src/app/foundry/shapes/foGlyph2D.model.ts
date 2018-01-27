@@ -292,8 +292,8 @@ export class foGlyph2D extends foGlyph implements iShape {
 
     public getLocation = ():any => {
         return {
-            x: 0,
-            y: 0,
+            x: this.x,
+            y: this.y,
             z: 0,
         }
     }
