@@ -6,7 +6,7 @@ import { iShape, iPoint2D, iSize, Action } from '../foInterface'
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'
 import { foHandle2D } from './foHandle2D'
-import { foGlue } from '../foGlue'
+import { foGlue2D } from './foGlue2D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 

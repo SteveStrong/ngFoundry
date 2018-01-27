@@ -1,23 +1,17 @@
 
-import { Tools } from './foTools';
-import { ModelRef, iPoint2D } from './foInterface'
+import { Tools } from '../foTools';
+import { ModelRef, iPoint2D, iGlueSignature } from '../foInterface'
 
-import { foObject } from './foObject.model';
-import { foNode } from './foNode.model';
-import { foShape2D } from './shapes/foShape2D.model';
-import { foHandle2D } from './shapes/foHandle2D';
-import { Lifecycle } from './foLifecycle';
+import { foObject } from '../foObject.model';
+import { foNode } from '../foNode.model';
+import { foShape2D } from './foShape2D.model';
+import { foHandle2D } from './foHandle2D';
+import { Lifecycle } from '../foLifecycle';
 
-export interface iGlueSignature {
-    sourceGuid: string,
-    sourceName: string,
-    targetGuid: string, 
-    targetName: string
-}
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlue extends foNode {
+export class foGlue2D extends foNode {
 
     myTarget: ModelRef<foShape2D>;
     mySource: ModelRef<foShape2D>;
@@ -39,8 +33,8 @@ export class foGlue extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (...args) => void;
-    public doTargetMoveProxy: (...args) => void;
+    public doSourceMoveProxy: (loc:iPoint2D) => void;
+    public doTargetMoveProxy: (loc:iPoint2D) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -58,7 +52,7 @@ export class foGlue extends foNode {
     is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
     is3D() { return this.mySource && this.mySource() && this.mySource().is3D(); }
 
-    glueTo(target: any, handleName: string) {
+    glueTo(target: foShape2D, handleName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape2D>this.myParent(); };
         this.targetName = handleName;

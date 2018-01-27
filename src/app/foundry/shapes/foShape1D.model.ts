@@ -1,7 +1,7 @@
 
 import { Tools } from '../foTools'
 import { cPoint2D } from './foGeometry2D';
-import { iPoint2D, any } from '../foInterface'
+import { iPoint2D } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'

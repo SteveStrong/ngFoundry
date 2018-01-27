@@ -3,7 +3,7 @@ import { Tools } from '../foTools'
 import { foShape3D } from "./foShape3D.model";
 
 
-import { foGlue } from '../foGlue'
+import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
@@ -11,7 +11,7 @@ import { foNode } from '../foNode.model'
 
 import { Lifecycle } from '../foLifecycle';
 
-import { JSONLoader,Object3D, Matrix3, MultiMaterial, Material, Geometry, Mesh } from 'three';
+import { JSONLoader, Object3D, Matrix3, MultiMaterial, Material, Geometry, Mesh } from 'three';
 
 import { SphereGeometry } from 'three';
 
@@ -31,13 +31,13 @@ export class foModel3D extends foShape3D {
 
     get mesh(): Mesh {
         if (!this._mesh && this._geometry && this._material) {
-          let geom = this.geometry()
-          let mat = this.material()
-          this._mesh = (geom && mat) && new Mesh(geom, this.material());
+            let geom = this.geometry()
+            let mat = this.material()
+            this._mesh = (geom && mat) && new Mesh(geom, this.material());
         }
         return this._mesh;
-      }
-      set mesh(value: Mesh) { this._mesh = value; }
+    }
+    set mesh(value: Mesh) { this._mesh = value; }
 
     geometry = (spec?: any): Geometry => {
         return this._geometry;

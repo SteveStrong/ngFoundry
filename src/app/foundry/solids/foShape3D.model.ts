@@ -3,7 +3,7 @@ import { Tools } from '../foTools'
 import { foGlyph3D } from "./foGlyph3D.model";
 
 
-import { foGlue } from '../foGlue'
+import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'

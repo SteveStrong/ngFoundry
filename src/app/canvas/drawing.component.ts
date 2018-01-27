@@ -27,7 +27,7 @@ import { foStage } from 'app/foundry/solids/foStage.model';
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
-import { foGlue } from 'app/foundry/foGlue';
+import { foGlue2D } from 'app/foundry/foGlue2D';
 import { filter } from 'rxjs/operators';
 import { SolidStencil } from "./solids.model";
 

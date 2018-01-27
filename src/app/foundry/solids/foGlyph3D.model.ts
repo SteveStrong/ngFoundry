@@ -2,7 +2,6 @@ import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, 
 
 import { Tools } from '../foTools'
 import { cPoint3D } from './foGeometry3D';
-import { any } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 

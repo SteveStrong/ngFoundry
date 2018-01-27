@@ -5,7 +5,7 @@ import { iPoint2D, any, iFrame } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'
-import { foGlue } from '../foGlue'
+import { foGlue2D } from '../foGlue2D'
 import { foConnectionPoint2D } from './foConnectionPoint2D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'

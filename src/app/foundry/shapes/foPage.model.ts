@@ -94,8 +94,8 @@ export class foPage extends foShape2D {
         return this._matrix;
     };
 
-    findHitShape(hit: any, deep: boolean = true, exclude: foGlyph2D = null): foGlyph {
-        let found: foGlyph = undefined;
+    findHitShape(hit: iPoint2D, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
+        let found: foGlyph2D = undefined;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape = this.nodes.getMember(i);
             if (shape === exclude) continue;
@@ -104,7 +104,7 @@ export class foPage extends foShape2D {
         }
     }
 
-    findShapeUnder(source: foGlyph, deep: boolean = true, exclude: foGlyph = null): foGlyph2D {
+    findShapeUnder(source: foGlyph2D, deep: boolean = true, exclude: foGlyph2D = null): foGlyph2D {
         let frame = source.boundryFrame;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape: foGlyph2D = this._subcomponents.getMember(i);

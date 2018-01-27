@@ -143,6 +143,12 @@ export interface iCube {
     localContains(x: number, y: number, z: number): boolean;
 }
 
+export interface iGlueSignature {
+    sourceGuid: string,
+    sourceName: string,
+    targetGuid: string, 
+    targetName: string
+}
 
 export interface iShape extends iRect, iNode {
     isSelected: boolean;

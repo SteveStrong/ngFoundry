@@ -13,9 +13,9 @@ import { foShape2D } from "../foundry/shapes/foShape2D.model";
 
 //https://greensock.com/docs/TweenMax
 import { Back } from "gsap";
-import { foObject } from 'app/foundry/foObject.model';
+import { foObject } from '../foundry/foObject.model';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
-import { foGlue, iGlueSignature } from 'app/foundry/foGlue';
+import { foGlue2D, iGlueSignature } from '../foundry/foGlue2D';
 
 @Injectable()
 export class SharingService {
