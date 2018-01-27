@@ -107,6 +107,8 @@ export let KnowcycleLock: foLifecycleEventLock = new foLifecycleEventLock();
 
 export class foLifecycle {
 
+    mute: boolean = false;
+
     public observable: Observable<foLifecycleEvent>;
     public emit: Subject<foLifecycleEvent>;
 
@@ -120,49 +122,53 @@ export class foLifecycle {
 
         this.debounced.asObservable().pipe(debounceTime(debouce)).subscribe(event => {
             event.id = counter++;
-            this.emit.next(event);
+            this.broadcast(event);
         });
 
     }
 
+    broadcast(obj: foLifecycleEvent) {
+        !this.mute &&  this.emit.next(obj)
+        return this;
+    }
 
     primitive(obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent('primitive', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('primitive', obj, counter++, value))
         return this;
     }
 
     defined(obj?: foObject) {
-        this.emit.next(new foLifecycleEvent('defined', obj, counter++))
+        this.broadcast(new foLifecycleEvent('defined', obj, counter++))
         return this;
     }
 
     event(eventName: string, obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent(eventName, obj, counter++, value))
+        this.broadcast(new foLifecycleEvent(eventName, obj, counter++, value))
         return this;
     }
 
     created(obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent('created', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('created', obj, counter++, value))
         return this;
     }
 
     destroyed(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('destroyed', obj, counter++))
+        this.broadcast(new foLifecycleEvent('destroyed', obj, counter++))
         return this;
     }
 
     unparent(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('unparent', obj, counter++))
+        this.broadcast(new foLifecycleEvent('unparent', obj, counter++))
         return this;
     }
 
     reparent(obj: foObject) {
-        this.emit.next(new foLifecycleEvent('reparent', obj, counter++))
+        this.broadcast(new foLifecycleEvent('reparent', obj, counter++))
         return this;
     }
 
     action(obj: foObject, action: string, params?: any) {
-        this.emit.next(new foLifecycleEvent('run', obj, counter++, {
+        this.broadcast(new foLifecycleEvent('run', obj, counter++, {
             action: action,
             params: params
         }));
@@ -170,38 +176,38 @@ export class foLifecycle {
     }
 
     command(obj: foObject, method: string) {
-        this.emit.next(new foLifecycleEvent('command', obj, counter++, method));
+        this.broadcast(new foLifecycleEvent('command', obj, counter++, method));
         return this;
     }
 
     selected(obj: foObject, value: any) {
-        this.emit.next(new foLifecycleEvent('selected', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('selected', obj, counter++, value))
         return this;
     }
 
     layout(obj: foObject, value: any) {
-        this.emit.next(new foLifecycleEvent('layout', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('layout', obj, counter++, value))
         return this;
     }
 
     changed(obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent('changed', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('changed', obj, counter++, value))
         return this;
     }
 
 
     glued(obj: foObject, value: any) {
-        this.emit.next(new foLifecycleEvent('glued', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('glued', obj, counter++, value))
         return this;
     }
 
     unglued(obj: foObject, value: any) {
-        this.emit.next(new foLifecycleEvent('unglued', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('unglued', obj, counter++, value))
         return this;
     }
 
     dropped(obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent('dropped', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('dropped', obj, counter++, value))
         return this;
     }
 
@@ -216,12 +222,12 @@ export class foLifecycle {
     }
 
     easeTo(obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent('easeTo', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('easeTo', obj, counter++, value))
         return this;
     }
 
     easeTween(obj: foObject, value?: any) {
-        this.emit.next(new foLifecycleEvent('easeTween', obj, counter++, value))
+        this.broadcast(new foLifecycleEvent('easeTween', obj, counter++, value))
         return this;
     }
 

@@ -12,7 +12,7 @@ import { foComponent } from '../foComponent.model';
 import { Lifecycle } from '../foLifecycle';
 import { BroadcastChange } from '../foChange';
 
-import { foHandle } from '../foGlyph.model';
+import { foHandle } from '../foHandle';
 import { Screen3D } from './threeDriver';
 
 export class foHandle3D extends foHandle {
@@ -35,9 +35,6 @@ export class foHandle3D extends foHandle {
     }
 
 
-    // public drawHover: (ctx: CanvasRenderingContext2D) => void;
-    // public preDraw: (ctx: CanvasRenderingContext2D) => void;
-    // public postDraw: (ctx: CanvasRenderingContext2D) => void;
 
     protected _matrix: Matrix3;
     protected _invMatrix: Matrix3;

@@ -2,54 +2,31 @@
 import { Tools } from './foTools';
 
 
-import { iName,  iFrame } from './foInterface';
+import { iName, iFrame } from './foInterface';
 import { cFrame } from './shapes/foGeometry2D';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
 import { foNode } from './foNode.model';
-
+import { foHandle } from './foHandle';
 import { Lifecycle } from './foLifecycle';
 
-export class foHandle extends foNode {
-    doMoveProxy: (loc: any) => void;
-
-    protected _size: number;
-    protected _opacity: number;
-    protected _color: string;
-
-    get size(): number { return this._size || 10.0; }
-    set size(value: number) { this._size = value; }
-
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'black';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
-
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-    }
-
-    public pinLocation() {
-        let loc = this.size / 2
-        return {
-            x: loc,
-            y: loc
-        }
-    }
-
-}
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foNode {
 
     static DEG_TO_RAD = Math.PI / 180;
     static RAD_TO_DEG = 180 / Math.PI;
+
+    protected _subcomponents: foCollection<foGlyph>;
+    get nodes(): foCollection<foGlyph> {
+        return this._subcomponents;
+    }
+    protected _handles: foCollection<foHandle>;
+    get handles(): foCollection<foHandle> {
+        this._handles || this.createHandles();
+        return this._handles;
+    }
 
     protected _isSelected: boolean = false;
     get isSelected(): boolean { return this._isSelected; }
@@ -61,12 +38,6 @@ export class foGlyph extends foNode {
 
     }
 
-
-    protected _subcomponents: foCollection<foGlyph>;
-    get nodes(): foCollection<foGlyph> {
-        return this._subcomponents;
-    }
-    
     protected _opacity: number;
     protected _color: string;
 
@@ -84,8 +55,7 @@ export class foGlyph extends foNode {
     }
 
 
-    protected _handles: foCollection<foHandle>;
-    get handles(): foCollection<foHandle> { return this._handles || this.createHandles(); }
+
 
 
     protected _layout: () => void;
@@ -167,17 +137,19 @@ export class foGlyph extends foNode {
 
 
 
-    public getLocation = () => {
+    public getLocation = ():any => {
         return {
             x: 0,
             y: 0,
+            z: 0,
         }
     }
 
-    public pinLocation() {
+    public pinLocation():any {
         return {
             x: 0,
             y: 0,
+            z: 0,
         }
     }
 
@@ -224,20 +196,9 @@ export class foGlyph extends foNode {
         return this.generateHandles(spec);
     }
 
-    getHandle(name: string): foHandle {
+    public getHandle(name: string): foHandle {
         if (!this._handles) return;
         return this._handles.findMember(name);
-    }
-
-    public findHandle(loc: any, e): foHandle {
-        if (!this._handles) return;
-
-        for (var i: number = 0; i < this.handles.length; i++) {
-            let handle: foHandle = this.handles.getChildAt(i);
-            if (handle['hitTest'](loc)) {
-                return handle;
-            }
-        }
     }
 
 

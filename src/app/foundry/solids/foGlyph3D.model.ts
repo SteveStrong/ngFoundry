@@ -10,6 +10,8 @@ import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
 import { foGlyph } from '../foGlyph.model'
+import { foHandle3D } from './foHandle3D'
+
 import { Screen3D } from "./threeDriver";
 
 
@@ -75,6 +77,11 @@ export class foGlyph3D extends foGlyph {
     protected _subcomponents: foCollection<foGlyph3D>;
     get nodes(): foCollection<foGlyph3D> {
         return this._subcomponents;
+    }
+    protected _handles: foCollection<foHandle3D>;
+    get handles(): foCollection<foHandle3D> {
+        this._handles || this.createHandles();
+        return this._handles;
     }
 
     protected _x: number;
@@ -154,13 +161,25 @@ export class foGlyph3D extends foGlyph {
         this.setupPreDraw();
     }
 
+
+
+
     is3D() { return true; }
 
     public getLocation = (): any => {
-        let x = this.x;
-        let y = this.y;
-        let z = this.z;
-        return new cPoint3D(x, y, z);
+        return {
+            x: this.x,
+            y: this.y,
+            z: this.z,
+        }
+    }
+
+    public pinLocation(): any {
+        return {
+            x: 0,
+            y: 0,
+            z: 0,
+        }
     }
 
 
@@ -263,6 +282,57 @@ export class foGlyph3D extends foGlyph {
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         this.obj3D.position.set(this.x, this.y, this.z);
         return this;
+    }
+
+    protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle3D> {
+
+        let i = 0;
+        if (!this._handles) {
+            this._handles = new foCollection<foHandle3D>()
+            spec.forEach(item => {
+                let type = item.myType ? item.myType : RuntimeType.define(foHandle3D)
+                let handle = new type(item, undefined, this);
+                handle.doMoveProxy = proxy && proxy[i]
+                this._handles.addMember(handle);
+                i++;
+            });
+        } else {
+            spec.forEach(item => {
+                let handle = this._handles.getChildAt(i)
+                handle.override(item);
+                handle.doMoveProxy = proxy && proxy[i];
+                i++;
+            });
+        }
+        return this._handles;
+    }
+
+    public createHandles(): foCollection<foHandle3D> {
+
+        let spec = [
+            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle3D) },
+            { x: this.width, y: 0, myName: "W:0" },
+            { x: this.width, y: this.height, myName: "W:H" },
+            { x: 0, y: this.height, myName: "0:H" },
+        ];
+
+        return this.generateHandles(spec);
+    }
+
+    public getHandle(name: string): foHandle3D {
+        if (!this._handles) return;
+        return this._handles.findMember(name);
+    }
+
+    public findHandle(loc: cPoint3D, e): foHandle3D {
+        if (!this._handles) return;
+
+        for (var i: number = 0; i < this.handles.length; i++) {
+            let handle: foHandle3D = this.handles.getChildAt(i);
+            if (handle.hitTest(loc)) {
+                return handle;
+            }
+        }
     }
 
 

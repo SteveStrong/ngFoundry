@@ -13,7 +13,7 @@ import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from '../foLifecycle';
 import { BroadcastChange } from '../foChange';
 
-import { foHandle } from '../foGlyph.model';
+import { foHandle } from '../foHandle';
 
 
 export class foHandle2D extends foHandle {

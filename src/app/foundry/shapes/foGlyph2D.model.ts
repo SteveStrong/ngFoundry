@@ -23,6 +23,13 @@ export class foGlyph2D extends foGlyph implements iShape {
         return this._subcomponents;
     }
 
+    protected _handles: foCollection<foHandle2D>;
+    get handles(): foCollection<foHandle2D> { 
+        this._handles || this.createHandles(); 
+        return this._handles; 
+    }
+
+
     protected _x: number;
     protected _y: number;
     protected _width: number;
@@ -48,8 +55,7 @@ export class foGlyph2D extends foGlyph implements iShape {
 
     public rotationZ = (): number => { return 0; }
 
-    get handles(): foCollection<foHandle2D> { return this._handles || this.createHandles(); }
-    protected _handles: foCollection<foHandle2D>;
+
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -284,13 +290,22 @@ export class foGlyph2D extends foGlyph implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = ():iPoint2D => {
+    public getLocation = ():any => {
         return {
-            myName:'loc',
-            x: this.x,
-            y: this.y,
+            x: 0,
+            y: 0,
+            z: 0,
         }
     }
+
+    public pinLocation():any {
+        return {
+            x: 0,
+            y: 0,
+            z: 0,
+        }
+    }
+
 
     public setLocation = (loc?: iPoint2D) => {
         this.x = loc ? loc.x : 0;
@@ -512,7 +527,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         return this.generateHandles(spec);
     }
 
-    getHandle(name: string): foHandle2D {
+    public getHandle(name: string): foHandle2D {
         if (!this._handles) return;
         return this._handles.findMember(name);
     }
