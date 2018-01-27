@@ -220,27 +220,27 @@ export class foPipe3D extends foShape3D {
 
 
 
-    public createHandles(): foCollection<foHandle3D> {
+    // public createHandles(): foCollection<foHandle3D> {
 
-        let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
-        let center = this.globalToLocalPoint(this.center(shape1DNames.center));
-        let end = this.globalToLocalPoint(this.end(shape1DNames.finish));
+    //     let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
+    //     let center = this.globalToLocalPoint(this.center(shape1DNames.center));
+    //     let end = this.globalToLocalPoint(this.end(shape1DNames.finish));
 
-        Tools.mixin(begin, { size: 20 });
-        Tools.mixin(end, { size: 20 });
-        Tools.mixin(center, { size: 20 });
-        let spec = [begin, center, end];
-        let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
+    //     Tools.mixin(begin, { size: 20 });
+    //     Tools.mixin(end, { size: 20 });
+    //     Tools.mixin(center, { size: 20 });
+    //     let spec = [begin, center, end];
+    //     let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
 
-        return this.generateHandles(spec, proxy);
-    }
+    //     return this.generateHandles(spec, proxy);
+    // }
 
 
 
-    public drawHandles(ctx: CanvasRenderingContext2D) {
-        this.createHandles();
-        super.drawHandles(ctx);
-    }
+    // public drawHandles(ctx: CanvasRenderingContext2D) {
+    //     this.createHandles();
+    //     super.drawHandles(ctx);
+    // }
 
 
 }

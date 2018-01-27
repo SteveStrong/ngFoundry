@@ -220,9 +220,9 @@ export class foHandle3D extends foHandle {
     render3D = (screen: Screen3D, deep: boolean = true) => {
         this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen)
-        deep && this.nodes.forEach(item => {
-            item.render3D(screen, deep);
-        });
+        // deep && this.nodes.forEach(item => {
+        //     item.render3D(screen, deep);
+        // });
     }
 
 }
