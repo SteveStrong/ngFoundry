@@ -27,7 +27,7 @@ import { foStage } from 'app/foundry/solids/foStage.model';
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
-import { foGlue2D } from 'app/foundry/foGlue2D';
+import { foGlue2D } from '../foundry/shapes/foGlue2D';
 import { filter } from 'rxjs/operators';
 import { SolidStencil } from "./solids.model";
 
@@ -148,7 +148,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
 
     glued.subscribe(event => {
-      let glue = event.object as foGlue;
+      let glue = event.object as foGlue2D;
       let { sourceGuid, sourceName, targetGuid, targetName } = glue.signature;
 
       this.rootWorkspace.activeStage.found<foShape3D>(sourceGuid, (source) => {

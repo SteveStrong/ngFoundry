@@ -27,13 +27,13 @@ export enum shape3DNames {
 
 export class foShape3D extends foGlyph3D {
 
-    get glue(): foCollection<foGlue> {
+    get glue(): foCollection<foGlue3D> {
         if (!this._glue) {
-            this._glue = new foCollection<foGlue>()
+            this._glue = new foCollection<foGlue3D>()
         }
         return this._glue;
     }
-    protected _glue: foCollection<foGlue>;
+    protected _glue: foCollection<foGlue3D>;
 
     get connectionPoints(): foCollection<foConnectionPoint3D> { return this._connectionPoints || this.createConnectionPoints(); }
     protected _connectionPoints: foCollection<foConnectionPoint3D>;
@@ -93,7 +93,7 @@ export class foShape3D extends foGlyph3D {
     protected getGlue(name: string) {
         let glue = this.glue.findMember(name);
         if (!glue) {
-            glue = new foGlue({ myName: name }, this);
+            glue = new foGlue3D({ myName: name }, this);
             this.addGlue(glue);
         }
         return glue;
@@ -113,13 +113,13 @@ export class foShape3D extends foGlyph3D {
         }
     }
 
-    public addGlue(glue: foGlue) {
+    public addGlue(glue: foGlue3D) {
         this.glue.addMember(glue);
         return glue;
     }
 
 
-    public removeGlue(glue: foGlue) {
+    public removeGlue(glue: foGlue3D) {
         if (this._glue) {
             this.glue.removeMember(glue);
         }

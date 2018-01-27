@@ -3,7 +3,7 @@ import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, 
 
 import { cPoint3D } from './foGeometry3D';
 
-import { iPoint3D, any } from '../foInterface';
+import { iPoint3D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
 import { foNode } from '../foNode.model';
@@ -123,37 +123,39 @@ export class foHandle3D extends foHandle {
         if (this._matrix === undefined) {
             this._matrix = new Matrix3();
             let delta = this.size / 2;
-            this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
+            //this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
         }
         return this._matrix;
     };
 
     getInvMatrix() {
-        if (this._invMatrix === undefined) {
-            this._invMatrix = this.getMatrix().invertCopy();
-        }
+        // if (this._invMatrix === undefined) {
+        //     this._invMatrix = this.getMatrix().invertCopy();
+        // }
         return this._invMatrix;
     };
 
     localToGlobal(x: number, y: number, pt?: cPoint3D) {
         let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y, pt);
+        return mtx; // mtx.transformPoint(x, y, pt);
     };
 
     globalToLocal(x: number, y: number, pt?: cPoint3D) {
-        let inv = this.getGlobalMatrix().invertCopy();
-        return inv.transformPoint(x, y, pt);
+        let inv = this.getGlobalMatrix();
+        return inv; // inv.transformPoint(x, y, pt);
     };
 
     localToGlobalPoint(pt: cPoint3D): cPoint3D {
         let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(pt.x, pt.y, pt);
+        //return  mtx.transformPoint(pt.x, pt.y, pt);
+        return pt;
     };
 
-    globalCenter(): cPoint3D {
-        let { x, y } = this.pinLocation();
-        let mtx = this.getGlobalMatrix();
-        return mtx.transformPoint(x, y);
+    globalCenter(pt?: cPoint3D): cPoint3D {
+        //let { x, y } = this.pinLocation();
+        //let mtx = this.getGlobalMatrix();
+        //return mtx.transformPoint(x, y);
+        return pt;
     };
 
     public getOffset = (loc: iPoint3D): iPoint3D => {
@@ -164,20 +166,20 @@ export class foHandle3D extends foHandle {
 
 
 
-    protected localHitTest = (hit: any): boolean => {
-        let { x, y } = hit as iPoint3D
-        let loc = this.globalToLocal(x, y);
+    protected localHitTest = (hit: iPoint3D): boolean => {
+        // let { x, y } = hit;
+        // let loc = this.globalToLocal(x, y);
 
-        if (loc.x < 0) return false;
-        if (loc.x > this.size) return false;
+        // if (loc.x < 0) return false;
+        // if (loc.x > this.size) return false;
 
-        if (loc.y < 0) return false;
-        if (loc.y > this.size) return false;
+        // if (loc.y < 0) return false;
+        // if (loc.y > this.size) return false;
         //foObject.beep();
         return true;
     }
 
-    public hitTest = (hit: any): boolean => {
+    public hitTest = (hit: iPoint3D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -218,7 +220,7 @@ export class foHandle3D extends foHandle {
     render3D = (screen: Screen3D, deep: boolean = true) => {
         this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen)
-        deep && this._subcomponents.forEach(item => {
+        deep && this.nodes.forEach(item => {
             item.render3D(screen, deep);
         });
     }

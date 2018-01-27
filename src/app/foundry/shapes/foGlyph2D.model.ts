@@ -284,8 +284,9 @@ export class foGlyph2D extends foGlyph implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = () => {
+    public getLocation = ():iPoint2D => {
         return {
+            myName:'loc',
             x: this.x,
             y: this.y,
         }

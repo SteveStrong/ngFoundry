@@ -1,11 +1,11 @@
 
 import { Tools } from '../foTools'
 import { cPoint2D } from './foGeometry2D';
-import { iPoint2D, any, iFrame } from '../foInterface'
+import { iPoint2D, iFrame } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'
-import { foGlue2D } from '../foGlue2D'
+import { foGlue2D } from './foGlue2D'
 import { foConnectionPoint2D } from './foConnectionPoint2D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
@@ -33,13 +33,13 @@ export class foShape2D extends foGlyph2D {
         this._angle = value;
     }
 
-    get glue(): foCollection<foGlue> {
+    get glue(): foCollection<foGlue2D> {
         if (!this._glue) {
-            this._glue = new foCollection<foGlue>()
+            this._glue = new foCollection<foGlue2D>()
         }
         return this._glue;
     }
-    protected _glue: foCollection<foGlue>;
+    protected _glue: foCollection<foGlue2D>;
 
     get connectionPoints(): foCollection<foConnectionPoint2D> { return this._connectionPoints || this.createConnectionPoints(); }
     protected _connectionPoints: foCollection<foConnectionPoint2D>;
@@ -149,7 +149,7 @@ export class foShape2D extends foGlyph2D {
     protected getGlue(name: string) {
         let glue = this.glue.findMember(name);
         if (!glue) {
-            glue = new foGlue({ myName: name }, this);
+            glue = new foGlue2D({ myName: name }, this);
             this.addGlue(glue);
         }
         return glue;
@@ -169,13 +169,13 @@ export class foShape2D extends foGlyph2D {
         }
     }
 
-    public addGlue(glue: foGlue) {
+    public addGlue(glue: foGlue2D) {
         this.glue.addMember(glue);
         return glue;
     }
 
 
-    public removeGlue(glue: foGlue) {
+    public removeGlue(glue: foGlue2D) {
         if (this._glue) {
             this.glue.removeMember(glue);
         }
