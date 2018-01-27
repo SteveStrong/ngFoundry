@@ -132,6 +132,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
 
 
+    Lifecycle.mute = true;
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
 
     // Lifecycle2D.subscribe(event => {
