@@ -162,7 +162,32 @@ export class foGlyph3D extends foGlyph {
     }
 
 
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+        let changed = false;
+        if (!Number.isNaN(x) && this.x != x) {
+            changed = true;
+            this.x = x;
+        };
 
+        if (!Number.isNaN(y) && this.y != y) {
+            changed = true;
+            this.y = y;
+        };
+
+        if (!Number.isNaN(z) && this.z != z) {
+            changed = true;
+            this.z = z;
+        };
+
+        return changed;
+    }
+
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+        if (this.didLocationChange(x, y, z)) {
+            Lifecycle.dropped(this, this.getLocation());
+        }
+        return this;
+    }
 
     is3D() { return true; }
 

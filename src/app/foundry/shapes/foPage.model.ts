@@ -76,7 +76,7 @@ export class foPage extends foShape2D {
     //this is used to drop shapes
     get centerX(): number { return this.width / 2; }
     get centerY(): number { return this.height / 2; }
-
+    get centerZ(): number { return 0; }
 
     findItem<T extends foGlyph2D>(key: string, onMissing?: Action<T>, onFound?: Action<T>): T {
         return this._dictionary.findItem(key, onMissing, onFound) as T;

@@ -56,10 +56,13 @@ export class foShape3D extends foGlyph3D {
     //     });
     // }
 
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+        let changed = super.didLocationChange(x, y, z);
+        return changed;
+    }
 
-
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (this.didLocationChange(x, y, angle)) {
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+        if (this.didLocationChange(x, y, z)) {
             let point = this.getLocation();
             this._glue && this.glue.forEach(item => {
                 item.targetMoved(point);

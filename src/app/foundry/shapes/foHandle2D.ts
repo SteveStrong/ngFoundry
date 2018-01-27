@@ -20,6 +20,7 @@ export class foHandle2D extends foHandle {
 
     protected _x: number;
     protected _y: number;
+    protected _angle: number;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -31,6 +32,13 @@ export class foHandle2D extends foHandle {
         this.smash();
         this._y = value;
     }
+
+    get angle(): number { return this._angle || 0.0; }
+    set angle(value: number) {
+        this.smash();
+        this._angle = value;
+    }
+    public rotation = (): number => { return this.angle; }
 
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
@@ -51,10 +59,10 @@ export class foHandle2D extends foHandle {
     }
 
 
-
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(angle)) this.angle = angle;
         return this;
     }
 
@@ -88,7 +96,7 @@ export class foHandle2D extends foHandle {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
             let delta = this.size / 2;
-            this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, delta, delta);
         }
         return this._matrix;
     };

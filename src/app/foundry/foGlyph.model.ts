@@ -29,15 +29,6 @@ export class foGlyph extends foNode {
     }
 
     protected _isSelected: boolean = false;
-    get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) {
-        if (this._isSelected != value) {
-            this._isSelected = value;
-            Lifecycle.selected(this, value);
-        };
-
-    }
-
     protected _opacity: number;
     protected _color: string;
 
@@ -54,7 +45,13 @@ export class foGlyph extends foNode {
         this._color = value;
     }
 
-
+    get isSelected(): boolean { return this._isSelected; }
+    set isSelected(value: boolean) {
+        if (this._isSelected != value) {
+            this._isSelected = value;
+            Lifecycle.selected(this, value);
+        };
+    }
 
 
 
@@ -77,8 +74,8 @@ export class foGlyph extends foNode {
         super(properties, subcomponents, parent);
     }
 
-    is2D() { return true; }
-    is3D() { return true; }
+    is2D() { return false; }
+    is3D() { return false; }
 
 
 

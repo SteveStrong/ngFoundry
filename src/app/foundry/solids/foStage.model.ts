@@ -84,9 +84,9 @@ export class foStage extends foGlyph3D {
     }
 
     //this is used to drop shapes
-    get centerX(): number { return this.width / 2; }
-    get centerY(): number { return this.height / 2; }
-    get centerZ(): number { return this.depth / 2; }
+    get centerX(): number { return 0; }
+    get centerY(): number { return 0; }
+    get centerZ(): number { return 0; }
 
     findItem<T extends foGlyph3D>(key: string, onMissing?: Action<T>, onFound?: Action<T>): T {
         return this._dictionary.findItem(key, onMissing, onFound) as T;
