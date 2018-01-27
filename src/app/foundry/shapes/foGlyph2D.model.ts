@@ -5,7 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import { iShape, iPoint,  iPoint2D, iRect, iFrame } from '../foInterface';
+import { iShape,  iPoint2D, iRect, iFrame } from '../foInterface';
 
 import { foHandle2D } from './foHandle2D';
 import { foObject } from '../foObject.model';
@@ -121,6 +121,8 @@ export class foGlyph2D extends foGlyph implements iShape {
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         return this;
     }
+
+
 
 
     public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
@@ -295,8 +297,8 @@ export class foGlyph2D extends foGlyph implements iShape {
     }
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
-        let { x, y } = hit as iPoint2D
+    protected localHitTest = (hit: iPoint2D): boolean => {
+        let { x, y } = hit;
         let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
@@ -307,7 +309,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: iPoint2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -321,6 +323,57 @@ export class foGlyph2D extends foGlyph implements iShape {
         return false;
     }
 
+
+    findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+
+        if (deep) {
+            let child = this.findChildObjectUnderPoint(hit);
+            found = child ? child : found;
+        }
+        return found;
+    }
+
+    protected findChildObjectUnderPoint(hit: iPoint2D): foGlyph2D {
+        let children = this.nodes;
+        if (children.isSelectable) {
+            for (let i: number = 0; i < children.length; i++) {
+                let child: foGlyph2D = children.getMember(i);
+                let found = child.findChildObjectUnderPoint(hit);
+                if (found) return found;
+            }
+        }
+
+        if (this.hitTest(hit)) {
+            return this;
+        }
+    }
+
+
+    findObjectUnderFrame(source: foGlyph2D, hit: iFrame, deep: boolean): foGlyph2D {
+        let found: foGlyph2D = this.overlapTest(hit) ? this : undefined;
+
+        if (deep) {
+            let child = this.findChildObjectUnderFrame(source, hit);
+            found = child ? child : found;
+        }
+        return found;
+    }
+
+    protected findChildObjectUnderFrame(source: foGlyph2D, hit: iFrame): foGlyph2D {
+        let children = this.nodes;
+        if (children.isSelectable) {
+            for (let i: number = 0; i < children.length; i++) {
+                let child: foGlyph2D = children.getMember(i);
+                if (source.hasAncestor(child)) continue;
+                let found = child.findChildObjectUnderFrame(source, hit);
+                if (found) return found;
+            }
+        }
+        if (this.overlapTest(hit)) {
+            return this;
+        }
+    } 
 
     public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
         ctx.save();

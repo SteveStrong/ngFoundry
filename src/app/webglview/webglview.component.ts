@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
-import { Screen3D } from "../foundryDrivers/threeDriver";
+import { Screen3D } from "../foundry/solids/threeDriver";
 
 
 @Component({

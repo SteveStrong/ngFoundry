@@ -1,7 +1,7 @@
 
 import { Tools } from '../foTools'
 import { cPoint2D } from './foGeometry2D';
-import { iPoint2D, iPoint, iFrame } from '../foInterface'
+import { iPoint2D, any, iFrame } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'
@@ -110,7 +110,7 @@ export class foShape2D extends foGlyph2D {
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: any): boolean => {
         let { x, y } = hit as iPoint2D
         let loc = this.globalToLocal(x, y);;
 
@@ -124,7 +124,7 @@ export class foShape2D extends foGlyph2D {
     }
 
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: any): boolean => {
         return this.localHitTest(hit);
     }
 

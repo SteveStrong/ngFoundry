@@ -2,7 +2,7 @@ import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, 
 
 import { Tools } from '../foTools'
 import { cPoint3D } from './foGeometry3D';
-import { iPoint } from '../foInterface'
+import { any } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 
@@ -157,7 +157,7 @@ export class foGlyph3D extends foGlyph {
 
     is3D() { return true; }
 
-    public getLocation = (): iPoint => {
+    public getLocation = (): any => {
         let x = this.x;
         let y = this.y;
         let z = this.z;

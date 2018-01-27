@@ -1,6 +1,6 @@
 
 import { Tools } from './foTools';
-import { ModelRef, iPoint } from './foInterface'
+import { ModelRef, iPoint2D } from './foInterface'
 
 import { foObject } from './foObject.model';
 import { foNode } from './foNode.model';
@@ -39,8 +39,8 @@ export class foGlue extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (loc: iPoint) => void;
-    public doTargetMoveProxy: (loc: iPoint) => void;
+    public doSourceMoveProxy: (...args) => void;
+    public doTargetMoveProxy: (...args) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -80,11 +80,11 @@ export class foGlue extends foNode {
         return this;
     }
 
-    sourceMoved(loc: iPoint) {
+    sourceMoved(loc: iPoint2D) {
         this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
     }
 
-    targetMoved(loc: iPoint) {  
+    targetMoved(loc: iPoint2D) {  
         let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
         this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
     }

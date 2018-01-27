@@ -3,7 +3,7 @@ import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, 
 
 import { cPoint3D } from './foGeometry3D';
 
-import { iPoint3D, iPoint } from '../foInterface';
+import { iPoint3D, any } from '../foInterface';
 
 import { foObject } from '../foObject.model';
 import { foNode } from '../foNode.model';
@@ -164,7 +164,7 @@ export class foHandle3D extends foHandle {
 
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: any): boolean => {
         let { x, y } = hit as iPoint3D
         let loc = this.globalToLocal(x, y);
 
@@ -177,7 +177,7 @@ export class foHandle3D extends foHandle {
         return true;
     }
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: any): boolean => {
         return this.localHitTest(hit);
     }
 

@@ -2,7 +2,7 @@
 import { Tools } from './foTools';
 
 
-import { iPoint,  iFrame } from './foInterface';
+import { iName,  iFrame } from './foInterface';
 import { cFrame } from './shapes/foGeometry2D';
 
 import { foObject } from './foObject.model';
@@ -12,6 +12,8 @@ import { foNode } from './foNode.model';
 import { Lifecycle } from './foLifecycle';
 
 export class foHandle extends foNode {
+    doMoveProxy: (loc: any) => void;
+
     protected _size: number;
     protected _opacity: number;
     protected _color: string;
@@ -29,14 +31,8 @@ export class foHandle extends foNode {
         this._color = value;
     }
 
-    public doMoveProxy: (loc: iPoint) => void;
-
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
-    }
-
-    public hitTest = (hit: iPoint): boolean => {
-        return false;
     }
 
     public pinLocation() {
@@ -88,9 +84,8 @@ export class foGlyph extends foNode {
     }
 
 
-    get handles(): foCollection<foHandle> { return this._handles || this.createHandles(); }
     protected _handles: foCollection<foHandle>;
-
+    get handles(): foCollection<foHandle> { return this._handles || this.createHandles(); }
 
 
     protected _layout: () => void;
@@ -107,13 +102,6 @@ export class foGlyph extends foNode {
         return this;
     };
 
-    protected _boundry: iFrame = new cFrame(this);
-    get boundryFrame(): iFrame {
-        this.nodes.forEach(item => {
-            this._boundry.merge(item.boundryFrame);
-        });
-        return this._boundry;
-    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -201,66 +189,7 @@ export class foGlyph extends foNode {
         })
     }
 
-    findObjectUnderPoint(hit: iPoint, deep: boolean): foGlyph {
-        let found: foGlyph = this.hitTest(hit) ? this : undefined;
 
-        if (deep) {
-            let child = this.findChildObjectUnderPoint(hit);
-            found = child ? child : found;
-        }
-        return found;
-    }
-
-    protected findChildObjectUnderPoint(hit: iPoint): foGlyph {
-        let children = this.nodes;
-        if (children.isSelectable) {
-            for (let i: number = 0; i < children.length; i++) {
-                let child: foGlyph = children.getMember(i);
-                let found = child.findChildObjectUnderPoint(hit);
-                if (found) return found;
-            }
-        }
-
-        if (this.hitTest(hit)) {
-            return this;
-        }
-    }
-
-
-
-    findObjectUnderFrame(source: foGlyph, hit: iFrame, deep: boolean): foGlyph {
-        let found: foGlyph = this.overlapTest(hit) ? this : undefined;
-
-        if (deep) {
-            let child = this.findChildObjectUnderFrame(source, hit);
-            found = child ? child : found;
-        }
-        return found;
-    }
-
-    protected findChildObjectUnderFrame(source: foGlyph, hit: iFrame): foGlyph {
-        let children = this.nodes;
-        if (children.isSelectable) {
-            for (let i: number = 0; i < children.length; i++) {
-                let child: foGlyph = children.getMember(i);
-                if (source.hasAncestor(child)) continue;
-                let found = child.findChildObjectUnderFrame(source, hit);
-                if (found) return found;
-            }
-        }
-        if (this.overlapTest(hit)) {
-            return this;
-        }
-    }
-
-
-    public hitTest = (hit: iPoint): boolean => {
-        return false;
-    }
-
-    public overlapTest = (hit: iFrame): boolean => {
-        return false;
-    }
 
 
 
@@ -300,12 +229,12 @@ export class foGlyph extends foNode {
         return this._handles.findMember(name);
     }
 
-    public findHandle(loc: iPoint, e): foHandle {
+    public findHandle(loc: any, e): foHandle {
         if (!this._handles) return;
 
         for (var i: number = 0; i < this.handles.length; i++) {
             let handle: foHandle = this.handles.getChildAt(i);
-            if (handle.hitTest(loc)) {
+            if (handle['hitTest'](loc)) {
                 return handle;
             }
         }

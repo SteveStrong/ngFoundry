@@ -3,7 +3,7 @@
 import { cPoint2D } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iPoint2D, iPoint } from '../foInterface';
+import { iPoint2D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
 import { foNode } from '../foNode.model';
@@ -129,7 +129,7 @@ export class foHandle2D extends foHandle {
 
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: any): boolean => {
         let { x, y } = hit as iPoint2D
         let loc = this.globalToLocal(x, y);
 
@@ -142,7 +142,7 @@ export class foHandle2D extends foHandle {
         return true;
     }
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: any): boolean => {
         return this.localHitTest(hit);
     }
 

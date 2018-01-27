@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foPubSub";
 import { cPoint2D, cFrame } from './foGeometry2D';
-import { iPoint, iPoint2D, Action } from '../foInterface'
+import { iPoint2D, Action } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
@@ -94,7 +94,7 @@ export class foPage extends foShape2D {
         return this._matrix;
     };
 
-    findHitShape(hit: iPoint, deep: boolean = true, exclude: foGlyph2D = null): foGlyph {
+    findHitShape(hit: any, deep: boolean = true, exclude: foGlyph2D = null): foGlyph {
         let found: foGlyph = undefined;
         for (var i: number = 0; i < this.nodes.length; i++) {
             let shape = this.nodes.getMember(i);
