@@ -154,7 +154,7 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
   //wire.glueStartTo(shape1, shape3DNames.right);
   //wire.glueFinishTo(shape2, shape3DNames.left);
 
-  wire.glueStartTo(shape1, shape3DNames.center);
+  wire.glueStartTo(shape1, shape3DNames.right);
   wire.glueFinishTo(shape2, shape3DNames.center);
 
   return results;

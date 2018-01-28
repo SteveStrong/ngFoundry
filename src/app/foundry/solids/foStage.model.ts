@@ -1,5 +1,5 @@
 
-import { PubSub } from "../foPubSub";
+import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
 import { iPoint3D, Action } from '../foInterface'
 import { Screen3D } from "./threeDriver";
@@ -80,6 +80,20 @@ export class foStage extends foGlyph3D {
         super(properties, subcomponents, parent);
         this.color = 'Linen';
 
+    }
+
+    protected _obj3D: Object3D;
+    get obj3D(): Object3D {
+        if (!this._obj3D && this.mesh) {
+            this._obj3D = new Object3D();
+            this._obj3D.name = this.myGuid;
+            alert('stage obj3d')
+        }
+        return this._obj3D;
+    }
+    set obj3D(value: Object3D) { this.obj3D = value; }
+    hasObj3D(): boolean {
+        return this._obj3D != undefined
     }
 
     //this is used to drop shapes

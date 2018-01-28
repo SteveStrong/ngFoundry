@@ -103,12 +103,11 @@ export class foHandle3D extends foHandle {
             this._obj3D = new Object3D();
             this._obj3D.name = this.myGuid;
             this._obj3D.add(this.mesh);
+            this._obj3D.position.set(this.x, this.y, this.z);
 
             let myParent = this.myParent() as foGlyph3D;
             let parentObj3D = myParent && myParent.obj3D;
             parentObj3D && parentObj3D.add(this._obj3D);
-
-            let works = parentObj3D === this._obj3D.parent;
         }
         return this._obj3D;
     }
@@ -175,19 +174,9 @@ export class foHandle3D extends foHandle {
     };
 
     globalCenter(pt?: cPoint3D): cPoint3D {
-        //let { x, y, z } = this.pinLocation();
-        let { x, y, z } = this;
-        let myParent = this.myParent() as foGlyph3D;
-        let objP = myParent.obj3D;
-        let parent = this.obj3D.parent;
-        let poss = this.obj3D.position;
-        //this.obj3D.updateMatrixWorld(true);
-        //let mat = this.obj3D.matrixWorld;
-        let pos = new Vector3(x, y, z);
-        let vec = this.obj3D.getWorldPosition()
-        //return mtx.transformPoint(x, y);
+        this.obj3D.updateMatrix();
+        let vec = this.obj3D.getWorldPosition();
         return new cPoint3D(vec[0], vec[1], vec[2]);
-        //return new cPoint3D(x, y, z);
     };
 
     public getOffset = (loc: iPoint3D): iPoint3D => {

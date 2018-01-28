@@ -133,6 +133,7 @@ export class foGlyph3D extends foGlyph {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
+            this.obj3D.position.set(this.x, this.y, this.z)
             Lifecycle.dropped(this, this.getLocation());
         }
         return this;
@@ -189,7 +190,12 @@ export class foGlyph3D extends foGlyph {
         if (!this._obj3D && this.mesh) {
             this._obj3D = new Object3D();
             this._obj3D.name = this.myGuid;
-            this._obj3D.add(this.mesh)
+            this._obj3D.add(this.mesh);
+            this._obj3D.position.set(this.x, this.y, this.z);
+
+            let myParent = this.myParent() as foGlyph3D;
+            let parentObj3D = myParent && myParent.obj3D;
+            parentObj3D && parentObj3D.add(this._obj3D);
         }
         return this._obj3D;
     }
@@ -216,8 +222,11 @@ export class foGlyph3D extends foGlyph {
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
+            let parent = this.myParent() as foGlyph3D;
             if (this._obj3D) {
-                this._obj3D.remove(this._mesh)
+                this._obj3D.remove(this._mesh);
+                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
+
                 screen.removeFromScene(this._obj3D);
 
                 this._obj3D = this._mesh = undefined;

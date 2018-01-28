@@ -65,15 +65,6 @@ export class foShape3D extends foGlyph3D {
         return new BoxGeometry(this.width, this.height, this.depth);
     }
 
-    // protected toJson(): any {
-    //     return Tools.mixin(super.toJson(), {
-    //         angleX: this.angleX,
-    //         angleY: this.angleY,
-    //         angleZ: this.angleZ,
-    //        // glue: this._glue && Tools.asArray(this.glue.asJson)
-    //     });
-    // }
-
     public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
         let changed = super.didLocationChange(x, y, z);
         return changed;
