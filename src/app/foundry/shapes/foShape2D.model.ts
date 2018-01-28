@@ -42,11 +42,11 @@ export class foShape2D extends foGlyph2D {
     }
 
     protected _connectionPoints: foCollection<foConnectionPoint2D>;
-    get connectionPoints(): foCollection<foConnectionPoint2D> { 
-        this._connectionPoints || this.createConnectionPoints(); 
-        return this._connectionPoints; 
+    get connectionPoints(): foCollection<foConnectionPoint2D> {
+        this._connectionPoints || this.createConnectionPoints();
+        return this._connectionPoints;
     }
- 
+
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
     public rotationZ = (): number => { return this.angle; }
@@ -210,12 +210,13 @@ export class foShape2D extends foGlyph2D {
     }
 
     public createConnectionPoints(): foCollection<foConnectionPoint2D> {
-
+        let w = this.width;
+        let h = this.height;
         let spec = [
-            { x: this.width / 2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint2D) },
-            { x: this.width / 2, y: this.height, myName: "bottom", angle: 45 },
-            { x: 0, y: this.height / 2, myName: "left" },
-            { x: this.width, y: this.height / 2, myName: "right" },
+            { x: w / 2, y: 0, myName: shape2DNames.top, myType: RuntimeType.define(foConnectionPoint2D) },
+            { x: w / 2, y: h, myName: shape2DNames.bottom, angle: 45 },
+            { x: 0, y: h / 2, myName: shape2DNames.left },
+            { x: w, y: h / 2, myName: shape2DNames.right },
         ];
 
         return this.generateConnectionPoints(spec);

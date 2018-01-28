@@ -18,6 +18,10 @@ import { foHandle } from '../foHandle';
 
 export class foHandle2D extends foHandle {
 
+
+    //get size(): number { return this._size || 10.0; }
+    //set size(value: number) { this._size = value; }
+
     protected _x: number;
     protected _y: number;
     protected _angle: number;

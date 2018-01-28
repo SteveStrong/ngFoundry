@@ -23,6 +23,7 @@ export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName()
 
 SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
   color: 'green',
+  opacity: .5,
   width: 100,
   height: 400,
   depth: 900
@@ -51,7 +52,7 @@ export class Sphere extends foSphere {
 
 SolidStencil.define<Sphere>('sphere', Sphere, {
   color: 'orange',
-  //opacity: .5,
+  opacity: .5,
   radius: 100,
   width: function () { return this.radius },
   height: function () { return this.radius },

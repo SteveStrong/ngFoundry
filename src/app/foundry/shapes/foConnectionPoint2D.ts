@@ -16,21 +16,23 @@ export class foConnectionPoint2D extends foHandle2D {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+
     }
 
 
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        ctx.save();
+    // public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    //     ctx.save();
 
-        this.updateContext(ctx);
+    //     this.updateContext(ctx);
 
-        this.preDraw && this.preDraw(ctx);
-        this.draw(ctx);
-        this.drawHover && this.drawHover(ctx);
-        this.postDraw && this.postDraw(ctx);
+    //     this.preDraw && this.preDraw(ctx);
+    //     this.draw(ctx);
+    //     this.drawHover && this.drawHover(ctx);
+    //     this.postDraw && this.postDraw(ctx);
 
-        ctx.restore();
-    }
+    //     ctx.restore();
+    // }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         ctx.fillStyle = this.color;

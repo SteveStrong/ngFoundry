@@ -188,11 +188,11 @@ ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
   let wire = cord.newInstance().pushTo(results);
 
 
-  //wire.glueStartTo(shape1, shape2DNames.right);
-  //wire.glueFinishTo(shape2, shape2DNames.left);
+  wire.glueStartTo(shape1, shape2DNames.right);
+  wire.glueFinishTo(shape2, shape2DNames.left);
 
-  wire.glueStartTo(shape1, shape2DNames.center);
-  wire.glueFinishTo(shape2, shape2DNames.center);
+  //wire.glueStartTo(shape1, shape2DNames.center);
+  //wire.glueFinishTo(shape2, shape2DNames.center);
 
   return results;
 

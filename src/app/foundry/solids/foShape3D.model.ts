@@ -1,7 +1,7 @@
 import { Tools } from '../foTools'
 
 import { foGlyph3D } from "./foGlyph3D.model";
-import {  Geometry, BoxGeometry } from 'three';
+import { Geometry, BoxGeometry } from 'three';
 
 import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -9,8 +9,9 @@ import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 import { foObject } from '../foObject.model'
 
-import { Lifecycle } from '../foLifecycle';
+import { Screen3D } from "./threeDriver";
 
+import { Lifecycle } from '../foLifecycle';
 
 export enum shape3DNames {
     left = "left",
@@ -21,6 +22,7 @@ export enum shape3DNames {
     back = "back",
     center = "center"
 };
+
 
 export class foShape3D extends foGlyph3D {
 
@@ -46,6 +48,8 @@ export class foShape3D extends foGlyph3D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw()
     }
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);
@@ -158,11 +162,16 @@ export class foShape3D extends foGlyph3D {
 
     public createConnectionPoints(): foCollection<foConnectionPoint3D> {
 
+        let w = this.width;
+        let h = this.height;
+        let d = this.depth;
         let spec = [
-            { x: this.width / 2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint3D) },
-            { x: this.width / 2, y: this.height, myName: "bottom", angle: 45 },
-            { x: 0, y: this.height / 2, myName: "left" },
-            { x: this.width, y: this.height / 2, myName: "right" },
+            { x: w / 2, y: 0, z: 0, myName: shape3DNames.top, myType: RuntimeType.define(foConnectionPoint3D) },
+            { x: w / 2, y: h, z: 0, myName: shape3DNames.bottom },
+            { x: 0, y: h / 2, z: 0, myName: shape3DNames.left },
+            { x: w, y: h / 2, z: 0, myName: shape3DNames.right },
+            { x: 0, y: h / 2, z: 0, myName: shape3DNames.front },
+            { x: w, y: h / 2, z: 0, myName: shape3DNames.back },
         ];
 
         return this.generateConnectionPoints(spec);
@@ -172,6 +181,22 @@ export class foShape3D extends foGlyph3D {
         return this.connectionPoints.findMember(name);
     }
 
+    public drawConnectionPoints(screen: Screen3D) {
+        this.connectionPoints.forEach(item => {
+            item.render3D(screen);
+        })
+    }
+
+    render3D = (screen: Screen3D, deep: boolean = true) => {
+        this.preDraw3D && this.preDraw3D(screen)
+        this.draw3D && this.draw3D(screen);
+
+        //this.drawHandles(screen);
+        this.drawConnectionPoints(screen);
+        deep && this._subcomponents.forEach(item => {
+            item.render3D(screen, deep);
+        });
+    }
 
 }
 

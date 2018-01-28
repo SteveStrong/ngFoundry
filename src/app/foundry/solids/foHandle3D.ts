@@ -6,7 +6,7 @@ import { cPoint3D } from './foGeometry3D';
 import { iPoint3D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
-import { foNode } from '../foNode.model';
+import { foGlyph3D } from './foGlyph3D.model';
 import { foComponent } from '../foComponent.model';
 
 import { Lifecycle } from '../foLifecycle';
@@ -16,6 +16,12 @@ import { foHandle } from '../foHandle';
 import { Screen3D } from './threeDriver';
 
 export class foHandle3D extends foHandle {
+
+    get color(): string {
+        return this._color || 'cyan';
+    }
+    get size(): number { return this._size || 50.0; }
+
 
     protected _x: number;
     protected _y: number;
@@ -49,6 +55,8 @@ export class foHandle3D extends foHandle {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw();
     }
 
     geometry = (spec?: any): Geometry => {
@@ -90,9 +98,10 @@ export class foHandle3D extends foHandle {
     set obj3D(value: Object3D) { this.obj3D = value; }
 
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(z)) this.z = z;
         return this;
     }
 
@@ -183,20 +192,23 @@ export class foHandle3D extends foHandle {
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
+            let parent = this.myParent() as foGlyph3D;
             if (this._obj3D) {
-                this._obj3D.remove(this._mesh)
-                screen.removeFromScene(this._obj3D);
+                this._obj3D.remove(this._mesh);
+                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
 
                 this._obj3D = this._mesh = undefined;
             }
             let obj3D = this.obj3D;
             if (obj3D) {
                 obj3D.position.set(this.x, this.y, this.z);
-                screen.addToScene(obj3D);
+                 parent.obj3D.add(obj3D);
                 this.preDraw3D = undefined;
             }
 
         }
+
+
 
         this.preDraw3D = preDraw;
     }
@@ -217,9 +229,6 @@ export class foHandle3D extends foHandle {
     render3D = (screen: Screen3D, deep: boolean = true) => {
         this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen)
-        // deep && this.nodes.forEach(item => {
-        //     item.render3D(screen, deep);
-        // });
     }
 
 }
