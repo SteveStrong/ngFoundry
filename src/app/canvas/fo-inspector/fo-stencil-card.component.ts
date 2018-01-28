@@ -1,6 +1,5 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { foPage } from "../../foundry/foPage.model";
 import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";
@@ -73,7 +72,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
       result = this.knowledge.newInstance().defaultName();
 
       let target = result.is2D() ? page : stage;
-        result.dropAt(target.centerX, target.centerY)
+        result.dropAt(target.centerX, target.centerY, target.centerZ)
         .addAsSubcomponent(target)
   
       Toast.info("Created", result.displayName)

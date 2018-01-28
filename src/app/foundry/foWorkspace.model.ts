@@ -3,8 +3,8 @@ import { Tools, foNames } from './foTools'
 import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
 import { foDictionary } from './foDictionary.model'
-import { foDocument } from './foDocument.model'
-import { foStudio } from './foStudio.model'
+import { foDocument } from './shapes/foDocument.model'
+import { foStudio } from './solids/foStudio.model'
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { foObject } from 'app/foundry/foObject.model';
 

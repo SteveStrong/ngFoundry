@@ -1,17 +1,17 @@
 
-import { Tools } from './foTools';
+import { Tools } from '../foTools';
 import { cPoint2D, cRect } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iObject, iNode, iShape, iPoint2D, iSize, Action, iRect } from './foInterface';
+import { iObject, iNode, iShape, iPoint2D, iSize, Action, iRect } from '../foInterface';
 
-import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foNode } from './foNode.model';
-import { foConcept } from './foConcept.model';
-import { foComponent } from './foComponent.model';
+import { foObject } from '../foObject.model';
+import { foCollection } from '../foCollection.model';
+import { foNode } from '../foNode.model';
+import { foConcept } from '../foConcept.model';
+import { foComponent } from '../foComponent.model';
 
-import { foShape2D } from '../foundry/foShape2D.model'
+import { foShape2D } from './foShape2D.model'
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foDisplay2D extends foShape2D {

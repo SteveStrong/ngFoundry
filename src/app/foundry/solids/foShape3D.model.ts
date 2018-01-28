@@ -1,20 +1,16 @@
-import { Tools } from '../foundry/foTools'
+import { Tools } from '../foTools'
 
-import { foGlyph3D } from "../foundry/foGlyph3D.model";
-import { foShape2D } from "../foundry/foShape2D.model";
+import { foGlyph3D } from "./foGlyph3D.model";
+import {  Geometry, BoxGeometry } from 'three';
 
+import { foGlue3D } from './foGlue3D'
+import { foConnectionPoint3D } from './foConnectionPoint3D'
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
+import { foObject } from '../foObject.model'
 
-import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
-import { foObject } from '../foundry/foObject.model'
+import { Lifecycle } from '../foLifecycle';
 
-import { Lifecycle } from './foLifecycle';
-
-import { JSONLoader, MultiMaterial, Material, Geometry, Mesh } from 'three';
-
-import { SphereGeometry } from 'three';
 
 export enum shape3DNames {
     left = "left",
@@ -28,16 +24,20 @@ export enum shape3DNames {
 
 export class foShape3D extends foGlyph3D {
 
-    get glue(): foCollection<foGlue> {
+    protected _glue: foCollection<foGlue3D>;
+    get glue(): foCollection<foGlue3D> {
         if (!this._glue) {
-            this._glue = new foCollection<foGlue>()
+            this._glue = new foCollection<foGlue3D>()
         }
         return this._glue;
     }
-    protected _glue: foCollection<foGlue>;
 
-    get connectionPoints(): foCollection<foConnectionPoint2D> { return this._connectionPoints || this.createConnectionPoints(); }
-    protected _connectionPoints: foCollection<foConnectionPoint2D>;
+    protected _connectionPoints: foCollection<foConnectionPoint3D>;
+    get connectionPoints(): foCollection<foConnectionPoint3D> {
+        this._connectionPoints || this.createConnectionPoints();
+        return this._connectionPoints;
+    }
+
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
@@ -46,6 +46,9 @@ export class foShape3D extends foGlyph3D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+    }
+    geometry = (spec?: any): Geometry => {
+        return new BoxGeometry(this.width, this.height, this.depth);
     }
 
     // protected toJson(): any {
@@ -57,10 +60,13 @@ export class foShape3D extends foGlyph3D {
     //     });
     // }
 
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+        let changed = super.didLocationChange(x, y, z);
+        return changed;
+    }
 
-
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (this.didLocationChange(x, y, angle)) {
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+        if (this.didLocationChange(x, y, z)) {
             let point = this.getLocation();
             this._glue && this.glue.forEach(item => {
                 item.targetMoved(point);
@@ -94,7 +100,7 @@ export class foShape3D extends foGlyph3D {
     protected getGlue(name: string) {
         let glue = this.glue.findMember(name);
         if (!glue) {
-            glue = new foGlue({ myName: name }, this);
+            glue = new foGlue3D({ myName: name }, this);
             this.addGlue(glue);
         }
         return glue;
@@ -114,26 +120,26 @@ export class foShape3D extends foGlyph3D {
         }
     }
 
-    public addGlue(glue: foGlue) {
+    public addGlue(glue: foGlue3D) {
         this.glue.addMember(glue);
         return glue;
     }
 
 
-    public removeGlue(glue: foGlue) {
+    public removeGlue(glue: foGlue3D) {
         if (this._glue) {
             this.glue.removeMember(glue);
         }
         return glue;
     }
 
-    protected generateConnectionPoints(spec: Array<any>, proxy?: Array<any>): foCollection<foConnectionPoint2D> {
+    protected generateConnectionPoints(spec: Array<any>, proxy?: Array<any>): foCollection<foConnectionPoint3D> {
 
         let i = 0;
         if (!this._connectionPoints) {
-            this._connectionPoints = new foCollection<foConnectionPoint2D>()
+            this._connectionPoints = new foCollection<foConnectionPoint3D>()
             spec.forEach(item => {
-                let type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint2D);
+                let type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint3D);
                 let point = new type(item, undefined, this);
                 point.doMoveProxy = proxy && proxy[i];
                 this._connectionPoints.addMember(point);
@@ -150,10 +156,10 @@ export class foShape3D extends foGlyph3D {
         return this._connectionPoints;
     }
 
-    public createConnectionPoints(): foCollection<foConnectionPoint2D> {
+    public createConnectionPoints(): foCollection<foConnectionPoint3D> {
 
         let spec = [
-            { x: this.width / 2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint2D) },
+            { x: this.width / 2, y: 0, myName: "top", myType: RuntimeType.define(foConnectionPoint3D) },
             { x: this.width / 2, y: this.height, myName: "bottom", angle: 45 },
             { x: 0, y: this.height / 2, myName: "left" },
             { x: this.width, y: this.height / 2, myName: "right" },
@@ -162,60 +168,12 @@ export class foShape3D extends foGlyph3D {
         return this.generateConnectionPoints(spec);
     }
 
-    getConnectionPoint(name: string): foConnectionPoint2D {
+    getConnectionPoint(name: string): foConnectionPoint3D {
         return this.connectionPoints.findMember(name);
     }
 
 
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape3D);
-
-export class foSphere extends foShape3D {
-    radius: number;
-    geometry = (spec?: any): Geometry => {
-        return new SphereGeometry(this.radius);
-    }
-}
-
-export class foModel3D extends foShape3D {
-    url: string;
-    private _geometry;
-    private _material;
-
-
-    get mesh(): Mesh {
-        if (!this._mesh && this._geometry && this._material) {
-          let geom = this.geometry()
-          let mat = this.material()
-          this._mesh = (geom && mat) && new Mesh(geom, this.material());
-        }
-        return this._mesh;
-      }
-      set mesh(value: Mesh) { this._mesh = value; }
-
-    geometry = (spec?: any): Geometry => {
-        return this._geometry;
-    }
-
-    material = (spec?: any): Material => {
-        return new MultiMaterial(this._material);
-    }
-
-
-
-    //deep hook for syncing matrix2d with geometry 
-    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-        let self = this;
-        let url = this.url || "assets/models/707.js";
-        new JSONLoader().load(url, (geometry, materials) => {
-            self._geometry = geometry;
-            self._material = materials;
-            self.smash();
-        });
-        return this;
-    };
-
-
-}

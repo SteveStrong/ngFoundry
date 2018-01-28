@@ -1,45 +1,39 @@
 
-import { Tools } from './foTools';
+import { Tools } from '../foTools';
 import { cPoint2D, cFrame } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import { iShape, iPoint,  iPoint2D, iRect, iFrame } from './foInterface';
+import { iShape,  iPoint2D, iRect, iFrame } from '../foInterface';
 
 import { foHandle2D } from './foHandle2D';
-import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foNode } from './foNode.model';
+import { foObject } from '../foObject.model';
+import { foCollection } from '../foCollection.model';
+import { foNode } from '../foNode.model';
+import { foGlyph } from '../foGlyph.model';
 
-import { Lifecycle } from './foLifecycle';
+import { Lifecycle } from '../foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlyph2D extends foNode implements iShape {
+export class foGlyph2D extends foGlyph implements iShape {
 
-    static DEG_TO_RAD = Math.PI / 180;
-    static RAD_TO_DEG = 180 / Math.PI;
+    protected _subcomponents: foCollection<foGlyph2D>;
+    get nodes(): foCollection<foGlyph2D> {
+        return this._subcomponents;
+    }
 
-    protected _isSelected: boolean = false;
-    get isSelected(): boolean { return this._isSelected; }
-    set isSelected(value: boolean) {
-        if (this._isSelected != value) {
-            this._isSelected = value;
-            Lifecycle.selected(this, value);
-        };
-
+    protected _handles: foCollection<foHandle2D>;
+    get handles(): foCollection<foHandle2D> { 
+        this._handles || this.createHandles(); 
+        return this._handles; 
     }
 
 
-    protected _subcomponents: foCollection<foGlyph2D>;
     protected _x: number;
     protected _y: number;
     protected _width: number;
     protected _height: number;
-    protected _opacity: number;
-    protected _color: string;
-
-    public context: any;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -58,20 +52,10 @@ export class foGlyph2D extends foNode implements iShape {
     get height(): number { return this._height || 0.0; }
     set height(value: number) { this._height = value; }
 
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'black';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
 
     public rotationZ = (): number => { return 0; }
 
-    get handles(): foCollection<foHandle2D> { return this._handles || this.createHandles(); }
-    protected _handles: foCollection<foHandle2D>;
+
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
@@ -85,22 +69,8 @@ export class foGlyph2D extends foNode implements iShape {
         this._invMatrix = undefined;
     }
 
-    private _layout: () => void;
-    public setLayout(func: () => void) {
-        this._layout = func;
-        return this;
-    };
-    public doLayout(deep: boolean = true) {
-        if (deep) {
-            this.nodes.forEach(item => item.doLayout());
-        }
 
-        this._layout && this.wait(1000, this._layout);
-        return this;
-    };
-
-
-    private _boundry: cFrame = new cFrame(this);
+    protected _boundry: cFrame = new cFrame(this);
     get boundryFrame(): cFrame {
         let mtx = this.getGlobalMatrix();
         //this is a buffer so we create less garbage
@@ -128,7 +98,6 @@ export class foGlyph2D extends foNode implements iShape {
     }
 
     is2D() { return true; }
-    is3D() { return false; }
 
     set(x: number, y: number, width: number, height: number): iRect {
         this.x = x;
@@ -152,8 +121,6 @@ export class foGlyph2D extends foNode implements iShape {
             y: this.y,
             width: this.width,
             height: this.height,
-            opacity: this.opacity,
-            color: this.color,
         });
     }
 
@@ -161,25 +128,8 @@ export class foGlyph2D extends foNode implements iShape {
         return this;
     }
 
-    public LifecycleCreated() {
-        Lifecycle.created(this)
-        return this;
-    }
 
-    public LifecycleDestroyed() {
-        Lifecycle.destroyed(this)
-        return this;
-    }
 
-    public LifecycleCommand(method: string) {
-        Lifecycle.command(this, method);
-        return this;
-    }
-
-    public LifecycleAction(method: string, params?: any) {
-        Lifecycle.action(this, method, params)
-        return this;
-    }
 
     public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
         let changed = false;
@@ -196,31 +146,6 @@ export class foGlyph2D extends foNode implements iShape {
         return changed;
     }
 
-
-
-
-
-    destroyed(obj: foNode) {
-        this.removeSubcomponent(obj);
-        Lifecycle.destroyed(obj);
-        return obj;
-    }
-
-    removeSubcomponent(obj: foNode) {
-        super.removeSubcomponent(obj);
-        Lifecycle.unparent(obj);
-        return obj;
-    }
-
-    addSubcomponent(obj: foNode, properties?: any) {
-        super.addSubcomponent(obj, properties);
-        Lifecycle.reparent(obj);
-        return obj;
-    }
-
-    get nodes(): foCollection<foGlyph2D> {
-        return this._subcomponents;
-    }
 
     public easeToNoLifecycle(x: number, y: number, time: number = .5, ease: any = Back.ease) {
 
@@ -365,91 +290,31 @@ export class foGlyph2D extends foNode implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = (): iPoint => {
-        let x = this.x;
-        let y = this.y;
-        return new cPoint2D(x, y);
+    public getLocation = ():any => {
+        return {
+            x: this.x,
+            y: this.y,
+            z: 0,
+        }
     }
+
+    public pinLocation():any {
+        return {
+            x: 0,
+            y: 0,
+            z: 0,
+        }
+    }
+
+
     public setLocation = (loc?: iPoint2D) => {
         this.x = loc ? loc.x : 0;
         this.y = loc ? loc.y : 0;
     }
 
 
-    public setColor(color: string): string {
-        this.color = color;
-        return this.color;
-    };
-
-    public setOpacity(opacity: number): number {
-        this.opacity = opacity;
-        return this.opacity;
-    };
-
-    unSelect(deep: boolean = true, exclude: foGlyph2D = null) {
-        this.isSelected = this == exclude ? this.isSelected : false;
-        this._handles && this._handles.forEach(item => item.color = 'black')
-        deep && this.Subcomponents.forEach(item => {
-            (<foGlyph2D>item).unSelect(deep, exclude);
-        })
-    }
-
-    findObjectUnderPoint(hit: iPoint2D, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
-
-        if (deep) {
-            let child = this.findChildObjectUnderPoint(hit, ctx);
-            found = child ? child : found;
-        }
-        return found;
-    }
-
-    protected findChildObjectUnderPoint(hit: iPoint2D, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let children = this.nodes;
-        if (children.isSelectable) {
-            for (let i: number = 0; i < children.length; i++) {
-                let child: foGlyph2D = children.getMember(i);
-                let found = child.findChildObjectUnderPoint(hit, ctx);
-                if (found) return found;
-            }
-        }
-
-        if (this.hitTest(hit)) {
-            return this;
-        }
-    }
-
-
-
-    findObjectUnderFrame(source: foGlyph2D, hit: iFrame, deep: boolean, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let found: foGlyph2D = this.overlapTest(hit) ? this : undefined;
-
-        if (deep) {
-            let child = this.findChildObjectUnderFrame(source, hit, ctx);
-            found = child ? child : found;
-        }
-        return found;
-    }
-
-    protected findChildObjectUnderFrame(source: foGlyph2D, hit: iFrame, ctx: CanvasRenderingContext2D): foGlyph2D {
-        let children = this.nodes;
-        if (children.isSelectable) {
-            for (let i: number = 0; i < children.length; i++) {
-                let child: foGlyph2D = children.getMember(i);
-                if (source.hasAncestor(child)) continue;
-                let found = child.findChildObjectUnderFrame(source, hit, ctx);
-                if (found) return found;
-            }
-        }
-        if (this.overlapTest(hit)) {
-            return this;
-        }
-    }
-
-
-
-    protected localHitTest = (hit: iPoint): boolean => {
-        let { x, y } = hit as iPoint2D
+    protected localHitTest = (hit: iPoint2D): boolean => {
+        let { x, y } = hit;
         let loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
@@ -460,7 +325,7 @@ export class foGlyph2D extends foNode implements iShape {
         return true;
     }
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: iPoint2D): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -474,12 +339,57 @@ export class foGlyph2D extends foNode implements iShape {
         return false;
     }
 
-    public pinLocation() {
-        return {
-            x: 0,
-            y: 0,
+
+    findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+
+        if (deep) {
+            let child = this.findChildObjectUnderPoint(hit);
+            found = child ? child : found;
+        }
+        return found;
+    }
+
+    protected findChildObjectUnderPoint(hit: iPoint2D): foGlyph2D {
+        let children = this.nodes;
+        if (children.isSelectable) {
+            for (let i: number = 0; i < children.length; i++) {
+                let child: foGlyph2D = children.getMember(i);
+                let found = child.findChildObjectUnderPoint(hit);
+                if (found) return found;
+            }
+        }
+
+        if (this.hitTest(hit)) {
+            return this;
         }
     }
+
+
+    findObjectUnderFrame(source: foGlyph2D, hit: iFrame, deep: boolean): foGlyph2D {
+        let found: foGlyph2D = this.overlapTest(hit) ? this : undefined;
+
+        if (deep) {
+            let child = this.findChildObjectUnderFrame(source, hit);
+            found = child ? child : found;
+        }
+        return found;
+    }
+
+    protected findChildObjectUnderFrame(source: foGlyph2D, hit: iFrame): foGlyph2D {
+        let children = this.nodes;
+        if (children.isSelectable) {
+            for (let i: number = 0; i < children.length; i++) {
+                let child: foGlyph2D = children.getMember(i);
+                if (source.hasAncestor(child)) continue;
+                let found = child.findChildObjectUnderFrame(source, hit);
+                if (found) return found;
+            }
+        }
+        if (this.overlapTest(hit)) {
+            return this;
+        }
+    } 
 
     public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
         ctx.save();
@@ -507,7 +417,7 @@ export class foGlyph2D extends foNode implements iShape {
 
         this.isSelected && this.drawSelected(ctx);
 
-        deep && this._subcomponents.forEach(item => {
+        deep && this.nodes.forEach(item => {
             item.render(ctx, deep);
         });
 
@@ -617,7 +527,7 @@ export class foGlyph2D extends foNode implements iShape {
         return this.generateHandles(spec);
     }
 
-    getHandle(name: string): foHandle2D {
+    public getHandle(name: string): foHandle2D {
         if (!this._handles) return;
         return this._handles.findMember(name);
     }
@@ -769,7 +679,7 @@ export class foGlyph2D extends foNode implements iShape {
     }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foGlyph2D);
 
 

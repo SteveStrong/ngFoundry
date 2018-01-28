@@ -1,5 +1,5 @@
 
-import { iPoint3D,  } from './foInterface';
+import { iPoint3D,  } from '../foInterface';
 import { Vector3 } from 'three';
 
 export class cPoint3D implements iPoint3D {

@@ -7,15 +7,16 @@ import { RuntimeType } from '../foundry/foRuntimeType';
 import { Stencil } from "../foundry/foStencil";
 
 import { foNode } from "../foundry/foNode.model";
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foShape2D } from "../foundry/foShape2D.model";
+import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
+import { foShape2D } from "../foundry/shapes/foShape2D.model";
 
 
 //https://greensock.com/docs/TweenMax
 import { Back } from "gsap";
-import { foObject } from 'app/foundry/foObject.model';
+import { foObject } from '../foundry/foObject.model';
+import { iGlueSignature } from '../foundry/foInterface';
 import { LifecycleLock, Lifecycle, KnowcycleLock, Knowcycle } from 'app/foundry/foLifecycle';
-import { foGlue, iGlueSignature } from 'app/foundry/foGlue';
+import { foGlue2D } from '../foundry/shapes/foGlue2D';
 
 @Injectable()
 export class SharingService {
@@ -112,12 +113,12 @@ export class SharingService {
     return this;
   }
 
-  public glued(glue: foGlue) {
+  public glued(glue: foGlue2D) {
     this.signalR.pubCommand("syncGlue", glue.signature, glue.asJson);
     return this;
   }
 
-  public unglued(glue: foGlue) {
+  public unglued(glue: foGlue2D) {
     this.signalR.pubCommand("syncUnGlue", glue.signature, glue.asJson);
     return this;
   }

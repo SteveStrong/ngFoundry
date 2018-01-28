@@ -1,17 +1,17 @@
 
-import { Tools } from '../foundry/foTools'
-import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
-import { iShape, iPoint2D, iSize, Action } from '../foundry/foInterface'
+import { Tools } from '../foTools'
+import { cPoint2D, cMargin } from './foGeometry2D';
+import { iShape, iPoint2D, iSize, Action } from '../foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle2D } from '../foundry/foHandle2D'
-import { foGlue } from '../foundry/foGlue'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
+import { Matrix2D } from './foMatrix2D'
+import { foHandle2D } from './foHandle2D'
+import { foGlue2D } from './foGlue2D'
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
 
 
-import { foShape2D } from '../foundry/foShape2D.model'
+import { foShape2D } from './foShape2D.model'
 
 
 export class foImage2D extends foShape2D {
@@ -125,5 +125,5 @@ export class foImage2D extends foShape2D {
 }
 
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foImage2D);

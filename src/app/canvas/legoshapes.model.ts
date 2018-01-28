@@ -1,9 +1,8 @@
-import { foShape2D } from "../foundry/foShape2D.model";
-import { foShape1D } from "../foundry/foShape1D.model";
-import { cPoint2D, cRect } from '../foundry/foGeometry2D';
-import { foHandle2D } from '../foundry/foHandle2D';
+import { foShape2D } from "../foundry/shapes/foShape2D.model";
+import { foShape1D } from "../foundry/shapes/foShape1D.model";
+import { cPoint2D, cRect } from '../foundry/shapes/foGeometry2D';
+import { foHandle2D } from '../foundry/shapes/foHandle2D';
 import { foCollection } from '../foundry/foCollection.model';
-//import { RuntimeType } from '../foundry/foRuntimeType';
 
 
 export class legoCore extends foShape2D {

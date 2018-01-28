@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Tools } from "../../foundry/foTools";
 
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foGlyph2D } from "../../foundry/foGlyph2D.model";
+import { foGlyph2D } from "../../foundry/shapes/foGlyph2D.model";
 
 @Component({
   selector: 'fo-page-panel',

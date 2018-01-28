@@ -3,31 +3,31 @@ import { Component, Input, OnInit, AfterViewInit, ElementRef, ViewChild, HostLis
 import { Tools } from "../foundry/foTools";
 
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
-import { foPage } from "../foundry/foPage.model";
+import { foPage } from "../foundry/shapes/foPage.model";
 import { foModel } from "../foundry/foModel.model";
 
-import { Screen2D } from "../foundryDrivers/canvasDriver";
-import { Screen3D } from "../foundryDrivers/threeDriver";
+import { Screen2D } from "../foundry/shapes/canvasDriver";
+import { Screen3D } from "../foundry/solids/threeDriver";
 
 import { BroadcastChange } from '../foundry/foChange';
 
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foShape3D } from "../foundry/foShape3D.model";
+import { cPoint2D } from '../foundry/shapes/foGeometry2D';
+import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
+import { foShape3D } from "../foundry/solids/foShape3D.model";
 
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { foChangeEvent } from '../foundry/foChange';
 
-import { foDocument } from 'app/foundry/foDocument.model';
-import { foStudio } from 'app/foundry/foStudio.model';
-import { foStage } from 'app/foundry/foStage.model';
+import { foDocument } from 'app/foundry/shapes/foDocument.model';
+import { foStudio } from 'app/foundry/solids/foStudio.model';
+import { foStage } from 'app/foundry/solids/foStage.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
-import { foGlue } from 'app/foundry/foGlue';
+import { foGlue2D } from '../foundry/shapes/foGlue2D';
 import { filter } from 'rxjs/operators';
 import { SolidStencil } from "./solids.model";
 
@@ -117,21 +117,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   }
 
 
-
-  ngOnInit() {
-    this.currentDocument = this.rootWorkspace.document.override({
-      pageWidth: this.pageWidth,
-      pageHeight: this.pageHeight,
-    });
-
-    this.currentStudio = this.rootWorkspace.studio.override({
-      stageWidth: 1000,
-      stageHeight: 1000,
-      stageDepth: 1000,
-    });
-
-
-
+  initLifecycle() {
+    //Lifecycle.mute = true;
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
 
     // Lifecycle2D.subscribe(event => {
@@ -148,7 +135,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
 
     glued.subscribe(event => {
-      let glue = event.object as foGlue;
+      let glue = event.object as foGlue2D;
       let { sourceGuid, sourceName, targetGuid, targetName } = glue.signature;
 
       this.rootWorkspace.activeStage.found<foShape3D>(sourceGuid, (source) => {
@@ -179,8 +166,8 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
     dropped.subscribe(event => {
       this.currentStudio.currentStage.found(event.myGuid, item => {
-        let { x, y, angle } = event.value;
-        item.dropAt(x, y, angle);
+        let { x, y } = event.value;
+        item.dropAt(x, y, 0);
       })
     });
 
@@ -217,14 +204,32 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       })
 
     });
+  }
 
+  ngOnInit() {
+    this.currentDocument = this.rootWorkspace.document.override({
+      pageWidth: this.pageWidth,
+      pageHeight: this.pageHeight,
+    });
+
+    this.currentStudio = this.rootWorkspace.studio.override({
+      stageWidth: 1000,
+      stageHeight: 1000,
+      stageDepth: 1000,
+    });
+
+
+    this.initLifecycle();
+   
     let libs = this.rootWorkspace.stencil;
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
     libs.add(SolidStencil).displayName = "Solid";
 
     this.rootWorkspace.library.add(PersonDomain);
-    this.rootWorkspace.model.addItem('default', new foModel({}))
+    this.rootWorkspace.model.addItem('default', new foModel({}));
+
+
   }
 
 
@@ -286,10 +291,14 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.doSetCurrentPage(this.currentDocument.currentPage);
-    this.doSetCurrentStage(this.currentStudio.currentStage);
+    setTimeout( _ => {
+      this.doSetCurrentPage(this.currentDocument.currentPage);
+      this.doSetCurrentStage(this.currentStudio.currentStage);
+      this.screen3D.addAxisHelper(1100).addBack(1000, 50);
+    })
 
-    this.screen3D.addAxisHelper(1100).addBack(1000, 50);
+
+   
   }
 
   addEventHooks(page: foPage) {

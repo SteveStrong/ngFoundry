@@ -1,13 +1,14 @@
 import { Tools } from '../foundry/foTools';
-import { cPoint2D, cMargin } from '../foundry/foGeometry2D';
-import { foGlyph2D } from "../foundry/foGlyph2D.model";
-import { foGlyph3D } from "../foundry/foGlyph3D.model";
-import { foShape2D, shape2DNames } from "../foundry/foShape2D.model";
-import { foShape1D } from "../foundry/foShape1D.model";
-import { foShape3D, foModel3D, foSphere, shape3DNames } from "../foundry/foShape3D.model";
-import { foText3D } from "../foundry/foText3D.model";
-import { foImage3D } from "../foundry/foImage3D.model";
-import { foPipe3D } from "../foundry/foPipe3D.model";
+import { cPoint2D, cMargin } from '../foundry/shapes/foGeometry2D';
+import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
+import { foGlyph3D } from "../foundry/solids/foGlyph3D.model";
+import { foShape2D, shape2DNames } from "../foundry/shapes/foShape2D.model";
+import { foShape1D } from "../foundry/shapes/foShape1D.model";
+import { foShape3D,  shape3DNames } from "../foundry/solids/foShape3D.model";
+import { foModel3D, foSphere } from "../foundry/solids/foBody.model";
+import { foText3D } from "../foundry/solids/foText3D.model";
+import { foImage3D } from "../foundry/solids/foImage3D.model";
+import { foPipe3D } from "../foundry/solids/foPipe3D.model";
 import { foNode } from "../foundry/foNode.model";
 import { foObject } from "../foundry/foObject.model";
 import { ThreeByThreeCircle, OneByOne, TwoByOne, TwoByTwo, TwoByFour, OneByTen, TenByTen } from "./legoshapes.model";
@@ -81,23 +82,23 @@ SolidStencil.define<foImage3D>('3D::Image', foImage3D, {
 
 class Pipe3d extends foPipe3D {
   //https://threejs.org/docs/#api/geometries/TubeGeometry
-  geometry = (spec?: any): Geometry => {
-    let begin = this.begin().asVector();
-    let end = this.end().asVector();
-    let curve = new LineCurve3(begin, end)
-    return new TubeGeometry(curve, 20, 2, 8, false);
-  }
+  // geometry = (spec?: any): Geometry => {
+  //   let begin = this.begin().asVector();
+  //   let end = this.end().asVector();
+  //   let curve = new LineCurve3(begin, end)
+  //   return new TubeGeometry(curve, 20, 2, 8, false);
+  // }
 
-  material = (spec?: any): Material => {
-    let props = Tools.mixin({
-      color: this.color,
-      wireframe: false
-    }, spec)
-    return new MeshBasicMaterial(props);
-  }
+  // material = (spec?: any): Material => {
+  //   let props = Tools.mixin({
+  //     color: this.color,
+  //     wireframe: false
+  //   }, spec)
+  //   return new MeshBasicMaterial(props);
+  // }
 }
 
-SolidStencil.define<foPipe3D>('3D::Pipe', Pipe3d, {
+SolidStencil.define<foPipe3D>('3D::Pipe', foPipe3D, {
   color: 'blue',
   width: 100,
   height: 20,

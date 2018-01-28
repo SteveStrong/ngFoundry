@@ -1,17 +1,17 @@
 
-import { Tools } from '../foundry/foTools'
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D, iPoint } from '../foundry/foInterface'
+import { Tools } from '../foTools'
+import { cPoint2D } from './foGeometry2D';
+import { iPoint2D } from '../foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foHandle2D } from '../foundry/foHandle2D'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
+import { Matrix2D } from './foMatrix2D'
+import { foHandle2D } from './foHandle2D'
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
 
-import { foShape2D } from '../foundry/foShape2D.model'
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
-import { Lifecycle } from './foLifecycle';
+import { foShape2D } from './foShape2D.model'
+import { foGlyph2D } from './foGlyph2D.model'
+import { Lifecycle } from '../foLifecycle';
 
 
 export enum shape1DNames {
@@ -54,7 +54,6 @@ export class foShape1D extends foShape2D {
         this._y2 = value;
     }
 
-
     get width(): number {
         if (!this._width) {
             let { length } = this.angleDistance();
@@ -85,6 +84,9 @@ export class foShape1D extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this[shape1DNames.start] = this.setStart.bind(this);
+        this[shape1DNames.finish] = this.setFinish.bind(this);
     }
 
     protected toJson(): any {
@@ -130,26 +132,37 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    glueStartTo(target: foShape2D, handleName?: string) {
+    public establishGlue(name: string, target: foShape2D, handleName?: string) {
+        let glue = super.establishGlue(name, target, handleName)
+        glue.doTargetMoveProxy = this[name];
+        glue.targetMoved(target.getLocation());
+        return glue;
+    }
+
+    public glueStartTo(target: foShape2D, handleName?: string) {
         let glue = this.establishGlue(shape1DNames.start, target, handleName);
-        glue.doTargetMoveProxy = this.setStart.bind(this);
-        glue.targetMoved(target.getLocation());
         return glue;
     }
 
-    glueFinishTo(target: foShape2D, handleName?: string) {
+    public glueFinishTo(target: foShape2D, handleName?: string) {
         let glue = this.establishGlue(shape1DNames.finish, target, handleName);
-        glue.doTargetMoveProxy = this.setFinish.bind(this);
-        glue.targetMoved(target.getLocation());
         return glue;
     }
 
-    unglueStart() {
-        return this.dissolveGlue(shape1DNames.start);
+    public unglueStart() {
+        let glue = this.dissolveGlue(shape1DNames.start);
+        if ( glue ) {
+            glue.doTargetMoveProxy = undefined;
+        }
+        return glue;
     }
 
-    unglueFinish() {
-        return this.dissolveGlue(shape1DNames.finish);
+    public unglueFinish() {
+        let glue = this.dissolveGlue(shape1DNames.finish);
+        if ( glue ) {
+            glue.doTargetMoveProxy = undefined;
+        }
+        return glue;
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
@@ -215,7 +228,7 @@ export class foShape1D extends foShape2D {
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: any): boolean => {
         let { x, y } = hit as iPoint2D
         let loc = this.globalToLocal(x, y);
 
@@ -230,7 +243,7 @@ export class foShape1D extends foShape2D {
     }
 
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: any): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -369,7 +382,7 @@ export class foShape1D extends foShape2D {
 }
 
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape1D);
 
 

@@ -1,18 +1,18 @@
 
-import { Tools } from '../foundry/foTools'
-import { cPoint2D } from '../foundry/foGeometry2D';
-import { iPoint2D, iPoint, iFrame } from '../foundry/foInterface'
+import { Tools } from '../foTools'
+import { cPoint2D } from './foGeometry2D';
+import { iPoint2D, iFrame } from '../foInterface'
 
-import { foObject } from '../foundry/foObject.model'
-import { Matrix2D } from '../foundry/foMatrix2D'
-import { foGlue } from '../foundry/foGlue'
-import { foConnectionPoint2D } from '../foundry/foConnectionPoint2D'
-import { foCollection } from '../foundry/foCollection.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
+import { Matrix2D } from './foMatrix2D'
+import { foGlue2D } from './foGlue2D'
+import { foConnectionPoint2D } from './foConnectionPoint2D'
+import { foCollection } from '../foCollection.model'
+import { foNode } from '../foNode.model'
 
-import { foGlyph2D } from '../foundry/foGlyph2D.model'
+import { foGlyph2D } from './foGlyph2D.model'
 
-import { Lifecycle } from './foLifecycle';
+import { Lifecycle } from '../foLifecycle';
 
 export enum shape2DNames {
     left = "left",
@@ -33,17 +33,20 @@ export class foShape2D extends foGlyph2D {
         this._angle = value;
     }
 
-    get glue(): foCollection<foGlue> {
+    protected _glue: foCollection<foGlue2D>;
+    get glue(): foCollection<foGlue2D> {
         if (!this._glue) {
-            this._glue = new foCollection<foGlue>()
+            this._glue = new foCollection<foGlue2D>()
         }
         return this._glue;
     }
-    protected _glue: foCollection<foGlue>;
 
-    get connectionPoints(): foCollection<foConnectionPoint2D> { return this._connectionPoints || this.createConnectionPoints(); }
     protected _connectionPoints: foCollection<foConnectionPoint2D>;
-
+    get connectionPoints(): foCollection<foConnectionPoint2D> { 
+        this._connectionPoints || this.createConnectionPoints(); 
+        return this._connectionPoints; 
+    }
+ 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
     public rotationZ = (): number => { return this.angle; }
@@ -110,7 +113,7 @@ export class foShape2D extends foGlyph2D {
     };
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: any): boolean => {
         let { x, y } = hit as iPoint2D
         let loc = this.globalToLocal(x, y);;
 
@@ -124,7 +127,7 @@ export class foShape2D extends foGlyph2D {
     }
 
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: any): boolean => {
         return this.localHitTest(hit);
     }
 
@@ -142,14 +145,15 @@ export class foShape2D extends foGlyph2D {
     public pinLocation() {
         return {
             x: this.pinX(),
-            y: this.pinY()
+            y: this.pinY(),
+            z: 0,
         }
     }
 
     protected getGlue(name: string) {
         let glue = this.glue.findMember(name);
         if (!glue) {
-            glue = new foGlue({ myName: name }, this);
+            glue = new foGlue2D({ myName: name }, this);
             this.addGlue(glue);
         }
         return glue;
@@ -169,13 +173,13 @@ export class foShape2D extends foGlyph2D {
         }
     }
 
-    public addGlue(glue: foGlue) {
+    public addGlue(glue: foGlue2D) {
         this.glue.addMember(glue);
         return glue;
     }
 
 
-    public removeGlue(glue: foGlue) {
+    public removeGlue(glue: foGlue2D) {
         if (this._glue) {
             this.glue.removeMember(glue);
         }
@@ -285,6 +289,6 @@ export class foShape2D extends foGlyph2D {
 
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape2D);
 

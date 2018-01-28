@@ -1,4 +1,4 @@
-import { foDisplay2D } from "../../foundry/foDisplay2D.model";
+import { foDisplay2D } from "../../foundry/shapes/foDisplay2D.model";
 import { cText } from "./text";
 
 export class cClock extends foDisplay2D {

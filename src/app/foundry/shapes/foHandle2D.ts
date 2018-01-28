@@ -3,63 +3,24 @@
 import { cPoint2D } from './foGeometry2D';
 import { Matrix2D } from './foMatrix2D';
 
-import { iPoint2D, iPoint } from './foInterface';
+import { iPoint2D } from '../foInterface';
 
-import { foObject } from './foObject.model';
-import { foNode } from './foNode.model';
-import { foComponent } from './foComponent.model';
+import { foObject } from '../foObject.model';
+import { foNode } from '../foNode.model';
+import { foComponent } from '../foComponent.model';
 
 import { foGlyph2D } from './foGlyph2D.model';
-import { Lifecycle } from './foLifecycle';
-import { BroadcastChange } from './foChange';
+import { Lifecycle } from '../foLifecycle';
+import { BroadcastChange } from '../foChange';
 
-import { iConnectionPoint } from './foInterface';
+import { foHandle } from '../foHandle';
 
-export class foHandle extends foNode implements iConnectionPoint {
-    protected _size: number;
-    protected _opacity: number;
-    protected _color: string;
-
-    get size(): number { return this._size || 10.0; }
-    set size(value: number) { this._size = value; }
-
-    get opacity(): number { return this._opacity || 1; }
-    set opacity(value: number) { this._opacity = value; }
-
-    get color(): string {
-        return this._color || 'black';
-    }
-    set color(value: string) {
-        this._color = value;
-    }
-
-    public doMoveProxy: (loc: iPoint) => void;
-
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
-        super(properties, subcomponents, parent);
-    }
-
-    public hitTest = (hit: iPoint): boolean => {
-        return false;
-    }
-
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-    }
-
-    public pinLocation() {
-        let loc = this.size / 2
-        return {
-            x: loc,
-            y: loc
-        }
-    }
-
-}
 
 export class foHandle2D extends foHandle {
 
     protected _x: number;
     protected _y: number;
+    protected _angle: number;
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
@@ -71,6 +32,13 @@ export class foHandle2D extends foHandle {
         this.smash();
         this._y = value;
     }
+
+    get angle(): number { return this._angle || 0.0; }
+    set angle(value: number) {
+        this.smash();
+        this._angle = value;
+    }
+    public rotation = (): number => { return this.angle; }
 
 
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
@@ -91,10 +59,10 @@ export class foHandle2D extends foHandle {
     }
 
 
-
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(angle)) this.angle = angle;
         return this;
     }
 
@@ -128,7 +96,7 @@ export class foHandle2D extends foHandle {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
             let delta = this.size / 2;
-            this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
+            this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, delta, delta);
         }
         return this._matrix;
     };
@@ -169,7 +137,7 @@ export class foHandle2D extends foHandle {
 
 
 
-    protected localHitTest = (hit: iPoint): boolean => {
+    protected localHitTest = (hit: any): boolean => {
         let { x, y } = hit as iPoint2D
         let loc = this.globalToLocal(x, y);
 
@@ -182,7 +150,7 @@ export class foHandle2D extends foHandle {
         return true;
     }
 
-    public hitTest = (hit: iPoint): boolean => {
+    public hitTest = (hit: any): boolean => {
         return this.localHitTest(hit);
     }
 

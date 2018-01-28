@@ -1,12 +1,12 @@
 
-import { Tools } from '../foundry/foTools'
-import { cMargin } from '../foundry/foGeometry2D';
+import { Tools } from '../foTools'
+import { cMargin } from './foGeometry2D';
 
 
-import { foObject } from '../foundry/foObject.model'
-import { foNode } from '../foundry/foNode.model'
+import { foObject } from '../foObject.model'
+import { foNode } from '../foNode.model'
 
-import { foShape2D } from '../foundry/foShape2D.model'
+import { foShape2D } from './foShape2D.model'
 
 
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
@@ -211,5 +211,5 @@ export class foText2D extends foShape2D {
     // }
 }
 
-import { RuntimeType } from './foRuntimeType';
+import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foText2D);

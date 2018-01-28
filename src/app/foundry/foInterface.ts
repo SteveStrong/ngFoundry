@@ -40,32 +40,32 @@ export interface iNode {
 export interface iKnowledge extends iObject {
 }
 
-export interface iConnectionPoint extends iObject {
-    doMoveProxy: (loc: iPoint) => void;
-    hitTest: (hit: iPoint2D) => boolean 
-    render(ctx: CanvasRenderingContext2D);
-}
+// export interface iConnectionPoint extends iObject {
+//     doMoveProxy: (loc: any) => void;
+//     hitTest: (hit: iPoint2D) => boolean 
+//     render(ctx: CanvasRenderingContext2D);
+// }
 
 //FOR GLYPHS and SHAPES
-export interface iPoint {
+export interface iName {
     myName: string;
 }
 
-export interface iPoint2D extends iPoint {
+export interface iPoint2D extends iName {
     x: number;
     y: number;
 
-    set(x: number, y: number): iPoint2D
-    add(x: number, y: number): iPoint2D
+    //set(x: number, y: number): iPoint2D
+    //add(x: number, y: number): iPoint2D
 }
 
-export interface iPoint3D extends iPoint {
-    x: number;
-    y: number;
+export interface iPoint3D extends iPoint2D {
+    //x: number;
+    //y: number;
     z: number;
 
-    set(x: number, y: number, z: number): iPoint3D
-    add(x: number, y: number, z: number): iPoint3D
+    //set(x: number, y: number, z: number): iPoint3D
+    //add(x: number, y: number, z: number): iPoint3D
 }
 
 export interface iMargin {
@@ -116,6 +116,39 @@ export interface iBox extends iRect {
     set(x: number, y: number, width: number, height: number): iRect
 }
 
+export interface iFence {
+    x1: number;
+    y1: number;
+    z1: number;
+    x2: number;
+    y2: number;
+    z2: number;
+
+    set(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number): iFence;
+    contains(x: number, y: number, z: number): boolean;
+    minmax(obj: iPoint3D): iFrame;
+}
+
+export interface iCube {
+    x: number;
+    y: number;
+    z: number;
+    width: number;
+    height: number;
+    depth: number;
+    myName: string;
+
+    set(x: number, y: number, z: number, width: number, height: number, depth: number): iCube
+    contains(x: number, y: number, z: number): boolean;
+    localContains(x: number, y: number, z: number): boolean;
+}
+
+export interface iGlueSignature {
+    sourceGuid: string,
+    sourceName: string,
+    targetGuid: string, 
+    targetName: string
+}
 
 export interface iShape extends iRect, iNode {
     isSelected: boolean;
@@ -123,16 +156,27 @@ export interface iShape extends iRect, iNode {
     render(ctx: CanvasRenderingContext2D, deep: boolean): void;
     draw(ctx: CanvasRenderingContext2D): void;
     drawHover(ctx: CanvasRenderingContext2D): void;
+
+    hitTest: (hit: iPoint2D) => boolean;
+    overlapTest: (hit: iFrame) => boolean
+
+    // getOffset(loc: iPoint2D): iPoint2D;
+    // getLocation(): any;
+    // moveTo(loc: iPoint2D, offset?: iPoint2D);
+    // moveBy(loc: iPoint2D, offset?: iPoint2D)
+}
+
+export interface iSolid extends iCube, iNode {
+    isSelected: boolean;
+
+
+    hitTest: (hit: iPoint3D) => boolean;
+    overlapTest: (hit: iFence) => boolean
     
-    hitTest(hit: iPoint): boolean;
-    overlapTest(hit: iFrame): boolean;
 
-    getOffset(loc: iPoint2D): iPoint2D;
-    getLocation(): iPoint;
-    moveTo(loc: iPoint2D, offset?: iPoint2D);
-    moveBy(loc: iPoint2D, offset?: iPoint2D)
-
-    setColor(color: string): string;
-    setOpacity(opacity: number): number;
+    // getOffset(loc: iPoint2D): iPoint2D;
+    // getLocation(): any;
+    // moveTo(loc: iPoint2D, offset?: iPoint2D);
+    // moveBy(loc: iPoint2D, offset?: iPoint2D)
 }
 
