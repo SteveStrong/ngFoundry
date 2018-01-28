@@ -9,6 +9,7 @@ import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
 import { foShape3D } from './foShape3D.model'
+import { LineCurve3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3 } from 'three';
 
 import { foHandle3D } from './foHandle3D'
 import { Lifecycle } from '../foLifecycle';
@@ -19,6 +20,8 @@ export enum shape1DNames {
     finish = "finish",
     center = "center"
 };
+
+//https://stackoverflow.com/questions/43432263/simulate-air-flowing-through-a-pipe-in-three-js
 
 
 //a Shape is a graphic designed to behave like a visio shape
@@ -95,7 +98,7 @@ export class foPipe3D extends foShape3D {
     }
 
     public center = (name?: string): cPoint3D => {
-        return new cPoint3D((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2,(this.startZ + this.finishZ) / 2, name);
+        return new cPoint3D((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, (this.startZ + this.finishZ) / 2, name);
     }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
@@ -122,9 +125,9 @@ export class foPipe3D extends foShape3D {
         this.startY = point.y;
         this.startZ = point.z;
         let { x: cX, y: cY, z: cZ } = this.center();
-        this.x = cX;
-        this.y = cY;
-        this.z = cZ;
+        this.x = 0 * cX;
+        this.y = 0 * cY;
+        this.z = 0 * cZ;
         this.width = 0;
     }
 
@@ -133,10 +136,27 @@ export class foPipe3D extends foShape3D {
         this.finishY = point.y;
         this.finishZ = point.z;
         let { x: cX, y: cY, z: cZ } = this.center();
-        this.x = cX;
-        this.y = cY;
-        this.z = cZ;
+        this.x = 0 * cX;
+        this.y = 0 * cY;
+        this.z = 0 * cZ;
         this.width = 0;
+    }
+
+    //https://threejs.org/docs/#api/geometries/TubeGeometry
+
+    geometry = (spec?: any): Geometry => {
+        let begin = this.begin().asVector();
+        let end = this.end().asVector();
+        let curve = new LineCurve3(begin, end)
+        return new TubeGeometry(curve, 20, 2, 8, false);
+    }
+
+    material = (spec?: any): Material => {
+        let props = Tools.mixin({
+            color: this.color,
+            wireframe: false
+        }, spec)
+        return new MeshBasicMaterial(props);
     }
 
 
@@ -174,7 +194,7 @@ export class foPipe3D extends foShape3D {
 
     public unglueStart() {
         let glue = this.dissolveGlue(shape1DNames.start);
-        if ( glue ) {
+        if (glue) {
             glue.doTargetMoveProxy = undefined;;
         }
         return glue;
@@ -182,52 +202,56 @@ export class foPipe3D extends foShape3D {
 
     public unglueFinish() {
         let glue = this.dissolveGlue(shape1DNames.finish);
-        if ( glue ) {
+        if (glue) {
             glue.doTargetMoveProxy = undefined;;
         }
         return glue;
     }
 
-    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-        // let { x: cX, y: cY } = this.center();
+    public initialize(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+        let { x: cX, y: cY, z: cZ } = this.center();
 
-        // this.x = Number.isNaN(x) ? cX : x;
-        // this.y = Number.isNaN(y) ? cY : y;
+        this.x = Number.isNaN(x) ? cX : x;
+        this.y = Number.isNaN(y) ? cY : y;
+        this.z = Number.isNaN(z) ? cZ : z;
 
-        // let mtx = new Matrix2D();
-        // mtx.appendTransform(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
+        let mtx = new Matrix3();
+        //mtx.set(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
         // let start = mtx.transformPoint(this.startX, this.startY);
         // let finish = mtx.transformPoint(this.finishX, this.finishY);
         // this.startX = start.x;
         // this.startY = start.y;
         // this.finishX = finish.x;
         // this.finishY = finish.y;
-        // this.width = 0;
+        this.width = 0;
         return this;
     }
 
-    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
-        // let changed = super.didLocationChange(x, y, angle);
-        // let { x: cX, y: cY } = this.center();
-        // if (!Number.isNaN(x) && this.x != cX) {
-        //     changed = true;
-        // };
-        // if (!Number.isNaN(y) && this.y != cY) {
-        //     changed = true;
-        // };
-        return true;
+    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+        let changed = super.didLocationChange(x, y, z);
+        let { x: cX, y: cY, z: cZ } = this.center();
+        if (!Number.isNaN(x) && this.x != cX) {
+            changed = true;
+        };
+        if (!Number.isNaN(y) && this.y != cY) {
+            changed = true;
+        };
+        if (!Number.isNaN(z) && this.z != cZ) {
+            changed = true;
+        };
+        return changed;
     }
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        //if (this.didLocationChange(x, y, angle)) {
-            this.initialize(x, y, angle);
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+        if (this.didLocationChange(x, y, z)) {
+            this.initialize(x, y, z);
             Lifecycle.dropped(this, this.getLocation());
-        //}
+        }
         return this;
     }
 
-    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        this.initialize(x, y, angle);
+    public move(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+        this.initialize(x, y, z);
         Lifecycle.moved(this, this.getLocation());
         return this;
     }

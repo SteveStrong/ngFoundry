@@ -1,7 +1,7 @@
 import { Tools } from '../foTools'
 
 import { foGlyph3D } from "./foGlyph3D.model";
-
+import {  Geometry, BoxGeometry } from 'three';
 
 import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -46,6 +46,9 @@ export class foShape3D extends foGlyph3D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+    }
+    geometry = (spec?: any): Geometry => {
+        return new BoxGeometry(this.width, this.height, this.depth);
     }
 
     // protected toJson(): any {

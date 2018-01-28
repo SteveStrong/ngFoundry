@@ -6,7 +6,7 @@ import { foGlyph3D } from "./foGlyph3D.model";
 import { foNode } from "../foNode.model";
 import { foObject } from "../foObject.model";
 
-import { Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial } from 'three';
 
 
 export class foText3D extends foGlyph3D {

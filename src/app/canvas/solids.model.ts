@@ -82,23 +82,23 @@ SolidStencil.define<foImage3D>('3D::Image', foImage3D, {
 
 class Pipe3d extends foPipe3D {
   //https://threejs.org/docs/#api/geometries/TubeGeometry
-  geometry = (spec?: any): Geometry => {
-    let begin = this.begin().asVector();
-    let end = this.end().asVector();
-    let curve = new LineCurve3(begin, end)
-    return new TubeGeometry(curve, 20, 2, 8, false);
-  }
+  // geometry = (spec?: any): Geometry => {
+  //   let begin = this.begin().asVector();
+  //   let end = this.end().asVector();
+  //   let curve = new LineCurve3(begin, end)
+  //   return new TubeGeometry(curve, 20, 2, 8, false);
+  // }
 
-  material = (spec?: any): Material => {
-    let props = Tools.mixin({
-      color: this.color,
-      wireframe: false
-    }, spec)
-    return new MeshBasicMaterial(props);
-  }
+  // material = (spec?: any): Material => {
+  //   let props = Tools.mixin({
+  //     color: this.color,
+  //     wireframe: false
+  //   }, spec)
+  //   return new MeshBasicMaterial(props);
+  // }
 }
 
-SolidStencil.define<foPipe3D>('3D::Pipe', Pipe3d, {
+SolidStencil.define<foPipe3D>('3D::Pipe', foPipe3D, {
   color: 'blue',
   width: 100,
   height: 20,
