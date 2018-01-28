@@ -54,7 +54,6 @@ export class foShape1D extends foShape2D {
         this._y2 = value;
     }
 
-
     get width(): number {
         if (!this._width) {
             let { length } = this.angleDistance();
@@ -85,6 +84,9 @@ export class foShape1D extends foShape2D {
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this[shape1DNames.start] = this.setStart.bind(this);
+        this[shape1DNames.finish] = this.setFinish.bind(this);
     }
 
     protected toJson(): any {
@@ -130,26 +132,37 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    glueStartTo(target: foShape2D, handleName?: string) {
+    public establishGlue(name: string, target: foShape2D, handleName?: string) {
+        let glue = super.establishGlue(name, target, handleName)
+        glue.doTargetMoveProxy = this[name];
+        glue.targetMoved(target.getLocation());
+        return glue;
+    }
+
+    public glueStartTo(target: foShape2D, handleName?: string) {
         let glue = this.establishGlue(shape1DNames.start, target, handleName);
-        glue.doTargetMoveProxy = this.setStart.bind(this);
-        glue.targetMoved(target.getLocation());
         return glue;
     }
 
-    glueFinishTo(target: foShape2D, handleName?: string) {
+    public glueFinishTo(target: foShape2D, handleName?: string) {
         let glue = this.establishGlue(shape1DNames.finish, target, handleName);
-        glue.doTargetMoveProxy = this.setFinish.bind(this);
-        glue.targetMoved(target.getLocation());
         return glue;
     }
 
-    unglueStart() {
-        return this.dissolveGlue(shape1DNames.start);
+    public unglueStart() {
+        let glue = this.dissolveGlue(shape1DNames.start);
+        if ( glue ) {
+            glue.doTargetMoveProxy = undefined;
+        }
+        return glue;
     }
 
-    unglueFinish() {
-        return this.dissolveGlue(shape1DNames.finish);
+    public unglueFinish() {
+        let glue = this.dissolveGlue(shape1DNames.finish);
+        if ( glue ) {
+            glue.doTargetMoveProxy = undefined;
+        }
+        return glue;
     }
 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {

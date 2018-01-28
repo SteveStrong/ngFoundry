@@ -1,9 +1,4 @@
-
 import { Tools } from './foTools';
-
-
-import { iName, iFrame } from './foInterface';
-import { cFrame } from './shapes/foGeometry2D';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';

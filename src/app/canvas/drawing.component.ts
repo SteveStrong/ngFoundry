@@ -118,7 +118,7 @@ export class DrawingComponent implements OnInit, AfterViewInit {
 
 
   initLifecycle() {
-    Lifecycle.mute = true;
+    //Lifecycle.mute = true;
     let Lifecycle2D = Lifecycle.observable.pipe(filter(e => e.object.is2D()));
 
     // Lifecycle2D.subscribe(event => {
@@ -164,12 +164,12 @@ export class DrawingComponent implements OnInit, AfterViewInit {
       })
     });
 
-    // dropped.subscribe(event => {
-    //   this.currentStudio.currentStage.found(event.myGuid, item => {
-    //     let { x, y, angle } = event.value;
-    //     item.dropAt(x, y, angle);
-    //   })
-    // });
+    dropped.subscribe(event => {
+      this.currentStudio.currentStage.found(event.myGuid, item => {
+        let { x, y } = event.value;
+        item.dropAt(x, y, 0);
+      })
+    });
 
     reparent.subscribe(event => {
       console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));

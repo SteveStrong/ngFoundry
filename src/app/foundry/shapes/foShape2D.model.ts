@@ -33,17 +33,20 @@ export class foShape2D extends foGlyph2D {
         this._angle = value;
     }
 
+    protected _glue: foCollection<foGlue2D>;
     get glue(): foCollection<foGlue2D> {
         if (!this._glue) {
             this._glue = new foCollection<foGlue2D>()
         }
         return this._glue;
     }
-    protected _glue: foCollection<foGlue2D>;
 
-    get connectionPoints(): foCollection<foConnectionPoint2D> { return this._connectionPoints || this.createConnectionPoints(); }
     protected _connectionPoints: foCollection<foConnectionPoint2D>;
-
+    get connectionPoints(): foCollection<foConnectionPoint2D> { 
+        this._connectionPoints || this.createConnectionPoints(); 
+        return this._connectionPoints; 
+    }
+ 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
     public rotationZ = (): number => { return this.angle; }

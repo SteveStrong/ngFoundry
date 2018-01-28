@@ -11,9 +11,6 @@ import { foObject } from '../foObject.model'
 
 import { Lifecycle } from '../foLifecycle';
 
-import { JSONLoader,Object3D, Matrix3, MultiMaterial, Material, Geometry, Mesh } from 'three';
-
-import { SphereGeometry } from 'three';
 
 export enum shape3DNames {
     left = "left",
@@ -27,16 +24,20 @@ export enum shape3DNames {
 
 export class foShape3D extends foGlyph3D {
 
+    protected _glue: foCollection<foGlue3D>;
     get glue(): foCollection<foGlue3D> {
         if (!this._glue) {
             this._glue = new foCollection<foGlue3D>()
         }
         return this._glue;
     }
-    protected _glue: foCollection<foGlue3D>;
 
-    get connectionPoints(): foCollection<foConnectionPoint3D> { return this._connectionPoints || this.createConnectionPoints(); }
     protected _connectionPoints: foCollection<foConnectionPoint3D>;
+    get connectionPoints(): foCollection<foConnectionPoint3D> {
+        this._connectionPoints || this.createConnectionPoints();
+        return this._connectionPoints;
+    }
+
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }

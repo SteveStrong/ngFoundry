@@ -1,7 +1,7 @@
 
 import { PubSub } from "../foPubSub";
 
-import { iPoint2D, Action } from '../foInterface'
+import { iPoint3D, Action } from '../foInterface'
 import { Screen3D } from "./threeDriver";
 
 import { foObject } from '../foObject.model'
@@ -13,7 +13,6 @@ import { foNode } from '../foNode.model'
 import { foComponent } from '../foComponent.model'
 
 import { foGlyph3D } from './foGlyph3D.model'
-import { foHandle3D } from './foHandle3D';
 import { Lifecycle } from '../foLifecycle';
 
 
