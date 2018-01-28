@@ -209,7 +209,7 @@ export class foGlyph3D extends foGlyph {
             depth: this.depth,
             angleX: this.angleX,
             angleY: this.angleY,
-            angleZ: this.angleZ,
+            angleZ: this.angleZ
         });
     }
 

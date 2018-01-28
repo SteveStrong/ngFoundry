@@ -51,6 +51,16 @@ export class foShape3D extends foGlyph3D {
 
         this.setupPreDraw()
     }
+
+    protected toJson(): any {
+        let list = this.connectionPoints.map(item => {
+            return item.toJson();
+        })
+        return Tools.mixin(super.toJson(), {
+            list: list
+        });
+    }
+
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);
     }
@@ -162,16 +172,16 @@ export class foShape3D extends foGlyph3D {
 
     public createConnectionPoints(): foCollection<foConnectionPoint3D> {
 
-        let w = this.width;
-        let h = this.height;
-        let d = this.depth;
+        let w = this.width / 2;
+        let h = this.height / 2;
+        let d = this.depth / 2;
         let spec = [
-            { x: w / 2, y: 0, z: 0, myName: shape3DNames.top, myType: RuntimeType.define(foConnectionPoint3D) },
-            { x: w / 2, y: h, z: 0, myName: shape3DNames.bottom },
-            { x: 0, y: h / 2, z: 0, myName: shape3DNames.left },
-            { x: w, y: h / 2, z: 0, myName: shape3DNames.right },
-            { x: 0, y: h / 2, z: 0, myName: shape3DNames.front },
-            { x: w, y: h / 2, z: 0, myName: shape3DNames.back },
+            { x: 0, y: h, z: 0, myName: shape3DNames.top, myType: RuntimeType.define(foConnectionPoint3D) },
+            { x: 0, y: -h, z: 0, myName: shape3DNames.bottom },
+            { x: w, y: 0, z: 0, myName: shape3DNames.left },
+            { x: -w, y: 0, z: 0, myName: shape3DNames.right },
+            { x: 0, y: 0, z: d, myName: shape3DNames.front },
+            { x: 0, y: 0, z: -d, myName: shape3DNames.back },
         ];
 
         return this.generateConnectionPoints(spec);

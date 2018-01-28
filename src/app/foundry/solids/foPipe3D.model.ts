@@ -12,10 +12,11 @@ import { foShape3D } from './foShape3D.model'
 import { LineCurve3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3 } from 'three';
 
 import { foHandle3D } from './foHandle3D'
+import { foConnectionPoint3D } from './foConnectionPoint3D'
 import { Lifecycle } from '../foLifecycle';
 
 
-export enum shape1DNames {
+export enum pipe3DNames {
     start = "start",
     finish = "finish",
     center = "center"
@@ -104,8 +105,8 @@ export class foPipe3D extends foShape3D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
-        this[shape1DNames.start] = this.setStart.bind(this);
-        this[shape1DNames.finish] = this.setFinish.bind(this);
+        this[pipe3DNames.start] = this.setStart.bind(this);
+        this[pipe3DNames.finish] = this.setFinish.bind(this);
     }
 
     protected toJson(): any {
@@ -183,17 +184,17 @@ export class foPipe3D extends foShape3D {
     }
 
     public glueStartTo(target: foShape3D, handleName?: string) {
-        let glue = this.establishGlue(shape1DNames.start, target, handleName);
+        let glue = this.establishGlue(pipe3DNames.start, target, handleName);
         return glue;
     }
 
     public glueFinishTo(target: foShape3D, handleName?: string) {
-        let glue = this.establishGlue(shape1DNames.finish, target, handleName);
+        let glue = this.establishGlue(pipe3DNames.finish, target, handleName);
         return glue;
     }
 
     public unglueStart() {
-        let glue = this.dissolveGlue(shape1DNames.start);
+        let glue = this.dissolveGlue(pipe3DNames.start);
         if (glue) {
             glue.doTargetMoveProxy = undefined;;
         }
@@ -201,7 +202,7 @@ export class foPipe3D extends foShape3D {
     }
 
     public unglueFinish() {
-        let glue = this.dissolveGlue(shape1DNames.finish);
+        let glue = this.dissolveGlue(pipe3DNames.finish);
         if (glue) {
             glue.doTargetMoveProxy = undefined;;
         }
@@ -225,6 +226,25 @@ export class foPipe3D extends foShape3D {
         // this.finishY = finish.y;
         this.width = 0;
         return this;
+    }
+
+    public createHandles(): foCollection<foHandle3D> {
+
+        let begin = this.begin(pipe3DNames.start);
+        let center = this.center(pipe3DNames.center);
+        let end = this.end(pipe3DNames.finish);
+
+        Tools.mixin(begin, { size: 20 });
+        Tools.mixin(end, { size: 20 });
+        Tools.mixin(center, { size: 20 });
+        let spec = [begin, center, end];
+        let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
+
+        return this.generateHandles(spec, proxy);
+    }
+
+    public createConnectionPoints(): foCollection<foConnectionPoint3D> {
+        return this.generateConnectionPoints([]);
     }
 
     public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
@@ -256,29 +276,13 @@ export class foPipe3D extends foShape3D {
         return this;
     }
 
+    public moveTo(loc: iPoint3D, offset?: iPoint3D) {
+        let x = loc.x + (offset ? offset.x : 0);
+        let y = loc.y + (offset ? offset.y : 0);
+        let z = loc.z + (offset ? offset.z : 0);
+        return this.move(x, y, z);
+    }
 
-
-    // public createHandles(): foCollection<foHandle3D> {
-
-    //     let begin = this.globalToLocalPoint(this.begin(shape1DNames.start));
-    //     let center = this.globalToLocalPoint(this.center(shape1DNames.center));
-    //     let end = this.globalToLocalPoint(this.end(shape1DNames.finish));
-
-    //     Tools.mixin(begin, { size: 20 });
-    //     Tools.mixin(end, { size: 20 });
-    //     Tools.mixin(center, { size: 20 });
-    //     let spec = [begin, center, end];
-    //     let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
-
-    //     return this.generateHandles(spec, proxy);
-    // }
-
-
-
-    // public drawHandles(ctx: CanvasRenderingContext2D) {
-    //     this.createHandles();
-    //     super.drawHandles(ctx);
-    // }
 
 
 }
