@@ -87,7 +87,7 @@ export class foStage extends foGlyph3D {
         if (!this._obj3D && this.mesh) {
             this._obj3D = new Object3D();
             this._obj3D.name = this.myGuid;
-            alert('stage obj3d')
+            //alert('stage obj3d')
         }
         return this._obj3D;
     }

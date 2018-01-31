@@ -37,6 +37,44 @@ SolidStencil.define<foShape3D>('box', foShape3D, {
   depth: 900
 });
 
+SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
+
+  let results = Array<foShape3D>();
+
+  let def = SolidStencil.define<foShape3D>('Element', foShape3D, {
+    color: 'blue',
+    opacity: .3,
+    width: 200,
+    height: 150,
+    depth: 100,
+  });
+
+  let last = def.newInstance()
+    .dropAt(300, 200)
+    .pushTo(results);
+
+  last.myName = last.color;
+  let colors = ['red', 'grey', 'green', 'orange'];
+
+  for (let i = 0; i < colors.length; i++) {
+    let next = def.newInstance({
+      color: colors[i],
+
+      width: function () { return this.myParent().width * .7 },
+      height: function () { return this.myParent().height * 1.2 },
+      depth: function () { return this.myParent().depth * .8 },
+    });
+
+    next.myName = next.color;
+    last = last.addSubcomponent(next) as foShape3D;
+  }
+
+
+
+  return results;
+
+});
+
 export class Sphere extends foSphere {
   doBigger() {
     this.radius += 30;
