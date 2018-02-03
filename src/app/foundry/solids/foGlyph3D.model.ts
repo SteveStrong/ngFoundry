@@ -1,4 +1,4 @@
-import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
 import { Tools } from '../foTools'
 import { cPoint3D } from './foGeometry3D';
@@ -58,15 +58,22 @@ export class foGlyph3D extends foGlyph {
     }
 
     get width(): number { return this._width || 0.0; }
-    set width(value: number) { this._width = value; }
+    set width(value: number) { 
+        this.clearMesh();
+        this._width = value; 
+    }
 
     get height(): number { return this._height || 0.0; }
-    set height(value: number) { this._height = value; }
-
-
+    set height(value: number) { 
+        this.clearMesh();
+        this._height = value; 
+    }
 
     get depth(): number { return this._depth || 0.0; }
-    set depth(value: number) { this._depth = value; }
+    set depth(value: number) { 
+        this.clearMesh();
+        this._depth = value; 
+    }
 
     protected _angleX: number;
     get angleX(): number { return this._angleX || 0.0; }
@@ -94,13 +101,9 @@ export class foGlyph3D extends foGlyph {
     public rotationZ = (): number => { return this.angleZ; }
 
 
-    protected _matrix: Matrix3;
-    protected _invMatrix: Matrix3;
+    //protected _matrix: Matrix3;
+    //protected _invMatrix: Matrix3;
     smash() {
-        //console.log('smash matrix')
-        this._matrix = undefined;
-        this._invMatrix = undefined;
-
         this.setupPreDraw();
     }
 
@@ -133,7 +136,7 @@ export class foGlyph3D extends foGlyph {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
-            this.obj3D.position.set(this.x, this.y, this.z)
+            this.mesh.position.set(this.x, this.y, this.z)
             Lifecycle.dropped(this, this.getLocation());
         }
         return this;
@@ -173,35 +176,30 @@ export class foGlyph3D extends foGlyph {
         return new MeshBasicMaterial(props);
     }
 
+    //children in the model map to children of a mesh
+    //https://bl.ocks.org/mpmckenna8/e0e3a8f79c711b29c55f
     protected _mesh: Mesh;
     get mesh(): Mesh {
         if (!this._mesh) {
             let geom = this.geometry()
             let mat = this.material()
             this._mesh = (geom && mat) && new Mesh(geom, this.material());
+           
         }
         return this._mesh;
     }
     set mesh(value: Mesh) { this._mesh = value; }
-
-
-    protected _obj3D: Object3D;
-    get obj3D(): Object3D {
-        if (!this._obj3D && this.mesh) {
-            this._obj3D = new Object3D();
-            this._obj3D.name = this.myGuid;
-            this._obj3D.add(this.mesh);
-            this._obj3D.position.set(this.x, this.y, this.z);
-
-            let myParent = this.myParent() as foGlyph3D;
-            let parentObj3D = myParent && myParent.obj3D;
-            parentObj3D && parentObj3D.add(this._obj3D);
-        }
-        return this._obj3D;
+    get hasMesh(): boolean {
+        return this._mesh != undefined
     }
-    set obj3D(value: Object3D) { this.obj3D = value; }
-    hasObj3D(): boolean {
-        return this._obj3D != undefined
+    clearMesh() {
+        if ( !this._mesh) return;
+        let parent = this.mesh.parent;
+        if (parent) {
+            parent.remove(this.mesh);
+        }
+        this._mesh == undefined;
+        this.setupPreDraw();
     }
 
 
@@ -219,24 +217,64 @@ export class foGlyph3D extends foGlyph {
         });
     }
 
+    getGlobalMatrix() {
+        // let mtx = new Matrix3(this.getMatrix());
+        // let parent = <foGlyph2D>this.myParent()
+        // if (parent) {
+        //     mtx.prependMatrix(parent.getGlobalMatrix());
+        // }
+        return new Matrix3();
+    };
+
+    getMatrix() {
+        return this.mesh.matrix;
+    };
+
+    getInvMatrix() {
+        let mat = this.getMatrix();
+        mat = mat.getInverse(mat);
+        return mat;
+    };
+
+    localToGlobal(x: number, y: number, pt?: cPoint3D) {
+        let mtx = this.getGlobalMatrix();
+        return mtx; // mtx.transformPoint(x, y, pt);
+    };
+
+    globalToLocal(x: number, y: number, pt?: cPoint3D) {
+        let inv = this.getGlobalMatrix();
+        return inv; // inv.transformPoint(x, y, pt);
+    };
+
+    localToGlobalPoint(pt: cPoint3D): cPoint3D {
+        //let mtx = this.getGlobalMatrix(new Vector3());
+        //return  mtx.transformPoint(pt.x, pt.y, pt);
+        return pt;
+    };
+
+    globalCenter(pt?: cPoint3D): cPoint3D {
+        this.mesh.updateMatrix();
+        let vec = this.mesh.getWorldPosition();
+        return new cPoint3D(vec[0], vec[1], vec[2]);
+    };
+
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
-            let parent = this.myParent() as foGlyph3D;
-            if (this._obj3D) {
-                this._obj3D.remove(this._mesh);
-                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
+            let mesh = this.mesh;
+            if (mesh) {
+                mesh.name = this.myGuid;
+                let parent = this.myParent() as foGlyph3D;
+                if ( parent && parent.hasMesh ) {
+                    parent.mesh.add(mesh)
+                } else {
+                    screen.addToScene(mesh);
+                }
 
-                screen.removeFromScene(this._obj3D);
-
-                this._obj3D = this._mesh = undefined;
-            }
-            let obj3D = this.obj3D;
-            if (obj3D) {
-                obj3D.position.set(this.x, this.y, this.z);
-                obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
-
-                screen.addToScene(obj3D);
+                //should hapen during draw
+                //mesh.position.set(this.x, this.y, this.z);
+                //mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
+               
                 this.preDraw3D = undefined;
             }
 
@@ -248,8 +286,8 @@ export class foGlyph3D extends foGlyph {
     preDraw3D: (screen: Screen3D) => void;
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
-        let obj = this.obj3D;
-        if (!obj) return;
+        if (!this.hasMesh) return;
+        let obj = this.mesh;
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         //make changes that support animation here
@@ -275,7 +313,7 @@ export class foGlyph3D extends foGlyph {
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        this.obj3D.position.set(this.x, this.y, this.z);
+        this.mesh.position.set(this.x, this.y, this.z);
         return this;
     }
 

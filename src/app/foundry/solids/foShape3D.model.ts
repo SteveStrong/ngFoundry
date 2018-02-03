@@ -2,6 +2,8 @@ import { Tools } from '../foTools'
 
 import { foGlyph3D } from "./foGlyph3D.model";
 import { Geometry, BoxGeometry } from 'three';
+import { cPoint3D } from './foGeometry3D';
+import { iPoint3D } from '../foInterface'
 
 import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -49,17 +51,39 @@ export class foShape3D extends foGlyph3D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
+        this[shape3DNames.left] = this.setBogas.bind(this);
+        this[shape3DNames.right] = this.setBogas.bind(this);
+        this[shape3DNames.top] = this.setBogas.bind(this);
+        this[shape3DNames.bottom] = this.setBogas.bind(this);
+        this[shape3DNames.front] = this.setBogas.bind(this);
+        this[shape3DNames.back] = this.setBogas.bind(this);
+
         this.setupPreDraw()
     }
 
-    protected toJson(): any {
-        let list = this.connectionPoints.map(item => {
-            return item.toJson();
-        })
-        return Tools.mixin(super.toJson(), {
-            list: list
-        });
+    public center = (name?: string): cPoint3D => {
+        return new cPoint3D(this.x, this.y, this.z, name);
     }
+
+    private setBogas(point: iPoint3D) {
+        let { x: cX, y: cY, z: cZ } = this.center();
+        this.x = 0 * cX;
+        this.y = 0 * cY;
+        this.z = 0 * cZ;
+        this.width = 0;
+    }
+
+    // protected toJson(): any {
+    //     if ( !this._connectionPoints) {
+    //         return super.toJson();
+    //     }
+
+    //     return Tools.mixin(super.toJson(), {
+    //         list: this.connectionPoints.map(item => {
+    //             return item.toJson();
+    //         })
+    //     });
+    // }
 
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);
@@ -114,6 +138,13 @@ export class foShape3D extends foGlyph3D {
     public establishGlue(name: string, target: any, handleName?: string) {
         let glue = this.getGlue(name)
         glue.glueTo(target, handleName);
+        glue.doTargetMoveProxy = this[name];
+        glue.targetMoved(target.getLocation());
+        return glue;
+    }
+
+    public glueConnectionPoints(target: foShape3D, sourceHandle?: string, targetHandle?: string) {
+        let glue = this.establishGlue(sourceHandle, target, targetHandle);
         return glue;
     }
 
@@ -173,6 +204,7 @@ export class foShape3D extends foGlyph3D {
             { x: -w, y: 0, z: 0, myName: shape3DNames.right },
             { x: 0, y: 0, z: d, myName: shape3DNames.front },
             { x: 0, y: 0, z: -d, myName: shape3DNames.back },
+            { x: 0, y: 0, z: 0, myName: shape3DNames.center },
         ];
 
         return this.generateConnectionPoints(spec);

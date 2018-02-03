@@ -49,17 +49,11 @@ export class foHandle3D extends foHandle {
             name: this.myName,
             color: this.color,
             size: this.size,
-            posW: this.obj3D.getWorldPosition()
+            posW: this.mesh.getWorldPosition()
         });
     }
 
-    protected _matrix: Matrix3;
-    protected _invMatrix: Matrix3;
     smash() {
-        //console.log('smash matrix')
-        this._matrix = undefined;
-        this._invMatrix = undefined;
-
         this.setupPreDraw();
     }
 
@@ -91,27 +85,24 @@ export class foHandle3D extends foHandle {
             let geom = this.geometry()
             let mat = this.material()
             this._mesh = (geom && mat) && new Mesh(geom, this.material());
+           
         }
         return this._mesh;
     }
     set mesh(value: Mesh) { this._mesh = value; }
-
-
-    protected _obj3D: Object3D;
-    get obj3D(): Object3D {
-        if (!this._obj3D && this.mesh) {
-            this._obj3D = new Object3D();
-            this._obj3D.name = this.myGuid;
-            this._obj3D.add(this.mesh);
-            this._obj3D.position.set(this.x, this.y, this.z);
-
-            let myParent = this.myParent() as foGlyph3D;
-            let parentObj3D = myParent && myParent.obj3D;
-            parentObj3D && parentObj3D.add(this._obj3D);
-        }
-        return this._obj3D;
+    get hasMesh(): boolean {
+        return this._mesh != undefined
     }
-    set obj3D(value: Object3D) { this.obj3D = value; }
+    clearMesh() {
+        if ( !this._mesh) return;
+        let parent = this.mesh.parent;
+        if (parent) {
+            parent.remove(this.mesh);
+        }
+        this._mesh == undefined;
+        this.setupPreDraw();
+    }
+
 
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
@@ -142,19 +133,13 @@ export class foHandle3D extends foHandle {
     };
 
     getMatrix() {
-        if (this._matrix === undefined) {
-            this._matrix = new Matrix3();
-            let delta = this.size / 2;
-            //this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
-        }
-        return this._matrix;
+        return this.mesh.matrix;
     };
 
     getInvMatrix() {
-        // if (this._invMatrix === undefined) {
-        //     this._invMatrix = this.getMatrix().invertCopy();
-        // }
-        return this._invMatrix;
+        let mat = this.getMatrix();
+        mat = mat.getInverse(mat);
+        return mat;
     };
 
     localToGlobal(x: number, y: number, pt?: cPoint3D) {
@@ -174,8 +159,8 @@ export class foHandle3D extends foHandle {
     };
 
     globalCenter(pt?: cPoint3D): cPoint3D {
-        this.obj3D.updateMatrix();
-        let vec = this.obj3D.getWorldPosition();
+        this.mesh.updateMatrix();
+        let vec = this.mesh.getWorldPosition();
         return new cPoint3D(vec[0], vec[1], vec[2]);
     };
 
@@ -208,23 +193,24 @@ export class foHandle3D extends foHandle {
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
-            let parent = this.myParent() as foGlyph3D;
-            if (this._obj3D) {
-                this._obj3D.remove(this._mesh);
-                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
+            let mesh = this.mesh;
+            if (mesh) {
+                mesh.name = this.myGuid;
+                let parent = this.myParent() as foGlyph3D;
+                if ( parent && parent.hasMesh ) {
+                    parent.mesh.add(mesh)
+                } else {
+                    //this should NEVER be the case
+                    screen.addToScene(mesh);
+                }
 
-                this._obj3D = this._mesh = undefined;
-            }
-            let obj3D = this.obj3D;
-            if (obj3D) {
-                obj3D.position.set(this.x, this.y, this.z);
-                parent.obj3D.add(obj3D);
+                //should happen during draw
+                //mesh.position.set(this.x, this.y, this.z);
+               
                 this.preDraw3D = undefined;
             }
 
         }
-
-
 
         this.preDraw3D = preDraw;
     }
@@ -232,8 +218,8 @@ export class foHandle3D extends foHandle {
     preDraw3D: (screen: Screen3D) => void;
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
-        let obj = this.obj3D;
-        if (!obj) return;
+        if (!this.hasMesh) return;
+        let obj = this.mesh;
         obj.position.set(this.x, this.y, this.z);
         //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         //make changes that support animation here

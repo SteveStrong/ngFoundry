@@ -1019,17 +1019,17 @@ export class Screen3D {
 
 
 
-    addToScene(obj: Object3D) {
+    addToScene(obj: Mesh) {
         this.scene.add(obj);
     }
 
-    removeFromScene(obj: Object3D) {
+    removeFromScene(obj: Mesh) {
         this.scene.remove(obj);
     }
 
     addBlock(width: number, height: number, depth: number) {
         let obj = new block3D(width, height, depth);
-        this.addToScene(obj.object);
+        this.addToScene(obj.mesh);
     }
 
 }

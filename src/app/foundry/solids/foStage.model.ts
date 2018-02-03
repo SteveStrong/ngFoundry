@@ -78,22 +78,30 @@ export class foStage extends foGlyph3D {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.color = 'Linen';
-
+        this.setupPreDraw();
     }
 
-    protected _obj3D: Object3D;
-    get obj3D(): Object3D {
-        if (!this._obj3D && this.mesh) {
-            this._obj3D = new Object3D();
-            this._obj3D.name = this.myGuid;
-            //alert('stage obj3d')
+    get mesh(): Mesh {
+        if (!this._mesh) {
+            this._mesh = new Mesh()
+            this._mesh.name = this.myGuid;
         }
-        return this._obj3D;
+        return this._mesh;
     }
-    set obj3D(value: Object3D) { this.obj3D = value; }
-    hasObj3D(): boolean {
-        return this._obj3D != undefined
+
+    setupPreDraw() {
+
+        let preDraw = (screen: Screen3D) => {
+            let mesh = this.mesh;
+            screen.addToScene(mesh);
+
+            mesh.position.set(this.x, this.y, this.z);
+            mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
+
+            this.preDraw3D = undefined;
+        }
+
+        this.preDraw3D = preDraw;
     }
 
     //this is used to drop shapes
@@ -130,7 +138,7 @@ export class foStage extends foGlyph3D {
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
             super.addSubcomponent(obj, properties);
-        }, child => { 
+        }, child => {
             super.addSubcomponent(obj, properties)
         });
         return obj;
@@ -172,7 +180,8 @@ export class foStage extends foGlyph3D {
         this.scaleZ *= zoom;
     }
 
-    render3D = (screen:Screen3D, deep: boolean = true) => {
+    render3D = (screen: Screen3D, deep: boolean = true) => {
+        this.preDraw3D && this.preDraw3D(screen)
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
         });

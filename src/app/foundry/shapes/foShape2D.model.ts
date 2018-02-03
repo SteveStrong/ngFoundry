@@ -165,6 +165,11 @@ export class foShape2D extends foGlyph2D {
         return glue;
     }
 
+    public glueConnectionPoints(target: foShape2D, sourceHandle?: string, targetHandle?: string) {
+        let glue = this.establishGlue(sourceHandle, target, targetHandle);
+        return glue;
+    }
+
     public dissolveGlue(name: string) {
         if (this._glue) {
             let glue = this.glue.findMember(name);

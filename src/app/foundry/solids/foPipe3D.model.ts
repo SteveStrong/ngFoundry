@@ -176,20 +176,20 @@ export class foPipe3D extends foShape3D {
         };
     }
 
-    public establishGlue(name: string, target: foShape3D, handleName?: string) {
-        let glue = super.establishGlue(name, target, handleName)
-        glue.doTargetMoveProxy = this[name];
-        glue.targetMoved(target.getLocation());
-        return glue;
-    }
+    // public establishGlue(name: string, target: foShape3D, handleName?: string) {
+    //     let glue = super.establishGlue(name, target, handleName)
+    //     glue.doTargetMoveProxy = this[name];
+    //     glue.targetMoved(target.getLocation());
+    //     return glue;
+    // }
 
     public glueStartTo(target: foShape3D, handleName?: string) {
-        let glue = this.establishGlue(pipe3DNames.start, target, handleName);
+        let glue = this.glueConnectionPoints(target, pipe3DNames.start, handleName);
         return glue;
     }
 
     public glueFinishTo(target: foShape3D, handleName?: string) {
-        let glue = this.establishGlue(pipe3DNames.finish, target, handleName);
+        let glue = this.glueConnectionPoints(target, pipe3DNames.finish, handleName);
         return glue;
     }
 
