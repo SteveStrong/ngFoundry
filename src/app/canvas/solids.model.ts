@@ -49,10 +49,10 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
     depth: 100,
   });
 
-  let last = def.newInstance()
-    .dropAt(300, 200, 100)
+  let main = def.newInstance()
     .pushTo(results);
 
+  let last = main;
   last.myName = last.color;
   let colors = ['red', 'grey', 'green', 'orange'];
 
@@ -68,6 +68,8 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
     next.myName = next.color;
     last = last.addSubcomponent(next) as foShape3D;
   }
+
+  main.dropAt(300, 200, 100)
 
 
 
