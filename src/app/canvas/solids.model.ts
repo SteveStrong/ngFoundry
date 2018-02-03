@@ -50,7 +50,7 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
   });
 
   let last = def.newInstance()
-    .dropAt(300, 200)
+    .dropAt(300, 200, 100)
     .pushTo(results);
 
   last.myName = last.color;

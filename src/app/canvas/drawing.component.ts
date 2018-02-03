@@ -32,6 +32,12 @@ import { filter } from 'rxjs/operators';
 import { SolidStencil } from "./solids.model";
 
 
+ //using tween
+    //https://greensock.com/forums/topic/12406-make-threejs-object-invisible/
+
+    //https://www.npmjs.com/package/modular-three
+
+
 @Component({
   selector: 'foundry-drawing',
   templateUrl: './drawing.component.html',
