@@ -317,12 +317,25 @@ export class foTools {
         return result;
     };
 
+    defineComputeOnlyProperty(target, name, func) {
+        //var self = target;
+        Object.defineProperty(target, name, {
+            enumerable: true,
+            configurable: true,
+            get: func
+        });
+        return target;
+    };
+
     defineCalculatedProperty(target, name, func) {
         //var self = target;
         Object.defineProperty(target, name, {
             enumerable: true,
             configurable: true,
             get: func,    //.call(self, self),
+            set: function(value) { 
+                this[`_${name}`] = value;
+            }
         });
         return target;
     };
