@@ -101,6 +101,51 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
 
 });
 
+
+SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
+
+  let results = Array<foShape3D>();
+
+  let def = SolidStencil.define<foShape3D>('Element', foShape3D, {
+    color: 'blue',
+    opacity: .3,
+    width: 200,
+    height: 150,
+    depth: 100,
+  });
+
+  let main = def.newInstance()
+    .pushTo(results);
+
+  let last = main;
+  last.myName = last.color;
+  let colors = ['red', 'green'];
+
+  for (let i = 0; i < colors.length; i++) {
+    let next = def.newInstance({
+      color: colors[i],
+      myName: function() { return this.color; },
+      width: function () { 
+        return this.hasParent ? this.myParent().width * .7 : 100;
+      }, 
+      height: function () { 
+        return this.hasParent ? this.myParent().height * 1.2 : 100;
+      },
+      depth: function () { 
+        return this.hasParent ? this.myParent().depth * .8 : 100;
+      },
+    });
+
+   // next.myName = next.color;
+    last = last.addSubcomponent(next) as foShape3D;
+    next.glueConnectionPoints(last, shape3DNames.bottom, shape3DNames.top)
+  }
+
+
+  return results;
+
+});
+
 export class Sphere extends foSphere {
   doBigger() {
     this.radius += 30;
