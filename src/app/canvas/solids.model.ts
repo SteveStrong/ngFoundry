@@ -47,6 +47,15 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
     width: 200,
     height: 150,
     depth: 100,
+    x: function(){
+      return this.hasParent ? 0.5 * (this.width + this.myParent().width) : 0;
+    },
+    y: function(){
+      return this.hasParent ? 0.5 * (this.height - this.myParent().height) : 0;
+    },
+    z: function(){
+      return this.hasParent ? 0.5 * (this.depth - this.myParent().depth) : 0;
+    }
   });
 
   let main = def.newInstance()
@@ -67,8 +76,17 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
         return this.hasParent ? this.myParent().height * 1.2 : 100;
       },
       depth: function () { 
-        return this.hasParent ? this.myParent().width * .8 : 100;
+        return this.hasParent ? this.myParent().depth * .8 : 100;
       },
+      // x: function(){
+      //   return this.hasParent ? 0.5 * (this.width + this.myParent().width) : 0;
+      // },
+      // y: function(){
+      //   return this.hasParent ? 0.5 * (this.height - this.myParent().height) : 0;
+      // },
+      // z: function(){
+      //   return this.hasParent ? 0.5 * (this.width - this.myParent().width) : 0;
+      // }
     });
 
     next.myName = next.color;
