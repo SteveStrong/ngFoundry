@@ -6,6 +6,7 @@ import { iPoint2D } from '../foInterface'
 import { foObject } from '../foObject.model'
 import { Matrix2D } from './foMatrix2D'
 import { foHandle2D } from './foHandle2D'
+import { foConnectionPoint2D } from './foConnectionPoint2D'
 import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
@@ -279,6 +280,10 @@ export class foShape1D extends foShape2D {
         //ctx.strokeStyle = '#003300';
         ctx.stroke();
         ctx.restore();
+    }
+
+    public createConnectionPoints(): foCollection<foConnectionPoint2D> {
+        return this.generateConnectionPoints([]);
     }
 
     public createHandles(): foCollection<foHandle2D> {

@@ -1,12 +1,12 @@
 import { Tools } from '../foTools'
-import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Object3D, Matrix3, Vector3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
 import { cPoint3D } from './foGeometry3D';
 
 import { iPoint3D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
-import { foNode } from '../foNode.model';
+import { foGlyph3D } from './foGlyph3D.model';
 import { foComponent } from '../foComponent.model';
 
 import { Lifecycle } from '../foLifecycle';
@@ -14,8 +14,15 @@ import { BroadcastChange } from '../foChange';
 
 import { foHandle } from '../foHandle';
 import { Screen3D } from './threeDriver';
+import { foGlue3D } from 'app/foundry/solids/foGlue3D';
 
 export class foHandle3D extends foHandle {
+
+    get color(): string {
+        return this._color || 'cyan';
+    }
+    get size(): number { return this._size || 10.0; }
+
 
     protected _x: number;
     protected _y: number;
@@ -34,7 +41,17 @@ export class foHandle3D extends foHandle {
         this._z = value;
     }
 
-
+    protected toJson(): any {
+        return Tools.mixin({}, {
+            x: this.x,
+            y: this.y,
+            z: this.z,
+            name: this.myName,
+            color: this.color,
+            size: this.size,
+            posW: this.obj3D.getWorldPosition()
+        });
+    }
 
     protected _matrix: Matrix3;
     protected _invMatrix: Matrix3;
@@ -49,6 +66,8 @@ export class foHandle3D extends foHandle {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw();
     }
 
     geometry = (spec?: any): Geometry => {
@@ -83,16 +102,22 @@ export class foHandle3D extends foHandle {
         if (!this._obj3D && this.mesh) {
             this._obj3D = new Object3D();
             this._obj3D.name = this.myGuid;
-            this._obj3D.add(this.mesh)
+            this._obj3D.add(this.mesh);
+            this._obj3D.position.set(this.x, this.y, this.z);
+
+            let myParent = this.myParent() as foGlyph3D;
+            let parentObj3D = myParent && myParent.obj3D;
+            parentObj3D && parentObj3D.add(this._obj3D);
         }
         return this._obj3D;
     }
     set obj3D(value: Object3D) { this.obj3D = value; }
 
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
+        if (!Number.isNaN(z)) this.z = z;
         return this;
     }
 
@@ -143,22 +168,22 @@ export class foHandle3D extends foHandle {
     };
 
     localToGlobalPoint(pt: cPoint3D): cPoint3D {
-        let mtx = this.getGlobalMatrix();
+        //let mtx = this.getGlobalMatrix(new Vector3());
         //return  mtx.transformPoint(pt.x, pt.y, pt);
         return pt;
     };
 
     globalCenter(pt?: cPoint3D): cPoint3D {
-        //let { x, y } = this.pinLocation();
-        //let mtx = this.getGlobalMatrix();
-        //return mtx.transformPoint(x, y);
-        return pt;
+        this.obj3D.updateMatrix();
+        let vec = this.obj3D.getWorldPosition();
+        return new cPoint3D(vec[0], vec[1], vec[2]);
     };
 
     public getOffset = (loc: iPoint3D): iPoint3D => {
         let x = this.x;
         let y = this.y;
-        return new cPoint3D(x - loc.x, y - loc.y);
+        let z = this.z;
+        return new cPoint3D(x - loc.x, y - loc.y, z - loc.z);
     }
 
 
@@ -183,20 +208,23 @@ export class foHandle3D extends foHandle {
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
+            let parent = this.myParent() as foGlyph3D;
             if (this._obj3D) {
-                this._obj3D.remove(this._mesh)
-                screen.removeFromScene(this._obj3D);
+                this._obj3D.remove(this._mesh);
+                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
 
                 this._obj3D = this._mesh = undefined;
             }
             let obj3D = this.obj3D;
             if (obj3D) {
                 obj3D.position.set(this.x, this.y, this.z);
-                screen.addToScene(obj3D);
+                parent.obj3D.add(obj3D);
                 this.preDraw3D = undefined;
             }
 
         }
+
+
 
         this.preDraw3D = preDraw;
     }
@@ -217,9 +245,6 @@ export class foHandle3D extends foHandle {
     render3D = (screen: Screen3D, deep: boolean = true) => {
         this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen)
-        // deep && this.nodes.forEach(item => {
-        //     item.render3D(screen, deep);
-        // });
     }
 
 }

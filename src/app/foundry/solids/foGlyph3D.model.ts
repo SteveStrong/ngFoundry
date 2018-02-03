@@ -18,6 +18,7 @@ import { Screen3D } from "./threeDriver";
 import { Lifecycle } from '../foLifecycle';
 
 
+
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
 export class foGlyph3D extends foGlyph {
@@ -132,6 +133,7 @@ export class foGlyph3D extends foGlyph {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
+            this.obj3D.position.set(this.x, this.y, this.z)
             Lifecycle.dropped(this, this.getLocation());
         }
         return this;
@@ -188,11 +190,19 @@ export class foGlyph3D extends foGlyph {
         if (!this._obj3D && this.mesh) {
             this._obj3D = new Object3D();
             this._obj3D.name = this.myGuid;
-            this._obj3D.add(this.mesh)
+            this._obj3D.add(this.mesh);
+            this._obj3D.position.set(this.x, this.y, this.z);
+
+            let myParent = this.myParent() as foGlyph3D;
+            let parentObj3D = myParent && myParent.obj3D;
+            parentObj3D && parentObj3D.add(this._obj3D);
         }
         return this._obj3D;
     }
     set obj3D(value: Object3D) { this.obj3D = value; }
+    hasObj3D(): boolean {
+        return this._obj3D != undefined
+    }
 
 
     protected toJson(): any {
@@ -205,15 +215,18 @@ export class foGlyph3D extends foGlyph {
             depth: this.depth,
             angleX: this.angleX,
             angleY: this.angleY,
-            angleZ: this.angleZ,
+            angleZ: this.angleZ
         });
     }
 
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
+            let parent = this.myParent() as foGlyph3D;
             if (this._obj3D) {
-                this._obj3D.remove(this._mesh)
+                this._obj3D.remove(this._mesh);
+                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
+
                 screen.removeFromScene(this._obj3D);
 
                 this._obj3D = this._mesh = undefined;
@@ -222,6 +235,7 @@ export class foGlyph3D extends foGlyph {
             if (obj3D) {
                 obj3D.position.set(this.x, this.y, this.z);
                 obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
+
                 screen.addToScene(obj3D);
                 this.preDraw3D = undefined;
             }
@@ -246,10 +260,18 @@ export class foGlyph3D extends foGlyph {
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
         this.preDraw3D && this.preDraw3D(screen)
-        this.draw3D && this.draw3D(screen)
+        this.draw3D && this.draw3D(screen);
+
+        //this.drawHandles(screen);
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
         });
+    }
+
+    public drawHandles(screen: Screen3D) {
+        this.handles.forEach(item => {
+            item.render3D(screen);
+        })
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
@@ -282,11 +304,20 @@ export class foGlyph3D extends foGlyph {
 
     public createHandles(): foCollection<foHandle3D> {
 
+        let w = this.width / 2;
+        let h = this.height / 2;
+        let d = this.depth / 2;
+
         let spec = [
-            { x: 0, y: 0, myName: "0:0", myType: RuntimeType.define(foHandle3D) },
-            { x: this.width, y: 0, myName: "W:0" },
-            { x: this.width, y: this.height, myName: "W:H" },
-            { x: 0, y: this.height, myName: "0:H" },
+            { x: -w, y: -h, z: -d, myName: "0:0:0", myType: RuntimeType.define(foHandle3D) },
+            { x: w, y: -h, z: -d, myName: "W:0:0" },
+            { x: w, y: h, z: -d, myName: "W:H:0" },
+            { x: -w, y: h, z: -d, myName: "0:H:0" },
+
+            { x: -w, y: -h, z: d, myName: "0:0:D", myType: RuntimeType.define(foHandle3D) },
+            { x: w, y: -h, z: d, myName: "W:0:D" },
+            { x: w, y: h, z: d, myName: "W:H:D" },
+            { x: -w, y: h, z: d, myName: "0:H:D" },
         ];
 
         return this.generateHandles(spec);

@@ -15,6 +15,8 @@ import { foGlyph } from '../foGlyph.model';
 
 import { Lifecycle } from '../foLifecycle';
 
+
+
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph2D extends foGlyph implements iShape {
 

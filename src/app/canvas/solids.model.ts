@@ -4,7 +4,7 @@ import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
 import { foGlyph3D } from "../foundry/solids/foGlyph3D.model";
 import { foShape2D, shape2DNames } from "../foundry/shapes/foShape2D.model";
 import { foShape1D } from "../foundry/shapes/foShape1D.model";
-import { foShape3D,  shape3DNames } from "../foundry/solids/foShape3D.model";
+import { foShape3D, shape3DNames } from "../foundry/solids/foShape3D.model";
 import { foModel3D, foSphere } from "../foundry/solids/foBody.model";
 import { foText3D } from "../foundry/solids/foText3D.model";
 import { foImage3D } from "../foundry/solids/foImage3D.model";
@@ -23,9 +23,58 @@ export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName()
 
 SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
   color: 'green',
+  opacity: .5,
   width: 100,
   height: 400,
   depth: 900
+});
+
+SolidStencil.define<foShape3D>('box', foShape3D, {
+  color: 'red',
+  opacity: .5,
+  width: 100,
+  height: 400,
+  depth: 900
+});
+
+SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
+
+  let results = Array<foShape3D>();
+
+  let def = SolidStencil.define<foShape3D>('Element', foShape3D, {
+    color: 'blue',
+    opacity: .3,
+    width: 200,
+    height: 150,
+    depth: 100,
+  });
+
+  let main = def.newInstance()
+    .pushTo(results);
+
+  let last = main;
+  last.myName = last.color;
+  let colors = ['red', 'grey', 'green', 'orange'];
+
+  for (let i = 0; i < colors.length; i++) {
+    let next = def.newInstance({
+      color: colors[i],
+
+      width: function () { return this.myParent().width * .7 },
+      height: function () { return this.myParent().height * 1.2 },
+      depth: function () { return this.myParent().depth * .8 },
+    });
+
+    next.myName = next.color;
+    last = last.addSubcomponent(next) as foShape3D;
+  }
+
+  main.dropAt(300, 200, 100)
+
+
+
+  return results;
+
 });
 
 export class Sphere extends foSphere {
@@ -51,7 +100,7 @@ export class Sphere extends foSphere {
 
 SolidStencil.define<Sphere>('sphere', Sphere, {
   color: 'orange',
-  //opacity: .5,
+  opacity: .5,
   radius: 100,
   width: function () { return this.radius },
   height: function () { return this.radius },
@@ -129,7 +178,7 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
     depth: 100,
   });
 
-  let shape1 = def.newInstance({color:'green'}).dropAt(300, 200).pushTo(results);
+  let shape1 = def.newInstance({ color: 'green' }).dropAt(300, 200).pushTo(results);
   let shape2 = def.newInstance().dropAt(600, 200).pushTo(results);
 
   let cord = SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
@@ -138,14 +187,14 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
     depth: 15,
   });
   SolidStencil.isVisible = true;
-  
+
   let wire = cord.newInstance().pushTo(results);
 
 
- // wire.glueStartTo(shape1, shape3DNames.right);
- // wire.glueFinishTo(shape2, shape3DNames.left);
+  //wire.glueStartTo(shape1, shape3DNames.right);
+  //wire.glueFinishTo(shape2, shape3DNames.left);
 
-  wire.glueStartTo(shape1, shape3DNames.center);
+  wire.glueStartTo(shape1, shape3DNames.right);
   wire.glueFinishTo(shape2, shape3DNames.center);
 
   return results;

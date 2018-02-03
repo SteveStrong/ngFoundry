@@ -4,17 +4,35 @@ import { foObject } from '../foObject.model';
 import { foComponent } from '../foComponent.model';
 
 import { foHandle3D } from './foHandle3D';
+import { Screen3D } from './threeDriver';
 
 
 export class foConnectionPoint3D extends foHandle3D {
 
-    protected _angle: number;
-    get angle(): number { return this._angle || 0.0; }
-    set angle(value: number) {
+    protected _angleX: number;
+    get angleX(): number { return this._angleX || 0.0; }
+    set angleX(value: number) {
         this.smash();
-        this._angle = value;
+        this._angleX = value;
     }
-    public rotation = (): number => { return this.angle; }
+
+    protected _angleY: number;
+    get angleY(): number { return this._angleY || 0.0; }
+    set angleY(value: number) {
+        this.smash();
+        this._angleY = value;
+    }
+
+    protected _angleZ: number;
+    get angleZ(): number { return this._angleZ || 0.0; }
+    set angleZ(value: number) {
+        this.smash();
+        this._angleZ = value;
+    }
+
+    public rotationX = (): number => { return this.angleX; }
+    public rotationY = (): number => { return this.angleY; }
+    public rotationZ = (): number => { return this.angleZ; }
 
     get color(): string {
         return this._color || 'pink';
@@ -24,27 +42,33 @@ export class foConnectionPoint3D extends foHandle3D {
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw()
     }
 
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
         if (!Number.isNaN(y)) this.y = y;
-        if (!Number.isNaN(angle)) this.angle = angle;
+        if (!Number.isNaN(z)) this.z = z;
         return this;
     }
 
+    draw3D = (screen: Screen3D, deep: boolean = true) => {
+        let obj = this.obj3D;
+        if (!obj) return;
+        obj.position.set(this.x, this.y, this.z);
+        //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+        //make changes that support animation here
+        //let rot = this.mesh.rotation;
+        // rot.x += 0.01;
+        // rot.y += 0.02;
+    };
 
-
-    // getMatrix() {
-    //     if (this._matrix === undefined) {
-    //         this._matrix = new Matrix3();
-    //         let delta = this.size / 2;
-    //         this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, delta, delta);
-    //     }
-    //     return this._matrix;
-    // };
-
+    render3D = (screen: Screen3D, deep: boolean = true) => {
+        this.preDraw3D && this.preDraw3D(screen)
+        this.draw3D && this.draw3D(screen)
+    }
 
 
 }
