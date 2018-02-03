@@ -40,34 +40,34 @@ export class foPipe3D extends foShape3D {
 
     get startX(): number { return this._x1 || 0.0; }
     set startX(value: number) {
-        this.smash();
+        this.clearMesh();
         this._x1 = value;
     }
 
     get startY(): number { return this._y1 || 0.0; }
     set startY(value: number) {
-        this.smash();
+        this.clearMesh();
         this._y1 = value;
     }
     get startZ(): number { return this._z1 || 0.0; }
     set startZ(value: number) {
-        this.smash();
+        this.clearMesh();
         this._z1 = value;
     }
 
     get finishX(): number { return this._x2 || 0.0; }
     set finishX(value: number) {
-        this.smash();
+        this.clearMesh();
         this._x2 = value;
     }
     get finishY(): number { return this._y2 || 0.0; }
     set finishY(value: number) {
-        this.smash();
+        this.clearMesh();
         this._y2 = value;
     }
     get finishZ(): number { return this._z2 || 0.0; }
     set finishZ(value: number) {
-        this.smash();
+        this.clearMesh();
         this._z2 = value;
     }
 

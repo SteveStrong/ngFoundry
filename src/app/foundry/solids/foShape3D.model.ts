@@ -73,17 +73,17 @@ export class foShape3D extends foGlyph3D {
         this.width = 0;
     }
 
-    // protected toJson(): any {
-    //     if ( !this._connectionPoints) {
-    //         return super.toJson();
-    //     }
+    protected toJson(): any {
+        if ( !this._connectionPoints) {
+            return super.toJson();
+        }
 
-    //     return Tools.mixin(super.toJson(), {
-    //         list: this.connectionPoints.map(item => {
-    //             return item.toJson();
-    //         })
-    //     });
-    // }
+        return Tools.mixin(super.toJson(), {
+            list: this.connectionPoints.map(item => {
+                return item.toJson();
+            })
+        });
+    }
 
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);

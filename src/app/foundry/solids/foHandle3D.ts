@@ -84,8 +84,11 @@ export class foHandle3D extends foHandle {
         if (!this._mesh) {
             let geom = this.geometry()
             let mat = this.material()
-            this._mesh = (geom && mat) && new Mesh(geom, this.material());
-           
+            let obj = (geom && mat) && new Mesh(geom, mat);
+            if ( obj){
+                obj.position.set(this.x, this.y, this.z);
+                this._mesh = obj;
+            }          
         }
         return this._mesh;
     }
@@ -164,6 +167,12 @@ export class foHandle3D extends foHandle {
         return new cPoint3D(vec[0], vec[1], vec[2]);
     };
 
+    getGlobalPosition(pt?: Vector3): Vector3 {
+        this.mesh.updateMatrix();
+        let vec = this.mesh.getWorldPosition(pt);
+        return vec;
+    }
+
     public getOffset = (loc: iPoint3D): iPoint3D => {
         let x = this.x;
         let y = this.y;
@@ -220,7 +229,7 @@ export class foHandle3D extends foHandle {
     draw3D = (screen: Screen3D, deep: boolean = true) => {
         if (!this.hasMesh) return;
         let obj = this.mesh;
-        obj.position.set(this.x, this.y, this.z);
+        //obj.position.set(this.x, this.y, this.z);
         //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         //make changes that support animation here
         //let rot = this.mesh.rotation;

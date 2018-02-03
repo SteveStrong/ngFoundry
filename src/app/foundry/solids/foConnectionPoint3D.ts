@@ -43,6 +43,21 @@ export class foConnectionPoint3D extends foHandle3D {
         this.setupPreDraw()
     }
 
+    get mesh(): Mesh {
+        if (!this._mesh) {
+            let geom = this.geometry()
+            let mat = this.material()
+            let obj = (geom && mat) && new Mesh(geom, mat);
+            if (obj) {
+                obj.position.set(this.x, this.y, this.z);
+                obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+                this._mesh = obj;
+            }
+
+        }
+        return this._mesh;
+    }
+
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;

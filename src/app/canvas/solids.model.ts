@@ -37,6 +37,39 @@ SolidStencil.define<foShape3D>('box', foShape3D, {
   depth: 900
 });
 
+SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
+
+  let results = Array<foShape3D>();
+
+  let def = SolidStencil.find<foShape3D>('box');
+
+  let main = def.newInstance()
+    .pushTo(results)
+
+  let mat1 = main.mesh.matrixWorld;
+
+  main.dropAt(300, 200, 100);
+  main.mesh.matrixWorldNeedsUpdate = true;
+
+  let mat2 = main.mesh.matrixWorld;
+
+    let corner = def.newInstance({
+      width: 30,
+      height:30,
+      depth:30,
+      color: 'blue'
+    })
+    .pushTo(results)
+
+    //corner.setGlobalPosition(main.getGlobalPosition());
+    let loc = main.getConnectionPoint('front');
+    let pt = loc.getGlobalPosition();
+    corner.setGlobalPosition(pt)
+
+  return results;
+
+});
+
 SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
 
   let results = Array<foShape3D>();
@@ -149,12 +182,12 @@ SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
 export class Sphere extends foSphere {
   doBigger() {
     this.radius += 30;
-    this.smash();
+    this.clearMesh();
   }
 
   doSmaller() {
     this.radius -= 30;
-    this.smash();
+    this.clearMesh();
   }
 
   doX() {
