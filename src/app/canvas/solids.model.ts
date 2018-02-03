@@ -60,9 +60,15 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
     let next = def.newInstance({
       color: colors[i],
 
-      width: function () { return this.myParent().width * .7 },
-      height: function () { return this.myParent().height * 1.2 },
-      depth: function () { return this.myParent().depth * .8 },
+      width: function () { 
+        return this.hasParent ? this.myParent().width * .7 : 100;
+      }, 
+      height: function () { 
+        return this.hasParent ? this.myParent().height * 1.2 : 100;
+      },
+      depth: function () { 
+        return this.hasParent ? this.myParent().width * .8 : 100;
+      },
     });
 
     next.myName = next.color;

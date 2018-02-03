@@ -53,13 +53,7 @@ export class foHandle3D extends foHandle {
         });
     }
 
-    protected _matrix: Matrix3;
-    protected _invMatrix: Matrix3;
     smash() {
-        //console.log('smash matrix')
-        this._matrix = undefined;
-        this._invMatrix = undefined;
-
         this.setupPreDraw();
     }
 
@@ -91,12 +85,12 @@ export class foHandle3D extends foHandle {
             let geom = this.geometry()
             let mat = this.material()
             this._mesh = (geom && mat) && new Mesh(geom, this.material());
-            this._mesh.name = this.myGuid;
+           
         }
         return this._mesh;
     }
     set mesh(value: Mesh) { this._mesh = value; }
-    hasMesh(): boolean {
+    get hasMesh(): boolean {
         return this._mesh != undefined
     }
     clearMesh() {
@@ -105,7 +99,8 @@ export class foHandle3D extends foHandle {
         if (parent) {
             parent.remove(this.mesh);
         }
-        this._mesh == undefined
+        this._mesh == undefined;
+        this.setupPreDraw();
     }
 
 
@@ -138,19 +133,13 @@ export class foHandle3D extends foHandle {
     };
 
     getMatrix() {
-        if (this._matrix === undefined) {
-            this._matrix = new Matrix3();
-            let delta = this.size / 2;
-            //this._matrix.appendTransform(this.x, this.y, 1, 1, 0, 0, 0, delta, delta);
-        }
-        return this._matrix;
+        return this.mesh.matrix;
     };
 
     getInvMatrix() {
-        // if (this._invMatrix === undefined) {
-        //     this._invMatrix = this.getMatrix().invertCopy();
-        // }
-        return this._invMatrix;
+        let mat = this.getMatrix();
+        mat = mat.getInverse(mat);
+        return mat;
     };
 
     localToGlobal(x: number, y: number, pt?: cPoint3D) {
@@ -206,7 +195,7 @@ export class foHandle3D extends foHandle {
         let preDraw = (screen: Screen3D) => {
             let mesh = this.mesh;
             if (mesh) {
- 
+                mesh.name = this.myGuid;
                 let parent = this.myParent() as foGlyph3D;
                 if ( parent && parent.hasMesh ) {
                     parent.mesh.add(mesh)
@@ -229,8 +218,8 @@ export class foHandle3D extends foHandle {
     preDraw3D: (screen: Screen3D) => void;
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
+        if (!this.hasMesh) return;
         let obj = this.mesh;
-        if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
         //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         //make changes that support animation here

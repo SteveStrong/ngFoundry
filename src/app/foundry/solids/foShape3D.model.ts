@@ -53,11 +53,14 @@ export class foShape3D extends foGlyph3D {
     }
 
     protected toJson(): any {
-        let list = this.connectionPoints.map(item => {
-            return item.toJson();
-        })
+        if ( !this._connectionPoints) {
+            return super.toJson();
+        }
+
         return Tools.mixin(super.toJson(), {
-            list: list
+            list: this.connectionPoints.map(item => {
+                return item.toJson();
+            })
         });
     }
 

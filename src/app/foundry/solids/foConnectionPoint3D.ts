@@ -12,21 +12,18 @@ export class foConnectionPoint3D extends foHandle3D {
     protected _angleX: number;
     get angleX(): number { return this._angleX || 0.0; }
     set angleX(value: number) {
-        this.smash();
         this._angleX = value;
     }
 
     protected _angleY: number;
     get angleY(): number { return this._angleY || 0.0; }
     set angleY(value: number) {
-        this.smash();
         this._angleY = value;
     }
 
     protected _angleZ: number;
     get angleZ(): number { return this._angleZ || 0.0; }
     set angleZ(value: number) {
-        this.smash();
         this._angleZ = value;
     }
 

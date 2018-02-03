@@ -7,7 +7,7 @@ import { foNode } from "../foNode.model";
 import { foObject } from "../foObject.model";
 
 import { Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial } from 'three';
-
+import { Screen3D } from "./threeDriver";
 
 export class foText3D extends foGlyph3D {
     public fontURL: string;
@@ -38,6 +38,16 @@ export class foText3D extends foGlyph3D {
       return (this.fontSize || 12);
     }
   
+    
+    asyncFontLoader() {
+      let self = this;
+      let url = this.fontURL || 'assets/fonts/helvetiker_regular.typeface.json';
+      new FontLoader().load(url, (font: Font) => {
+        self.font = font;
+        self.setupPreDraw();
+      });
+  }
+
     geometry = (spec?: any): Geometry => {
       if (!this.font) return undefined;
   
@@ -60,17 +70,36 @@ export class foText3D extends foGlyph3D {
       return new MeshPhongMaterial(props);
     }
   
-  
-    //deep hook for syncing matrix2d with geometry 
-    public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
-      let self = this;
-      let url = this.fontURL || 'assets/fonts/helvetiker_regular.typeface.json';
-      new FontLoader().load(url, (font: Font) => {
-        self.font = font;
-        self.smash();
-      });
-      return this;
-    };
-  
+    setupPreDraw() {
+
+      let preDraw = (screen: Screen3D) => { 
+          this.preDraw3D = undefined;
+
+          if ( !this.font) {
+              this.asyncFontLoader()
+          } else {
+              let mesh = this.mesh;
+              mesh.name = this.myGuid;
+              let parent = this.myParent() as foGlyph3D;
+              if ( parent && parent.hasMesh ) {
+                  parent.mesh.add(mesh)
+              } else {
+                  screen.addToScene(mesh);
+              }
+          }
+               
+      }
+
+      this.preDraw3D = preDraw;
+  }
+
+  //mesh might be loading...
+  draw3D = (screen: Screen3D, deep: boolean = true) => {
+      if (!this.hasMesh) return;
+      let obj = this.mesh;
+      obj.position.set(this.x, this.y, this.z);
+      obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+  };
+
   
   }
