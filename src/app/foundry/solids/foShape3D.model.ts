@@ -204,6 +204,7 @@ export class foShape3D extends foGlyph3D {
             { x: -w, y: 0, z: 0, myName: shape3DNames.right },
             { x: 0, y: 0, z: d, myName: shape3DNames.front },
             { x: 0, y: 0, z: -d, myName: shape3DNames.back },
+            { x: 0, y: 0, z: 0, myName: shape3DNames.center },
         ];
 
         return this.generateConnectionPoints(spec);
