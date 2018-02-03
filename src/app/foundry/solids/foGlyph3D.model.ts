@@ -1,4 +1,4 @@
-import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
 import { Tools } from '../foTools'
 import { cPoint3D } from './foGeometry3D';
@@ -133,7 +133,7 @@ export class foGlyph3D extends foGlyph {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
-            this.obj3D.position.set(this.x, this.y, this.z)
+            this.mesh.position.set(this.x, this.y, this.z)
             Lifecycle.dropped(this, this.getLocation());
         }
         return this;
@@ -173,35 +173,29 @@ export class foGlyph3D extends foGlyph {
         return new MeshBasicMaterial(props);
     }
 
+    //children in the model map to children of a mesh
+    //https://bl.ocks.org/mpmckenna8/e0e3a8f79c711b29c55f
     protected _mesh: Mesh;
     get mesh(): Mesh {
         if (!this._mesh) {
             let geom = this.geometry()
             let mat = this.material()
             this._mesh = (geom && mat) && new Mesh(geom, this.material());
+            this._mesh.name = this.myGuid;
         }
         return this._mesh;
     }
     set mesh(value: Mesh) { this._mesh = value; }
-
-
-    protected _obj3D: Object3D;
-    get obj3D(): Object3D {
-        if (!this._obj3D && this.mesh) {
-            this._obj3D = new Object3D();
-            this._obj3D.name = this.myGuid;
-            this._obj3D.add(this.mesh);
-            this._obj3D.position.set(this.x, this.y, this.z);
-
-            let myParent = this.myParent() as foGlyph3D;
-            let parentObj3D = myParent && myParent.obj3D;
-            parentObj3D && parentObj3D.add(this._obj3D);
-        }
-        return this._obj3D;
+    hasMesh(): boolean {
+        return this._mesh != undefined
     }
-    set obj3D(value: Object3D) { this.obj3D = value; }
-    hasObj3D(): boolean {
-        return this._obj3D != undefined
+    clearMesh() {
+        if ( !this._mesh) return;
+        let parent = this.mesh.parent;
+        if (parent) {
+            parent.remove(this.mesh);
+        }
+        this._mesh == undefined
     }
 
 
@@ -222,21 +216,19 @@ export class foGlyph3D extends foGlyph {
     setupPreDraw() {
 
         let preDraw = (screen: Screen3D) => {
-            let parent = this.myParent() as foGlyph3D;
-            if (this._obj3D) {
-                this._obj3D.remove(this._mesh);
-                parent.hasObj3D() && parent.obj3D.remove(this._obj3D);
+            let mesh = this.mesh;
+            if (mesh) {
+ 
+                let parent = this.myParent() as foGlyph3D;
+                if ( parent && parent.hasMesh ) {
+                    parent.mesh.add(mesh)
+                } else {
+                    screen.addToScene(mesh);
+                }
 
-                screen.removeFromScene(this._obj3D);
-
-                this._obj3D = this._mesh = undefined;
-            }
-            let obj3D = this.obj3D;
-            if (obj3D) {
-                obj3D.position.set(this.x, this.y, this.z);
-                obj3D.rotation.set(this.angleX, this.angleY, this.angleZ);
-
-                screen.addToScene(obj3D);
+                mesh.position.set(this.x, this.y, this.z);
+                mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
+               
                 this.preDraw3D = undefined;
             }
 
@@ -248,7 +240,7 @@ export class foGlyph3D extends foGlyph {
     preDraw3D: (screen: Screen3D) => void;
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
-        let obj = this.obj3D;
+        let obj = this.mesh;
         if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
@@ -275,7 +267,7 @@ export class foGlyph3D extends foGlyph {
     }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        this.obj3D.position.set(this.x, this.y, this.z);
+        this.mesh.position.set(this.x, this.y, this.z);
         return this;
     }
 
