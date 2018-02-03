@@ -215,7 +215,8 @@ export class foHandle3D extends foHandle {
                     screen.addToScene(mesh);
                 }
 
-                mesh.position.set(this.x, this.y, this.z);
+                //should happen during draw
+                //mesh.position.set(this.x, this.y, this.z);
                
                 this.preDraw3D = undefined;
             }

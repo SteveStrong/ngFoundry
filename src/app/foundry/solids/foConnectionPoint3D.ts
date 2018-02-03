@@ -55,7 +55,7 @@ export class foConnectionPoint3D extends foHandle3D {
     }
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
-        let obj = this.obj3D;
+        let obj = this.mesh;
         if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
         //obj.rotation.set(this.angleX, this.angleY, this.angleZ);

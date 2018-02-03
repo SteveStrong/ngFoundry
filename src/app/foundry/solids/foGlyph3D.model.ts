@@ -226,8 +226,9 @@ export class foGlyph3D extends foGlyph {
                     screen.addToScene(mesh);
                 }
 
-                mesh.position.set(this.x, this.y, this.z);
-                mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
+                //should hapen during draw
+                //mesh.position.set(this.x, this.y, this.z);
+                //mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
                
                 this.preDraw3D = undefined;
             }
