@@ -38,8 +38,8 @@ export class foPipe3D extends foShape3D {
     protected _y2: number;
     protected _z2: number;
 
-    protected _segments:number;
-    protected _radiusSegments:number;
+    protected _segments: number;
+    protected _radiusSegments: number;
 
     get segments(): number { return this._segments || 10; }
     set segments(value: number) {
@@ -92,9 +92,9 @@ export class foPipe3D extends foShape3D {
         }
         return this._width || 0.0;
     }
-    set width(value: number) { 
+    set width(value: number) {
         value != this._width && this.clearMesh();
-        this._width = value; 
+        this._width = value;
     }
 
     get height(): number { return this._height || 0.0; }
@@ -128,7 +128,7 @@ export class foPipe3D extends foShape3D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
-     }
+    }
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
@@ -142,11 +142,21 @@ export class foPipe3D extends foShape3D {
         });
     }
 
+    enforceStart(glue: foGlue3D) {
+        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget();
+        target && this.startAt(target.getGlobalPosition())
+    }
+
     public startAt(point: Vector3) {
         this.startX = point.x;
         this.startY = point.y;
         this.startZ = point.z;
         this.recomputeCenter();
+    }
+
+    enforceFinish(glue: foGlue3D) {
+        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget();
+        target && this.finishAt(target.getGlobalPosition())
     }
 
     public finishAt(point: Vector3) {
@@ -228,9 +238,9 @@ export class foPipe3D extends foShape3D {
 
     public establishGlue(name: string, target: foShape3D, handleName?: string) {
         let binding = {}
-        binding[pipe3DNames.start] = this.startAt.bind(this);
-        binding[pipe3DNames.finish] = this.finishAt.bind(this);
-     
+        binding[pipe3DNames.start] = this.enforceStart.bind(this);
+        binding[pipe3DNames.finish] = this.enforceFinish.bind(this);
+
         let glue = this.getGlue(name)
         glue.glueTo(target, handleName);
         glue.doTargetMoveProxy = binding[name];
@@ -253,7 +263,6 @@ export class foPipe3D extends foShape3D {
     public unglueStart() {
         let glue = this.dissolveGlue(pipe3DNames.start);
         if (glue) {
-            glue.doTargetMoveProxy = undefined;
             this.enforceGlue();
         }
         return glue;
@@ -262,7 +271,6 @@ export class foPipe3D extends foShape3D {
     public unglueFinish() {
         let glue = this.dissolveGlue(pipe3DNames.finish);
         if (glue) {
-            glue.doTargetMoveProxy = undefined;
             this.enforceGlue();
         }
         return glue;
@@ -348,6 +356,7 @@ export class foPipe3D extends foShape3D {
 
 
 import { RuntimeType } from '../foRuntimeType';
+import { foGlue3D } from 'app/foundry/solids/foGlue3D';
 RuntimeType.define(foPipe3D);
 
 

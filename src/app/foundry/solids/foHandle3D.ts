@@ -123,16 +123,16 @@ export class foHandle3D extends foHandle {
         return this;
     }
 
-    alignTo(target: foConnectionPoint3D):Vector3 {
+    alignTo(target: foHandle3D): Vector3 {
         //let parentTarget = target.myParent() as foGlyph3D;
         let parent = this.myParent() as foGlyph3D;
 
         let point = target.getGlobalPosition();
         let center = this.getGlobalPosition();
 
-        let distance = point.distanceTo( center );
-        let dist = point.add( center.negate() );
-        if ( distance > 1 ){
+        let distance = point.distanceTo(center);
+        let dist = point.add(center.negate());
+        if (distance > 1) {
             parent.setGlobalPosition(dist);
         }
 

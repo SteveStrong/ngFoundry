@@ -98,11 +98,16 @@ export class foShape3D extends foGlyph3D {
         return this;
     }
 
+    enforceAlignTo(glue: foGlue3D) {
+        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget().getConnectionPoint(shape3DNames.center);
+        let source = glue.sourceHandle ? glue.sourceHandle : glue.mySource().getConnectionPoint(shape3DNames.center);
+        target && source &&  source.alignTo(target)
+    }
+
     enforceGlue() {
         this.afterMeshCreated = () => {
-            let point = this.getGlobalPosition();
             this._glue && this.glue.forEach(item => {
-                item.targetMoved(point);
+                item.targetMovedSyncGlue();
             })
         }
     }
@@ -126,15 +131,9 @@ export class foShape3D extends foGlyph3D {
     }
 
     public establishGlue(name: string, target: foShape3D, handleName?: string) {
-        // let binding = {}
-
-        let con = this.getConnectionPoint(name)
-        let binding = con && con.alignTo.bind(con);
- 
-
         let glue = this.getGlue(name)
         glue.glueTo(target, handleName);
-        glue.doTargetMoveProxy = binding;
+        glue.doTargetMoveProxy = this.enforceAlignTo.bind(this);
         this.enforceGlue();
         return glue;
     }

@@ -18,15 +18,17 @@ export class foGlue3D extends foNode {
     myTarget: ModelRef<foShape3D>;
     mySource: ModelRef<foShape3D>;
 
-    protected _targetHandle: foHandle3D;
-    get targetHandle(): foHandle3D { return this._targetHandle; }
-    set targetHandle(value: foHandle3D) {
-        this._targetHandle = value;
-    }
+
 
     get sourceName(): string { return this.myName; }
     set sourceName(value: string) {
         this.myName = value;
+    }
+
+    protected _sourceHandle: foHandle3D;
+    get sourceHandle(): foHandle3D { return this._sourceHandle; }
+    set sourceHandle(value: foHandle3D) {
+        this._sourceHandle = value;
     }
 
     protected _targetName: string;
@@ -35,8 +37,14 @@ export class foGlue3D extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (loc: Vector3) => void;
-    public doTargetMoveProxy: (loc: Vector3) => void;
+    protected _targetHandle: foHandle3D;
+    get targetHandle(): foHandle3D { return this._targetHandle; }
+    set targetHandle(value: foHandle3D) {
+        this._targetHandle = value;
+    }
+
+    public doSourceMoveProxy: (glue:foGlue3D) => void;
+    public doTargetMoveProxy: (glue:foGlue3D) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -59,6 +67,9 @@ export class foGlue3D extends foNode {
         this.mySource = () => { return <foShape3D>this.myParent(); };
         this.targetName = handleName;
         this.targetHandle = target.getConnectionPoint(handleName);
+ 
+        //my name is the source name
+        this.sourceHandle = target.getConnectionPoint(this.sourceName);
         target.addGlue(this);
 
         Lifecycle.glued(this, this.signature);
@@ -76,13 +87,12 @@ export class foGlue3D extends foNode {
         return this;
     }
 
-    sourceMoved(loc: Vector3) {
-        this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
+    sourceMovedSyncGlue() {
+        this.doSourceMoveProxy && this.doSourceMoveProxy(this);
     }
 
-    targetMoved(loc: Vector3) {
-        let pnt = this.targetHandle ? this.targetHandle.getGlobalPosition() : loc;
-        this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
+    targetMovedSyncGlue() {
+        this.doTargetMoveProxy && this.doTargetMoveProxy(this);
     }
 
 
