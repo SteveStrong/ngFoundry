@@ -8,7 +8,7 @@ export class cPoint2D extends Vector2 implements iPoint2D {
     public myName: string;
 
     constructor(x: number = 0, y: number = 0, name?: string) {
-        super(x, y)
+        super(x, y);
         this.myName = name;
     }
 

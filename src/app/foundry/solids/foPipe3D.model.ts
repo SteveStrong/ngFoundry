@@ -9,7 +9,7 @@ import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
 import { foShape3D } from './foShape3D.model'
-import { LineCurve3, Vector3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3 } from 'three';
+import { LineCurve3, Vector3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3, Mesh } from 'three';
 
 import { foHandle3D } from './foHandle3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -89,11 +89,13 @@ export class foPipe3D extends foShape3D {
         if (!this._width) {
             let { length } = this.angleDistance();
             this._width = length;
-            this.clearMesh();
         }
         return this._width || 0.0;
     }
-    set width(value: number) { this._width = value; }
+    set width(value: number) { 
+        value != this._width && this.clearMesh();
+        this._width = value; 
+    }
 
     get height(): number { return this._height || 0.0; }
     set height(value: number) {
@@ -181,8 +183,8 @@ export class foPipe3D extends foShape3D {
     //https://threejs.org/docs/#api/geometries/TubeGeometry
 
     geometry = (spec?: any): Geometry => {
-        let begin = this.begin().asVector();
-        let end = this.end().asVector();
+        let begin = this.begin();
+        let end = this.end();
         let curve = new LineCurve3(begin, end)
         let radius = (this.height + this.depth) / 2;
         return new TubeGeometry(curve, this.segments, radius, this.radiusSegments, false);
@@ -197,6 +199,30 @@ export class foPipe3D extends foShape3D {
         }, spec)
         return new MeshBasicMaterial(props);
     }
+
+    // get mesh(): Mesh {
+    //     if (!this._mesh) {
+    //         let geom = this.geometry()
+    //         let mat = this.material()
+    //         let obj = (geom && mat) && new Mesh(geom, mat);
+    //         if (obj) {
+    //             obj.position.set(this.x, this.y, this.z);
+    //             // obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+    //             this._mesh = obj;
+    //         }
+
+    //     }
+    //     return this._mesh;
+    // }
+    // clearMesh() {
+    //     if (!this._mesh) return;
+    //     let parent = this.mesh.parent;
+    //     if (parent) {
+    //         parent.remove(this.mesh);
+    //     }
+    //     this._mesh = undefined;
+    //     this.setupPreDraw();
+    // }
 
 
     private angleDistance(): any {
@@ -217,18 +243,21 @@ export class foPipe3D extends foShape3D {
 
     public glueStartTo(target: foShape3D, handleName?: string) {
         let glue = this.glueConnectionPoints(target, pipe3DNames.start, handleName);
+        this.enforceGlue();
         return glue;
     }
 
     public glueFinishTo(target: foShape3D, handleName?: string) {
         let glue = this.glueConnectionPoints(target, pipe3DNames.finish, handleName);
+        this.enforceGlue();
         return glue;
     }
 
     public unglueStart() {
         let glue = this.dissolveGlue(pipe3DNames.start);
         if (glue) {
-            glue.doTargetMoveProxy = undefined;;
+            glue.doTargetMoveProxy = undefined;
+            this.enforceGlue();
         }
         return glue;
     }
@@ -236,29 +265,30 @@ export class foPipe3D extends foShape3D {
     public unglueFinish() {
         let glue = this.dissolveGlue(pipe3DNames.finish);
         if (glue) {
-            glue.doTargetMoveProxy = undefined;;
+            glue.doTargetMoveProxy = undefined;
+            this.enforceGlue();
         }
         return glue;
     }
 
-    public initialize(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
-        let { x: cX, y: cY, z: cZ } = this.center();
+    // public initialize(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+    //     let { x: cX, y: cY, z: cZ } = this.center();
 
-        this.x = Number.isNaN(x) ? cX : x;
-        this.y = Number.isNaN(y) ? cY : y;
-        this.z = Number.isNaN(z) ? cZ : z;
+    //     this.x = Number.isNaN(x) ? cX : x;
+    //     this.y = Number.isNaN(y) ? cY : y;
+    //     this.z = Number.isNaN(z) ? cZ : z;
 
-        let mtx = new Matrix3();
-        //mtx.set(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
-        // let start = mtx.transformPoint(this.startX, this.startY);
-        // let finish = mtx.transformPoint(this.finishX, this.finishY);
-        // this.startX = start.x;
-        // this.startY = start.y;
-        // this.finishX = finish.x;
-        // this.finishY = finish.y;
-        this.width = 0;
-        return this;
-    }
+    //     let mtx = new Matrix3();
+    //     //mtx.set(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
+    //     // let start = mtx.transformPoint(this.startX, this.startY);
+    //     // let finish = mtx.transformPoint(this.finishX, this.finishY);
+    //     // this.startX = start.x;
+    //     // this.startY = start.y;
+    //     // this.finishX = finish.x;
+    //     // this.finishY = finish.y;
+    //     this.width = 0;
+    //     return this;
+    // }
 
     public createHandles(): foCollection<foHandle3D> {
 
@@ -279,28 +309,28 @@ export class foPipe3D extends foShape3D {
         return this.generateConnectionPoints([]);
     }
 
-    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
-        let changed = super.didLocationChange(x, y, z);
-        let { x: cX, y: cY, z: cZ } = this.center();
-        if (!Number.isNaN(x) && this.x != cX) {
-            changed = true;
-        };
-        if (!Number.isNaN(y) && this.y != cY) {
-            changed = true;
-        };
-        if (!Number.isNaN(z) && this.z != cZ) {
-            changed = true;
-        };
-        return changed;
-    }
+    // public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+    //     let changed = super.didLocationChange(x, y, z);
+    //     let { x: cX, y: cY, z: cZ } = this.center();
+    //     if (!Number.isNaN(x) && this.x != cX) {
+    //         changed = true;
+    //     };
+    //     if (!Number.isNaN(y) && this.y != cY) {
+    //         changed = true;
+    //     };
+    //     if (!Number.isNaN(z) && this.z != cZ) {
+    //         changed = true;
+    //     };
+    //     return changed;
+    // }
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
-        if (this.didLocationChange(x, y, z)) {
-            this.initialize(x, y, z);
-            Lifecycle.dropped(this, this.getLocation());
-        }
-        return this;
-    }
+    // public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+    //     if (this.didLocationChange(x, y, z)) {
+    //         this.initialize(x, y, z);
+    //         Lifecycle.dropped(this, this.getLocation());
+    //     }
+    //     return this;
+    // }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         this.initialize(x, y, z);

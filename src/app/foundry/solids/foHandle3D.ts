@@ -100,7 +100,7 @@ export class foHandle3D extends foHandle {
         if (parent) {
             parent.remove(this.mesh);
         }
-        this._mesh == undefined;
+        this._mesh = undefined;
         this.setupPreDraw();
     }
 

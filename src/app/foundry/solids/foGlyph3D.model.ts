@@ -199,7 +199,7 @@ export class foGlyph3D extends foGlyph {
         if (parent) {
             parent.remove(this.mesh);
         }
-        this._mesh == undefined;
+        this._mesh = undefined;
         this.setupPreDraw();
     }
 

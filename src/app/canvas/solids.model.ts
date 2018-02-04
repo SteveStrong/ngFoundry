@@ -314,11 +314,12 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
   });
   SolidStencil.isVisible = true;
 
-  let wire1 = cord.newInstance().pushTo(results);
+  let wire1 = cord.newInstance({myName:'wire1'}).pushTo(results);
   wire1.glueStartTo(shape1, shape3DNames.right);
   wire1.glueFinishTo(shape2, shape3DNames.left);
 
   let wire2 = cord.newInstance({
+    myName:'wire2',
     color: 'green',
     opacity: .4,
     height: 15,
@@ -329,8 +330,9 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
 
 
   let wire3 = cord.newInstance({
+    myName:'wire3',
     color: 'blue',
-    opacity: .4,
+    opacity: .7,
     height: 40
   }).pushTo(results) as foPipe3D;
 

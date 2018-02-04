@@ -66,15 +66,10 @@ export class foShape3D extends foGlyph3D {
     }
 
     private setBogas(point: iPoint3D) {
-        let { x: cX, y: cY, z: cZ } = this.center();
-        this.x = 0 * cX;
-        this.y = 0 * cY;
-        this.z = 0 * cZ;
-        this.width = 0;
     }
 
     protected toJson(): any {
-        if ( !this._connectionPoints) {
+        if (!this._connectionPoints) {
             return super.toJson();
         }
 
@@ -96,10 +91,8 @@ export class foShape3D extends foGlyph3D {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
+            this.enforceGlue();
             let point = this.getGlobalPosition();
-            this._glue && this.glue.forEach(item => {
-                item.targetMoved(point);
-            })
             Lifecycle.dropped(this, point);
         }
         return this;
@@ -107,15 +100,21 @@ export class foShape3D extends foGlyph3D {
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
+            this.enforceGlue();
             let point = this.getGlobalPosition();
-            this._glue && this.glue.forEach(item => {
-                item.targetMoved(point);
-            })
             Lifecycle.moved(this, point);
         }
         return this;
     }
 
+    enforceGlue() {
+        this.afterMeshCreated = () => {
+            let point = this.getGlobalPosition();
+            this._glue && this.glue.forEach(item => {
+                item.targetMoved(point);
+            })
+        }
+    }
 
 
     public pinLocation() {
