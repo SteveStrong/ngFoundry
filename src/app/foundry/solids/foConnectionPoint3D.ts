@@ -53,7 +53,6 @@ export class foConnectionPoint3D extends foHandle3D {
                 obj.rotation.set(this.angleX, this.angleY, this.angleZ);
                 this._mesh = obj;
             }
-
         }
         return this._mesh;
     }
@@ -78,11 +77,7 @@ export class foConnectionPoint3D extends foHandle3D {
         let obj = this.mesh;
         if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
-        //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
-        //make changes that support animation here
-        //let rot = this.mesh.rotation;
-        // rot.x += 0.01;
-        // rot.y += 0.02;
+        obj.rotation.set(this.angleX, this.angleY, this.angleZ);
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {

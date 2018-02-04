@@ -46,33 +46,35 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
   let main = def.newInstance()
     .pushTo(results)
 
-  // main.mesh.updateMatrixWorld( true );
-  // let mat1 = main.mesh.matrixWorld;
-
   main.dropAt(300, 200, 100);
-  // main.mesh.updateMatrixWorld( true );
 
-  // //https://github.com/mrdoob/three.js/issues/652
-  // let childObject = main.mesh;
-  // childObject.matrixAutoUpdate && childObject.updateMatrix();
-  // let xxx = childObject.matrixWorld.multiplyVector3( new Vector3() )
 
-  // let mat2 = main.mesh.matrixWorld;
 
-    let corner = def.newInstance({
-      width: 30,
-      height:30,
-      depth:30,
-      color: 'blue'
-    })
-    .pushTo(results)
+  let corner1 = def.newInstance({
+    width: 30,
+    height: 30,
+    depth: 30,
+    color: 'blue'
+  }).pushTo(results);
 
-    corner.afterMeshCreated = () => {
-      let loc = main.getConnectionPoint('front');
-      let pt = loc.getGlobalPosition();
-      corner.setGlobalPosition(pt)
-    }
-    //corner.setGlobalPosition(main.getGlobalPosition());
+  corner1.afterMeshCreated = () => {
+    let loc = main.getConnectionPoint('front');
+    let pt = loc.getGlobalPosition();
+    corner1.setGlobalPosition(pt)
+  }
+
+  let corner2 = def.newInstance({
+    width: 160,
+    height: 160,
+    depth: 160,
+    color: 'yellow'
+  }).pushTo(results)
+
+  corner2.afterMeshCreated = () => {
+    let top = main.getConnectionPoint('top');
+    let bottom = corner2.getConnectionPoint('bottom');
+    bottom.alignTo(top);
+  }
 
 
 
@@ -90,13 +92,13 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
     width: 200,
     height: 150,
     depth: 100,
-    x: function(){
+    x: function () {
       return this.hasParent ? 0.5 * (this.width + this.myParent().width) : 0;
     },
-    y: function(){
+    y: function () {
       return this.hasParent ? 0.5 * (this.height - this.myParent().height) : 0;
     },
-    z: function(){
+    z: function () {
       return this.hasParent ? 0.5 * (this.depth - this.myParent().depth) : 0;
     }
   });
@@ -112,13 +114,13 @@ SolidStencil.factory<foShape3D>('stack', (spec?: any) => {
     let next = def.newInstance({
       color: colors[i],
 
-      width: function () { 
+      width: function () {
         return this.hasParent ? this.myParent().width * .7 : 100;
-      }, 
-      height: function () { 
+      },
+      height: function () {
         return this.hasParent ? this.myParent().height * 1.2 : 100;
       },
-      depth: function () { 
+      depth: function () {
         return this.hasParent ? this.myParent().depth * .8 : 100;
       },
       // x: function(){
@@ -167,19 +169,19 @@ SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
   for (let i = 0; i < colors.length; i++) {
     let next = def.newInstance({
       color: colors[i],
-      myName: function() { return this.color; },
-      width: function () { 
+      myName: function () { return this.color; },
+      width: function () {
         return this.hasParent ? this.myParent().width * .7 : 100;
-      }, 
-      height: function () { 
+      },
+      height: function () {
         return this.hasParent ? this.myParent().height * 1.2 : 100;
       },
-      depth: function () { 
+      depth: function () {
         return this.hasParent ? this.myParent().depth * .8 : 100;
       },
     });
 
-   // next.myName = next.color;
+    // next.myName = next.color;
     last = last.addSubcomponent(next) as foShape3D;
     next.glueConnectionPoints(last, shape3DNames.bottom, shape3DNames.top)
   }

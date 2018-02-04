@@ -15,6 +15,7 @@ import { BroadcastChange } from '../foChange';
 import { foHandle } from '../foHandle';
 import { Screen3D } from './threeDriver';
 import { foGlue3D } from 'app/foundry/solids/foGlue3D';
+import { foConnectionPoint3D } from 'app/foundry/solids/foConnectionPoint3D';
 
 export class foHandle3D extends foHandle {
 
@@ -53,9 +54,6 @@ export class foHandle3D extends foHandle {
         });
     }
 
-    smash() {
-        this.setupPreDraw();
-    }
 
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
@@ -85,10 +83,10 @@ export class foHandle3D extends foHandle {
             let geom = this.geometry()
             let mat = this.material()
             let obj = (geom && mat) && new Mesh(geom, mat);
-            if ( obj){
+            if (obj) {
                 obj.position.set(this.x, this.y, this.z);
                 this._mesh = obj;
-            }          
+            }
         }
         return this._mesh;
     }
@@ -97,7 +95,7 @@ export class foHandle3D extends foHandle {
         return this._mesh != undefined
     }
     clearMesh() {
-        if ( !this._mesh) return;
+        if (!this._mesh) return;
         let parent = this.mesh.parent;
         if (parent) {
             parent.remove(this.mesh);
@@ -125,22 +123,38 @@ export class foHandle3D extends foHandle {
         return this;
     }
 
-    getGlobalMatrix():Matrix4 {
+    alignTo(target: foConnectionPoint3D):Vector3 {
+        //let parentTarget = target.myParent() as foGlyph3D;
+        let parent = this.myParent() as foGlyph3D;
+
+        let point = target.getGlobalPosition();
+        let center = this.getGlobalPosition();
+
+        let distance = point.distanceTo( center );
+        let dist = point.add( center.negate() );
+        if ( distance > 1 ){
+            parent.setGlobalPosition(dist);
+        }
+
+        return dist;
+    }
+
+    getGlobalMatrix(): Matrix4 {
         let mat = this.mesh.matrixWorld;
         return mat;
     };
 
-    getGlobalInvMatrix():Matrix4 {
+    getGlobalInvMatrix(): Matrix4 {
         let mat = this.getGlobalMatrix();
         mat = mat.getInverse(mat);
         return mat;
     };
 
-    getMatrix():Matrix4 {
+    getMatrix(): Matrix4 {
         return this.mesh.matrix;
     };
 
-    getInvMatrix():Matrix4 {
+    getInvMatrix(): Matrix4 {
         let mat = this.getMatrix();
         mat = mat.getInverse(mat);
         return mat;
@@ -173,7 +187,7 @@ export class foHandle3D extends foHandle {
 
 
 
-    
+
     public getOffset = (loc: iPoint3D): iPoint3D => {
         let x = this.x;
         let y = this.y;
@@ -207,7 +221,7 @@ export class foHandle3D extends foHandle {
             if (mesh) {
                 mesh.name = this.myGuid;
                 let parent = this.myParent() as foGlyph3D;
-                if ( parent && parent.hasMesh ) {
+                if (parent && parent.hasMesh) {
                     parent.mesh.add(mesh)
                 } else {
                     //this should NEVER be the case
@@ -216,10 +230,9 @@ export class foHandle3D extends foHandle {
 
                 //should happen during draw
                 //mesh.position.set(this.x, this.y, this.z);
-               
+
                 this.preDraw3D = undefined;
             }
-
         }
 
         this.preDraw3D = preDraw;
@@ -230,12 +243,7 @@ export class foHandle3D extends foHandle {
     draw3D = (screen: Screen3D, deep: boolean = true) => {
         if (!this.hasMesh) return;
         let obj = this.mesh;
-        //obj.position.set(this.x, this.y, this.z);
-        //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
-        //make changes that support animation here
-        //let rot = this.mesh.rotation;
-        // rot.x += 0.01;
-        // rot.y += 0.02;
+        obj.position.set(this.x, this.y, this.z);
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
