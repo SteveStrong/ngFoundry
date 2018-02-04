@@ -69,9 +69,10 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
       result = list[0];
       Toast.info("Created", names.join(','))
     } else {
-      result = this.knowledge.newInstance().defaultName();
 
+      result = this.knowledge.newInstance({},[],).defaultName();
       let target = result.is2D() ? page : stage;
+
         result.dropAt(target.centerX + result.width/2, target.centerY, target.centerZ + result.depth/2)
         .addAsSubcomponent(target)
   

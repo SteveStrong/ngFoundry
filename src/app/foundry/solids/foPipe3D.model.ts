@@ -128,9 +128,7 @@ export class foPipe3D extends foShape3D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
-        this[pipe3DNames.start] = this.setStart.bind(this);
-        this[pipe3DNames.finish] = this.setFinish.bind(this);
-    }
+     }
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
@@ -166,19 +164,7 @@ export class foPipe3D extends foShape3D {
         this.width = 0;
     }
 
-    private setStart(point: iPoint3D) {
-        this.startX = point.x;
-        this.startY = point.y;
-        this.startZ = point.z;
-        this.recomputeCenter();
-    }
 
-    private setFinish(point: iPoint3D) {
-        this.finishX = point.x;
-        this.finishY = point.y;
-        this.finishZ = point.z;
-        this.recomputeCenter();
-    }
 
     //https://threejs.org/docs/#api/geometries/TubeGeometry
 
@@ -240,6 +226,17 @@ export class foPipe3D extends foShape3D {
         };
     }
 
+    public establishGlue(name: string, target: foShape3D, handleName?: string) {
+        let binding = {}
+        binding[pipe3DNames.start] = this.startAt.bind(this);
+        binding[pipe3DNames.finish] = this.finishAt.bind(this);
+     
+        let glue = this.getGlue(name)
+        glue.glueTo(target, handleName);
+        glue.doTargetMoveProxy = binding[name];
+        this.enforceGlue();
+        return glue;
+    }
 
     public glueStartTo(target: foShape3D, handleName?: string) {
         let glue = this.glueConnectionPoints(target, pipe3DNames.start, handleName);
@@ -300,7 +297,7 @@ export class foPipe3D extends foShape3D {
         Tools.mixin(end, { size: 20 });
         Tools.mixin(center, { size: 20 });
         let spec = [begin, center, end];
-        let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
+        let proxy = [this.startAt.bind(this), this.moveTo.bind(this), this.finishAt.bind(this)];
 
         return this.generateHandles(spec, proxy);
     }
