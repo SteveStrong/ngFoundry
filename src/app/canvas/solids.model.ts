@@ -36,21 +36,14 @@ SolidStencil.define<foShape3D>('box', foShape3D, {
   height: 400,
   depth: 900
 }).onCreation( obj => {
-  let subBox = SolidStencil.define<foShape3D>('subbox',foShape3D)
-  let corner3 = subBox.newInstance({
+  SolidStencil.impermanent<foShape3D>('subbox',foShape3D)
+  .newInstance({
     width: 160,
     height: 160,
     depth: 160,
     color: 'green'
   }).addAsSubcomponent(obj);
 
-  corner3.glueConnectionPoints(obj, shape3DNames.bottom, shape3DNames.top)
-
-  // corner3.afterMeshCreated = () => {
-  //   let top = main.getConnectionPoint('back');
-  //   let bottom = corner3.getConnectionPoint('left');
-  //   bottom.alignTo(top);
-  // }
 })
 
 SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
@@ -63,6 +56,60 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
     .pushTo(results)
 
   main.dropAt(300, 200, 100);
+
+  let corner1 = def.newInstance({
+    width: 30,
+    height: 30,
+    depth: 30,
+    color: 'blue'
+  }).pushTo(results);
+
+  corner1.afterMeshCreated = () => {
+    let loc = main.getConnectionPoint('front');
+    let pt = loc.getGlobalPosition();
+    corner1.setGlobalPosition(pt)
+  }
+
+  let corner2 = def.newInstance({
+    width: 160,
+    height: 160,
+    depth: 160,
+    color: 'yellow'
+  }).pushTo(results)
+
+  corner2.afterMeshCreated = () => {
+    let top = main.getConnectionPoint('top');
+    let bottom = corner2.getConnectionPoint('bottom');
+    bottom.alignTo(top);
+  }
+
+  let corner3 = def.newInstance({
+    width: 160,
+    height: 160,
+    depth: 160,
+    color: 'green'
+  }).pushTo(results)
+
+  corner3.afterMeshCreated = () => {
+    let top = main.getConnectionPoint('back');
+    let bottom = corner3.getConnectionPoint('left');
+    bottom.alignTo(top);
+  }
+
+  return results;
+
+});
+
+SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
+
+  let results = Array<foShape3D>();
+
+  let def = SolidStencil.find<foShape3D>('box');
+
+  let main = def.newInstance()
+    .pushTo(results)
+
+  main.dropAt(-300, -200, -100);
 
   let corner1 = def.newInstance({
     width: 30,

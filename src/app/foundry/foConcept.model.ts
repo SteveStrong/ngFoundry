@@ -63,8 +63,6 @@ export class foConcept<T extends foNode> extends foKnowledge {
         super(properties);
     }
 
-    is2D() { return false; }
-    is3D() { return false; }
 
     definePrimitive(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         RuntimeType.define(type);
