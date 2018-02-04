@@ -1,5 +1,7 @@
 
 import { iPoint2D, iRect, iBox, iMargin, iFrame } from '../foInterface';
+import { Vector2 } from 'three';
+export { Vector2, Matrix3 } from 'three';
 
 export class cPoint2D implements iPoint2D {
     public x: number;
@@ -10,6 +12,10 @@ export class cPoint2D implements iPoint2D {
         this.x = x;
         this.y = y;
         this.myName = name;
+    }
+
+    asVector():Vector2 {
+        return new Vector2(this.x, this.y)
     }
 
     set(x: number = 0, y: number = 0) {
@@ -197,6 +203,7 @@ export class cMargin implements iMargin {
         return this.top + this.bottom;
     }
 }
+
 export class cBox extends cRect implements iBox {
 
     constructor(x: number, y: number, width: number, height: number, name?: string) {

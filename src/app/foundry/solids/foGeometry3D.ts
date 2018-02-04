@@ -1,6 +1,7 @@
 
-import { iPoint3D,  } from '../foInterface';
+import { iPoint3D } from '../foInterface';
 import { Vector3 } from 'three';
+export { Vector3, Matrix4 } from 'three';
 
 export class cPoint3D implements iPoint3D {
     public x: number;

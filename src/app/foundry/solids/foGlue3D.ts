@@ -1,3 +1,4 @@
+import { Vector3 } from 'three';
 
 import { Tools } from '../foTools';
 import { ModelRef, iPoint3D, iGlueSignature } from '../foInterface'
@@ -34,8 +35,8 @@ export class foGlue3D extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (loc:iPoint3D) => void;
-    public doTargetMoveProxy: (loc:iPoint3D) => void;
+    public doSourceMoveProxy: (loc: Vector3) => void;
+    public doTargetMoveProxy: (loc: Vector3) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -46,7 +47,7 @@ export class foGlue3D extends foNode {
             sourceGuid: this.mySource && this.mySource() && this.mySource().myGuid,
             sourceName: this.sourceName,
             targetGuid: this.myTarget && this.myTarget() && this.myTarget().myGuid,
-            targetName: this.targetName          
+            targetName: this.targetName
         }
     }
 
@@ -67,7 +68,7 @@ export class foGlue3D extends foNode {
     unglue() {
         Lifecycle.unglued(this, this.signature);
         this.myTarget().removeGlue(this);
-  
+
         this.myTarget = undefined;
         this.mySource = undefined;
         this.doSourceMoveProxy = undefined;
@@ -75,12 +76,12 @@ export class foGlue3D extends foNode {
         return this;
     }
 
-    sourceMoved(loc: iPoint3D) {
+    sourceMoved(loc: Vector3) {
         this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
     }
 
-    targetMoved(loc: iPoint3D) {  
-        let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
+    targetMoved(loc: Vector3) {
+        let pnt = this.targetHandle ? this.targetHandle.getGlobalPosition() : loc;
         this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
     }
 
