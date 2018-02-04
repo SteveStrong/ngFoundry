@@ -35,8 +35,16 @@ SolidStencil.define<foShape3D>('box', foShape3D, {
   width: 100,
   height: 400,
   depth: 900
+})
+
+SolidStencil.define<foShape3D>('subbox', foShape3D, {
+  color: 'red',
+  opacity: .5,
+  width: 100,
+  height: 400,
+  depth: 900
 }).onCreation( obj => {
-  SolidStencil.impermanent<foShape3D>('subbox',foShape3D)
+  SolidStencil.impermanent<foShape3D>('empty',foShape3D)
   .newInstance({
     width: 160,
     height: 160,
@@ -59,7 +67,7 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
 
   let corner1 = def.newInstance({
     width: 30,
-    height: 30,
+    height: 130,
     depth: 30,
     color: 'blue'
   }).pushTo(results);
@@ -85,8 +93,8 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
 
   let corner3 = def.newInstance({
     width: 160,
-    height: 160,
-    depth: 160,
+    height: 180,
+    depth: 100,
     color: 'green'
   }).pushTo(results)
 
@@ -113,16 +121,19 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
 
   let corner1 = def.newInstance({
     width: 30,
-    height: 30,
+    height: 130,
     depth: 30,
     color: 'blue'
   }).pushTo(results);
 
-  corner1.afterMeshCreated = () => {
-    let loc = main.getConnectionPoint('front');
-    let pt = loc.getGlobalPosition();
-    corner1.setGlobalPosition(pt)
-  }
+
+  corner1.glueConnectionPoints(main, shape3DNames.center, shape3DNames.front)
+
+  //corner1.afterMeshCreated = () => {
+  //   let loc = main.getConnectionPoint('front');
+  //   let pt = loc.getGlobalPosition();
+  //   corner1.setGlobalPosition(pt)
+  // }
 
   let corner2 = def.newInstance({
     width: 160,
@@ -131,24 +142,30 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
     color: 'yellow'
   }).pushTo(results)
 
-  corner2.afterMeshCreated = () => {
-    let top = main.getConnectionPoint('top');
-    let bottom = corner2.getConnectionPoint('bottom');
-    bottom.alignTo(top);
-  }
+
+  //corner2.glueConnectionPoints(main, shape3DNames.bottom, shape3DNames.top)
+
+
+  // corner2.afterMeshCreated = () => {
+  //   let top = main.getConnectionPoint('top');
+  //   let bottom = corner2.getConnectionPoint('bottom');
+  //   bottom.alignTo(top);
+  // }
 
   let corner3 = def.newInstance({
     width: 160,
-    height: 160,
-    depth: 160,
+    height: 180,
+    depth: 100,
     color: 'green'
   }).pushTo(results)
 
-  corner3.afterMeshCreated = () => {
-    let top = main.getConnectionPoint('back');
-    let bottom = corner3.getConnectionPoint('left');
-    bottom.alignTo(top);
-  }
+  //corner3.glueConnectionPoints(main, shape3DNames.left, shape3DNames.back)
+
+  // corner3.afterMeshCreated = () => {
+  //   let top = main.getConnectionPoint('back');
+  //   let bottom = corner3.getConnectionPoint('left');
+  //   bottom.alignTo(top);
+  // }
 
   return results;
 
