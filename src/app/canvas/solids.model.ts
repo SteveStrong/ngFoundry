@@ -328,6 +328,19 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
   wire2.glueFinishTo(shape2);
 
 
+  let wire3 = cord.newInstance({
+    color: 'blue',
+    opacity: .4,
+    height: 40
+  }).pushTo(results) as foPipe3D;
+
+  wire3.afterMeshCreated = () => {
+    let front = shape1.getConnectionPoint('front');
+    let back = shape2.getConnectionPoint('back');
+    wire3.startAt(front.getGlobalPosition())
+    wire3.finishAt(back.getGlobalPosition())
+  }
+
 
   return results;
 

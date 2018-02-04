@@ -9,7 +9,7 @@ import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
 import { foShape3D } from './foShape3D.model'
-import { LineCurve3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3 } from 'three';
+import { LineCurve3, Vector3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3 } from 'three';
 
 import { foHandle3D } from './foHandle3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -43,45 +43,45 @@ export class foPipe3D extends foShape3D {
 
     get segments(): number { return this._segments || 10; }
     set segments(value: number) {
-        this.clearMesh();
+        value != this._segments && this.clearMesh();
         this._segments = value;
     }
     get radiusSegments(): number { return this._radiusSegments || 10; }
     set radiusSegments(value: number) {
-        this.clearMesh();
+        value != this._radiusSegments && this.clearMesh();
         this._radiusSegments = value;
     }
 
     get startX(): number { return this._x1 || 0.0; }
     set startX(value: number) {
-        this.clearMesh();
+        value != this._x1 && this.clearMesh();
         this._x1 = value;
     }
 
     get startY(): number { return this._y1 || 0.0; }
     set startY(value: number) {
-        this.clearMesh();
+        value != this._y1 && this.clearMesh();
         this._y1 = value;
     }
     get startZ(): number { return this._z1 || 0.0; }
     set startZ(value: number) {
-        this.clearMesh();
+        value != this._z1 && this.clearMesh();
         this._z1 = value;
     }
 
     get finishX(): number { return this._x2 || 0.0; }
     set finishX(value: number) {
-        this.clearMesh();
+        value != this._x2 && this.clearMesh();
         this._x2 = value;
     }
     get finishY(): number { return this._y2 || 0.0; }
     set finishY(value: number) {
-        this.clearMesh();
+        value != this._y2 && this.clearMesh();
         this._y2 = value;
     }
     get finishZ(): number { return this._z2 || 0.0; }
     set finishZ(value: number) {
-        this.clearMesh();
+        value != this._z2 && this.clearMesh();
         this._z2 = value;
     }
 
@@ -89,16 +89,23 @@ export class foPipe3D extends foShape3D {
         if (!this._width) {
             let { length } = this.angleDistance();
             this._width = length;
+            this.clearMesh();
         }
         return this._width || 0.0;
     }
     set width(value: number) { this._width = value; }
 
     get height(): number { return this._height || 0.0; }
-    set height(value: number) { this._height = value; }
+    set height(value: number) {
+        value != this._height && this.clearMesh();
+        this._height = value;
+    }
 
     get depth(): number { return this._depth || 0.0; }
-    set depth(value: number) { this._depth = value; }
+    set depth(value: number) {
+        value != this._depth && this.clearMesh();
+        this._depth = value;
+    }
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; };
@@ -135,10 +142,21 @@ export class foPipe3D extends foShape3D {
         });
     }
 
-    private setStart(point: iPoint3D) {
+    public startAt(point: Vector3) {
         this.startX = point.x;
         this.startY = point.y;
         this.startZ = point.z;
+        this.recomputeCenter();
+    }
+
+    public finishAt(point: Vector3) {
+        this.finishX = point.x;
+        this.finishY = point.y;
+        this.finishZ = point.z;
+        this.recomputeCenter();
+    }
+
+    private recomputeCenter() {
         let { x: cX, y: cY, z: cZ } = this.center();
         this.x = 0 * cX;
         this.y = 0 * cY;
@@ -146,15 +164,18 @@ export class foPipe3D extends foShape3D {
         this.width = 0;
     }
 
+    private setStart(point: iPoint3D) {
+        this.startX = point.x;
+        this.startY = point.y;
+        this.startZ = point.z;
+        this.recomputeCenter();
+    }
+
     private setFinish(point: iPoint3D) {
         this.finishX = point.x;
         this.finishY = point.y;
         this.finishZ = point.z;
-        let { x: cX, y: cY, z: cZ } = this.center();
-        this.x = 0 * cX;
-        this.y = 0 * cY;
-        this.z = 0 * cZ;
-        this.width = 0;
+        this.recomputeCenter();
     }
 
     //https://threejs.org/docs/#api/geometries/TubeGeometry
