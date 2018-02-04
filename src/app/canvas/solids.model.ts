@@ -46,12 +46,18 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
   let main = def.newInstance()
     .pushTo(results)
 
-  let mat1 = main.mesh.matrixWorld;
+  // main.mesh.updateMatrixWorld( true );
+  // let mat1 = main.mesh.matrixWorld;
 
   main.dropAt(300, 200, 100);
-  main.mesh.matrixWorldNeedsUpdate = true;
+  // main.mesh.updateMatrixWorld( true );
 
-  let mat2 = main.mesh.matrixWorld;
+  // //https://github.com/mrdoob/three.js/issues/652
+  // let childObject = main.mesh;
+  // childObject.matrixAutoUpdate && childObject.updateMatrix();
+  // let xxx = childObject.matrixWorld.multiplyVector3( new Vector3() )
+
+  // let mat2 = main.mesh.matrixWorld;
 
     let corner = def.newInstance({
       width: 30,
@@ -61,10 +67,14 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
     })
     .pushTo(results)
 
+    corner.afterMeshCreated = () => {
+      let loc = main.getConnectionPoint('front');
+      let pt = loc.getGlobalPosition();
+      corner.setGlobalPosition(pt)
+    }
     //corner.setGlobalPosition(main.getGlobalPosition());
-    let loc = main.getConnectionPoint('front');
-    let pt = loc.getGlobalPosition();
-    corner.setGlobalPosition(pt)
+
+
 
   return results;
 

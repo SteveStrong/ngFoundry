@@ -42,57 +42,57 @@ export class foGlyph3D extends foGlyph {
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
-        this.clearMesh();
+        value != this._x && this.clearMesh();
         this._x = value;
     }
     get y(): number { return this._y || 0.0 }
     set y(value: number) {
-        this.clearMesh();
+        value != this._y && this.clearMesh();
         this._y = value;
     }
 
     get z(): number { return this._z || 0.0; }
     set z(value: number) {
-        this.clearMesh();
+        value != this._z && this.clearMesh();
         this._z = value;
     }
 
     get width(): number { return this._width || 0.0; }
     set width(value: number) {
-        this.clearMesh();
+        value != this._width && this.clearMesh();
         this._width = value;
     }
 
     get height(): number { return this._height || 0.0; }
     set height(value: number) {
-        this.clearMesh();
+        value != this._height && this.clearMesh();
         this._height = value;
     }
 
     get depth(): number { return this._depth || 0.0; }
     set depth(value: number) {
-        this.clearMesh();
+        value != this._depth && this.clearMesh();
         this._depth = value;
     }
 
     protected _angleX: number;
     get angleX(): number { return this._angleX || 0.0; }
     set angleX(value: number) {
-        this.clearMesh();
+        value != this._angleX && this.clearMesh();
         this._angleX = value;
     }
 
     protected _angleY: number;
     get angleY(): number { return this._angleY || 0.0; }
     set angleY(value: number) {
-        this.clearMesh();
+        value != this._angleY && this.clearMesh();
         this._angleY = value;
     }
 
     protected _angleZ: number;
     get angleZ(): number { return this._angleZ || 0.0; }
     set angleZ(value: number) {
-        this.clearMesh();
+        value != this._angleZ && this.clearMesh();
         this._angleZ = value;
     }
 
@@ -285,6 +285,12 @@ export class foGlyph3D extends foGlyph {
                     screen.addToScene(mesh);
                 }
 
+                let self = this;
+                mesh.onBeforeRender = function( renderer, scene, camera, geometry, material, group ) {
+                    self.afterMeshCreated && self.afterMeshCreated(renderer, scene, camera, geometry, material, group);
+                    mesh.onBeforeRender = function () {};
+                };
+
                 //should hapen during draw
                 //mesh.position.set(this.x, this.y, this.z);
                 //mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
@@ -296,6 +302,8 @@ export class foGlyph3D extends foGlyph {
 
         this.preDraw3D = preDraw;
     }
+
+    afterMeshCreated: (...args) => void = () => {}
 
     preDraw3D: (screen: Screen3D) => void;
 
