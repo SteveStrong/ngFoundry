@@ -38,6 +38,20 @@ export class foPipe3D extends foShape3D {
     protected _y2: number;
     protected _z2: number;
 
+    protected _segments:number;
+    protected _radiusSegments:number;
+
+    get segments(): number { return this._segments || 10; }
+    set segments(value: number) {
+        this.clearMesh();
+        this._segments = value;
+    }
+    get radiusSegments(): number { return this._radiusSegments || 10; }
+    set radiusSegments(value: number) {
+        this.clearMesh();
+        this._radiusSegments = value;
+    }
+
     get startX(): number { return this._x1 || 0.0; }
     set startX(value: number) {
         this.clearMesh();
@@ -149,12 +163,15 @@ export class foPipe3D extends foShape3D {
         let begin = this.begin().asVector();
         let end = this.end().asVector();
         let curve = new LineCurve3(begin, end)
-        return new TubeGeometry(curve, 20, 2, 8, false);
+        let radius = (this.height + this.depth) / 2;
+        return new TubeGeometry(curve, this.segments, radius, this.radiusSegments, false);
     }
 
     material = (spec?: any): Material => {
         let props = Tools.mixin({
             color: this.color,
+            opacity: this.opacity,
+            transparent: this.opacity < 1 ? true : false,
             wireframe: false
         }, spec)
         return new MeshBasicMaterial(props);
@@ -176,12 +193,6 @@ export class foPipe3D extends foShape3D {
         };
     }
 
-    // public establishGlue(name: string, target: foShape3D, handleName?: string) {
-    //     let glue = super.establishGlue(name, target, handleName)
-    //     glue.doTargetMoveProxy = this[name];
-    //     glue.targetMoved(target.getLocation());
-    //     return glue;
-    // }
 
     public glueStartTo(target: foShape3D, handleName?: string) {
         let glue = this.glueConnectionPoints(target, pipe3DNames.start, handleName);

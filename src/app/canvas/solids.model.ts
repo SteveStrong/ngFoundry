@@ -76,7 +76,18 @@ SolidStencil.factory<foShape3D>('corner', (spec?: any) => {
     bottom.alignTo(top);
   }
 
+  let corner3 = def.newInstance({
+    width: 160,
+    height: 160,
+    depth: 160,
+    color: 'green'
+  }).pushTo(results)
 
+  corner3.afterMeshCreated = () => {
+    let top = main.getConnectionPoint('back');
+    let bottom = corner3.getConnectionPoint('left');
+    bottom.alignTo(top);
+  }
 
   return results;
 
@@ -297,19 +308,26 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
 
   let cord = SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
     color: 'red',
-    height: 15,
-    depth: 15,
+    opacity: .4,
+    height: 55,
+    radiusSegments: 50
   });
   SolidStencil.isVisible = true;
 
-  let wire = cord.newInstance().pushTo(results);
+  let wire1 = cord.newInstance().pushTo(results);
+  wire1.glueStartTo(shape1, shape3DNames.right);
+  wire1.glueFinishTo(shape2, shape3DNames.left);
+
+  let wire2 = cord.newInstance({
+    color: 'green',
+    opacity: .4,
+    height: 15,
+    radiusSegments: 3
+  }).pushTo(results);
+  wire2.glueStartTo(shape1);
+  wire2.glueFinishTo(shape2);
 
 
-  //wire.glueStartTo(shape1, shape3DNames.right);
-  //wire.glueFinishTo(shape2, shape3DNames.left);
-
-  wire.glueStartTo(shape1, shape3DNames.right);
-  wire.glueFinishTo(shape2, shape3DNames.center);
 
   return results;
 
