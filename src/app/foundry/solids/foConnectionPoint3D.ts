@@ -1,4 +1,4 @@
-import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Vector3, Mesh } from 'three';
 
 import { foObject } from '../foObject.model';
 import { foComponent } from '../foComponent.model';
@@ -56,6 +56,14 @@ export class foConnectionPoint3D extends foHandle3D {
 
         }
         return this._mesh;
+    }
+
+
+    setGlobalRotation(pt: Vector3): Vector3 {
+        this.angleX = pt.x;
+        this.angleY = pt.y;
+        this.angleZ = pt.z;
+        return pt;
     }
 
 

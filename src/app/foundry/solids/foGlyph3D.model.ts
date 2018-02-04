@@ -1,4 +1,4 @@
-import { Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
+import { Matrix4, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 import { Tools } from '../foTools'
 import { cPoint3D } from './foGeometry3D';
@@ -218,45 +218,40 @@ export class foGlyph3D extends foGlyph {
         });
     }
 
-    getGlobalMatrix() {
-        // let mtx = new Matrix3(this.getMatrix());
-        // let parent = <foGlyph2D>this.myParent()
-        // if (parent) {
-        //     mtx.prependMatrix(parent.getGlobalMatrix());
-        // }
-        return new Matrix3();
+    //http://www.codinglabs.net/article_world_view_projection_matrix.aspx
+    //https://scottbyrns.atlassian.net/wiki/spaces/THREEJS/pages/27721809/Matrix4
+
+    getGlobalMatrix():Matrix4 {
+        let mat = this.mesh.matrixWorld;
+        return mat;
     };
 
-    getMatrix() {
+    getGlobalInvMatrix():Matrix4 {
+        let mat = this.getGlobalMatrix();
+        mat = mat.getInverse(mat);
+        return mat;
+    };
+
+    getMatrix():Matrix4 {
         return this.mesh.matrix;
     };
 
-    getInvMatrix() {
+    getInvMatrix():Matrix4 {
         let mat = this.getMatrix();
         mat = mat.getInverse(mat);
         return mat;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint3D) {
-        let mtx = this.getGlobalMatrix();
-        return mtx; // mtx.transformPoint(x, y, pt);
+    localToGlobal(pt: Vector3): Vector3 {
+        let mat = this.getGlobalMatrix();
+        let vec = mat.multiplyVector3(pt);
+        return vec;
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint3D) {
+    globalToLocal(pt: Vector3): Vector3 {
         let inv = this.getGlobalMatrix();
-        return inv; // inv.transformPoint(x, y, pt);
-    };
-
-    localToGlobalPoint(pt: cPoint3D): cPoint3D {
-        //let mtx = this.getGlobalMatrix(new Vector3());
-        //return  mtx.transformPoint(pt.x, pt.y, pt);
-        return pt;
-    };
-
-    globalCenter(pt?: cPoint3D): cPoint3D {
-        this.mesh.updateMatrix();
-        let vec = this.mesh.getWorldPosition();
-        return new cPoint3D(vec[0], vec[1], vec[2]);
+        let vec = inv.multiplyVector3(pt);
+        return vec;
     };
 
     getGlobalPosition(pt?: Vector3): Vector3 {
@@ -269,6 +264,13 @@ export class foGlyph3D extends foGlyph {
         this.x = pt.x;
         this.y = pt.y;
         this.z = pt.z;
+        return pt;
+    }
+
+    setGlobalRotation(pt: Vector3): Vector3 {
+        this.angleX = pt.x;
+        this.angleY = pt.y;
+        this.angleZ = pt.z;
         return pt;
     }
 
@@ -291,19 +293,19 @@ export class foGlyph3D extends foGlyph {
                     mesh.onBeforeRender = function () {};
                 };
 
-                //should hapen during draw
-                //mesh.position.set(this.x, this.y, this.z);
-                //mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
+                mesh.onAfterRender = function( renderer, scene, camera, geometry, material, group ) {
+                    self.afterMeshRendered && self.afterMeshRendered(renderer, scene, camera, geometry, material, group);
+                    mesh.onAfterRender = function () {};
+                };
 
                 this.preDraw3D = undefined;
             }
-
         }
-
         this.preDraw3D = preDraw;
     }
 
     afterMeshCreated: (...args) => void = () => {}
+    afterMeshRendered: (...args) => void = () => {}
 
     preDraw3D: (screen: Screen3D) => void;
 
@@ -312,10 +314,6 @@ export class foGlyph3D extends foGlyph {
         let obj = this.mesh;
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
-        //make changes that support animation here
-        //let rot = this.mesh.rotation;
-        // rot.x += 0.01;
-        // rot.y += 0.02;
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {

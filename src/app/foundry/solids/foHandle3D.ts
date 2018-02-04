@@ -1,5 +1,5 @@
 import { Tools } from '../foTools'
-import { Object3D, Matrix3, Vector3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Matrix4, Vector3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
 
 import { cPoint3D } from './foGeometry3D';
 
@@ -125,46 +125,37 @@ export class foHandle3D extends foHandle {
         return this;
     }
 
-
-    getGlobalMatrix() {
-        // let mtx = new Matrix3(this.getMatrix());
-        // let parent = <foGlyph2D>this.myParent()
-        // if (parent) {
-        //     mtx.prependMatrix(parent.getGlobalMatrix());
-        // }
-        return new Matrix3();
+    getGlobalMatrix():Matrix4 {
+        let mat = this.mesh.matrixWorld;
+        return mat;
     };
 
-    getMatrix() {
+    getGlobalInvMatrix():Matrix4 {
+        let mat = this.getGlobalMatrix();
+        mat = mat.getInverse(mat);
+        return mat;
+    };
+
+    getMatrix():Matrix4 {
         return this.mesh.matrix;
     };
 
-    getInvMatrix() {
+    getInvMatrix():Matrix4 {
         let mat = this.getMatrix();
         mat = mat.getInverse(mat);
         return mat;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint3D) {
-        let mtx = this.getGlobalMatrix();
-        return mtx; // mtx.transformPoint(x, y, pt);
+    localToGlobal(pt: Vector3): Vector3 {
+        let mat = this.getGlobalMatrix();
+        let vec = mat.multiplyVector3(pt);
+        return vec;
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint3D) {
+    globalToLocal(pt: Vector3): Vector3 {
         let inv = this.getGlobalMatrix();
-        return inv; // inv.transformPoint(x, y, pt);
-    };
-
-    localToGlobalPoint(pt: cPoint3D): cPoint3D {
-        //let mtx = this.getGlobalMatrix(new Vector3());
-        //return  mtx.transformPoint(pt.x, pt.y, pt);
-        return pt;
-    };
-
-    globalCenter(pt?: cPoint3D): cPoint3D {
-        this.mesh.updateMatrix();
-        let vec = this.mesh.getWorldPosition();
-        return new cPoint3D(vec[0], vec[1], vec[2]);
+        let vec = inv.multiplyVector3(pt);
+        return vec;
     };
 
     getGlobalPosition(pt?: Vector3): Vector3 {
@@ -173,6 +164,16 @@ export class foHandle3D extends foHandle {
         return vec;
     }
 
+    setGlobalPosition(pt: Vector3): Vector3 {
+        this.x = pt.x;
+        this.y = pt.y;
+        this.z = pt.z;
+        return pt;
+    }
+
+
+
+    
     public getOffset = (loc: iPoint3D): iPoint3D => {
         let x = this.x;
         let y = this.y;
