@@ -135,13 +135,19 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
   //   corner1.setGlobalPosition(pt)
   // }
 
+  let glue = corner1.glue.first();
+  glue.targetMovedSyncGlue = corner1.enforceAlignTo.bind(glue);
 
   corner1.afterMeshCreated = () => {
     let self = corner1;
-    let glue = self.glue.first();
-    let target = glue.targetHandle ? glue.targetHandle : glue.myTarget().getConnectionPoint(shape3DNames.center);
-    let source = glue.sourceHandle ? glue.sourceHandle : glue.mySource().getConnectionPoint(shape3DNames.center);
-    target && source &&  source.alignTo(target)
+
+    self.glue.forEach(item => {
+      //self.enforceAlignTo(item)
+      item.targetMovedSyncGlue = self.enforceAlignTo.bind(item);
+      item.targetMovedSyncGlue();
+    })
+
+    
 
     // this._glue && this.glue.forEach(item => {
     //   item.targetMovedSyncGlue();

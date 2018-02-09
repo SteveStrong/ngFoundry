@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 
 import { Tools } from '../foTools';
-import { ModelRef, iPoint3D, iGlueSignature } from '../foInterface'
+import { ModelRef, iGlueSignature } from '../foInterface'
 
 import { foObject } from '../foObject.model';
 import { foNode } from '../foNode.model';
@@ -100,6 +100,12 @@ export class foGlue3D extends foNode {
         return Tools.mixin(super.toJson(), this.signature);
     }
 
+    enforceAlignTo() {
+        let glue = this;
+        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget().getConnectionPoint();
+        let source = glue.sourceHandle ? glue.sourceHandle : glue.mySource().getConnectionPoint();
+        target && source &&  source.alignTo(target)
+    }
 
 }
 

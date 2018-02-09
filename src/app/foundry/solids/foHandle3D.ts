@@ -123,6 +123,8 @@ export class foHandle3D extends foHandle {
         return this;
     }
 
+
+
     alignTo(target: foHandle3D): Vector3 {
         //let parentTarget = target.myParent() as foGlyph3D;
         let parent = this.myParent() as foGlyph3D;

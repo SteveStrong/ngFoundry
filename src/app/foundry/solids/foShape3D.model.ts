@@ -99,9 +99,7 @@ export class foShape3D extends foGlyph3D {
     }
 
     enforceAlignTo(glue: foGlue3D) {
-        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget().getConnectionPoint(shape3DNames.center);
-        let source = glue.sourceHandle ? glue.sourceHandle : glue.mySource().getConnectionPoint(shape3DNames.center);
-        target && source &&  source.alignTo(target)
+        glue.enforceAlignTo();
     }
 
     enforceGlue() {
@@ -205,8 +203,9 @@ export class foShape3D extends foGlyph3D {
         return this.generateConnectionPoints(spec);
     }
 
-    getConnectionPoint(name: string): foConnectionPoint3D {
-        return this.connectionPoints.findMember(name);
+    getConnectionPoint(name?: string): foConnectionPoint3D {
+        let pntName = name ? name : shape3DNames.center;
+        return this.connectionPoints.findMember(pntName);
     }
 
     public drawConnectionPoints(screen: Screen3D) {
