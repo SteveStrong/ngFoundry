@@ -43,14 +43,14 @@ SolidStencil.define<foShape3D>('subbox', foShape3D, {
   width: 100,
   height: 400,
   depth: 900
-}).onCreation( obj => {
-  SolidStencil.impermanent<foShape3D>('empty',foShape3D)
-  .newInstance({
-    width: 160,
-    height: 160,
-    depth: 160,
-    color: 'green'
-  }).addAsSubcomponent(obj);
+}).onCreation(obj => {
+  SolidStencil.impermanent<foShape3D>('empty', foShape3D)
+    .newInstance({
+      width: 160,
+      height: 160,
+      depth: 160,
+      color: 'green'
+    }).addAsSubcomponent(obj);
 
 })
 
@@ -129,18 +129,32 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
 
   corner1.glueConnectionPoints(main, shape3DNames.center, shape3DNames.front)
 
-  //corner1.afterMeshCreated = () => {
+  // corner1.afterMeshCreated = () => {
   //   let loc = main.getConnectionPoint('front');
   //   let pt = loc.getGlobalPosition();
   //   corner1.setGlobalPosition(pt)
   // }
 
-  let corner2 = def.newInstance({
-    width: 160,
-    height: 160,
-    depth: 160,
-    color: 'yellow'
-  }).pushTo(results)
+
+  corner1.afterMeshCreated = () => {
+    let self = corner1;
+    let glue = self.glue.first();
+    let target = glue.targetHandle ? glue.targetHandle : glue.myTarget().getConnectionPoint(shape3DNames.center);
+    let source = glue.sourceHandle ? glue.sourceHandle : glue.mySource().getConnectionPoint(shape3DNames.center);
+    target && source &&  source.alignTo(target)
+
+    // this._glue && this.glue.forEach(item => {
+    //   item.targetMovedSyncGlue();
+    // })
+  }
+
+
+  // let corner2 = def.newInstance({
+  //   width: 160,
+  //   height: 160,
+  //   depth: 160,
+  //   color: 'yellow'
+  // }).pushTo(results)
 
 
   //corner2.glueConnectionPoints(main, shape3DNames.bottom, shape3DNames.top)
@@ -152,12 +166,12 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
   //   bottom.alignTo(top);
   // }
 
-  let corner3 = def.newInstance({
-    width: 160,
-    height: 180,
-    depth: 100,
-    color: 'green'
-  }).pushTo(results)
+  // let corner3 = def.newInstance({
+  //   width: 160,
+  //   height: 180,
+  //   depth: 100,
+  //   color: 'green'
+  // }).pushTo(results)
 
   //corner3.glueConnectionPoints(main, shape3DNames.left, shape3DNames.back)
 
@@ -392,12 +406,12 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
   });
   SolidStencil.isVisible = true;
 
-  let wire1 = cord.newInstance({myName:'wire1'}).pushTo(results);
+  let wire1 = cord.newInstance({ myName: 'wire1' }).pushTo(results);
   wire1.glueStartTo(shape1, shape3DNames.left);
   wire1.glueFinishTo(shape2, shape3DNames.right);
 
   let wire2 = cord.newInstance({
-    myName:'wire2',
+    myName: 'wire2',
     color: 'green',
     opacity: .4,
     height: 15,
@@ -408,7 +422,7 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
 
 
   let wire3 = cord.newInstance({
-    myName:'wire3',
+    myName: 'wire3',
     color: 'blue',
     opacity: .7,
     height: 40

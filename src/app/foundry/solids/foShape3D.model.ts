@@ -82,7 +82,7 @@ export class foShape3D extends foGlyph3D {
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
-            this.enforceGlue();
+            //this.enforceGlue();
             let point = this.getGlobalPosition();
             Lifecycle.dropped(this, point);
         }
@@ -91,7 +91,7 @@ export class foShape3D extends foGlyph3D {
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            this.enforceGlue();
+            //this.enforceGlue();
             let point = this.getGlobalPosition();
             Lifecycle.moved(this, point);
         }
@@ -133,8 +133,8 @@ export class foShape3D extends foGlyph3D {
     public establishGlue(name: string, target: foShape3D, handleName?: string) {
         let glue = this.getGlue(name)
         glue.glueTo(target, handleName);
-        glue.doTargetMoveProxy = this.enforceAlignTo.bind(this);
-        this.enforceGlue();
+        //glue.doTargetMoveProxy = this.enforceAlignTo.bind(this);
+        //this.enforceGlue();
         return glue;
     }
 
