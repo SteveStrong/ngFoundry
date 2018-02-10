@@ -62,14 +62,14 @@ export class foGlue3D extends foNode {
     is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
     is3D() { return this.mySource && this.mySource() && this.mySource().is3D(); }
 
-    glueTo(target: foShape3D, handleName: string) {
+    glueTo(target: foShape3D, targetName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape3D>this.myParent(); };
-        this.targetName = handleName;
-        this.targetHandle = target.getConnectionPoint(handleName);
+        this.targetName = targetName;
+        this.targetHandle = this.myTarget().getConnectionPoint(targetName);
  
         //my name is the source name
-        this.sourceHandle = target.getConnectionPoint(this.sourceName);
+        this.sourceHandle = this.mySource().getConnectionPoint(this.sourceName);
         this.myTarget().addGlue(this);
 
         Lifecycle.glued(this, this.signature);

@@ -100,7 +100,7 @@ export class foShape3D extends foGlyph3D {
 
     enforceGlue() {
         this.afterMeshCreated = () => {
-            this._glue && this.glue.forEach(item => {
+            this.glue.forEach(item => {
                 item.targetMovedSyncGlue();
             })
         }
@@ -129,7 +129,7 @@ export class foShape3D extends foGlyph3D {
         glue.sourceName = sourceName;
         glue.glueTo(target, targetName);
         glue.doTargetMoveProxy = glue.enforceAlignTo.bind(glue);
-        this.enforceGlue();
+        //this.enforceGlue();
         return glue;
     }
 

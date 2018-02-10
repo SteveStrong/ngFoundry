@@ -124,13 +124,33 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
   }).pushTo(results);
 
 
- corner1.glueConnectionPoints(main, shape3DNames.center, shape3DNames.front)
+  let glue = corner1.glueConnectionPoints(main, shape3DNames.center, shape3DNames.front)
 
-  // corner1.afterMeshCreated = () => {
-  //   let loc = main.getConnectionPoint('front');
-  //   let pt = loc.getGlobalPosition();
-  //   corner1.setGlobalPosition(pt)
-  // }
+  //this one is right
+  corner1.afterMeshCreated = () => {
+    let target = main.getConnectionPoint('front');
+    let source = corner1.getConnectionPoint();
+    target && source && source.alignTo(target)
+  }
+
+  //this one is glue based and it is wrong
+  corner1.afterMeshCreated = () => {
+    let target1 = main.getConnectionPoint('front');
+    let source1 = corner1.getConnectionPoint();
+
+    let target = glue.targetHandle;
+    let source = glue.sourceHandle;
+    if (target1 != target) return;
+    if (source1 != source) return;
+
+    target && source && source.alignTo(target)
+  }
+
+
+
+
+
+
 
   //let glue = corner1.glue.first();
   //glue.targetMovedSyncGlue = glue.enforceAlignTo.bind(glue);
@@ -144,7 +164,7 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
   //     item.targetMovedSyncGlue();
   //   })
 
-    
+
 
   //   // this._glue && this.glue.forEach(item => {
   //   //   item.targetMovedSyncGlue();
@@ -161,14 +181,13 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
 
 
   //corner2.glueConnectionPoints(main, shape3DNames.bottom, shape3DNames.top)
-  //corner2.glueConnectionPoints(main, shape3DNames.center, shape3DNames.front)
-  
 
-  // corner2.afterMeshCreated = () => {
-  //   let top = main.getConnectionPoint('top');
-  //   let bottom = corner2.getConnectionPoint('bottom');
-  //   bottom.alignTo(top);
-  // }
+
+  corner2.afterMeshCreated = () => {
+    let target = main.getConnectionPoint('top');
+    let source = corner2.getConnectionPoint('bottom');
+    target && source && source.alignTo(target)
+  }
 
   let corner3 = def.newInstance({
     width: 160,
@@ -179,11 +198,12 @@ SolidStencil.factory<foShape3D>('glue corner', (spec?: any) => {
 
   //corner3.glueConnectionPoints(main, shape3DNames.left, shape3DNames.back)
 
-  // corner3.afterMeshCreated = () => {
-  //   let top = main.getConnectionPoint('back');
-  //   let bottom = corner3.getConnectionPoint('left');
-  //   bottom.alignTo(top);
-  // }
+
+  corner3.afterMeshCreated = () => {
+    let target = main.getConnectionPoint('back');
+    let source = corner3.getConnectionPoint('left');
+    target && source && source.alignTo(target)
+  }
 
   return results;
 
