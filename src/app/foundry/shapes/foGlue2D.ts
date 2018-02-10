@@ -22,6 +22,12 @@ export class foGlue2D extends foNode {
         this._targetHandle = value;
     }
 
+    protected _sourceHandle: foHandle2D;
+    get sourceHandle(): foHandle2D { return this._sourceHandle; }
+    set sourceHandle(value: foHandle2D) {
+        this._sourceHandle = value;
+    }
+
     protected _sourceName: string;
     get sourceName(): string { return this._sourceName; }
     set sourceName(value: string) {
@@ -53,11 +59,15 @@ export class foGlue2D extends foNode {
     is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
     is3D() { return this.mySource && this.mySource() && this.mySource().is3D(); }
 
-    glueTo(target: foShape2D, handleName: string) {
+    glueTo(sourceName: string, target: foShape2D, targetName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape2D>this.myParent(); };
-        this.targetName = handleName;
-        this.targetHandle = target.getConnectionPoint(handleName);
+        this.targetName = targetName;
+        this.targetHandle = this.myTarget().getConnectionPoint(targetName);
+
+        this.sourceName = sourceName;
+        this.sourceHandle = this.mySource().getConnectionPoint(sourceName);
+
         target.addGlue(this);
 
         Lifecycle.glued(this, this.signature);

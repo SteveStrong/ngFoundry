@@ -126,10 +126,9 @@ export class foShape3D extends foGlyph3D {
 
     public establishGlue(sourceName: string, target: foShape3D, targetName?: string) {
         let glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
-        glue.sourceName = sourceName;
-        glue.glueTo(target, targetName);
+        glue.glueTo(sourceName, target, targetName);
         glue.doTargetMoveProxy = glue.enforceAlignTo.bind(glue);
-        //this.enforceGlue();
+        this.enforceGlue();
         return glue;
     }
 
