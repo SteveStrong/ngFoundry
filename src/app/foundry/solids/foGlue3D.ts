@@ -19,10 +19,10 @@ export class foGlue3D extends foNode {
     mySource: ModelRef<foShape3D>;
 
 
-
-    get sourceName(): string { return this.myName; }
+    protected _sourceName: string;
+    get sourceName(): string { return this._sourceName; }
     set sourceName(value: string) {
-        this.myName = value;
+        this._sourceName = value;
     }
 
     protected _sourceHandle: foHandle3D;
@@ -70,7 +70,7 @@ export class foGlue3D extends foNode {
  
         //my name is the source name
         this.sourceHandle = target.getConnectionPoint(this.sourceName);
-        target.addGlue(this);
+        this.myTarget().addGlue(this);
 
         Lifecycle.glued(this, this.signature);
         return this;
@@ -101,9 +101,8 @@ export class foGlue3D extends foNode {
     }
 
     enforceAlignTo() {
-        let glue = this;
-        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget().getConnectionPoint();
-        let source = glue.sourceHandle ? glue.sourceHandle : glue.mySource().getConnectionPoint();
+        let target = this.targetHandle ? this.targetHandle : this.myTarget().getConnectionPoint();
+        let source = this.sourceHandle ? this.sourceHandle : this.mySource().getConnectionPoint();
         target && source &&  source.alignTo(target)
     }
 

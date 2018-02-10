@@ -403,7 +403,7 @@ export class foGlyph3D extends foGlyph {
 //https://www.typescriptlang.org/docs/handbook/mixins.html
 
 import { RuntimeType } from '../foRuntimeType';
-import { iPoint3D } from 'app/foundry/foInterface';
+
 RuntimeType.define(foGlyph3D);
 
 //RuntimeType.applyMixins(foGlyph3D, [foGlyph2D, foBody3D]);

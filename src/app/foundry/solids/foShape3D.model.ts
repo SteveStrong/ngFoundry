@@ -3,7 +3,6 @@ import { Tools } from '../foTools'
 import { foGlyph3D } from "./foGlyph3D.model";
 import { Geometry, BoxGeometry } from 'three';
 import { cPoint3D } from './foGeometry3D';
-import { iPoint3D } from '../foInterface'
 
 import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -98,9 +97,6 @@ export class foShape3D extends foGlyph3D {
         return this;
     }
 
-    enforceAlignTo(glue: foGlue3D) {
-        glue.enforceAlignTo();
-    }
 
     enforceGlue() {
         this.afterMeshCreated = () => {
@@ -119,8 +115,8 @@ export class foShape3D extends foGlyph3D {
         }
     }
 
-    protected getGlue(name: string) {
-        let glue = this.glue.findMember(name);
+    protected getGlue(name?: string) {
+        let glue = name && this.glue.findMember(name);
         if (!glue) {
             glue = new foGlue3D({ myName: name }, this);
             this.addGlue(glue);
@@ -128,11 +124,12 @@ export class foShape3D extends foGlyph3D {
         return glue;
     }
 
-    public establishGlue(name: string, target: foShape3D, handleName?: string) {
-        let glue = this.getGlue(name)
-        glue.glueTo(target, handleName);
-        //glue.doTargetMoveProxy = this.enforceAlignTo.bind(this);
-        //this.enforceGlue();
+    public establishGlue(sourceName: string, target: foShape3D, targetName?: string) {
+        let glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
+        glue.sourceName = sourceName;
+        glue.glueTo(target, targetName);
+        glue.doTargetMoveProxy = glue.enforceAlignTo.bind(glue);
+        this.enforceGlue();
         return glue;
     }
 
