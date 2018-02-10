@@ -59,6 +59,7 @@ import { ZoneTestComponent } from './zone-test/zone-test.component';
 import { foStagePanelComponent } from './canvas/fo-inspector/fo-stage-panel.component';
 import { foStageComponent } from './canvas/fo-inspector/fo-stage.component';
 import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
+import { DomainComponent } from './canvas/domain.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +105,8 @@ import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
     ZoneTestComponent,
     foStagePanelComponent,
     foStageComponent,
-    foStudioComponent
+    foStudioComponent,
+    DomainComponent
   ],
   imports: [
     BrowserAnimationsModule,
