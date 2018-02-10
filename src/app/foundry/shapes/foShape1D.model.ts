@@ -86,8 +86,7 @@ export class foShape1D extends foShape2D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
-        this[shape1DNames.start] = this.setStart.bind(this);
-        this[shape1DNames.finish] = this.setFinish.bind(this);
+
     }
 
     protected toJson(): any {
@@ -134,8 +133,12 @@ export class foShape1D extends foShape2D {
     }
 
     public establishGlue(name: string, target: foShape2D, handleName?: string) {
+        let binding = {}
+        binding[shape1DNames.start] = this.setStart.bind(this);
+        binding[shape1DNames.finish] = this.setFinish.bind(this);
+
         let glue = super.establishGlue(name, target, handleName)
-        glue.doTargetMoveProxy = this[name];
+        glue.doTargetMoveProxy = binding[name];
         glue.targetMoved(target.getLocation());
         return glue;
     }
@@ -152,17 +155,11 @@ export class foShape1D extends foShape2D {
 
     public unglueStart() {
         let glue = this.dissolveGlue(shape1DNames.start);
-        if ( glue ) {
-            glue.doTargetMoveProxy = undefined;
-        }
         return glue;
     }
 
     public unglueFinish() {
         let glue = this.dissolveGlue(shape1DNames.finish);
-        if ( glue ) {
-            glue.doTargetMoveProxy = undefined;
-        }
         return glue;
     }
 

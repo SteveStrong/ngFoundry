@@ -77,7 +77,7 @@ export class Screen2D {
 
             let x = rect.left;
             let y = rect.top;
-            return pt.set(event.clientX - x, event.clientY - y);
+            return pt.setValues(event.clientX - x, event.clientY - y);
         }
 
         // //http://jsfiddle.net/jy5yQ/1/

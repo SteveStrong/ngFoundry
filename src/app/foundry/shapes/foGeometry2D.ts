@@ -1,43 +1,47 @@
 
 import { iPoint2D, iRect, iBox, iMargin, iFrame } from '../foInterface';
+import { Vector2 } from 'three';
+export { Vector2, Matrix3 } from 'three';
 
-export class cPoint2D implements iPoint2D {
-    public x: number;
-    public y: number;
+export class cPoint2D extends Vector2 implements iPoint2D {
+
     public myName: string;
 
     constructor(x: number = 0, y: number = 0, name?: string) {
-        this.x = x;
-        this.y = y;
+        super(x, y);
         this.myName = name;
     }
 
-    set(x: number = 0, y: number = 0) {
+    asVector(): Vector2 {
+        return new Vector2(this.x, this.y)
+    }
+
+    setValues(x: number = 0, y: number = 0) {
         this.x = x;
         this.y = y;
         return this;
     }
 
-    clone() {
+    clonePoint() {
         return new cPoint2D(this.x, this.y, this.myName);
     }
 
-    add(x: number = 0, y: number = 0) {
+    addPoint(x: number = 0, y: number = 0) {
         this.x += x;
         this.y += y;
         return this;
     }
 
-    subtract(x: number = 0, y: number = 0) {
+    subtractPoint(x: number = 0, y: number = 0) {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
-    midpoint(pt: cPoint2D) {
+    midPoint(pt: cPoint2D) {
         let x = (this.x + pt.x) / 2;
         let y = (this.y + pt.y) / 2;
-        return new cPoint2D(x, y);
+        return new cPoint2D(x, y, 'midpoint');
     }
 }
 
@@ -113,10 +117,10 @@ export class cFrame implements iFrame {
     public x2: number;
     public y2: number;
 
-    public point:cPoint2D = new cPoint2D();
-    public source:any;
+    public point: cPoint2D = new cPoint2D();
+    public source: any;
 
-    constructor(source?:any){
+    constructor(source?: any) {
         this.source = source;
     }
 
@@ -128,7 +132,7 @@ export class cFrame implements iFrame {
         return this;
     }
 
-    init(obj:iPoint2D): iFrame {
+    init(obj: iPoint2D): iFrame {
         this.x1 = obj.x;
         this.y1 = obj.y;
         this.x2 = obj.x;
@@ -136,19 +140,19 @@ export class cFrame implements iFrame {
         return this;
     }
 
-    merge(obj:iFrame): iFrame {
-        this.x1 = Math.min(this.x1,obj.x1,obj.x2);
-        this.y1 = Math.min(this.y1,obj.y1,obj.y2);
-        this.x2 = Math.max(this.x2,obj.x2,obj.x1);
-        this.y2 = Math.max(this.y2,obj.y2,obj.y1);
+    merge(obj: iFrame): iFrame {
+        this.x1 = Math.min(this.x1, obj.x1, obj.x2);
+        this.y1 = Math.min(this.y1, obj.y1, obj.y2);
+        this.x2 = Math.max(this.x2, obj.x2, obj.x1);
+        this.y2 = Math.max(this.y2, obj.y2, obj.y1);
         return this;
     }
 
-    minmax(obj:iPoint2D): iFrame {
-        this.x1 = Math.min(this.x1,obj.x);
-        this.y1 = Math.min(this.y1,obj.y);
-        this.x2 = Math.max(this.x2,obj.x);
-        this.y2 = Math.max(this.y2,obj.y);
+    minmax(obj: iPoint2D): iFrame {
+        this.x1 = Math.min(this.x1, obj.x);
+        this.y1 = Math.min(this.y1, obj.y);
+        this.x2 = Math.max(this.x2, obj.x);
+        this.y2 = Math.max(this.y2, obj.y);
         return this;
     }
 
@@ -175,14 +179,14 @@ export class cMargin implements iMargin {
     public bottom: number = 0;
 
 
-    constructor(left: number=0, top: number=0, right: number=0, bottom: number=0) {
+    constructor(left: number = 0, top: number = 0, right: number = 0, bottom: number = 0) {
         this.left = left;
         this.top = top;
         this.right = right;
         this.bottom = bottom;
     }
 
-    setAll(size: number=0) {
+    setAll(size: number = 0) {
         this.left = size;
         this.top = size;
         this.right = size;
@@ -197,6 +201,7 @@ export class cMargin implements iMargin {
         return this.top + this.bottom;
     }
 }
+
 export class cBox extends cRect implements iBox {
 
     constructor(x: number, y: number, width: number, height: number, name?: string) {

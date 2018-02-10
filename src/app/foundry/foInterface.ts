@@ -60,8 +60,6 @@ export interface iPoint2D extends iName {
 }
 
 export interface iPoint3D extends iPoint2D {
-    //x: number;
-    //y: number;
     z: number;
 
     //set(x: number, y: number, z: number): iPoint3D

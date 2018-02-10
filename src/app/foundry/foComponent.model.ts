@@ -1,19 +1,17 @@
 
-import { Tools } from './foTools'
-import { iObject, iNode } from './foInterface'
 
 import { foObject } from './foObject.model'
-import { foNode } from './foNode.model'
+import { foInstance } from './foInstance.model'
 import { foCollection } from './foCollection.model'
 
-export class foComponent extends foNode {  
+export class foComponent extends foInstance {  
     
-    constructor(properties?:any, subcomponents?:Array<foNode>, parent?:foObject) {
+    constructor(properties?:any, subcomponents?:Array<foInstance>, parent?:foObject) {
         super(properties,subcomponents,parent);
     }
     
         
-    init(properties?:any, subcomponents?:Array<foNode>, parent?:foObject) {
+    init(properties?:any, subcomponents?:Array<foInstance>, parent?:foObject) {
       
         this.myName = properties &&  properties['myName'] ? properties['myName'] : 'unknown'; 
 

@@ -1,6 +1,7 @@
+import { Vector3 } from 'three';
 
 import { Tools } from '../foTools';
-import { ModelRef, iPoint3D, iGlueSignature } from '../foInterface'
+import { ModelRef, iGlueSignature } from '../foInterface'
 
 import { foObject } from '../foObject.model';
 import { foNode } from '../foNode.model';
@@ -17,15 +18,17 @@ export class foGlue3D extends foNode {
     myTarget: ModelRef<foShape3D>;
     mySource: ModelRef<foShape3D>;
 
-    protected _targetHandle: foHandle3D;
-    get targetHandle(): foHandle3D { return this._targetHandle; }
-    set targetHandle(value: foHandle3D) {
-        this._targetHandle = value;
+
+    protected _sourceName: string;
+    get sourceName(): string { return this._sourceName; }
+    set sourceName(value: string) {
+        this._sourceName = value;
     }
 
-    get sourceName(): string { return this.myName; }
-    set sourceName(value: string) {
-        this.myName = value;
+    protected _sourceHandle: foHandle3D;
+    get sourceHandle(): foHandle3D { return this._sourceHandle; }
+    set sourceHandle(value: foHandle3D) {
+        this._sourceHandle = value;
     }
 
     protected _targetName: string;
@@ -34,8 +37,14 @@ export class foGlue3D extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (loc:iPoint3D) => void;
-    public doTargetMoveProxy: (loc:iPoint3D) => void;
+    protected _targetHandle: foHandle3D;
+    get targetHandle(): foHandle3D { return this._targetHandle; }
+    set targetHandle(value: foHandle3D) {
+        this._targetHandle = value;
+    }
+
+    public doSourceMoveProxy: (glue:foGlue3D) => void;
+    public doTargetMoveProxy: (glue:foGlue3D) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -46,42 +55,47 @@ export class foGlue3D extends foNode {
             sourceGuid: this.mySource && this.mySource() && this.mySource().myGuid,
             sourceName: this.sourceName,
             targetGuid: this.myTarget && this.myTarget() && this.myTarget().myGuid,
-            targetName: this.targetName          
+            targetName: this.targetName
         }
     }
 
     is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
     is3D() { return this.mySource && this.mySource() && this.mySource().is3D(); }
 
-    glueTo(target: foShape3D, handleName: string) {
+    glueTo(sourceName: string, target: foShape3D, targetName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape3D>this.myParent(); };
-        this.targetName = handleName;
-        this.targetHandle = target.getConnectionPoint(handleName);
-        target.addGlue(this);
+        this.targetName = targetName;
+        this.targetHandle = this.myTarget().getConnectionPoint(targetName);
+ 
+        //my name is the source name
+        this.sourceName = sourceName;
+        this.sourceHandle = this.mySource().getConnectionPoint(this.sourceName);
 
+        this.myTarget().addGlue(this);
         Lifecycle.glued(this, this.signature);
         return this;
     }
 
     unglue() {
         Lifecycle.unglued(this, this.signature);
-        this.myTarget().removeGlue(this);
-  
+        let target = this.myTarget();
+
         this.myTarget = undefined;
         this.mySource = undefined;
         this.doSourceMoveProxy = undefined;
         this.doTargetMoveProxy = undefined;
+
+        target.removeGlue(this);
         return this;
     }
 
-    sourceMoved(loc: iPoint3D) {
-        this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
+    sourceMovedSyncGlue() {
+        this.doSourceMoveProxy && this.doSourceMoveProxy(this);
     }
 
-    targetMoved(loc: iPoint3D) {  
-        let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
-        this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
+    targetMovedSyncGlue() {
+        this.doTargetMoveProxy && this.doTargetMoveProxy(this);
     }
 
 
@@ -89,6 +103,11 @@ export class foGlue3D extends foNode {
         return Tools.mixin(super.toJson(), this.signature);
     }
 
+    enforceAlignTo() {
+        let target = this.targetHandle ? this.targetHandle : this.myTarget().getConnectionPoint();
+        let source = this.sourceHandle ? this.sourceHandle : this.mySource().getConnectionPoint();
+        target && source &&  source.alignTo(target)
+    }
 
 }
 

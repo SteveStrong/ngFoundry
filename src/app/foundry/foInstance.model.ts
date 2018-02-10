@@ -6,6 +6,8 @@ import { foCollection } from './foCollection.model'
 
 
 export class foInstance extends foNode {
+
+    protected _subcomponents: foCollection<foInstance>;
 }
 
 import { RuntimeType } from './foRuntimeType';

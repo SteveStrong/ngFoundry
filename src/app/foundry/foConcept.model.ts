@@ -57,7 +57,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
     set projections(value: any) { this._projections = value; }
 
-
+    private _onCreation: (obj) => void;
 
     constructor(properties?: any) {
         super(properties);
@@ -75,12 +75,12 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
     usingRuntimeType(type:string, action:Action<foKnowledge>){
         let found = RuntimeType.find(type);
-        let hold = this._create;
+        let tempHold = this._create;
         this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
             return new found(properties, subcomponents, parent);
         }
         action(this);
-        this._create = hold;
+        this._create = tempHold;
         return this;
     }
 
@@ -135,9 +135,16 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = this._create(spec, subcomponents, parent) as T;
         result.myClass = this.myName;
         result.initialize();
+        this._onCreation && this._onCreation(result);
         Lifecycle.created(result, this);
         return result;
     }
+
+    onCreation(func: (obj) => void) {
+        this._onCreation = func;
+        return this;
+    }
+
 
 }
 

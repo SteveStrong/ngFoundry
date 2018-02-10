@@ -22,9 +22,16 @@ export class foGlue2D extends foNode {
         this._targetHandle = value;
     }
 
-    get sourceName(): string { return this.myName; }
+    protected _sourceHandle: foHandle2D;
+    get sourceHandle(): foHandle2D { return this._sourceHandle; }
+    set sourceHandle(value: foHandle2D) {
+        this._sourceHandle = value;
+    }
+
+    protected _sourceName: string;
+    get sourceName(): string { return this._sourceName; }
     set sourceName(value: string) {
-        this.myName = value;
+        this._sourceName = value;
     }
 
     protected _targetName: string;
@@ -33,8 +40,8 @@ export class foGlue2D extends foNode {
         this._targetName = value;
     }
 
-    public doSourceMoveProxy: (loc:iPoint2D) => void;
-    public doTargetMoveProxy: (loc:iPoint2D) => void;
+    public doSourceMoveProxy: (loc: iPoint2D) => void;
+    public doTargetMoveProxy: (loc: iPoint2D) => void;
 
     constructor(properties?: any, parent?: foObject) {
         super(properties, undefined, parent);
@@ -45,18 +52,22 @@ export class foGlue2D extends foNode {
             sourceGuid: this.mySource && this.mySource() && this.mySource().myGuid,
             sourceName: this.sourceName,
             targetGuid: this.myTarget && this.myTarget() && this.myTarget().myGuid,
-            targetName: this.targetName          
+            targetName: this.targetName
         }
     }
 
     is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
     is3D() { return this.mySource && this.mySource() && this.mySource().is3D(); }
 
-    glueTo(target: foShape2D, handleName: string) {
+    glueTo(sourceName: string, target: foShape2D, targetName: string) {
         this.myTarget = () => { return target; };
         this.mySource = () => { return <foShape2D>this.myParent(); };
-        this.targetName = handleName;
-        this.targetHandle = target.getConnectionPoint(handleName);
+        this.targetName = targetName;
+        this.targetHandle = this.myTarget().getConnectionPoint(targetName);
+
+        this.sourceName = sourceName;
+        this.sourceHandle = this.mySource().getConnectionPoint(sourceName);
+
         target.addGlue(this);
 
         Lifecycle.glued(this, this.signature);
@@ -66,7 +77,7 @@ export class foGlue2D extends foNode {
     unglue() {
         Lifecycle.unglued(this, this.signature);
         this.myTarget().removeGlue(this);
-  
+
         this.myTarget = undefined;
         this.mySource = undefined;
         this.doSourceMoveProxy = undefined;
@@ -74,11 +85,19 @@ export class foGlue2D extends foNode {
         return this;
     }
 
+    isEmpty() {
+        if (this.myTarget) return false;
+        if (this.mySource) return false;
+        if (this.doSourceMoveProxy) return false;
+        if (this.doTargetMoveProxy) return false;
+        return true;
+    }
+
     sourceMoved(loc: iPoint2D) {
         this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
     }
 
-    targetMoved(loc: iPoint2D) {  
+    targetMoved(loc: iPoint2D) {
         let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
         this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
     }

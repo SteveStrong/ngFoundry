@@ -21,7 +21,7 @@ export class foKnowledge extends foObject {
         return this;
     }
 
-    newInstance(properties?: any) {
+    newInstance(properties?: any, subcomponents?: any, parent?: any): any {
         return undefined;
     }
 

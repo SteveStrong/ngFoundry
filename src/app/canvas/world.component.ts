@@ -38,6 +38,8 @@ export class WorldComponent implements OnInit, AfterViewInit {
   @Input()
   public pageHeight = 1000;
 
+//https://stemkoski.github.io/Three.js/
+
 
   screen3D: Screen3D = new Screen3D();
   currentStudio: foStudio;

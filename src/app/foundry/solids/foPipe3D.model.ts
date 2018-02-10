@@ -9,7 +9,7 @@ import { foCollection } from '../foCollection.model'
 import { foNode } from '../foNode.model'
 
 import { foShape3D } from './foShape3D.model'
-import { LineCurve3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3 } from 'three';
+import { LineCurve3, Vector3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3, Mesh } from 'three';
 
 import { foHandle3D } from './foHandle3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
@@ -38,36 +38,50 @@ export class foPipe3D extends foShape3D {
     protected _y2: number;
     protected _z2: number;
 
+    protected _segments: number;
+    protected _radiusSegments: number;
+
+    get segments(): number { return this._segments || 10; }
+    set segments(value: number) {
+        value != this._segments && this.clearMesh();
+        this._segments = value;
+    }
+    get radiusSegments(): number { return this._radiusSegments || 10; }
+    set radiusSegments(value: number) {
+        value != this._radiusSegments && this.clearMesh();
+        this._radiusSegments = value;
+    }
+
     get startX(): number { return this._x1 || 0.0; }
     set startX(value: number) {
-        this.smash();
+        value != this._x1 && this.clearMesh();
         this._x1 = value;
     }
 
     get startY(): number { return this._y1 || 0.0; }
     set startY(value: number) {
-        this.smash();
+        value != this._y1 && this.clearMesh();
         this._y1 = value;
     }
     get startZ(): number { return this._z1 || 0.0; }
     set startZ(value: number) {
-        this.smash();
+        value != this._z1 && this.clearMesh();
         this._z1 = value;
     }
 
     get finishX(): number { return this._x2 || 0.0; }
     set finishX(value: number) {
-        this.smash();
+        value != this._x2 && this.clearMesh();
         this._x2 = value;
     }
     get finishY(): number { return this._y2 || 0.0; }
     set finishY(value: number) {
-        this.smash();
+        value != this._y2 && this.clearMesh();
         this._y2 = value;
     }
     get finishZ(): number { return this._z2 || 0.0; }
     set finishZ(value: number) {
-        this.smash();
+        value != this._z2 && this.clearMesh();
         this._z2 = value;
     }
 
@@ -78,13 +92,22 @@ export class foPipe3D extends foShape3D {
         }
         return this._width || 0.0;
     }
-    set width(value: number) { this._width = value; }
+    set width(value: number) {
+        value != this._width && this.clearMesh();
+        this._width = value;
+    }
 
     get height(): number { return this._height || 0.0; }
-    set height(value: number) { this._height = value; }
+    set height(value: number) {
+        value != this._height && this.clearMesh();
+        this._height = value;
+    }
 
     get depth(): number { return this._depth || 0.0; }
-    set depth(value: number) { this._depth = value; }
+    set depth(value: number) {
+        value != this._depth && this.clearMesh();
+        this._depth = value;
+    }
 
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; };
@@ -105,8 +128,6 @@ export class foPipe3D extends foShape3D {
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
-        this[pipe3DNames.start] = this.setStart.bind(this);
-        this[pipe3DNames.finish] = this.setFinish.bind(this);
     }
 
     protected toJson(): any {
@@ -121,10 +142,31 @@ export class foPipe3D extends foShape3D {
         });
     }
 
-    private setStart(point: iPoint3D) {
+    enforceStart(glue: foGlue3D) {
+        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget();
+        target && this.startAt(target.getGlobalPosition())
+    }
+
+    public startAt(point: Vector3) {
         this.startX = point.x;
         this.startY = point.y;
         this.startZ = point.z;
+        this.recomputeCenter();
+    }
+
+    enforceFinish(glue: foGlue3D) {
+        let target = glue.targetHandle ? glue.targetHandle : glue.myTarget();
+        target && this.finishAt(target.getGlobalPosition())
+    }
+
+    public finishAt(point: Vector3) {
+        this.finishX = point.x;
+        this.finishY = point.y;
+        this.finishZ = point.z;
+        this.recomputeCenter();
+    }
+
+    private recomputeCenter() {
         let { x: cX, y: cY, z: cZ } = this.center();
         this.x = 0 * cX;
         this.y = 0 * cY;
@@ -132,33 +174,51 @@ export class foPipe3D extends foShape3D {
         this.width = 0;
     }
 
-    private setFinish(point: iPoint3D) {
-        this.finishX = point.x;
-        this.finishY = point.y;
-        this.finishZ = point.z;
-        let { x: cX, y: cY, z: cZ } = this.center();
-        this.x = 0 * cX;
-        this.y = 0 * cY;
-        this.z = 0 * cZ;
-        this.width = 0;
-    }
+
 
     //https://threejs.org/docs/#api/geometries/TubeGeometry
 
     geometry = (spec?: any): Geometry => {
-        let begin = this.begin().asVector();
-        let end = this.end().asVector();
+        let begin = this.begin();
+        let end = this.end();
         let curve = new LineCurve3(begin, end)
-        return new TubeGeometry(curve, 20, 2, 8, false);
+        let radius = (this.height + this.depth) / 2;
+        return new TubeGeometry(curve, this.segments, radius, this.radiusSegments, false);
     }
 
     material = (spec?: any): Material => {
         let props = Tools.mixin({
             color: this.color,
+            opacity: this.opacity,
+            transparent: this.opacity < 1 ? true : false,
             wireframe: false
         }, spec)
         return new MeshBasicMaterial(props);
     }
+
+    // get mesh(): Mesh {
+    //     if (!this._mesh) {
+    //         let geom = this.geometry()
+    //         let mat = this.material()
+    //         let obj = (geom && mat) && new Mesh(geom, mat);
+    //         if (obj) {
+    //             obj.position.set(this.x, this.y, this.z);
+    //             // obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+    //             this._mesh = obj;
+    //         }
+
+    //     }
+    //     return this._mesh;
+    // }
+    // clearMesh() {
+    //     if (!this._mesh) return;
+    //     let parent = this.mesh.parent;
+    //     if (parent) {
+    //         parent.remove(this.mesh);
+    //     }
+    //     this._mesh = undefined;
+    //     this.setupPreDraw();
+    // }
 
 
     private angleDistance(): any {
@@ -176,27 +236,34 @@ export class foPipe3D extends foShape3D {
         };
     }
 
-    // public establishGlue(name: string, target: foShape3D, handleName?: string) {
-    //     let glue = super.establishGlue(name, target, handleName)
-    //     glue.doTargetMoveProxy = this[name];
-    //     glue.targetMoved(target.getLocation());
-    //     return glue;
-    // }
+    public establishGlue(name: string, target: foShape3D, handleName?: string) {
+        let binding = {}
+        binding[pipe3DNames.start] = this.enforceStart.bind(this);
+        binding[pipe3DNames.finish] = this.enforceFinish.bind(this);
+
+        let glue = this.getGlue(name)
+        glue.glueTo(target, handleName);
+        glue.doTargetMoveProxy = binding[name];
+        this.enforceGlue();
+        return glue;
+    }
 
     public glueStartTo(target: foShape3D, handleName?: string) {
         let glue = this.glueConnectionPoints(target, pipe3DNames.start, handleName);
+        this.enforceGlue();
         return glue;
     }
 
     public glueFinishTo(target: foShape3D, handleName?: string) {
         let glue = this.glueConnectionPoints(target, pipe3DNames.finish, handleName);
+        this.enforceGlue();
         return glue;
     }
 
     public unglueStart() {
         let glue = this.dissolveGlue(pipe3DNames.start);
         if (glue) {
-            glue.doTargetMoveProxy = undefined;;
+            this.enforceGlue();
         }
         return glue;
     }
@@ -204,29 +271,29 @@ export class foPipe3D extends foShape3D {
     public unglueFinish() {
         let glue = this.dissolveGlue(pipe3DNames.finish);
         if (glue) {
-            glue.doTargetMoveProxy = undefined;;
+            this.enforceGlue();
         }
         return glue;
     }
 
-    public initialize(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
-        let { x: cX, y: cY, z: cZ } = this.center();
+    // public initialize(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+    //     let { x: cX, y: cY, z: cZ } = this.center();
 
-        this.x = Number.isNaN(x) ? cX : x;
-        this.y = Number.isNaN(y) ? cY : y;
-        this.z = Number.isNaN(z) ? cZ : z;
+    //     this.x = Number.isNaN(x) ? cX : x;
+    //     this.y = Number.isNaN(y) ? cY : y;
+    //     this.z = Number.isNaN(z) ? cZ : z;
 
-        let mtx = new Matrix3();
-        //mtx.set(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
-        // let start = mtx.transformPoint(this.startX, this.startY);
-        // let finish = mtx.transformPoint(this.finishX, this.finishY);
-        // this.startX = start.x;
-        // this.startY = start.y;
-        // this.finishX = finish.x;
-        // this.finishY = finish.y;
-        this.width = 0;
-        return this;
-    }
+    //     let mtx = new Matrix3();
+    //     //mtx.set(this.x, this.y, 1, 1, ang + this.rotationZ(), 0, 0, cX, cY);
+    //     // let start = mtx.transformPoint(this.startX, this.startY);
+    //     // let finish = mtx.transformPoint(this.finishX, this.finishY);
+    //     // this.startX = start.x;
+    //     // this.startY = start.y;
+    //     // this.finishX = finish.x;
+    //     // this.finishY = finish.y;
+    //     this.width = 0;
+    //     return this;
+    // }
 
     public createHandles(): foCollection<foHandle3D> {
 
@@ -238,7 +305,7 @@ export class foPipe3D extends foShape3D {
         Tools.mixin(end, { size: 20 });
         Tools.mixin(center, { size: 20 });
         let spec = [begin, center, end];
-        let proxy = [this.setStart.bind(this), this.moveTo.bind(this), this.setFinish.bind(this)];
+        let proxy = [this.startAt.bind(this), this.moveTo.bind(this), this.finishAt.bind(this)];
 
         return this.generateHandles(spec, proxy);
     }
@@ -247,28 +314,28 @@ export class foPipe3D extends foShape3D {
         return this.generateConnectionPoints([]);
     }
 
-    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
-        let changed = super.didLocationChange(x, y, z);
-        let { x: cX, y: cY, z: cZ } = this.center();
-        if (!Number.isNaN(x) && this.x != cX) {
-            changed = true;
-        };
-        if (!Number.isNaN(y) && this.y != cY) {
-            changed = true;
-        };
-        if (!Number.isNaN(z) && this.z != cZ) {
-            changed = true;
-        };
-        return changed;
-    }
+    // public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+    //     let changed = super.didLocationChange(x, y, z);
+    //     let { x: cX, y: cY, z: cZ } = this.center();
+    //     if (!Number.isNaN(x) && this.x != cX) {
+    //         changed = true;
+    //     };
+    //     if (!Number.isNaN(y) && this.y != cY) {
+    //         changed = true;
+    //     };
+    //     if (!Number.isNaN(z) && this.z != cZ) {
+    //         changed = true;
+    //     };
+    //     return changed;
+    // }
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
-        if (this.didLocationChange(x, y, z)) {
-            this.initialize(x, y, z);
-            Lifecycle.dropped(this, this.getLocation());
-        }
-        return this;
-    }
+    // public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+    //     if (this.didLocationChange(x, y, z)) {
+    //         this.initialize(x, y, z);
+    //         Lifecycle.dropped(this, this.getLocation());
+    //     }
+    //     return this;
+    // }
 
     public move(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         this.initialize(x, y, z);
@@ -289,6 +356,7 @@ export class foPipe3D extends foShape3D {
 
 
 import { RuntimeType } from '../foRuntimeType';
+import { foGlue3D } from 'app/foundry/solids/foGlue3D';
 RuntimeType.define(foPipe3D);
 
 

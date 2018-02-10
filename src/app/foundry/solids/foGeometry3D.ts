@@ -1,54 +1,51 @@
 
-import { iPoint3D,  } from '../foInterface';
+import { iPoint3D } from '../foInterface';
 import { Vector3 } from 'three';
+export { Vector3, Matrix4 } from 'three';
 
-export class cPoint3D implements iPoint3D {
-    public x: number;
-    public y: number;
-    public z: number;
+export class cPoint3D extends Vector3 implements iPoint3D {
+
     public myName: string;
 
     constructor(x: number = 0, y: number = 0, z: number = 0, name?: string) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        super(x, y, z);
         this.myName = name;
     }
 
-    asVector():Vector3 {
+    asVector(): Vector3 {
         return new Vector3(this.x, this.y, this.z)
     }
 
-    set(x: number = 0, y: number = 0, z: number = 0) {
+    setValues(x: number = 0, y: number = 0, z: number = 0) {
         this.x = x;
         this.y = y;
         this.z = z;
         return this;
     }
 
-    clone() {
+    clonePoint() {
         return new cPoint3D(this.x, this.y, this.z, this.myName);
     }
 
-    add(x: number = 0, y: number = 0, z: number = 0) {
+    addPoint(x: number = 0, y: number = 0, z: number = 0) {
         this.x += x;
         this.y += y;
         this.z += z;
         return this;
     }
 
-    subtract(x: number = 0, y: number = 0, z: number = 0) {
+    subtractPoint(x: number = 0, y: number = 0, z: number = 0) {
         this.x -= x;
         this.y -= y;
         this.z += z;
         return this;
     }
 
-    midpoint(pt: cPoint3D) {
+    midPoint(pt: cPoint3D) {
         let x = (this.x + pt.x) / 2;
         let y = (this.y + pt.y) / 2;
         let z = (this.z + pt.z) / 2;
-        return new cPoint3D(x, y, z);
+        return new cPoint3D(x, y, z, 'midPoint');
     }
 }
 

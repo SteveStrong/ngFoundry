@@ -1,4 +1,4 @@
-import { Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Matrix4, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
 import { Tools } from '../foTools'
 import { cPoint3D } from './foGeometry3D';
@@ -42,57 +42,57 @@ export class foGlyph3D extends foGlyph {
 
     get x(): number { return this._x || 0.0; }
     set x(value: number) {
-        this.smash();
+        value != this._x && this.clearMesh();
         this._x = value;
     }
     get y(): number { return this._y || 0.0 }
     set y(value: number) {
-        this.smash();
+        value != this._y && this.clearMesh();
         this._y = value;
     }
 
     get z(): number { return this._z || 0.0; }
     set z(value: number) {
-        this.smash();
+        value != this._z && this.clearMesh();
         this._z = value;
     }
 
     get width(): number { return this._width || 0.0; }
-    set width(value: number) { 
-        this.clearMesh();
-        this._width = value; 
+    set width(value: number) {
+        value != this._width && this.clearMesh();
+        this._width = value;
     }
 
     get height(): number { return this._height || 0.0; }
-    set height(value: number) { 
-        this.clearMesh();
-        this._height = value; 
+    set height(value: number) {
+        value != this._height && this.clearMesh();
+        this._height = value;
     }
 
     get depth(): number { return this._depth || 0.0; }
-    set depth(value: number) { 
-        this.clearMesh();
-        this._depth = value; 
+    set depth(value: number) {
+        value != this._depth && this.clearMesh();
+        this._depth = value;
     }
 
     protected _angleX: number;
     get angleX(): number { return this._angleX || 0.0; }
     set angleX(value: number) {
-        this.smash();
+        value != this._angleX && this.clearMesh();
         this._angleX = value;
     }
 
     protected _angleY: number;
     get angleY(): number { return this._angleY || 0.0; }
     set angleY(value: number) {
-        this.smash();
+        value != this._angleY && this.clearMesh();
         this._angleY = value;
     }
 
     protected _angleZ: number;
     get angleZ(): number { return this._angleZ || 0.0; }
     set angleZ(value: number) {
-        this.smash();
+        value != this._angleZ && this.clearMesh();
         this._angleZ = value;
     }
 
@@ -100,12 +100,6 @@ export class foGlyph3D extends foGlyph {
     public rotationY = (): number => { return this.angleY; }
     public rotationZ = (): number => { return this.angleZ; }
 
-
-    //protected _matrix: Matrix3;
-    //protected _invMatrix: Matrix3;
-    smash() {
-        this.setupPreDraw();
-    }
 
     constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -143,6 +137,8 @@ export class foGlyph3D extends foGlyph {
     }
 
     is3D() { return true; }
+
+
 
     public getLocation = (): any => {
         return {
@@ -183,8 +179,13 @@ export class foGlyph3D extends foGlyph {
         if (!this._mesh) {
             let geom = this.geometry()
             let mat = this.material()
-            this._mesh = (geom && mat) && new Mesh(geom, this.material());
-           
+            let obj = (geom && mat) && new Mesh(geom, mat);
+            if (obj) {
+                obj.position.set(this.x, this.y, this.z);
+                obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+                this._mesh = obj;
+            }
+
         }
         return this._mesh;
     }
@@ -193,12 +194,12 @@ export class foGlyph3D extends foGlyph {
         return this._mesh != undefined
     }
     clearMesh() {
-        if ( !this._mesh) return;
+        if (!this._mesh) return;
         let parent = this.mesh.parent;
         if (parent) {
             parent.remove(this.mesh);
         }
-        this._mesh == undefined;
+        this._mesh = undefined;
         this.setupPreDraw();
     }
 
@@ -217,46 +218,61 @@ export class foGlyph3D extends foGlyph {
         });
     }
 
-    getGlobalMatrix() {
-        // let mtx = new Matrix3(this.getMatrix());
-        // let parent = <foGlyph2D>this.myParent()
-        // if (parent) {
-        //     mtx.prependMatrix(parent.getGlobalMatrix());
-        // }
-        return new Matrix3();
+    //http://www.codinglabs.net/article_world_view_projection_matrix.aspx
+    //https://scottbyrns.atlassian.net/wiki/spaces/THREEJS/pages/27721809/Matrix4
+
+    getGlobalMatrix():Matrix4 {
+        let mat = this.mesh.matrixWorld;
+        return mat;
     };
 
-    getMatrix() {
+    getGlobalInvMatrix():Matrix4 {
+        let mat = this.getGlobalMatrix();
+        mat = mat.getInverse(mat);
+        return mat;
+    };
+
+    getMatrix():Matrix4 {
         return this.mesh.matrix;
     };
 
-    getInvMatrix() {
+    getInvMatrix():Matrix4 {
         let mat = this.getMatrix();
         mat = mat.getInverse(mat);
         return mat;
     };
 
-    localToGlobal(x: number, y: number, pt?: cPoint3D) {
-        let mtx = this.getGlobalMatrix();
-        return mtx; // mtx.transformPoint(x, y, pt);
+    localToGlobal(pt: Vector3): Vector3 {
+        let mat = this.getGlobalMatrix();
+        let vec = mat.multiplyVector3(pt);
+        return vec;
     };
 
-    globalToLocal(x: number, y: number, pt?: cPoint3D) {
+    globalToLocal(pt: Vector3): Vector3 {
         let inv = this.getGlobalMatrix();
-        return inv; // inv.transformPoint(x, y, pt);
+        let vec = inv.multiplyVector3(pt);
+        return vec;
     };
 
-    localToGlobalPoint(pt: cPoint3D): cPoint3D {
-        //let mtx = this.getGlobalMatrix(new Vector3());
-        //return  mtx.transformPoint(pt.x, pt.y, pt);
-        return pt;
-    };
-
-    globalCenter(pt?: cPoint3D): cPoint3D {
+    getGlobalPosition(pt?: Vector3): Vector3 {
         this.mesh.updateMatrix();
-        let vec = this.mesh.getWorldPosition();
-        return new cPoint3D(vec[0], vec[1], vec[2]);
-    };
+        let vec = this.mesh.getWorldPosition(pt);
+        return vec;
+    }
+
+    setGlobalPosition(pt: Vector3): Vector3 {
+        this.x = pt.x;
+        this.y = pt.y;
+        this.z = pt.z;
+        return pt;
+    }
+
+    setGlobalRotation(pt: Vector3): Vector3 {
+        this.angleX = pt.x;
+        this.angleY = pt.y;
+        this.angleZ = pt.z;
+        return pt;
+    }
 
     setupPreDraw() {
 
@@ -265,23 +281,31 @@ export class foGlyph3D extends foGlyph {
             if (mesh) {
                 mesh.name = this.myGuid;
                 let parent = this.myParent() as foGlyph3D;
-                if ( parent && parent.hasMesh ) {
+                if (parent && parent.hasMesh) {
                     parent.mesh.add(mesh)
                 } else {
                     screen.addToScene(mesh);
                 }
 
-                //should hapen during draw
-                //mesh.position.set(this.x, this.y, this.z);
-                //mesh.rotation.set(this.angleX, this.angleY, this.angleZ);
-               
+                let self = this;
+                mesh.onBeforeRender = function( renderer, scene, camera, geometry, material, group ) {
+                    self.afterMeshCreated && self.afterMeshCreated(renderer, scene, camera, geometry, material, group);
+                    mesh.onBeforeRender = function () {};
+                };
+
+                mesh.onAfterRender = function( renderer, scene, camera, geometry, material, group ) {
+                    self.afterMeshRendered && self.afterMeshRendered(renderer, scene, camera, geometry, material, group);
+                    mesh.onAfterRender = function () {};
+                };
+
                 this.preDraw3D = undefined;
             }
-
         }
-
         this.preDraw3D = preDraw;
     }
+
+    afterMeshCreated: (...args) => void = () => {}
+    afterMeshRendered: (...args) => void = () => {}
 
     preDraw3D: (screen: Screen3D) => void;
 
@@ -290,10 +314,6 @@ export class foGlyph3D extends foGlyph {
         let obj = this.mesh;
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
-        //make changes that support animation here
-        //let rot = this.mesh.rotation;
-        // rot.x += 0.01;
-        // rot.y += 0.02;
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
@@ -383,6 +403,7 @@ export class foGlyph3D extends foGlyph {
 //https://www.typescriptlang.org/docs/handbook/mixins.html
 
 import { RuntimeType } from '../foRuntimeType';
+
 RuntimeType.define(foGlyph3D);
 
 //RuntimeType.applyMixins(foGlyph3D, [foGlyph2D, foBody3D]);

@@ -1,4 +1,4 @@
-import { Object3D, Matrix3, Material, Geometry, BoxGeometry, MeshBasicMaterial, Mesh } from 'three';
+import { Vector3, Mesh } from 'three';
 
 import { foObject } from '../foObject.model';
 import { foComponent } from '../foComponent.model';
@@ -43,6 +43,28 @@ export class foConnectionPoint3D extends foHandle3D {
         this.setupPreDraw()
     }
 
+    get mesh(): Mesh {
+        if (!this._mesh) {
+            let geom = this.geometry()
+            let mat = this.material()
+            let obj = (geom && mat) && new Mesh(geom, mat);
+            if (obj) {
+                obj.position.set(this.x, this.y, this.z);
+                obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+                this._mesh = obj;
+            }
+        }
+        return this._mesh;
+    }
+
+
+    setGlobalRotation(pt: Vector3): Vector3 {
+        this.angleX = pt.x;
+        this.angleY = pt.y;
+        this.angleZ = pt.z;
+        return pt;
+    }
+
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (!Number.isNaN(x)) this.x = x;
@@ -55,11 +77,7 @@ export class foConnectionPoint3D extends foHandle3D {
         let obj = this.mesh;
         if (!obj) return;
         obj.position.set(this.x, this.y, this.z);
-        //obj.rotation.set(this.angleX, this.angleY, this.angleZ);
-        //make changes that support animation here
-        //let rot = this.mesh.rotation;
-        // rot.x += 0.01;
-        // rot.y += 0.02;
+        obj.rotation.set(this.angleX, this.angleY, this.angleZ);
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {

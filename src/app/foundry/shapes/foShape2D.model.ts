@@ -150,8 +150,8 @@ export class foShape2D extends foGlyph2D {
         }
     }
 
-    protected getGlue(name: string) {
-        let glue = this.glue.findMember(name);
+    protected getGlue(name?: string) {
+        let glue = name && this.glue.findMember(name);
         if (!glue) {
             glue = new foGlue2D({ myName: name }, this);
             this.addGlue(glue);
@@ -159,14 +159,15 @@ export class foShape2D extends foGlyph2D {
         return glue;
     }
 
-    public establishGlue(name: string, target: foShape2D, handleName?: string) {
-        let glue = this.getGlue(name)
+    public establishGlue(sourceName: string, target: foShape2D, handleName?: string) {
+        let glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
+        glue.sourceName = sourceName;
         glue.glueTo(target, handleName);
         return glue;
     }
 
     public glueConnectionPoints(target: foShape2D, sourceHandle?: string, targetHandle?: string) {
-        let glue = this.establishGlue(sourceHandle, target, targetHandle);
+        let glue = this.establishGlue(sourceHandle ? sourceHandle: shape2DNames.center, target, targetHandle ? targetHandle: shape2DNames.center);
         return glue;
     }
 

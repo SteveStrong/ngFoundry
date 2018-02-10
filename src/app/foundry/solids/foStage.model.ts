@@ -28,42 +28,42 @@ export class foStage extends foGlyph3D {
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
     set marginX(value: number) {
-        this.smash();
+        value != this._marginX && this.clearMesh();
         this._marginX = value;
     }
 
     protected _marginY: number;
     get marginY(): number { return this._marginY || 0.0; }
     set marginY(value: number) {
-        this.smash();
+        value != this._marginY && this.clearMesh();
         this._marginY = value;
     }
 
     protected _marginZ: number;
     get marginZ(): number { return this._marginZ || 0.0; }
     set marginZ(value: number) {
-        this.smash();
-        this._marginY = value;
+        value != this._marginZ && this.clearMesh();
+        this._marginZ = value;
     }
 
     protected _scaleX: number;
     get scaleX(): number { return this._scaleX || 1.0; }
     set scaleX(value: number) {
-        this.smash();
+        value != this._scaleX && this.clearMesh();
         this._scaleX = value;
     }
 
     protected _scaleY: number;
     get scaleY(): number { return this._scaleY || 1.0; }
     set scaleY(value: number) {
-        this.smash();
+        value != this._scaleY && this.clearMesh();
         this._scaleY = value;
     }
 
     protected _scaleZ: number;
     get scaleZ(): number { return this._scaleZ || 1.0; }
     set scaleZ(value: number) {
-        this.smash();
+        value != this._scaleZ && this.clearMesh();
         this._scaleZ = value;
     }
 

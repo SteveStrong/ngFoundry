@@ -30,6 +30,16 @@ export class foStencilLibrary extends foLibrary {
         return concept;
     }
 
+    public impermanent<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
+        RuntimeType.define(type);
+        
+        let concept = new foConcept<T>({ myName });
+        concept.isVisible = false;
+        
+        concept.definePrimitive(type);
+        concept.specification = specification || {};
+        return concept;
+    }
 
     public define<T extends foNode>(myName: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
         RuntimeType.define(type);
