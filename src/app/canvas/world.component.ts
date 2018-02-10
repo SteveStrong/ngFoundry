@@ -57,6 +57,10 @@ export class WorldComponent implements OnInit, AfterViewInit {
     this.currentStudio.currentStage.deleteSelected();
   }
 
+  doRefresh() {
+    this.currentStudio.currentStage.clearMesh(true);
+  }
+
 
 
   doOnOff() {

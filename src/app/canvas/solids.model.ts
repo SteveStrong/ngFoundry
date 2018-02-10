@@ -291,7 +291,7 @@ SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
 
   let last = main;
   last.myName = last.color;
-  let colors = ['red', 'green'];
+  let colors = ['red', 'green', 'orange'];
 
   for (let i = 0; i < colors.length; i++) {
     let next = def.newInstance({

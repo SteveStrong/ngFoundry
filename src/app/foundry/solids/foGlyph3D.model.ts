@@ -193,7 +193,7 @@ export class foGlyph3D extends foGlyph {
     get hasMesh(): boolean {
         return this._mesh != undefined
     }
-    removeMesh(deep:boolean=false) {
+    removeMesh(deep: boolean = false) {
         if (!this._mesh) return;
 
         //also think about handles and connection points
@@ -207,9 +207,13 @@ export class foGlyph3D extends foGlyph {
         }
         this._mesh = undefined;
     }
-    clearMesh() {
+    clearMesh(deep: boolean = false) {
         if (!this._mesh) return;
-        this.removeMesh();
+
+        //also think about handles and connection points
+        deep && this.nodes.forEach(child => {
+            child.clearMesh(deep);
+        })
         this.setupPreDraw();
     }
 

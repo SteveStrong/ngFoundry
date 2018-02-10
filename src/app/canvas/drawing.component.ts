@@ -86,7 +86,10 @@ export class DrawingComponent implements OnInit, AfterViewInit {
   doDelete() {
     this.currentDocument.currentPage.deleteSelected();
     this.currentStudio.currentStage.deleteSelected();
+  }
 
+  doRefresh() {
+    this.currentStudio.currentStage.clearMesh(true)
   }
 
   doOnOff() {
