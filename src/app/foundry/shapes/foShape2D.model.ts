@@ -159,9 +159,9 @@ export class foShape2D extends foGlyph2D {
         return glue;
     }
 
-    public establishGlue(sourceName: string, target: foShape2D, handleName?: string) {
+    public establishGlue(sourceName: string, target: foShape2D, targetName?: string) {
         let glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
-        glue.glueTo(sourceName, target, handleName);
+        glue.glueTo(sourceName, target, targetName);
         return glue;
     }
 
