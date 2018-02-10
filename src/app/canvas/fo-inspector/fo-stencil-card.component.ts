@@ -58,7 +58,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
     let stage = globalWorkspace.activeStage;
 
 
-    if ( this.knowledge['run'] ) {
+    if (this.knowledge['run']) {
       let list = this.knowledge['run']();
       let names = list.map(element => {
         let target = element.is2D() ? page : stage;
@@ -70,12 +70,18 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
       Toast.info("Created", names.join(','))
     } else {
 
-      result = this.knowledge.newInstance({},[],).defaultName();
-      let target = result.is2D() ? page : stage;
+      result = this.knowledge.newInstance().defaultName();
+      
+      if (result.is2D()) {
+        result.dropAt(page.centerX, page.centerY)
+        .addAsSubcomponent(page)
+      } else {
+        result.dropAt(stage.centerX, stage.centerY, stage.centerZ)
+        .addAsSubcomponent(stage)
+      }
 
-        result.dropAt(target.centerX + result.width/2, target.centerY, target.centerZ + result.depth/2)
-        .addAsSubcomponent(target)
-  
+
+
       Toast.info("Created", result.displayName)
     }
     this.lastCreated = result;

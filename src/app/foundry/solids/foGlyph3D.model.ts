@@ -193,16 +193,31 @@ export class foGlyph3D extends foGlyph {
     get hasMesh(): boolean {
         return this._mesh != undefined
     }
-    clearMesh() {
+    removeMesh(deep:boolean=false) {
         if (!this._mesh) return;
+
+        //also think about handles and connection points
+        deep && this.nodes.forEach(child => {
+            child.removeMesh(deep);
+        })
+
         let parent = this.mesh.parent;
         if (parent) {
             parent.remove(this.mesh);
         }
         this._mesh = undefined;
+    }
+    clearMesh() {
+        if (!this._mesh) return;
+        this.removeMesh();
         this.setupPreDraw();
     }
 
+    removeSubcomponent(obj: foNode) {
+        this.removeMesh();
+        super.removeSubcomponent(obj);
+        return obj;
+    }
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
@@ -221,22 +236,22 @@ export class foGlyph3D extends foGlyph {
     //http://www.codinglabs.net/article_world_view_projection_matrix.aspx
     //https://scottbyrns.atlassian.net/wiki/spaces/THREEJS/pages/27721809/Matrix4
 
-    getGlobalMatrix():Matrix4 {
+    getGlobalMatrix(): Matrix4 {
         let mat = this.mesh.matrixWorld;
         return mat;
     };
 
-    getGlobalInvMatrix():Matrix4 {
+    getGlobalInvMatrix(): Matrix4 {
         let mat = this.getGlobalMatrix();
         mat = mat.getInverse(mat);
         return mat;
     };
 
-    getMatrix():Matrix4 {
+    getMatrix(): Matrix4 {
         return this.mesh.matrix;
     };
 
-    getInvMatrix():Matrix4 {
+    getInvMatrix(): Matrix4 {
         let mat = this.getMatrix();
         mat = mat.getInverse(mat);
         return mat;
@@ -288,14 +303,14 @@ export class foGlyph3D extends foGlyph {
                 }
 
                 let self = this;
-                mesh.onBeforeRender = function( renderer, scene, camera, geometry, material, group ) {
+                mesh.onBeforeRender = function (renderer, scene, camera, geometry, material, group) {
                     self.afterMeshCreated && self.afterMeshCreated(renderer, scene, camera, geometry, material, group);
-                    mesh.onBeforeRender = function () {};
+                    mesh.onBeforeRender = function () { };
                 };
 
-                mesh.onAfterRender = function( renderer, scene, camera, geometry, material, group ) {
+                mesh.onAfterRender = function (renderer, scene, camera, geometry, material, group) {
                     self.afterMeshRendered && self.afterMeshRendered(renderer, scene, camera, geometry, material, group);
-                    mesh.onAfterRender = function () {};
+                    mesh.onAfterRender = function () { };
                 };
 
                 this.preDraw3D = undefined;
@@ -304,8 +319,8 @@ export class foGlyph3D extends foGlyph {
         this.preDraw3D = preDraw;
     }
 
-    afterMeshCreated: (...args) => void = () => {}
-    afterMeshRendered: (...args) => void = () => {}
+    afterMeshCreated: (...args) => void = () => { }
+    afterMeshRendered: (...args) => void = () => { }
 
     preDraw3D: (screen: Screen3D) => void;
 
