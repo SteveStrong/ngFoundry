@@ -56,22 +56,22 @@ export class foModel3D extends foShape3D {
 
     setupPreDraw() {
 
-        let preDraw = (screen: Screen3D) => { 
+        let preDraw = (screen: Screen3D) => {
             this.preDraw3D = undefined;
 
-            if ( !this._geometry && !this._material) {
+            if (!this._geometry && !this._material) {
                 this.asyncModelLoader()
             } else {
                 let mesh = this.mesh;
                 mesh.name = this.myGuid;
                 let parent = this.myParent() as foShape3D;
-                if ( parent && parent.hasMesh ) {
+                if (parent && parent.hasMesh) {
                     parent.mesh.add(mesh)
                 } else {
                     screen.addToScene(mesh);
                 }
             }
-                 
+
         }
 
         this.preDraw3D = preDraw;
@@ -84,6 +84,10 @@ export class foModel3D extends foShape3D {
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
     };
+
+    public createConnectionPoints(): foCollection<foConnectionPoint3D> {
+        return this.generateConnectionPoints([]);
+    }
 }
 
 import { RuntimeType } from '../foRuntimeType';
