@@ -58,6 +58,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
   }
 
   doRefresh() {
+    this.screen3D.clear();
     this.currentStudio.currentStage.clearMesh(true);
   }
 

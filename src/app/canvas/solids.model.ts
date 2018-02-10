@@ -301,7 +301,7 @@ SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
         return this.hasParent ? this.myParent().width * .7 : 100;
       },
       height: function () {
-        return this.hasParent ? this.myParent().height * 1.2 : 100;
+        return this.hasParent ? this.myParent().height * 1.5 : 100;
       },
       depth: function () {
         return this.hasParent ? this.myParent().depth * .8 : 100;
