@@ -236,14 +236,14 @@ export class foPipe3D extends foShape3D {
         };
     }
 
-    public establishGlue(name: string, target: foShape3D, handleName?: string) {
+    public establishGlue(sourceName: string, target: foShape3D, targetName?: string) {
         let binding = {}
         binding[pipe3DNames.start] = this.enforceStart.bind(this);
         binding[pipe3DNames.finish] = this.enforceFinish.bind(this);
 
-        let glue = this.getGlue(name)
-        glue.glueTo(target, handleName);
-        glue.doTargetMoveProxy = binding[name];
+        let glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
+        glue.glueTo(sourceName, target, targetName);
+        glue.doTargetMoveProxy = binding[sourceName];
         this.enforceGlue();
         return glue;
     }
