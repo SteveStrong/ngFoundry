@@ -60,22 +60,22 @@ export class foDictionary<T extends iObject> extends foObject {
         this._lookup = {};
     }
 
-    get count():number {
+    get count(): number {
         return Object.keys(this._lookup).length;
     }
 
-    get keys():Array<string> {
+    get keys(): Array<string> {
         return Object.keys(this._lookup);
     }
 
-    get members():Array<T> {
+    get members(): Array<T> {
         let keys = this.keys;
         let list = keys.map(key => this._lookup[key]);
         return list;
     }
 
-    get publicMembers():Array<T> {
-        let list = this.members.filter( item => item.isPublic)
+    get publicMembers(): Array<T> {
+        let list = this.members.filter(item => item.isPublic)
         return list;
     }
 

@@ -1,40 +1,52 @@
 import { foKnowledge } from './foKnowledge.model'
 import { foConcept } from './foConcept.model'
 import { foComponent } from './foComponent.model'
-import { foCollection } from './foCollection.model'
+
 import { foLibrary } from './foLibrary.model'
+import { foDictionary } from './foDictionary.model'
 
 import { RuntimeType } from './foRuntimeType';
 
 class foSubSpec extends foKnowledge {
     structure: foStructure;
-    name:string;
+    name: string;
+    order: number = 0;
 }
+
 
 export class foStructure extends foKnowledge {
 
     private _concept: foConcept<foComponent>;
-    private _structures: foCollection<foSubSpec>;
+    private _structures: foDictionary<foSubSpec>;
 
     //return a new collection that could be destroyed
-    structures():foCollection<foSubSpec> {
-        if ( !this._structures){
-            this._structures = new foCollection<foSubSpec>();
+    get structures(): Array<foSubSpec> {
+        if (this._structures) {
+            this._structures = new foDictionary<foSubSpec>();
+            return this._structures.members.sort((a,b) => a.order - b.order)
         }
-        return this._structures;
     }
 
     constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);      
+        super(properties, parent);
     }
 
-    subcomponent(name:string, spec?: any | foStructure) {
-        let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
+    private addSubSpec(name: string, structure: foStructure): foSubSpec {
+        if (!this._structures) {
+            this._structures = new foDictionary<foSubSpec>();
+        }
         let subSpec = new foSubSpec({
             name,
-            structure
+            structure,
+            order: this._structures.count + 1
         });
-        this.structures().addMember(subSpec);
+        this._structures.addItem(name,subSpec );
+        return subSpec;
+    }
+
+    subcomponent(name: string, spec?: any | foStructure) {
+        let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
+        this.addSubSpec(name,structure);
         return this;
     }
 
@@ -47,10 +59,10 @@ export class foStructure extends foKnowledge {
     }
 
     concept(concept?: string | foConcept<foComponent>) {
-        if ( concept instanceof foConcept ) {
+        if (concept instanceof foConcept) {
             this._concept = concept;
         } else {
-            let library = this.findParent( item => item instanceof foLibrary) as foLibrary;
+            let library = this.findParent(item => item instanceof foLibrary) as foLibrary;
             this._concept = library.establishConcept<foComponent>(concept);
         }
 
@@ -60,10 +72,10 @@ export class foStructure extends foKnowledge {
     newInstance(context?: foComponent): foComponent {
         let concept = this._concept ? this._concept : new foConcept<foComponent>();
         let result = concept.newInstance({}, [], context);
-        
+
         result && result.addAsSubcomponent(context);
 
-        this.structures().forEach(item => {
+        this.structures.forEach(item => {
             let structure = item.structure;
             let child = structure.newInstance(result);
             child.myName = item.name;
