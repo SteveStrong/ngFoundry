@@ -124,7 +124,7 @@ export class foLibrary extends foKnowledge {
     establishStructure(key: string, properties?: any): foStructure {
         let structure = this.structures.getItem(key) as foStructure;
         if (!structure) {
-            structure = new foStructure(properties)
+            structure = new foStructure(properties, this);
             this.structures.addItem(key, structure);
             structure.myName = key;
         }
@@ -138,7 +138,8 @@ export class foLibrary extends foKnowledge {
     establishConcept<T extends foNode>(key: string, properties?: any): foConcept<T> {
         let concept = this.concepts.getItem(key) as foConcept<T>
         if (!concept) {
-            concept = new foConcept<T>(properties);
+            concept = new foConcept<T>({}, this);
+            concept.specification = properties;
             this.concepts.addItem(key, concept);
             concept.myName = key;
         }
@@ -152,7 +153,7 @@ export class foLibrary extends foKnowledge {
     establishProperty(key: string, properties: any): foProperty {
         let property = this.properties.getItem(key);
         if (!property) {
-            property = new foProperty(properties)
+            property = new foProperty(properties,this)
             this.properties.addItem(key, property);
             property.myName = key;
         }

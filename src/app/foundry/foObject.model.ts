@@ -15,8 +15,12 @@ export class foObject implements iObject {
     get isInvisible(): boolean { return !this._isVisible; }
     set isInvisible(value: boolean) { this._isVisible = !value; }
 
-    visible(value: boolean) {
-        this._isVisible = value;
+    show(value?: boolean) {
+        this._isVisible = value ? true: false;
+        return this;
+    }
+    hide() {
+        this._isVisible = false;
         return this;
     }
 

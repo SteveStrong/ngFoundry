@@ -14,22 +14,24 @@ PersonDomain.establishConcept<foComponent>('Person', {
   }
 });
 
-let pipeDef = PersonDomain.establishConcept<foComponent>('fullpipeline', {
+PersonDomain.establishConcept<foComponent>('fullpipeline', {
   pipelineName: 'dave',
-});
+}).hide();
 
-;
+let compile = PersonDomain.establishConcept<foComponent>('compile').hide();
+
 
 let s1 = PersonDomain.establishStructure('stage1', {})
-        .concept(PersonDomain.establishConcept<foComponent>('compile')).visible(false);
+        .concept(compile).hide();
 let s2 = PersonDomain.establishStructure('stage2', {})
-        .concept(PersonDomain.establishConcept<foComponent>('test')).visible(false);
+        .concept('test').hide();
 let s3 = PersonDomain.establishStructure('stage3', {})
-        .concept(PersonDomain.establishConcept<foComponent>('package')).visible(false);
+        .concept('package').hide();
 
 PersonDomain.establishStructure('Pipeline', {
-}).concept(pipeDef)
+}).concept('fullpipeline')
   .subcomponent('s1', s1)
+  .subcomponent('s2', s2)
   .subcomponent('s3', s3)
-  .subcomponent('s2', s2);
+
 

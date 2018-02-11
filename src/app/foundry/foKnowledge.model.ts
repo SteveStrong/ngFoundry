@@ -58,6 +58,15 @@ export class foKnowledge extends foObject {
         }
         return result;
     }
+
+    findParent(where: WhereClause<foKnowledge>){
+        let parent = <foKnowledge>this.myParent();
+        if ( !parent ) return;
+        if ( where(parent) ) {
+            return parent;
+        }
+        return parent.findParent(where);
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';

@@ -59,8 +59,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
     private _onCreation: (obj) => void;
 
-    constructor(properties?: any) {
-        super(properties);
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);      
     }
 
 
@@ -89,7 +89,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let attributes = this.attributes;
         let attribute = attributes.getItem(key);
         if (!attribute) {
-            attribute = attributes.addItem(key, new foAttribute(spec));
+            attribute = new foAttribute(spec, this);
+            attribute = attributes.addItem(key, attribute);
             attribute.myName = key;
 
             PubSub.Pub("attribute", ["added", this, attribute]);
