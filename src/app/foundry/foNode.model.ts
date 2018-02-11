@@ -12,8 +12,10 @@ export class foNode extends foObject implements iNode {
     private _childDepth: number = 0;
 
 
+
     protected _subcomponents: foCollection<foNode>;
 
+   
     private _class: string;
     get myClass(): string {
         //let comp: any = this.constructor;

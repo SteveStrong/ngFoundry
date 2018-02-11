@@ -81,7 +81,6 @@ class FactoryDictionary<T extends foNode> extends foDictionary<foFactory<T>>{
 export class foLibrary extends foKnowledge {
 
     private _structures: StructureDictionary = new ConceptDictionary({ myName: 'structures' }, this);
-
     private _concepts: ConceptDictionary = new ConceptDictionary({ myName: 'concepts' }, this);
     private _properties: PropertyDictionary = new PropertyDictionary({ myName: 'properties' }, this);
     private _actions: ActionDictionary<foNode> = new ActionDictionary({ myName: 'actions' }, this);

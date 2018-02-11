@@ -25,6 +25,11 @@ export class foKnowledge extends foObject {
         return undefined;
     }
 
+    extract(target: any) {
+        let result = {};
+        return result;
+    }
+
     get commands(): Array<string> {
         return [];
     }

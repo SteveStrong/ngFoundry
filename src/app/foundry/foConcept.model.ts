@@ -7,7 +7,7 @@ import { foAttribute, foViewAttribute } from './foAttribute.model'
 import { Action } from "./foInterface";
 
 import { foObject } from './foObject.model'
-//import { foComponent } from './foComponent.model'
+import { foComponent } from './foComponent.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
@@ -60,7 +60,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     private _onCreation: (obj) => void;
 
     constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);      
+        super(properties, parent);
     }
 
 
@@ -73,7 +73,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
-    usingRuntimeType(type:string, action:Action<foKnowledge>){
+    usingRuntimeType(type: string, action: Action<foKnowledge>) {
         let found = RuntimeType.find(type);
         let tempHold = this._create;
         this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
@@ -130,11 +130,23 @@ export class foConcept<T extends foNode> extends foKnowledge {
         });
     }
 
+    extract(target: any) {
+        let result = {};
+        Object.keys(this.specification).forEach(key => {
+            result[key] = target[key]
+        })
+        return result;
+    }
 
     newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
         let spec = Tools.union(this.specification, properties);
         let result = this._create(spec, subcomponents, parent) as T;
-        result.myClass = this.myName;
+        if (result instanceof foComponent) {
+            result.setCreatedFrom(this);
+        } else {
+            result.myClass = this.myName;
+        }
+
         result.initialize();
         this._onCreation && this._onCreation(result);
         Lifecycle.created(result, this);
@@ -164,7 +176,7 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
         PubSub.Sub("attribute", (action, source, attribute) => {
             if (this._mySource === source) {
-               // let view = this.establishViewAttribute(attribute)
+                // let view = this.establishViewAttribute(attribute)
             }
         });
     }
@@ -185,5 +197,5 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
 RuntimeType.knowledge(foProjection);
 
- 
+
 
