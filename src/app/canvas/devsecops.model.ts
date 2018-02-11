@@ -13,14 +13,15 @@ DevSecOps.establishConcept<foComponent>('Root', {
 }).hide();
 
 let compile = DevSecOps.establishConcept<foComponent>('compile').hide();
-
+compile.subcomponent('details', {})
 
 let s1 = DevSecOps.establishStructure('stage1', {})
   .concept(compile).hide();
 let s2 = DevSecOps.establishStructure('stage2', {})
   .concept('test').hide();
 let s3 = DevSecOps.establishStructure('stage3', {})
-  .concept('package').hide();
+  .concept('package').hide()
+  .subcomponent('local', {})
 
 DevSecOps.establishStructure('Pipeline', {
 }).concept('Root')
