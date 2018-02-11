@@ -1,0 +1,11 @@
+<div class="col-sm-3" style="border:3">
+  <div class="card" style="width: 18rem;">
+    <i (click)="doToggleDetails()" class="fa fa-2x fa-ellipsis-h" aria-hidden="true"></i>
+
+    <canvas (click)="doCreate()" #canvas width=170 height=100></canvas>
+
+    <div class="card-body">
+      <pre *ngIf="showDetails" class="well">{{structure.asJson | json }}</pre>
+    </div>
+  </div>
+</div>

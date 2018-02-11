@@ -74,6 +74,11 @@ export class foDictionary<T extends iObject> extends foObject {
         return list;
     }
 
+    get publicMembers():Array<T> {
+        let list = this.members.filter( item => item.isPublic)
+        return list;
+    }
+
     get values() {
         let result = this._lookup;
         return result;

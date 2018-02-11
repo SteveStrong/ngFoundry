@@ -9,11 +9,24 @@ export class foObject implements iObject {
     myName: string = foNames.UNKNOWN;
     myParent: ModelRef<iObject>;
 
-    private _isVisible:boolean = true;
+    private _isVisible: boolean = true;
     get isVisible(): boolean { return this._isVisible; }
     set isVisible(value: boolean) { this._isVisible = value; }
     get isInvisible(): boolean { return !this._isVisible; }
     set isInvisible(value: boolean) { this._isVisible = !value; }
+
+    show(value?: boolean) {
+        this._isVisible = value ? true: false;
+        return this;
+    }
+    hide() {
+        this._isVisible = false;
+        return this;
+    }
+
+    get isPublic() {
+        return this._isVisible;
+    }
 
     constructor(properties?: any, parent?: foObject) {
         if (parent) {
@@ -63,12 +76,12 @@ export class foObject implements iObject {
         }
     }
 
-    protected _displayName:string;
+    protected _displayName: string;
     get displayName() {
-        if ( this._displayName ) return this._displayName;
+        if (this._displayName) return this._displayName;
         return `${this.myName} - ${this.myType}`;
     }
-    set displayName(value:string){
+    set displayName(value: string) {
         this._displayName = value;
     }
 

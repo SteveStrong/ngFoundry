@@ -162,6 +162,7 @@ export class foStage extends foGlyph3D {
             Lifecycle.unparent(item);
             Lifecycle.destroyed(item);
         })
+        this.removeMesh(true);
         this._subcomponents.clearAll();
         this._dictionary.clearAll();
     }

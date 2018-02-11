@@ -1,6 +1,7 @@
 <accordion>
   <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="true">
-      <fo-concept-card *ngFor="let concept of item.concepts.members" [model]="rootModel" [concept]="concept"></fo-concept-card>
-  </accordion-group>
+      <fo-concept-card *ngFor="let concept of item.concepts.publicMembers" [model]="rootModel" [concept]="concept"></fo-concept-card>
+      <fo-structure-card *ngFor="let structure of item.structures.publicMembers" [model]="rootModel" [structure]="structure"></fo-structure-card>
+    </accordion-group>
 </accordion>
 

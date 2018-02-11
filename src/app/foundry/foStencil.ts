@@ -34,7 +34,6 @@ export class foStencilLibrary extends foLibrary {
         RuntimeType.define(type);
         
         let concept = new foConcept<T>({ myName });
-        concept.isVisible = false;
         
         concept.definePrimitive(type);
         concept.specification = specification || {};
@@ -45,7 +44,6 @@ export class foStencilLibrary extends foLibrary {
         RuntimeType.define(type);
         
         let concept = new foConcept<T>({ myName });
-        concept.isVisible = this.isVisible;
         
         concept.definePrimitive(type);
         concept.specification = specification || {};
@@ -76,7 +74,6 @@ export class foStencilLibrary extends foLibrary {
     public action<T extends foNode>(myName: string, funct:Action<T>): foMethod<T> {
           
         let method = new foMethod(funct, { myName });
-        method.isVisible = this.isVisible;
 
         this.actions.addItem(myName, method);
         Knowcycle.defined(method);
@@ -86,7 +83,6 @@ export class foStencilLibrary extends foLibrary {
     public factory<T extends foNode>(myName: string, funct:Spec<T>): foFactory<T> {
           
         let method = new foFactory(funct, { myName });
-        method.isVisible = this.isVisible;
 
         this.factories.addItem(myName, method);
         Knowcycle.defined(method);

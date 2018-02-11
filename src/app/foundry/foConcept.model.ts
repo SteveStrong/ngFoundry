@@ -11,7 +11,7 @@ import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
-import { Lifecycle } from 'app/foundry/foLifecycle';
+import { Lifecycle } from './foLifecycle';
 
 
 export class foConcept<T extends foNode> extends foKnowledge {
@@ -59,8 +59,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
     private _onCreation: (obj) => void;
 
-    constructor(properties?: any) {
-        super(properties);
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);      
     }
 
 
@@ -89,7 +89,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let attributes = this.attributes;
         let attribute = attributes.getItem(key);
         if (!attribute) {
-            attribute = attributes.addItem(key, new foAttribute(spec));
+            attribute = new foAttribute(spec, this);
+            attribute = attributes.addItem(key, attribute);
             attribute.myName = key;
 
             PubSub.Pub("attribute", ["added", this, attribute]);
@@ -150,6 +151,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 
 RuntimeType.knowledge(foConcept);
+
+
 
 export class foProjection<T extends foNode> extends foConcept<T> {
 

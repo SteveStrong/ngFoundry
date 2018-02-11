@@ -10,18 +10,18 @@ import { Toast } from "../../common/emitter.service";
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
 
 @Component({
-  selector: 'fo-concept-card',
-  templateUrl: './fo-concept-card.component.html',
-  styleUrls: ['./fo-concept-card.component.css']
+  selector: 'fo-structure-card',
+  templateUrl: './fo-structure-card.component.html',
+  styleUrls: ['./fo-structure-card.component.css']
 })
-export class foConceptCardComponent implements OnInit, AfterViewInit {
+export class foStructureCardComponent implements OnInit {
   lastCreated: foNode;
   showDetails = false;
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
   @Input()
-  public concept: foKnowledge;
+  public structure: foKnowledge;
 
   @Input()
   public model: foModel;
@@ -50,7 +50,7 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
     let canvas = nativeElement;
     let context = canvas.getContext("2d");
 
-    this.drawName(this.concept.myName, context)
+    this.drawName(this.structure.myName, context)
   }
 
   doToggleDetails() {
@@ -58,31 +58,9 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
   }
 
   doCreate() {
-    this.lastCreated = this.concept.newInstance().defaultName()
-      .addAsSubcomponent(this.model);
+    let obj = this.structure.newInstance(this.model).defaultName();
 
-    Toast.info("Created", this.lastCreated.displayName);
-
-    let found = globalWorkspace.stencil.select(item => {
-      return Tools.matches(item.myName, 'text');
-    }).first();
-
-
-
-    let shape = found.newInstance({
-      myGuid: this.lastCreated.myGuid,
-      context: this.lastCreated.displayName,
-      fontSize: 40,
-      x: 400,
-      y: 400,
-    });
-    //foObject.jsonAlert(shape);
-    globalWorkspace.activePage.addSubcomponent(shape);
-
-  }
-
-  doCommand(cmd: string) {
-    this.lastCreated && this.lastCreated[cmd]();
+    Toast.info("Created", obj.displayName);
   }
 
 }

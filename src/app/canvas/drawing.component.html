@@ -3,6 +3,8 @@
   <div class="col-xs-12 col-12">
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group mr-2" role="group">
+          <button (click)="doRefresh()" type="button" class="btn btn-success">Refresh</button>
+          
         <button (click)="doClear()" type="button" class="btn btn-danger">Clear</button>
         <button (click)="doDelete()" type="button" class="btn btn-warning">Delete</button>
         <button (click)="doOnOff()" type="button" class="btn btn-success">{{label}}</button>

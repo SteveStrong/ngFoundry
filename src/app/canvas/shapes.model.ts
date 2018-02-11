@@ -164,7 +164,6 @@ ShapeStencil.factory<foGlyph2D>('doText', (spec?: any) => {
 
 ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
 
-  ShapeStencil.isVisible = false;
   let results = Array<foGlyph2D>();
 
   let def = ShapeStencil.define<foShape2D>('2D::glueShape', foShape2D, {
@@ -183,7 +182,6 @@ ShapeStencil.factory<foGlyph2D>('doGlue2D', (spec?: any) => {
     height: 15,
   });
 
-  ShapeStencil.isVisible = true;
   
   let wire = cord.newInstance().pushTo(results);
 

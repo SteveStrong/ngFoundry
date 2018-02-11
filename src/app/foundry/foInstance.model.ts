@@ -8,6 +8,12 @@ import { foCollection } from './foCollection.model'
 export class foInstance extends foNode {
 
     protected _subcomponents: foCollection<foInstance>;
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            subcomponents: this._subcomponents && this._subcomponents.asJson() 
+        });
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';

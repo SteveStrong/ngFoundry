@@ -48,7 +48,7 @@ import { foConceptComponent } from './canvas/fo-inspector/fo-concept.component';
 import { foStencilPanelComponent } from './canvas/fo-inspector/fo-stencil-panel.component';
 import { foPagePanelComponent } from './canvas/fo-inspector/fo-page-panel.component';
 import { foModelPanelComponent } from './canvas/fo-inspector/fo-model-panel.component';
-import { foConceptPanelComponent } from './canvas/fo-inspector/fo-concept-panel.component';
+
 import { DrawingComponent } from './canvas/drawing.component';
 import { foPageComponent } from './canvas/fo-inspector/fo-page.component';
 import { foStencilCardComponent } from './canvas/fo-inspector/fo-stencil-card.component';
@@ -59,6 +59,8 @@ import { ZoneTestComponent } from './zone-test/zone-test.component';
 import { foStagePanelComponent } from './canvas/fo-inspector/fo-stage-panel.component';
 import { foStageComponent } from './canvas/fo-inspector/fo-stage.component';
 import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
+import { DomainComponent } from './canvas/domain.component';
+import { foStructureCardComponent } from './canvas/fo-inspector/fo-structure-card.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +96,7 @@ import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
     foStencilPanelComponent,
     foPagePanelComponent,
     foModelPanelComponent,
-    foConceptPanelComponent,
+
     DrawingComponent,
     foPageComponent,
     foStencilCardComponent,
@@ -104,7 +106,9 @@ import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
     ZoneTestComponent,
     foStagePanelComponent,
     foStageComponent,
-    foStudioComponent
+    foStudioComponent,
+    DomainComponent,
+    foStructureCardComponent
   ],
   imports: [
     BrowserAnimationsModule,

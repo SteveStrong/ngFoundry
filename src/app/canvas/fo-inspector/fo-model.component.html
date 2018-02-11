@@ -1,8 +1,8 @@
 <ng-container>
   <div *ngIf="model" class="panel panel-default">
     <div class="panel-body">{{model.displayName}}</div>
-    <ng-container *ngFor="let node of model.nodes.members; let i = index; let isOdd = odd">
-      <fo-model-panel [node]="node"></fo-model-panel>
-    </ng-container>
+    <ul *ngFor="let node of model.nodes.members; let i = index; let isOdd = odd">
+        <li><fo-model-panel [node]="node"></fo-model-panel></li>
+    </ul>
   </div>
 </ng-container>

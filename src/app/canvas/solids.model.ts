@@ -291,7 +291,7 @@ SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
 
   let last = main;
   last.myName = last.color;
-  let colors = ['red', 'green'];
+  let colors = ['red', 'green', 'orange'];
 
   for (let i = 0; i < colors.length; i++) {
     let next = def.newInstance({
@@ -301,7 +301,7 @@ SolidStencil.factory<foShape3D>('stackWithGlue', (spec?: any) => {
         return this.hasParent ? this.myParent().width * .7 : 100;
       },
       height: function () {
-        return this.hasParent ? this.myParent().height * 1.2 : 100;
+        return this.hasParent ? this.myParent().height * 1.5 : 100;
       },
       depth: function () {
         return this.hasParent ? this.myParent().depth * .8 : 100;
@@ -370,23 +370,7 @@ SolidStencil.define<foImage3D>('3D::Image', foImage3D, {
   height: 250
 });
 
-class Pipe3d extends foPipe3D {
-  //https://threejs.org/docs/#api/geometries/TubeGeometry
-  // geometry = (spec?: any): Geometry => {
-  //   let begin = this.begin().asVector();
-  //   let end = this.end().asVector();
-  //   let curve = new LineCurve3(begin, end)
-  //   return new TubeGeometry(curve, 20, 2, 8, false);
-  // }
 
-  // material = (spec?: any): Material => {
-  //   let props = Tools.mixin({
-  //     color: this.color,
-  //     wireframe: false
-  //   }, spec)
-  //   return new MeshBasicMaterial(props);
-  // }
-}
 
 SolidStencil.define<foPipe3D>('3D::Pipe', foPipe3D, {
   color: 'blue',
@@ -408,7 +392,6 @@ SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
 });
 
 SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
-  SolidStencil.isVisible = false;
   let results = Array<foGlyph3D>();
 
   let def = SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
@@ -428,7 +411,7 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
     height: 55,
     radiusSegments: 50
   });
-  SolidStencil.isVisible = true;
+
 
   let wire1 = cord.newInstance({ myName: 'wire1' }).pushTo(results);
   wire1.glueStartTo(shape1, shape3DNames.left);

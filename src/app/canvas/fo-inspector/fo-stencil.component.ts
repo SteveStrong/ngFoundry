@@ -18,6 +18,6 @@ export class foStencilComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.stencils = this.rootWorkspace.stencil.members.filter( item => item.isVisible);
+    this.stencils = this.rootWorkspace.stencil.members;
   }
 }
