@@ -7,7 +7,7 @@ import { foDictionary } from './foDictionary.model'
 
 import { RuntimeType } from './foRuntimeType';
 
-class foSubSpec extends foKnowledge {
+class foSubStructSpec extends foKnowledge {
     structure: foStructure;
     name: string;
     order: number = 0;
@@ -17,25 +17,20 @@ class foSubSpec extends foKnowledge {
 export class foStructure extends foKnowledge {
 
     private _concept: foConcept<foComponent>;
-    private _structures: foDictionary<foSubSpec>;
+    private _structures: foDictionary<foSubStructSpec>;
 
     //return a new collection that could be destroyed
-    get structures(): Array<foSubSpec> {
-        if (this._structures) {
-            this._structures = new foDictionary<foSubSpec>();
-            return this._structures.members.sort((a,b) => a.order - b.order)
-        }
-    }
+
 
     constructor(properties?: any, parent?: foKnowledge) {
         super(properties, parent);
     }
 
-    private addSubSpec(name: string, structure: foStructure): foSubSpec {
+    private addSubSpec(name: string, structure: foStructure): foSubStructSpec {
         if (!this._structures) {
-            this._structures = new foDictionary<foSubSpec>();
+            this._structures = new foDictionary<foSubStructSpec>();
         }
-        let subSpec = new foSubSpec({
+        let subSpec = new foSubStructSpec({
             name,
             structure,
             order: this._structures.count + 1
@@ -48,6 +43,11 @@ export class foStructure extends foKnowledge {
         let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
         this.addSubSpec(name,structure);
         return this;
+    }
+    get structures(): Array<foSubStructSpec> {
+        if (this._structures) {
+             return this._structures.members.sort((a,b) => a.order - b.order);
+        }
     }
 
     attribute(spec?: any) {

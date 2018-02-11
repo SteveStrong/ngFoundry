@@ -13,9 +13,15 @@ import { foNode } from './foNode.model'
 import { RuntimeType } from './foRuntimeType';
 import { Lifecycle } from './foLifecycle';
 
+class foSubComponentSpec extends foKnowledge {
+    concept: foKnowledge;
+    name: string;
+    order: number = 0;
+}
 
 export class foConcept<T extends foNode> extends foKnowledge {
 
+ 
     private _create = (properties?: any, subcomponents?: Array<foNode>, parent?: foObject): T => {
         return <T>new foNode(properties, subcomponents, parent);
     }
@@ -48,6 +54,31 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
     set attributes(value: any) { this._attributes = value; }
 
+
+    private _structures: foDictionary<foSubComponentSpec>;
+    private addSubComponentSpec(name: string, concept: foKnowledge): foSubComponentSpec {
+        if (!this._structures) {
+            this._structures = new foDictionary<foSubComponentSpec>();
+        }
+        let subSpec = new foSubComponentSpec({
+            name,
+            concept,
+            order: this._structures.count + 1
+        });
+        this._structures.addItem(name,subSpec );
+        return subSpec;
+    }
+    subcomponent(name: string, spec?: any | foKnowledge) {
+        let structure = spec instanceof foKnowledge ? spec : new foConcept(spec, this);
+        this.addSubComponentSpec(name,structure);
+        return this;
+    }
+    get structures(): Array<foSubComponentSpec> {
+        if (this._structures) {
+             return this._structures.members.sort((a,b) => a.order - b.order);
+        }
+    }
+    
     private _projections: foDictionary<foProjection<T>>;
     get projections() {
         if (!this._projections) {
@@ -150,6 +181,16 @@ export class foConcept<T extends foNode> extends foKnowledge {
         result.initialize();
         this._onCreation && this._onCreation(result);
         Lifecycle.created(result, this);
+
+        
+        result && parent && result.addAsSubcomponent(parent);
+
+        this.structures.forEach(item => {
+            let concept = item.concept;
+            let child = concept.newInstance({}, [], result);
+            child.myName = item.name;
+        });
+
         return result;
     }
 
