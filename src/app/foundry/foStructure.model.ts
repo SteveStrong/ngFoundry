@@ -5,17 +5,20 @@ import { foCollection } from './foCollection.model'
 
 import { RuntimeType } from './foRuntimeType';
 
-export class Concept extends foConcept<foComponent> {}
+class foSubSpec extends foKnowledge {
+    structure: foStructure;
+    name:string;
+}
 
 export class foStructure extends foKnowledge {
 
-    private _concept: Concept;
-    private _structures: foCollection<foStructure>;
+    private _concept: foConcept<foComponent>;
+    private _structures: foCollection<foSubSpec>;
 
     //return a new collection that could be destroyed
-    structures():foCollection<foStructure> {
+    structures():foCollection<foSubSpec> {
         if ( !this._structures){
-            this._structures = new foCollection<foStructure>();
+            this._structures = new foCollection<foSubSpec>();
         }
         return this._structures;
     }
@@ -24,9 +27,13 @@ export class foStructure extends foKnowledge {
         super(properties, parent);      
     }
 
-    subcomponent(spec?: any | foStructure) {
-        let result = spec instanceof foStructure ? spec : new foStructure(spec, this);
-        this.structures().addMember(result);
+    subcomponent(name:string, spec?: any | foStructure) {
+        let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
+        let subSpec = new foSubSpec({
+            name,
+            structure
+        });
+        this.structures().addMember(subSpec);
         return this;
     }
 
@@ -46,11 +53,14 @@ export class foStructure extends foKnowledge {
     newInstance(context?: foComponent): foComponent {
         let concept = this._concept ? this._concept : new foConcept<foComponent>();
         let result = concept.newInstance({}, [], context);
+        
         result && result.addAsSubcomponent(context);
 
         this.structures().forEach(item => {
-            item.newInstance(result);
-        })
+            let structure = item.structure;
+            let child = structure.newInstance(result);
+            child.myName = item.name;
+        });
         return result;
     }
 

@@ -20,6 +20,10 @@ export class foObject implements iObject {
         return this;
     }
 
+    get isPublic() {
+        return this._isVisible;
+    }
+
     constructor(properties?: any, parent?: foObject) {
         if (parent) {
             this.myParent = () => { return parent };

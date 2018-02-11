@@ -392,7 +392,6 @@ SolidStencil.define<foPipe3D>('3D::glueLine', foPipe3D, {
 });
 
 SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
-  //SolidStencil.isVisible = false;
   let results = Array<foGlyph3D>();
 
   let def = SolidStencil.define<foShape3D>('3D::glueShape', foShape3D, {
@@ -412,7 +411,7 @@ SolidStencil.factory<foGlyph3D>('doGlue3D', (spec?: any) => {
     height: 55,
     radiusSegments: 50
   });
-  //SolidStencil.isVisible = true;
+
 
   let wire1 = cord.newInstance({ myName: 'wire1' }).pushTo(results);
   wire1.glueStartTo(shape1, shape3DNames.left);

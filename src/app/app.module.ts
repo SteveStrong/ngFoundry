@@ -60,7 +60,7 @@ import { foStagePanelComponent } from './canvas/fo-inspector/fo-stage-panel.comp
 import { foStageComponent } from './canvas/fo-inspector/fo-stage.component';
 import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
 import { DomainComponent } from './canvas/domain.component';
-import { foStructureComponent } from './canvas/fo-inspector/fo-structure.component';
+import { foStructureCardComponent } from './canvas/fo-inspector/fo-structure-card.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +108,7 @@ import { foStructureComponent } from './canvas/fo-inspector/fo-structure.compone
     foStageComponent,
     foStudioComponent,
     DomainComponent,
-    foStructureComponent
+    foStructureCardComponent
   ],
   imports: [
     BrowserAnimationsModule,

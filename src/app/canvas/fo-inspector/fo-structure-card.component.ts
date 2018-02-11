@@ -10,11 +10,11 @@ import { Toast } from "../../common/emitter.service";
 import { globalWorkspace } from "../../foundry/foWorkspace.model";
 
 @Component({
-  selector: 'fo-structure',
-  templateUrl: './fo-structure.component.html',
-  styleUrls: ['./fo-structure.component.css']
+  selector: 'fo-structure-card',
+  templateUrl: './fo-structure-card.component.html',
+  styleUrls: ['./fo-structure-card.component.css']
 })
-export class foStructureComponent implements OnInit {
+export class foStructureCardComponent implements OnInit {
   lastCreated: foNode;
   showDetails = false;
 
@@ -58,10 +58,9 @@ export class foStructureComponent implements OnInit {
   }
 
   doCreate() {
-    this.lastCreated = this.structure.newInstance().defaultName()
-      .addAsSubcomponent(this.model);
+    let obj = this.structure.newInstance(this.model).defaultName();
 
-    Toast.info("Created", this.lastCreated.displayName);
+    Toast.info("Created", obj.displayName);
   }
 
 }

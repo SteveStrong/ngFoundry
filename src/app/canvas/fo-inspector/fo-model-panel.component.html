@@ -7,10 +7,8 @@
     </ng-container>
   
     <ng-container *ngIf="!node.nodes.isHidden ">
-      <p *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
-        <fo-model-panel [node]="node"></fo-model-panel>
-      </p>
+      <ul *ngFor="let node of node.nodes.members; let i = index; let isOdd = odd">
+        <li><fo-model-panel [node]="node"></fo-model-panel></li>
+      </ul>
     </ng-container>
-  
-  
   </div>

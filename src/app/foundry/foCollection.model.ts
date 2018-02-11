@@ -99,6 +99,10 @@ export class foCollection<T extends iObject> extends foObject {
         return this._members;
     }
 
+    get publicMembers() {
+        return this.members.filter( item => item.isPublic);
+    }
+
 
     moveToTop(item: T) {
         let loc = this._members.indexOf(item);

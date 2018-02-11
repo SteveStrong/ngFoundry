@@ -29,6 +29,7 @@ export interface iObject {
     override(properties?: any);
     hasAncestor(member?: iObject): boolean;
     asJson: string;
+    isPublic: boolean
 }
 
 export interface iNode {
