@@ -22,22 +22,24 @@ import { SolidStencil } from "./solids.model";
 })
 export class DomainComponent implements OnInit {
 
-  rootWorkspace: foWorkspace = globalWorkspace.defaultName();
+  workspace: foWorkspace = globalWorkspace;
+  model: foModel;
   
   constructor(
     private sharing: SharingService) {
   }
 
   ngOnInit() {
-
+  
     // let libs = this.rootWorkspace.stencil;
     // libs.add(ParticleStencil).displayName = "Particle";
     // libs.add(ShapeStencil).displayName = "Shape";
     // libs.add(SolidStencil).displayName = "Solid";
 
-    this.rootWorkspace.library.add(PersonDomain);
-    this.rootWorkspace.model.addItem('default', new foModel({}));
+    this.workspace.library.add(PersonDomain);
+    this.workspace.model.addItem('default', new foModel({}));
 
+    this.model = this.workspace.model.getItem('default')
   }
 
 }

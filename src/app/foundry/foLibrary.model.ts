@@ -5,11 +5,25 @@ import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
 import { foCollection } from './foCollection.model'
 import { foConcept } from './foConcept.model'
+import { foStructure } from './foStructure.model'
 import { foProperty } from './foProperty.model'
 import { foMethod, foFactory } from './foMethod.model';
 import { foNode } from './foNode.model'
 
 import { WhereClause } from "./foInterface";
+
+class StructureDictionary extends foDictionary<foKnowledge>{
+    public establish = (name: string): foKnowledge => {
+        this.findItem(name, () => {
+            this.addItem(name, new foStructure({ myName: name }))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
+    }
+}
 
 class ConceptDictionary extends foDictionary<foKnowledge>{
     public establish = (name: string): foKnowledge => {
@@ -66,6 +80,8 @@ class FactoryDictionary<T extends foNode> extends foDictionary<foFactory<T>>{
 
 export class foLibrary extends foKnowledge {
 
+    private _structures: StructureDictionary = new ConceptDictionary({ myName: 'structures' }, this);
+
     private _concepts: ConceptDictionary = new ConceptDictionary({ myName: 'concepts' }, this);
     private _properties: PropertyDictionary = new PropertyDictionary({ myName: 'properties' }, this);
     private _actions: ActionDictionary<foNode> = new ActionDictionary({ myName: 'actions' }, this);
@@ -91,10 +107,6 @@ export class foLibrary extends foKnowledge {
         });
     }
 
-    get concepts() {
-        return this._concepts;
-    }
-
     get actions() {
         return this._actions;
     }
@@ -103,10 +115,31 @@ export class foLibrary extends foKnowledge {
         return this._factory;
     }
 
-    establishConcept<T extends foNode>(key: string, properties?: any) {
-        let concept = this.concepts.getItem(key);
+
+
+    get structures() {
+        return this._structures;
+    }
+
+    establishStructure(key: string, properties?: any): foStructure {
+        let structure = this.structures.getItem(key) as foStructure;
+        if (!structure) {
+            structure = new foStructure(properties)
+            this.structures.addItem(key, structure);
+            structure.myName = key;
+        }
+        return structure;
+    }
+
+    get concepts() {
+        return this._concepts;
+    }
+
+    establishConcept<T extends foNode>(key: string, properties?: any): foConcept<T> {
+        let concept = this.concepts.getItem(key) as foConcept<T>
         if (!concept) {
-            concept = this.concepts.addItem(key, new foConcept<T>(properties));
+            concept = new foConcept<T>(properties);
+            this.concepts.addItem(key, concept);
             concept.myName = key;
         }
         return concept;
@@ -116,10 +149,11 @@ export class foLibrary extends foKnowledge {
         return this._properties;
     }
 
-    establishProperty(key: string, properties: any) {
+    establishProperty(key: string, properties: any): foProperty {
         let property = this.properties.getItem(key);
         if (!property) {
-            property = this.properties.addItem(key, new foProperty(properties));
+            property = new foProperty(properties)
+            this.properties.addItem(key, property);
             property.myName = key;
         }
         return property;
@@ -128,12 +162,14 @@ export class foLibrary extends foKnowledge {
     select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
         let result = super.select(where, list, deep);
 
-        this.concepts.forEachKeyValue((key,value) => {
+        this.concepts.forEachKeyValue((key, value) => {
             value.select(where, result, deep);
         })
 
         return result;
     }
+
+
 
 }
 

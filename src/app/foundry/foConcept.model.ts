@@ -11,7 +11,7 @@ import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
-import { Lifecycle } from 'app/foundry/foLifecycle';
+import { Lifecycle } from './foLifecycle';
 
 
 export class foConcept<T extends foNode> extends foKnowledge {
@@ -150,6 +150,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 
 RuntimeType.knowledge(foConcept);
+
+
 
 export class foProjection<T extends foNode> extends foConcept<T> {
 
