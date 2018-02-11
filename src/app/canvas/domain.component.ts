@@ -9,10 +9,8 @@ import { foModel } from "../foundry/foModel.model";
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 
-import { ParticleStencil } from "./particle.model";
-import { ShapeStencil } from "./shapes.model";
-import { PersonDomain } from "./domain.model";
-import { SolidStencil } from "./solids.model";
+import { DevSecOps, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
+
 
 
 @Component({
@@ -31,12 +29,9 @@ export class DomainComponent implements OnInit {
 
   ngOnInit() {
   
-    // let libs = this.rootWorkspace.stencil;
-    // libs.add(ParticleStencil).displayName = "Particle";
-    // libs.add(ShapeStencil).displayName = "Shape";
-    // libs.add(SolidStencil).displayName = "Solid";
-
-    this.workspace.library.add(PersonDomain);
+    this.workspace.stencil.add(DevSecOpsShapes);
+    this.workspace.stencil.add(DevSecOpsSolids);
+    this.workspace.library.add(DevSecOps);
     this.workspace.model.addItem('default', new foModel({}));
 
     this.model = this.workspace.model.getItem('default')

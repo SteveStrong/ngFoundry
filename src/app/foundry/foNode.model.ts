@@ -28,7 +28,7 @@ export class foNode extends foObject implements iNode {
     get displayName() {
         if ( this._displayName) return this._displayName;
         if (this._class) {
-            return `${this.myName} - ${this.myClass}`;
+            return `${this.myName}:${this.myClass} - ${this.myType}`;
         }
         return `${this.myName} - ${this.myType}`;
     }

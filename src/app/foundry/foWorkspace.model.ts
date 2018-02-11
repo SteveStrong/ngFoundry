@@ -1,12 +1,9 @@
-import { Tools, foNames } from './foTools'
+import { Tools } from './foTools'
 
-import { foLibrary } from './foLibrary.model'
-import { foModel } from './foModel.model'
-import { foDictionary } from './foDictionary.model'
 import { foDocument } from './shapes/foDocument.model'
 import { foStudio } from './solids/foStudio.model'
-import { foKnowledge } from "../foundry/foKnowledge.model";
-import { foObject } from 'app/foundry/foObject.model';
+import { foKnowledge } from "./foKnowledge.model";
+import { ModelDictionary, LibraryDictionary } from './foDictionaries';
 
 import { foCollection } from './foCollection.model'
 import { WhereClause } from "./foInterface";
@@ -23,59 +20,14 @@ export let storage = (function () {
     } catch (exception) { }
 }());
 
-class LibraryDictionary extends foDictionary<foLibrary>{
-    public establish = (name: string): foLibrary => {
-        this.findItem(name, () => {
-            this.addItem(name, new foLibrary({ myName: name }))
-        })
-        return this.getItem(name);
-    }
 
-    constructor(properties?: any, parent?: foObject) {
-        super(properties, parent);
-    }
-
-    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
-        let result = list ? list : new foCollection<foKnowledge>();
-
-        this.forEachKeyValue((key, value) => {
-            if (where(value)) result.addMember(value);
-            value.select(where, result, deep);
-        })
-
-        return result;
-    }
-}
-
-class ModelDictionary extends foDictionary<foModel>{
-    public establish = (name: string): foModel => {
-        this.findItem(name, () => {
-            this.addItem(name, new foModel({ myName: name }))
-        })
-        return this.getItem(name);
-    }
-
-    constructor(properties?: any, parent?: foObject) {
-        super(properties, parent);
-    }
-
-    selectComponent(where: WhereClause<foObject>, list?: foCollection<foObject>, deep: boolean = true): foCollection<foObject> {
-        let result = list ? list : new foCollection<foObject>();
-
-        this.forEachKeyValue((key, value) => {
-            if (where(value)) result.addMember(value);
-            value.select(where, result, deep);
-        })
-
-        return result;
-    }
-}
 
 export class foWorkspace extends foKnowledge {
 
     private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
     private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
     private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
+   
     private _document: foDocument = new foDocument({}, [], this);
     private _studio: foStudio = new foStudio({}, [], this);
 

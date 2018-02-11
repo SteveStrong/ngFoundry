@@ -35,8 +35,11 @@ export class foKnowledge extends foObject {
     }
 
 
-    defaultName() {
-        if (Tools.matches(this.myName, foNames.UNKNOWN)) {
+    defaultName(name?:string) {
+        if ( name) {
+            this.myName = name;
+        }
+        else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
             foKnowledge._counter += 1;
             let count = ("0000" + foKnowledge._counter).slice(-4);
             this.myName = `${this.myType}_${count}`;
