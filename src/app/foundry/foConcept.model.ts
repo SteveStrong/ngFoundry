@@ -185,7 +185,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         
         result && parent && result.addAsSubcomponent(parent);
 
-        this.structures.forEach(item => {
+        this.structures && this.structures.forEach(item => {
             let concept = item.concept;
             let child = concept.newInstance({}, [], result);
             child.myName = item.name;

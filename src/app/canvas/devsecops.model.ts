@@ -8,7 +8,7 @@ export let DevSecOps: foLibrary = new foLibrary().defaultName('definitions');
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
 export let DevSecOpsSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
 
-DevSecOps.establishConcept<foComponent>('fullpipeline', {
+DevSecOps.establishConcept<foComponent>('Root', {
   pipelineName: 'dave',
 }).hide();
 
@@ -23,7 +23,7 @@ let s3 = DevSecOps.establishStructure('stage3', {})
   .concept('package').hide();
 
 DevSecOps.establishStructure('Pipeline', {
-}).concept('fullpipeline')
+}).concept('Root')
   .subcomponent('s1', s1)
   .subcomponent('s2', s2)
   .subcomponent('s3', s3)

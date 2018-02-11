@@ -35,18 +35,18 @@ export class foStructure extends foKnowledge {
             structure,
             order: this._structures.count + 1
         });
-        this._structures.addItem(name,subSpec );
+        this._structures.addItem(name, subSpec);
         return subSpec;
     }
 
     subcomponent(name: string, spec?: any | foStructure) {
         let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
-        this.addSubSpec(name,structure);
+        this.addSubSpec(name, structure);
         return this;
     }
     get structures(): Array<foSubStructSpec> {
         if (this._structures) {
-             return this._structures.members.sort((a,b) => a.order - b.order);
+            return this._structures.members.sort((a, b) => a.order - b.order);
         }
     }
 
@@ -73,9 +73,7 @@ export class foStructure extends foKnowledge {
         let concept = this._concept ? this._concept : new foConcept<foComponent>();
         let result = concept.newInstance({}, [], context);
 
-        result && result.addAsSubcomponent(context);
-
-        this.structures.forEach(item => {
+        this.structures && this.structures.forEach(item => {
             let structure = item.structure;
             let child = structure.newInstance(result);
             child.myName = item.name;

@@ -58,27 +58,9 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
   }
 
   doCreate() {
-    this.lastCreated = this.concept.newInstance().defaultName()
-      .addAsSubcomponent(this.model);
+    this.lastCreated = this.concept.newInstance({},[],this.model).defaultName();
 
     Toast.info("Created", this.lastCreated.displayName);
-
-    let found = globalWorkspace.stencil.select(item => {
-      return Tools.matches(item.myName, 'text');
-    }).first();
-
-
-
-    let shape = found.newInstance({
-      myGuid: this.lastCreated.myGuid,
-      context: this.lastCreated.displayName,
-      fontSize: 40,
-      x: 400,
-      y: 400,
-    });
-    //foObject.jsonAlert(shape);
-    globalWorkspace.activePage.addSubcomponent(shape);
-
   }
 
   doCommand(cmd: string) {
