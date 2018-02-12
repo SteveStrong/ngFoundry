@@ -4,6 +4,7 @@ import { foKnowledge } from './foKnowledge.model'
 
 import { Knowcycle } from './foLifecycle';
 import { foCollection } from './foCollection.model'
+import { foComponent } from './foComponent.model'
 import { foConcept } from './foConcept.model'
 import { foStructure } from './foStructure.model'
 import { foProperty } from './foProperty.model'
@@ -72,7 +73,7 @@ export class foLibrary extends foKnowledge {
         return this._concepts;
     }
 
-    establishConcept<T extends foNode>(key: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
+    establishConcept<T extends foComponent>(key: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
         let concept = this.concepts.getItem(key) as foConcept<T>
         if (!concept) {
             RuntimeType.define(type);
