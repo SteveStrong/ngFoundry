@@ -3,7 +3,7 @@ import { Tools, foNames } from './foTools'
 import { WhereClause, Action } from "./foInterface";
 
 import { foObject } from './foObject.model'
-import { foComponent } from './foComponent.model'
+
 
 export class foKnowledge extends foObject {
     private static _counter: number = 0;
@@ -24,7 +24,6 @@ export class foKnowledge extends foObject {
     makeComponent(parent?: any, properties?: any, onComplete?:Action<any>): any {
         return undefined;
     }
-
 
     newInstance(properties?: any, subcomponents?: any, parent?: any): any {
         return undefined;

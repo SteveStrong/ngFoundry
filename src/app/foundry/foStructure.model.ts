@@ -1,4 +1,4 @@
-import { WhereClause } from './foInterface'
+import { WhereClause, Action } from './foInterface'
 
 import { foKnowledge } from './foKnowledge.model'
 import { foConcept } from './foConcept.model'
@@ -22,10 +22,10 @@ export class foStructure extends foKnowledge {
 
     private _concept: foConcept<foComponent>;
     private _attributes: foDictionary<foAttribute>;
-    
+
     private _structures: foDictionary<foSubStructSpec>;
     private _existWhen: Array<WhereClause<foComponent>>;
-    
+
     //return a new collection that could be destroyed
 
 
@@ -74,25 +74,27 @@ export class foStructure extends foKnowledge {
         return this;
     }
 
-    private canExist(context?: foComponent):boolean {
+    private canExist(context?: foComponent): boolean {
         let result = true;
         return result;
     }
 
-    newInstance(context?: foComponent): foComponent {
+    makeComponent(parent?: any, properties?: any, onComplete?: Action<any>): any {
 
-        if ( !this.canExist(context) ) {
+        if (!this.canExist(parent)) {
             return;
         }
 
         let concept = this._concept ? this._concept : new foConcept<foComponent>();
-        let result = concept.newInstance({}, [], context);
+        let result = concept.makeComponent(parent, properties);
 
         this.structures && this.structures.forEach(item => {
             let structure = item.structure;
-            let child = structure.newInstance(result);
+            let child = structure.makeComponent(result);
             child && child.defaultName(item.name);
         });
+
+        onComplete && onComplete(result);
         return result;
     }
 

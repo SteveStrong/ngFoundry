@@ -183,9 +183,9 @@ export class foConcept<T extends foNode> extends foKnowledge {
             concept.makeComponent(result, {}, child => {
                 child.defaultName(item.name);
             });
-
         });
 
+        onComplete && onComplete(result);
         return result;
     }
 

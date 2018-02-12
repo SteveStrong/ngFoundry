@@ -5,6 +5,7 @@ import { Action, Spec } from '../foundry/foInterface';
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
 import { foConcept } from './foConcept.model'
+import { foStructure } from './foStructure.model'
 import { foProperty } from './foProperty.model'
 import { foMethod, foFactory } from './foMethod.model';
 import { foNode } from './foNode.model'
@@ -39,7 +40,7 @@ export class ConceptDictionary extends foDictionary<foKnowledge>{
 export class PropertyDictionary extends foDictionary<foProperty>{
     public establish = (name: string): foProperty => {
         this.findItem(name, () => {
-            this.addItem(name, new foConcept({ myName: name }))
+            this.addItem(name, new foProperty({ myName: name }))
         })
         return this.getItem(name);
     }

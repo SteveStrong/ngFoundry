@@ -11,7 +11,7 @@ export let DevSecOpsSolids: foStencilLibrary = new foStencilLibrary().defaultNam
 
 
 function getConcept(name:string, spec?:any){
-  return DevSecOps.establishConcept<foComponent>(name,spec).hide();
+  return DevSecOps.establishConcept<foComponent>(name,foComponent,spec).hide();
 }
 let root = getConcept('Root', {
   pipelineName: 'dave',

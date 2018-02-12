@@ -7,14 +7,14 @@ import { foNode } from "../../foundry/foNode.model";
 import { foKnowledge } from "../../foundry/foKnowledge.model";
 import { Toast } from "../../common/emitter.service";
 
-import { globalWorkspace } from "../../foundry/foWorkspace.model";
+//import { globalWorkspace } from "../../foundry/foWorkspace.model";
 
 @Component({
   selector: 'fo-structure-card',
   templateUrl: './fo-structure-card.component.html',
   styleUrls: ['./fo-structure-card.component.css']
 })
-export class foStructureCardComponent implements OnInit {
+export class foStructureCardComponent implements OnInit, AfterViewInit {
   lastCreated: foNode;
   showDetails = false;
 
@@ -58,7 +58,7 @@ export class foStructureCardComponent implements OnInit {
   }
 
   doCreate() {
-    let obj = this.structure.newInstance(this.model).defaultName();
+    let obj = this.structure.makeComponent(this.model).defaultName();
 
     Toast.info("Created", obj.displayName);
   }
