@@ -5,7 +5,6 @@ import { foConcept } from './foConcept.model'
 import { foAttribute } from './foAttribute.model'
 import { foComponent } from './foComponent.model'
 
-import { foLibrary } from './foLibrary.model'
 import { foDictionary } from './foDictionary.model'
 
 import { RuntimeType } from './foRuntimeType';
@@ -65,14 +64,8 @@ export class foStructure extends foKnowledge {
         return this;
     }
 
-    concept(concept?: string | foConcept<foComponent>) {
-        if (concept instanceof foConcept) {
-            this._concept = concept;
-        } else {
-            let library = this.findParent(item => item instanceof foLibrary) as foLibrary;
-            this._concept = library.establishConcept<foComponent>(concept);
-        }
-
+    concept(concept?: foConcept<foComponent>) {
+        this._concept = concept;
         return this;
     }
 
