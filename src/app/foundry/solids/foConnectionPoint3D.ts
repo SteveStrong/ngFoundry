@@ -1,7 +1,6 @@
 import { Vector3, Mesh } from 'three';
 
 import { foObject } from '../foObject.model';
-import { foComponent } from '../foComponent.model';
 
 import { foHandle3D } from './foHandle3D';
 import { Screen3D } from './threeDriver';

@@ -7,7 +7,7 @@ import { cPoint3D } from './foGeometry3D';
 import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
 import { foCollection } from '../foCollection.model'
-import { foNode } from '../foNode.model'
+
 import { foObject } from '../foObject.model'
 
 import { Screen3D } from "./threeDriver";
