@@ -50,7 +50,10 @@ let pipe = DevSecOps.structures.define('Pipeline', {
 
 
   DevSecOps.solutions.define('DevOps')
-  .useStructure(pipe);
+  .useStructure(pipe)
+  .subSolution('security', DevSecOps.solutions.define('security').hide() )
+  .subSolution('metrics', DevSecOps.solutions.define('metrics').hide() )
+  .subSolution('governance', DevSecOps.solutions.define('governance').hide() )
   //.useStructureWhen(pipe, function(c) { return true});
 
 
