@@ -26,6 +26,7 @@ SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
   depth: 900
 });
 
+
 SolidStencil.define<foShape3D>('box', foShape3D, {
   color: 'red',
   opacity: .5,

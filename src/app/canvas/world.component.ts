@@ -17,7 +17,7 @@ import { ParticleStencil, foShape2D } from "./particle.model";
 import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
 import { SolidStencil } from "./solids.model";
-
+import { ShrineStencil } from "./shrine.model";
 
 @Component({
   selector: 'foundry-world',
@@ -88,9 +88,11 @@ export class WorldComponent implements OnInit, AfterViewInit {
     })
 
     let libs = this.rootWorkspace.stencil;
+    libs.add(ShrineStencil).displayName = "Shrine";
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
     libs.add(SolidStencil).displayName = "Solid";
+  
 
     this.rootWorkspace.library.add(PersonDomain);
     this.rootWorkspace.model.addItem('default', new foModel({}))

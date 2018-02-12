@@ -57,21 +57,22 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 
     private _structures: foDictionary<foSubComponentSpec>;
-    private addSubComponentSpec(name: string, concept: foKnowledge): foSubComponentSpec {
+    private addSubComponentSpec(name: string, concept: foKnowledge, properties?: any): foSubComponentSpec {
         if (!this._structures) {
             this._structures = new foDictionary<foSubComponentSpec>();
         }
         let subSpec = new foSubComponentSpec({
             name,
             concept,
-            order: this._structures.count + 1
+            order: this._structures.count + 1,
+            spec: properties || {}
         });
         this._structures.addItem(name, subSpec);
         return subSpec;
     }
-    subComponent(name: string, spec?: any | foKnowledge) {
+    subComponent(name: string, spec?: any | foKnowledge, properties?: any) {
         let structure = spec instanceof foKnowledge ? spec : new foConcept(spec, this);
-        this.addSubComponentSpec(name, structure);
+        this.addSubComponentSpec(name, structure, properties);
         return this;
     }
     get structures(): Array<foSubComponentSpec> {
