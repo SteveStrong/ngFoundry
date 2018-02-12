@@ -27,7 +27,7 @@ export class foText3D extends foGlyph3D {
     }
   
     
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
       super(properties, subcomponents, parent);
   
       this.setupPreDraw();

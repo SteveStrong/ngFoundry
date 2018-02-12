@@ -66,7 +66,7 @@ export class foGlyph extends foInstance {  //foNode {
     };
 
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

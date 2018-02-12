@@ -56,7 +56,7 @@ export class foHandle3D extends foHandle {
 
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foHandle3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw();

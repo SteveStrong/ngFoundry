@@ -6,7 +6,7 @@ import { iPoint3D } from '../foInterface'
 import { foObject } from '../foObject.model'
 
 import { foCollection } from '../foCollection.model'
-import { foNode } from '../foNode.model'
+import { foGlyph3D } from './foGlyph3D.model'
 
 import { foShape3D } from './foShape3D.model'
 import { LineCurve3, Vector3, TubeGeometry, Material, Geometry, MeshBasicMaterial, Matrix3, Mesh } from 'three';
@@ -125,7 +125,7 @@ export class foPipe3D extends foShape3D {
         return new cPoint3D((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, (this.startZ + this.finishZ) / 2, name);
     }
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
     }

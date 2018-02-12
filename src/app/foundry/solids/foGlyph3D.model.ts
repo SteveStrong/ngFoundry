@@ -101,7 +101,7 @@ export class foGlyph3D extends foGlyph {
     public rotationZ = (): number => { return this.angleZ; }
 
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw();

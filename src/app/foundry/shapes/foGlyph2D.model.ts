@@ -10,7 +10,7 @@ import { iShape,  iPoint2D, iRect, iFrame } from '../foInterface';
 import { foHandle2D } from './foHandle2D';
 import { foObject } from '../foObject.model';
 import { foCollection } from '../foCollection.model';
-import { foNode } from '../foNode.model';
+
 import { foGlyph } from '../foGlyph.model';
 
 import { Lifecycle } from '../foLifecycle';
@@ -95,7 +95,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         ctx.stroke();
     }
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

@@ -47,7 +47,7 @@ export class foShape3D extends foGlyph3D {
     public pinZ = (): number => { return 0.5 * this.depth; }
 
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw()

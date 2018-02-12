@@ -2,21 +2,14 @@ import { Tools } from './foTools'
 
 import { foObject } from './foObject.model'
 import { foInstance } from './foInstance.model'
-import { foKnowledge } from './foKnowledge.model'
+
 import { foCollection } from './foCollection.model'
 
 export class foComponent extends foInstance {
 
-    public createdFrom: () => foKnowledge;
 
-    constructor(properties?: any, subcomponents?: Array<foInstance>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
-        this.createdFrom = undefined;
-    }
-
-    setCreatedFrom(source:any) {
-        this.createdFrom = () => { return source; };
-        this.myClass = source.myName;
     }
 
 

@@ -17,7 +17,7 @@ class foSubComponentSpec extends foKnowledge {
     concept: foKnowledge;
     name: string;
     order: number = 0;
-    spec:any = {}
+    spec: any = {}
 }
 
 export class foConcept<T extends foNode> extends foKnowledge {
@@ -176,8 +176,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let result = this.newInstance(spec, [], parent) as T;
         if (result instanceof foComponent) {
             result.setCreatedFrom(this);
-            parent && result.addAsSubcomponent(parent);
         }
+        parent && parent.addSubcomponent(result);
 
         result && onComplete && onComplete(result);
         return result;

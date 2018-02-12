@@ -83,7 +83,7 @@ export class foShape1D extends foShape2D {
         return new cPoint2D((this.startX + this.finishX) / 2, (this.startY + this.finishY) / 2, name);
     }
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
 

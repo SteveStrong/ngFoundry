@@ -62,7 +62,7 @@ export class foPage extends foShape2D {
     _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
     _ctx: CanvasRenderingContext2D;
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.color = 'Linen';
         //setting x,y to something other than zero will break
