@@ -6,7 +6,7 @@ import { foComponent } from "../foundry/foComponent.model";
 export let PersonDomain: foLibrary = new foLibrary().defaultName();
 
 
-PersonDomain.establishConcept<foComponent>('Person', {
+PersonDomain.establishConcept<foComponent>('Person', foComponent, {
   firstName: 'Red',
   lastName: 'Faceplant',
   fullName: function () {
@@ -14,24 +14,6 @@ PersonDomain.establishConcept<foComponent>('Person', {
   }
 });
 
-PersonDomain.establishConcept<foComponent>('fullpipeline', {
-  pipelineName: 'dave',
-}).hide();
 
-let compile = PersonDomain.establishConcept<foComponent>('compile').hide();
-
-
-let s1 = PersonDomain.establishStructure('stage1', {})
-        .concept(compile).hide();
-let s2 = PersonDomain.establishStructure('stage2', {})
-        .concept('test').hide();
-let s3 = PersonDomain.establishStructure('stage3', {})
-        .concept('package').hide();
-
-PersonDomain.establishStructure('Pipeline', {
-}).concept('fullpipeline')
-  .subcomponent('s1', s1)
-  .subcomponent('s2', s2)
-  .subcomponent('s3', s3)
 
 

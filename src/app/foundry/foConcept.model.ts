@@ -7,14 +7,20 @@ import { foAttribute, foViewAttribute } from './foAttribute.model'
 import { Action } from "./foInterface";
 
 import { foObject } from './foObject.model'
-//import { foComponent } from './foComponent.model'
+import { foComponent } from './foComponent.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
 import { Lifecycle } from './foLifecycle';
 
+class foSubComponentSpec extends foKnowledge {
+    concept: foKnowledge;
+    name: string;
+    order: number = 0;
+}
 
 export class foConcept<T extends foNode> extends foKnowledge {
+
 
     private _create = (properties?: any, subcomponents?: Array<foNode>, parent?: foObject): T => {
         return <T>new foNode(properties, subcomponents, parent);
@@ -48,6 +54,31 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
     set attributes(value: any) { this._attributes = value; }
 
+
+    private _structures: foDictionary<foSubComponentSpec>;
+    private addSubComponentSpec(name: string, concept: foKnowledge): foSubComponentSpec {
+        if (!this._structures) {
+            this._structures = new foDictionary<foSubComponentSpec>();
+        }
+        let subSpec = new foSubComponentSpec({
+            name,
+            concept,
+            order: this._structures.count + 1
+        });
+        this._structures.addItem(name, subSpec);
+        return subSpec;
+    }
+    subcomponent(name: string, spec?: any | foKnowledge) {
+        let structure = spec instanceof foKnowledge ? spec : new foConcept(spec, this);
+        this.addSubComponentSpec(name, structure);
+        return this;
+    }
+    get structures(): Array<foSubComponentSpec> {
+        if (this._structures) {
+            return this._structures.members.sort((a, b) => a.order - b.order);
+        }
+    }
+
     private _projections: foDictionary<foProjection<T>>;
     get projections() {
         if (!this._projections) {
@@ -60,7 +91,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
     private _onCreation: (obj) => void;
 
     constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);      
+        super(properties, parent);
     }
 
 
@@ -73,7 +104,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
-    usingRuntimeType(type:string, action:Action<foKnowledge>){
+    usingRuntimeType(type: string, action: Action<foKnowledge>) {
         let found = RuntimeType.find(type);
         let tempHold = this._create;
         this._create = (properties?: any, subcomponents?: Array<T>, parent?: T) => {
@@ -130,14 +161,44 @@ export class foConcept<T extends foNode> extends foKnowledge {
         });
     }
 
+    extract(target: any) {
+        let result = {};
+        Object.keys(this.specification).forEach(key => {
+            result[key] = target[key]
+        })
+        return result;
+    }
 
-    newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
+    makeComponent(parent?: any, properties?: any, onComplete?: Action<any>): any {
+        let spec = Tools.union(this.specification, properties);
+
+        let result = this.newInstance(spec, [], parent) as T;
+        if (result instanceof foComponent) {
+            result.setCreatedFrom(this);
+            parent && result.addAsSubcomponent(parent);
+        }
+
+        this.structures && this.structures.forEach(item => {
+            let concept = item.concept;
+            concept.makeComponent(result, {}, child => {
+                child.defaultName(item.name);
+            });
+        });
+
+        onComplete && onComplete(result);
+        return result;
+    }
+
+    //newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
+    newInstance(properties?: any, subcomponents?: any, parent?: any): T {
         let spec = Tools.union(this.specification, properties);
         let result = this._create(spec, subcomponents, parent) as T;
         result.myClass = this.myName;
+
         result.initialize();
         this._onCreation && this._onCreation(result);
         Lifecycle.created(result, this);
+
         return result;
     }
 
@@ -164,7 +225,7 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
         PubSub.Sub("attribute", (action, source, attribute) => {
             if (this._mySource === source) {
-               // let view = this.establishViewAttribute(attribute)
+                // let view = this.establishViewAttribute(attribute)
             }
         });
     }
@@ -185,5 +246,5 @@ export class foProjection<T extends foNode> extends foConcept<T> {
 
 RuntimeType.knowledge(foProjection);
 
- 
+
 

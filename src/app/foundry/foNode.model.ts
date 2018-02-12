@@ -12,7 +12,9 @@ export class foNode extends foObject implements iNode {
     private _childDepth: number = 0;
 
 
+
     protected _subcomponents: foCollection<foNode>;
+
 
     private _class: string;
     get myClass(): string {
@@ -24,13 +26,13 @@ export class foNode extends foObject implements iNode {
     }
 
     get displayName() {
-        if ( this._displayName) return this._displayName;
+        if (this._displayName) return this._displayName;
         if (this._class) {
-            return `${this.myName} - ${this.myClass}`;
+            return `${this.myName}:${this.myClass} - ${this.myType}`;
         }
         return `${this.myName} - ${this.myType}`;
     }
-    set displayName(value:string){
+    set displayName(value: string) {
         this._displayName = value;
     }
 
@@ -50,7 +52,7 @@ export class foNode extends foObject implements iNode {
         });
     }
 
-    public pushTo(list){
+    public pushTo(list) {
         list.push(this);
         return this;
     }
@@ -107,8 +109,11 @@ export class foNode extends foObject implements iNode {
         return obj;
     }
 
-    defaultName() {
-        if (Tools.matches(this.myName, foNames.UNKNOWN)) {
+    public defaultName(name?: string) {
+        if (name) {
+            this.myName = name;
+        }
+        else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
             foNode._counter += 1;
             let count = ("0000" + foNode._counter).slice(-4);
             this.myName = `${this.myType}_${count}`;
@@ -167,14 +172,14 @@ export class foNode extends foObject implements iNode {
         if (type === this.myType) return true;
         if (!this.myType) return false;
         //remember a type may be preceeded with a namespace  knowtshare::note
-        return type && Tools.matches(type,this.myType);
+        return type && Tools.matches(type, this.myType);
     }
 
     isOfType(type) {
         var found = this.isType(type);
         if (found) return true;
         //var myType = Tools.getType(this);
-        return type && Tools.matches(type,this.myType);
+        return type && Tools.matches(type, this.myType);
     }
 }
 

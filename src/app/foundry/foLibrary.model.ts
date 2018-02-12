@@ -1,87 +1,25 @@
 import { Tools } from './foTools'
-import { Action, Spec } from '../foundry/foInterface';
 
 import { foKnowledge } from './foKnowledge.model'
-import { foDictionary } from './foDictionary.model'
+
+import { Knowcycle } from './foLifecycle';
 import { foCollection } from './foCollection.model'
+import { foComponent } from './foComponent.model'
 import { foConcept } from './foConcept.model'
 import { foStructure } from './foStructure.model'
 import { foProperty } from './foProperty.model'
-import { foMethod, foFactory } from './foMethod.model';
+
 import { foNode } from './foNode.model'
+
+import { FactoryDictionary, ActionDictionary, PropertyDictionary, ConceptDictionary, StructureDictionary } from './foDictionaries'
 
 import { WhereClause } from "./foInterface";
 
-class StructureDictionary extends foDictionary<foKnowledge>{
-    public establish = (name: string): foKnowledge => {
-        this.findItem(name, () => {
-            this.addItem(name, new foStructure({ myName: name }))
-        })
-        return this.getItem(name);
-    }
-
-    constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);
-    }
-}
-
-class ConceptDictionary extends foDictionary<foKnowledge>{
-    public establish = (name: string): foKnowledge => {
-        this.findItem(name, () => {
-            this.addItem(name, new foConcept({ myName: name }))
-        })
-        return this.getItem(name);
-    }
-
-    constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);
-    }
-}
-
-class PropertyDictionary extends foDictionary<foProperty>{
-    public establish = (name: string): foProperty => {
-        this.findItem(name, () => {
-            this.addItem(name, new foConcept({ myName: name }))
-        })
-        return this.getItem(name);
-    }
-
-    constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);
-    }
-}
-
-class ActionDictionary<T extends foNode> extends foDictionary<foMethod<T>>{
-    public establish = (myName: string, funct: Action<T>): foMethod<T> => {
-        this.findItem(myName, () => {
-            this.addItem(myName, new foMethod<T>(funct, { myName }));
-        })
-        return this.getItem(myName);
-    }
-
-    constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);
-    }
-}
-
-class FactoryDictionary<T extends foNode> extends foDictionary<foFactory<T>>{
-    public establish = (myName: string, funct: Spec<T>): foFactory<T> => {
-        this.findItem(myName, () => {
-            this.addItem(myName, new foFactory<T>(funct, { myName }))
-        })
-        return this.getItem(myName);
-    }
-
-    constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);
-    }
-}
 
 
 export class foLibrary extends foKnowledge {
 
-    private _structures: StructureDictionary = new ConceptDictionary({ myName: 'structures' }, this);
-
+    private _structures: StructureDictionary = new StructureDictionary({ myName: 'structures' }, this);
     private _concepts: ConceptDictionary = new ConceptDictionary({ myName: 'concepts' }, this);
     private _properties: PropertyDictionary = new PropertyDictionary({ myName: 'properties' }, this);
     private _actions: ActionDictionary<foNode> = new ActionDictionary({ myName: 'actions' }, this);
@@ -135,13 +73,16 @@ export class foLibrary extends foKnowledge {
         return this._concepts;
     }
 
-    establishConcept<T extends foNode>(key: string, properties?: any): foConcept<T> {
+    establishConcept<T extends foComponent>(key: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
         let concept = this.concepts.getItem(key) as foConcept<T>
         if (!concept) {
-            concept = new foConcept<T>({}, this);
-            concept.specification = properties;
+            RuntimeType.define(type);
+            concept =  new foConcept<T>({}, this);
+            concept.definePrimitive(type);
+            concept.specification = specification || {};
             this.concepts.addItem(key, concept);
             concept.myName = key;
+            Knowcycle.defined(concept);
         }
         return concept;
     }

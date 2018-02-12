@@ -1,12 +1,13 @@
-import { Tools, foNames } from './foTools'
+import { Tools } from './foTools'
+
+import { foDocument } from './shapes/foDocument.model'
+import { foStudio } from './solids/foStudio.model'
+import { foKnowledge } from "./foKnowledge.model";
+import { foDictionary } from './foDictionary.model'
 
 import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
-import { foDictionary } from './foDictionary.model'
-import { foDocument } from './shapes/foDocument.model'
-import { foStudio } from './solids/foStudio.model'
-import { foKnowledge } from "../foundry/foKnowledge.model";
-import { foObject } from 'app/foundry/foObject.model';
+import { foObject } from './foObject.model'
 
 import { foCollection } from './foCollection.model'
 import { WhereClause } from "./foInterface";
@@ -23,7 +24,7 @@ export let storage = (function () {
     } catch (exception) { }
 }());
 
-class LibraryDictionary extends foDictionary<foLibrary>{
+export class LibraryDictionary extends foDictionary<foLibrary>{
     public establish = (name: string): foLibrary => {
         this.findItem(name, () => {
             this.addItem(name, new foLibrary({ myName: name }))
@@ -47,7 +48,7 @@ class LibraryDictionary extends foDictionary<foLibrary>{
     }
 }
 
-class ModelDictionary extends foDictionary<foModel>{
+export class ModelDictionary extends foDictionary<foModel>{
     public establish = (name: string): foModel => {
         this.findItem(name, () => {
             this.addItem(name, new foModel({ myName: name }))
@@ -76,6 +77,7 @@ export class foWorkspace extends foKnowledge {
     private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
     private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
     private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
+   
     private _document: foDocument = new foDocument({}, [], this);
     private _studio: foStudio = new foStudio({}, [], this);
 
