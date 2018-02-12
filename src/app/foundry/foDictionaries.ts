@@ -7,12 +7,36 @@ import { foDictionary } from './foDictionary.model'
 import { foConcept } from './foConcept.model'
 import { foComponent } from './foComponent.model'
 import { foStructure } from './foStructure.model'
+import { foSolution } from './foSolution.model'
 import { foProperty } from './foProperty.model'
 import { foMethod, foFactory } from './foMethod.model';
 import { foNode } from './foNode.model'
 
 import { Knowcycle } from './foLifecycle';
 import { RuntimeType } from './foRuntimeType';
+
+export class SolutionDictionary extends foDictionary<foKnowledge>{
+    public establish = (name: string): foKnowledge => {
+        this.findItem(name, () => {
+            this.addItem(name, new foSolution({ myName: name }))
+        })
+        return this.getItem(name);
+    }
+
+    public define(key: string, properties?: any): foSolution {
+        let parent = this.myParent() as foKnowledge;
+        let solution = this.getItem(key) as foSolution;
+        if (!solution) {
+            solution = new foSolution(properties, parent);
+            this.add(solution, key);
+            Knowcycle.defined(solution);
+        }
+        return solution;
+    }
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
+    }
+}
 
 export class StructureDictionary extends foDictionary<foKnowledge>{
     public establish = (name: string): foKnowledge => {

@@ -17,6 +17,7 @@ class foSubComponentSpec extends foKnowledge {
     concept: foKnowledge;
     name: string;
     order: number = 0;
+    spec:any = {}
 }
 
 export class foConcept<T extends foNode> extends foKnowledge {
@@ -68,7 +69,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         this._structures.addItem(name, subSpec);
         return subSpec;
     }
-    subcomponent(name: string, spec?: any | foKnowledge) {
+    subComponent(name: string, spec?: any | foKnowledge) {
         let structure = spec instanceof foKnowledge ? spec : new foConcept(spec, this);
         this.addSubComponentSpec(name, structure);
         return this;
@@ -178,14 +179,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
             parent && result.addAsSubcomponent(parent);
         }
 
-        this.structures && this.structures.forEach(item => {
-            let concept = item.concept;
-            concept.makeComponent(result, {}, child => {
-                child.defaultName(item.name);
-            });
-        });
-
-        onComplete && onComplete(result);
+        result && onComplete && onComplete(result);
         return result;
     }
 
@@ -198,6 +192,13 @@ export class foConcept<T extends foNode> extends foKnowledge {
         result.initialize();
         this._onCreation && this._onCreation(result);
         Lifecycle.created(result, this);
+
+        this.structures && this.structures.forEach(item => {
+            let concept = item.concept;
+            concept.makeComponent(result, item.spec, child => {
+                child.defaultName(item.name);
+            });
+        });
 
         return result;
     }

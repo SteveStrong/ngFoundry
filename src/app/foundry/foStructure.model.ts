@@ -9,10 +9,11 @@ import { foDictionary } from './foDictionary.model'
 
 import { RuntimeType } from './foRuntimeType';
 
-class foSubStructSpec extends foKnowledge {
+class foSubStructureSpec extends foKnowledge {
     structure: foStructure;
     name: string;
     order: number = 0;
+    spec:any = {}
 }
 
 
@@ -23,7 +24,7 @@ export class foStructure extends foKnowledge {
     private _concept: foConcept<foComponent>;
     private _attributes: foDictionary<foAttribute>;
 
-    private _structures: foDictionary<foSubStructSpec>;
+    private _structures: foDictionary<foSubStructureSpec>;
     private _existWhen: Array<WhereClause<foComponent>>;
 
     //return a new collection that could be destroyed
@@ -33,25 +34,26 @@ export class foStructure extends foKnowledge {
         super(properties, parent);
     }
 
-    private addSubSpec(name: string, structure: foStructure): foSubStructSpec {
+    private addSubStructureSpec(name: string, structure: foStructure, properties?:any): foSubStructureSpec {
         if (!this._structures) {
-            this._structures = new foDictionary<foSubStructSpec>();
+            this._structures = new foDictionary<foSubStructureSpec>();
         }
-        let subSpec = new foSubStructSpec({
+        let subSpec = new foSubStructureSpec({
             name,
             structure,
-            order: this._structures.count + 1
+            order: this._structures.count + 1,
+            spec: properties || {}
         });
         this._structures.addItem(name, subSpec);
         return subSpec;
     }
 
-    subcomponent(name: string, spec?: any | foStructure) {
+    subComponent(name: string, spec?: any | foStructure, properties?:any) {
         let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
-        this.addSubSpec(name, structure);
+        this.addSubStructureSpec(name, structure, properties);
         return this;
     }
-    get structures(): Array<foSubStructSpec> {
+    get structures(): Array<foSubStructureSpec> {
         if (this._structures) {
             return this._structures.members.sort((a, b) => a.order - b.order);
         }
@@ -66,6 +68,7 @@ export class foStructure extends foKnowledge {
 
     concept(concept?: foConcept<foComponent>) {
         this._concept = concept;
+        //this.select(where, list, deep)
         return this;
     }
 
@@ -90,11 +93,13 @@ export class foStructure extends foKnowledge {
 
         this.structures && this.structures.forEach(item => {
             let structure = item.structure;
-            let child = structure.makeComponent(result);
-            child && child.defaultName(item.name);
+            structure.makeComponent(result, item.spec, child => {
+                child.defaultName(item.name);
+            });
+
         });
 
-        onComplete && onComplete(result);
+        result && onComplete && onComplete(result);
         return result;
     }
 

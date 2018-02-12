@@ -18,7 +18,7 @@ let root = getConcept('Root', {
 });
 
 let compile = getConcept('compile');
-compile.subcomponent('details', {})
+compile.subComponent('details', {})
 
 let s1 = DevSecOps.structures.define('stage1', {})
   .concept(compile).hide();
@@ -26,12 +26,12 @@ let s2 = DevSecOps.structures.define('stage2', {})
   .concept(getConcept('test')).hide();
 let s3 = DevSecOps.structures.define('stage3', {})
   .concept(getConcept('package')).hide()
-  .subcomponent('local', {})
+  .subComponent('local', {})
 
 DevSecOps.structures.define('Pipeline', {
 }).concept(root)
-  .subcomponent('s1', s1)
-  .subcomponent('s2', s2)
-  .subcomponent('s3', s3)
+  .subComponent('s1', s1)
+  .subComponent('s2', s2)
+  .subComponent('s3', s3)
 
 

@@ -3,12 +3,13 @@ import { Tools } from './foTools';
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
 import { foNode } from './foNode.model';
+import { foInstance } from './foInstance.model';
 import { foHandle } from './foHandle';
 import { Lifecycle } from './foLifecycle';
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlyph extends foNode {
+export class foGlyph extends foInstance {  //foNode {
 
     static DEG_TO_RAD = Math.PI / 180;
     static RAD_TO_DEG = 180 / Math.PI;
