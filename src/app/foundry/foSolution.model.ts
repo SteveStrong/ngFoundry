@@ -14,9 +14,15 @@ class foAltStructureSpec extends foKnowledge {
     exist: WhereClause<foComponent>;
     priority: number = 100;
 
-    isValid(context: any) {
-        if (!this.exist) return;
-        return this.exist(context);
+    isValid(context: any):boolean {
+        if (!this.exist) return true;
+        try {
+            let result = this.exist(context);
+            return result;
+        } catch(ex) {
+            return false;
+        }
+
     }
 }
 
@@ -60,11 +66,12 @@ export class foSolution extends foKnowledge {
         return altSpec;
     }
 
-    useStructureWhen(spec?: any | foStructure, exist?: WhereClause<foComponent>, priority?: number) {
+    useStructure(spec?: any | foStructure, exist?: WhereClause<foComponent>, priority?: number) {
         let structure = spec instanceof foStructure ? spec : new foStructure(spec, this);
         this.addAltStructureSpec(structure, exist, priority);
         return this;
     }
+
     get altStructures(): Array<foAltStructureSpec> {
         if (this._structures) {
             return this._structures.members.sort((a, b) => a.priority - b.priority);

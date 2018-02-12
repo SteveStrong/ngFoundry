@@ -42,10 +42,15 @@ let s3 = DevSecOps.structures.define('stage3', {})
   .concept(getConcept('package')).hide()
   .subComponent('local', {})
 
-DevSecOps.structures.define('Pipeline', {
+let pipe = DevSecOps.structures.define('Pipeline', {
 }).concept(root)
   .subComponent('s1', s1)
   .subComponent('s2', s2)
   .subComponent('s3', s3)
+
+
+  DevSecOps.solutions.define('DevOps')
+  .useStructure(pipe);
+  //.useStructureWhen(pipe, function(c) { return true});
 
 
