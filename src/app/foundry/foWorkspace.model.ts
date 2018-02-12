@@ -3,7 +3,11 @@ import { Tools } from './foTools'
 import { foDocument } from './shapes/foDocument.model'
 import { foStudio } from './solids/foStudio.model'
 import { foKnowledge } from "./foKnowledge.model";
-import { ModelDictionary, LibraryDictionary } from './foDictionaries';
+import { foDictionary } from './foDictionary.model'
+
+import { foLibrary } from './foLibrary.model'
+import { foModel } from './foModel.model'
+import { foObject } from './foObject.model'
 
 import { foCollection } from './foCollection.model'
 import { WhereClause } from "./foInterface";
@@ -20,7 +24,53 @@ export let storage = (function () {
     } catch (exception) { }
 }());
 
+export class LibraryDictionary extends foDictionary<foLibrary>{
+    public establish = (name: string): foLibrary => {
+        this.findItem(name, () => {
+            this.addItem(name, new foLibrary({ myName: name }))
+        })
+        return this.getItem(name);
+    }
 
+    constructor(properties?: any, parent?: foObject) {
+        super(properties, parent);
+    }
+
+    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
+        let result = list ? list : new foCollection<foKnowledge>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            value.select(where, result, deep);
+        })
+
+        return result;
+    }
+}
+
+export class ModelDictionary extends foDictionary<foModel>{
+    public establish = (name: string): foModel => {
+        this.findItem(name, () => {
+            this.addItem(name, new foModel({ myName: name }))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foObject) {
+        super(properties, parent);
+    }
+
+    selectComponent(where: WhereClause<foObject>, list?: foCollection<foObject>, deep: boolean = true): foCollection<foObject> {
+        let result = list ? list : new foCollection<foObject>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            value.select(where, result, deep);
+        })
+
+        return result;
+    }
+}
 
 export class foWorkspace extends foKnowledge {
 

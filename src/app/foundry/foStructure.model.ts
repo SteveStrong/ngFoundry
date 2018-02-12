@@ -93,7 +93,7 @@ export class foStructure extends foKnowledge {
         }
 
         let concept = this._concept ? this._concept : new foConcept<foComponent>();
-        let result = concept.makeInstance({}, context);
+        let result = concept.newInstance({}, [], context);
 
         this.structures && this.structures.forEach(item => {
             let structure = item.structure;

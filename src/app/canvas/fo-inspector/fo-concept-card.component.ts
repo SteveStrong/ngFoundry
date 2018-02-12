@@ -58,7 +58,7 @@ export class foConceptCardComponent implements OnInit, AfterViewInit {
   }
 
   doCreate() {
-    this.lastCreated = this.concept.newInstance({},[],this.model).defaultName();
+    this.lastCreated = this.concept.makeComponent(this.model).defaultName();
 
     Toast.info("Created", this.lastCreated.displayName);
   }

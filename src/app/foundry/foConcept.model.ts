@@ -21,7 +21,7 @@ class foSubComponentSpec extends foKnowledge {
 
 export class foConcept<T extends foNode> extends foKnowledge {
 
- 
+
     private _create = (properties?: any, subcomponents?: Array<foNode>, parent?: foObject): T => {
         return <T>new foNode(properties, subcomponents, parent);
     }
@@ -65,20 +65,20 @@ export class foConcept<T extends foNode> extends foKnowledge {
             concept,
             order: this._structures.count + 1
         });
-        this._structures.addItem(name,subSpec );
+        this._structures.addItem(name, subSpec);
         return subSpec;
     }
     subcomponent(name: string, spec?: any | foKnowledge) {
         let structure = spec instanceof foKnowledge ? spec : new foConcept(spec, this);
-        this.addSubComponentSpec(name,structure);
+        this.addSubComponentSpec(name, structure);
         return this;
     }
     get structures(): Array<foSubComponentSpec> {
         if (this._structures) {
-             return this._structures.members.sort((a,b) => a.order - b.order);
+            return this._structures.members.sort((a, b) => a.order - b.order);
         }
     }
-    
+
     private _projections: foDictionary<foProjection<T>>;
     get projections() {
         if (!this._projections) {
@@ -169,27 +169,35 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return result;
     }
 
-    newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
+    makeComponent(parent?: any, properties?: any, onComplete?: Action<any>): any {
         let spec = Tools.union(this.specification, properties);
-        let result = this._create(spec, subcomponents, parent) as T;
+
+        let result = this.newInstance(spec, [], parent) as T;
         if (result instanceof foComponent) {
             result.setCreatedFrom(this);
-        } else {
-            result.myClass = this.myName;
+            parent && result.addAsSubcomponent(parent);
         }
+
+        this.structures && this.structures.forEach(item => {
+            let concept = item.concept;
+            concept.makeComponent(result, {}, child => {
+                child.defaultName(item.name);
+            });
+
+        });
+
+        return result;
+    }
+
+    //newInstance(properties?: any, subcomponents?: Array<T>, parent?: T): T {
+    newInstance(properties?: any, subcomponents?: any, parent?: any): T {
+        let spec = Tools.union(this.specification, properties);
+        let result = this._create(spec, subcomponents, parent) as T;
+        result.myClass = this.myName;
 
         result.initialize();
         this._onCreation && this._onCreation(result);
         Lifecycle.created(result, this);
-
-        
-        result && parent && result.addAsSubcomponent(parent);
-
-        this.structures && this.structures.forEach(item => {
-            let concept = item.concept;
-            let child = concept.newInstance({}, [], result);
-            child.myName = item.name;
-        });
 
         return result;
     }
