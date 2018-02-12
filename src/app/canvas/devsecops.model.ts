@@ -11,7 +11,7 @@ export let DevSecOpsSolids: foStencilLibrary = new foStencilLibrary().defaultNam
 
 
 function getConcept(name:string, spec?:any){
-  return DevSecOps.establishConcept<foComponent>(name,foComponent,spec).hide();
+  return DevSecOps.concepts.define(name,foComponent,spec).hide();
 }
 let root = getConcept('Root', {
   pipelineName: 'dave',
@@ -20,15 +20,15 @@ let root = getConcept('Root', {
 let compile = getConcept('compile');
 compile.subcomponent('details', {})
 
-let s1 = DevSecOps.establishStructure('stage1', {})
+let s1 = DevSecOps.structures.define('stage1', {})
   .concept(compile).hide();
-let s2 = DevSecOps.establishStructure('stage2', {})
+let s2 = DevSecOps.structures.define('stage2', {})
   .concept(getConcept('test')).hide();
-let s3 = DevSecOps.establishStructure('stage3', {})
+let s3 = DevSecOps.structures.define('stage3', {})
   .concept(getConcept('package')).hide()
   .subcomponent('local', {})
 
-DevSecOps.establishStructure('Pipeline', {
+DevSecOps.structures.define('Pipeline', {
 }).concept(root)
   .subcomponent('s1', s1)
   .subcomponent('s2', s2)

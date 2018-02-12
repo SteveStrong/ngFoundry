@@ -2,12 +2,12 @@ import { Tools } from './foTools'
 
 import { foKnowledge } from './foKnowledge.model'
 
-import { Knowcycle } from './foLifecycle';
+//import { Knowcycle } from './foLifecycle';
 import { foCollection } from './foCollection.model'
-import { foComponent } from './foComponent.model'
-import { foConcept } from './foConcept.model'
-import { foStructure } from './foStructure.model'
-import { foProperty } from './foProperty.model'
+//import { foComponent } from './foComponent.model'
+//import { foConcept } from './foConcept.model'
+//import { foStructure } from './foStructure.model'
+//import { foProperty } from './foProperty.model'
 
 import { foNode } from './foNode.model'
 
@@ -59,47 +59,47 @@ export class foLibrary extends foKnowledge {
         return this._structures;
     }
 
-    establishStructure(key: string, properties?: any): foStructure {
-        let structure = this.structures.getItem(key) as foStructure;
-        if (!structure) {
-            structure = new foStructure(properties, this);
-            this.structures.addItem(key, structure);
-            structure.myName = key;
-        }
-        return structure;
-    }
+    // establishStructure(key: string, properties?: any): foStructure {
+    //     let structure = this.structures.getItem(key) as foStructure;
+    //     if (!structure) {
+    //         structure = new foStructure(properties, this);
+    //         this.structures.addItem(key, structure);
+    //         structure.myName = key;
+    //     }
+    //     return structure;
+    // }
 
     get concepts() {
         return this._concepts;
     }
 
-    establishConcept<T extends foComponent>(key: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
-        let concept = this.concepts.getItem(key) as foConcept<T>
-        if (!concept) {
-            RuntimeType.define(type);
-            concept =  new foConcept<T>({}, this);
-            concept.definePrimitive(type);
-            concept.specification = specification || {};
-            this.concepts.addItem(key, concept);
-            concept.myName = key;
-            Knowcycle.defined(concept);
-        }
-        return concept;
-    }
+    // establishConcept<T extends foComponent>(key: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
+    //     let concept = this.concepts.getItem(key) as foConcept<T>
+    //     if (!concept) {
+    //         RuntimeType.define(type);
+    //         concept =  new foConcept<T>({}, this);
+    //         concept.definePrimitive(type);
+    //         concept.specification = specification || {};
+    //         this.concepts.addItem(key, concept);
+    //         concept.myName = key;
+    //         Knowcycle.defined(concept);
+    //     }
+    //     return concept;
+    // }
 
     get properties() {
         return this._properties;
     }
 
-    establishProperty(key: string, properties: any): foProperty {
-        let property = this.properties.getItem(key);
-        if (!property) {
-            property = new foProperty(properties,this)
-            this.properties.addItem(key, property);
-            property.myName = key;
-        }
-        return property;
-    }
+    // establishProperty(key: string, properties: any): foProperty {
+    //     let property = this.properties.getItem(key);
+    //     if (!property) {
+    //         property = new foProperty(properties,this)
+    //         this.properties.addItem(key, property);
+    //         property.myName = key;
+    //     }
+    //     return property;
+    // }
 
     select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
         let result = super.select(where, list, deep);

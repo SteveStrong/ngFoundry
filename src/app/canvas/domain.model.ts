@@ -6,7 +6,7 @@ import { foComponent } from "../foundry/foComponent.model";
 export let PersonDomain: foLibrary = new foLibrary().defaultName();
 
 
-PersonDomain.establishConcept<foComponent>('Person', foComponent, {
+PersonDomain.concepts.define('Person', foComponent, {
   firstName: 'Red',
   lastName: 'Faceplant',
   fullName: function () {

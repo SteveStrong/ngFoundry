@@ -5,11 +5,14 @@ import { Action, Spec } from '../foundry/foInterface';
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
 import { foConcept } from './foConcept.model'
+import { foComponent } from './foComponent.model'
 import { foStructure } from './foStructure.model'
 import { foProperty } from './foProperty.model'
 import { foMethod, foFactory } from './foMethod.model';
 import { foNode } from './foNode.model'
 
+import { Knowcycle } from './foLifecycle';
+import { RuntimeType } from './foRuntimeType';
 
 export class StructureDictionary extends foDictionary<foKnowledge>{
     public establish = (name: string): foKnowledge => {
@@ -19,6 +22,16 @@ export class StructureDictionary extends foDictionary<foKnowledge>{
         return this.getItem(name);
     }
 
+    public define(key: string, properties?: any): foStructure {
+        let parent = this.myParent() as foKnowledge;
+        let structure = this.getItem(key) as foStructure;
+        if (!structure) {
+            structure = new foStructure(properties, parent);
+            this.add(structure, key);
+            Knowcycle.defined(structure);
+        }
+        return structure;
+    }
     constructor(properties?: any, parent?: foKnowledge) {
         super(properties, parent);
     }
@@ -30,6 +43,20 @@ export class ConceptDictionary extends foDictionary<foKnowledge>{
             this.addItem(name, new foConcept({ myName: name }))
         })
         return this.getItem(name);
+    }
+
+    public define(key: string, type: { new(p?: any, s?: Array<foComponent>, r?: foComponent): foComponent; }, specification?: any): foConcept<foComponent> {
+        let concept = this.getItem(key) as foConcept<foComponent>;
+        if (!concept) {
+            let parent = this.myParent() as foKnowledge;
+            RuntimeType.define(type);
+            concept = new foConcept<foComponent>({}, parent);
+            concept.definePrimitive(type);
+            concept.specification = specification || {};
+            this.add(concept, key);
+            Knowcycle.defined(concept);
+        }
+        return concept;
     }
 
     constructor(properties?: any, parent?: foKnowledge) {
@@ -45,6 +72,16 @@ export class PropertyDictionary extends foDictionary<foProperty>{
         return this.getItem(name);
     }
 
+    public define(key: string, properties: any): foProperty {
+        let property = this.getItem(key);
+        if (!property) {
+            let parent = this.myParent() as foKnowledge;
+            property = new foProperty(properties, parent)
+            this.add(property, key);
+            Knowcycle.defined(property);
+        }
+        return property;
+    }
     constructor(properties?: any, parent?: foKnowledge) {
         super(properties, parent);
     }
@@ -75,6 +112,6 @@ export class FactoryDictionary<T extends foNode> extends foDictionary<foFactory<
         super(properties, parent);
     }
 
-    
+
 }
 
