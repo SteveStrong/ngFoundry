@@ -14,7 +14,7 @@ export class foConnectionPoint2D extends foHandle2D {
     get size(): number { return this._size || 15.0; }
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foHandle2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
 

@@ -58,7 +58,7 @@ export class foHandle2D extends foHandle {
     }
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foHandle2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

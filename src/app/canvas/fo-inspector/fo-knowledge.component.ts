@@ -6,11 +6,11 @@ import { foModel } from "../../foundry/foModel.model";
 
 
 @Component({
-  selector: 'fo-concept',
-  templateUrl: './fo-concept.component.html',
-  styleUrls: ['./fo-concept.component.css']
+  selector: 'fo-knowledge',
+  templateUrl: './fo-knowledge.component.html',
+  styleUrls: ['./fo-knowledge.component.css']
 })
-export class foConceptComponent implements OnInit {
+export class foKnowledgeComponent implements OnInit {
   rootWorkspace: foWorkspace = globalWorkspace;
   rootModel: foModel;
   list:Array<foLibrary> = new Array<foLibrary>();

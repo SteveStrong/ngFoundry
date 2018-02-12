@@ -2,16 +2,16 @@ import { Tools } from './foTools'
 
 import { foKnowledge } from './foKnowledge.model'
 
-import { Knowcycle } from './foLifecycle';
+//import { Knowcycle } from './foLifecycle';
 import { foCollection } from './foCollection.model'
-import { foComponent } from './foComponent.model'
-import { foConcept } from './foConcept.model'
-import { foStructure } from './foStructure.model'
-import { foProperty } from './foProperty.model'
+//import { foComponent } from './foComponent.model'
+//import { foConcept } from './foConcept.model'
+//import { foStructure } from './foStructure.model'
+//import { foProperty } from './foProperty.model'
 
 import { foNode } from './foNode.model'
 
-import { FactoryDictionary, ActionDictionary, PropertyDictionary, ConceptDictionary, StructureDictionary } from './foDictionaries'
+import { FactoryDictionary, ActionDictionary, PropertyDictionary, ConceptDictionary, StructureDictionary, SolutionDictionary } from './foDictionaries'
 
 import { WhereClause } from "./foInterface";
 
@@ -19,11 +19,30 @@ import { WhereClause } from "./foInterface";
 
 export class foLibrary extends foKnowledge {
 
-    private _structures: StructureDictionary = new StructureDictionary({ myName: 'structures' }, this);
-    private _concepts: ConceptDictionary = new ConceptDictionary({ myName: 'concepts' }, this);
-    private _properties: PropertyDictionary = new PropertyDictionary({ myName: 'properties' }, this);
-    private _actions: ActionDictionary<foNode> = new ActionDictionary({ myName: 'actions' }, this);
-    private _factory: FactoryDictionary<foNode> = new FactoryDictionary({ myName: 'factories' }, this);
+    private _solutions: SolutionDictionary = new SolutionDictionary({
+        myName: 'solutions'
+    }, this);
+
+    private _structures: StructureDictionary = new StructureDictionary({
+        myName: 'structures',
+        concepts: this.concepts
+    }, this);
+
+    private _concepts: ConceptDictionary = new ConceptDictionary({
+        myName: 'concepts'
+    }, this);
+
+    private _properties: PropertyDictionary = new PropertyDictionary({
+        myName: 'properties'
+    }, this);
+
+    private _actions: ActionDictionary<foNode> = new ActionDictionary({ 
+        myName: 'actions' 
+    }, this);
+
+    private _factory: FactoryDictionary<foNode> = new FactoryDictionary({ 
+        myName: 'factories' 
+    }, this);
 
     constructor(properties?: any, parent?: foKnowledge) {
         super(properties, parent);
@@ -53,53 +72,24 @@ export class foLibrary extends foKnowledge {
         return this._factory;
     }
 
-
-
     get structures() {
         return this._structures;
     }
 
-    establishStructure(key: string, properties?: any): foStructure {
-        let structure = this.structures.getItem(key) as foStructure;
-        if (!structure) {
-            structure = new foStructure(properties, this);
-            this.structures.addItem(key, structure);
-            structure.myName = key;
-        }
-        return structure;
+    get solutions() {
+        return this._solutions;
     }
+
 
     get concepts() {
         return this._concepts;
     }
 
-    establishConcept<T extends foComponent>(key: string, type: { new(p?: any, s?: Array<T>, r?: T): T; }, specification?: any): foConcept<T> {
-        let concept = this.concepts.getItem(key) as foConcept<T>
-        if (!concept) {
-            RuntimeType.define(type);
-            concept =  new foConcept<T>({}, this);
-            concept.definePrimitive(type);
-            concept.specification = specification || {};
-            this.concepts.addItem(key, concept);
-            concept.myName = key;
-            Knowcycle.defined(concept);
-        }
-        return concept;
-    }
 
     get properties() {
         return this._properties;
     }
 
-    establishProperty(key: string, properties: any): foProperty {
-        let property = this.properties.getItem(key);
-        if (!property) {
-            property = new foProperty(properties,this)
-            this.properties.addItem(key, property);
-            property.myName = key;
-        }
-        return property;
-    }
 
     select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
         let result = super.select(where, list, deep);

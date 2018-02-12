@@ -4,7 +4,7 @@ import { cMargin } from './foGeometry2D';
 
 
 import { foObject } from '../foObject.model'
-import { foNode } from '../foNode.model'
+import { foGlyph2D } from './foGlyph2D.model'
 
 import { foShape2D } from './foShape2D.model'
 
@@ -42,7 +42,7 @@ export class foText2D extends foShape2D {
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw();

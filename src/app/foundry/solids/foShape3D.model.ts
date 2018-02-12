@@ -7,7 +7,7 @@ import { cPoint3D } from './foGeometry3D';
 import { foGlue3D } from './foGlue3D'
 import { foConnectionPoint3D } from './foConnectionPoint3D'
 import { foCollection } from '../foCollection.model'
-import { foNode } from '../foNode.model'
+
 import { foObject } from '../foObject.model'
 
 import { Screen3D } from "./threeDriver";
@@ -47,7 +47,7 @@ export class foShape3D extends foGlyph3D {
     public pinZ = (): number => { return 0.5 * this.depth; }
 
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw()

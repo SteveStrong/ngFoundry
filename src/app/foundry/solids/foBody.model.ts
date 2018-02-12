@@ -30,7 +30,7 @@ export class foModel3D extends foShape3D {
     private _geometry;
     private _material;
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foShape3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw()

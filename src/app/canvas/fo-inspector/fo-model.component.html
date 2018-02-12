@@ -1,6 +1,12 @@
 <ng-container>
   <div *ngIf="model" class="panel panel-default">
-    <div class="panel-body">{{model.displayName}}</div>
+    <div (click)="doToggleDetails()" class="panel-body">{{model.displayName}}</div>
+    <pre *ngIf="showDetails" class="well">{{model.asJson | json }}</pre>
+   
+    <ng-container *ngFor="let cmd of commands; let i = index; let isOdd = odd">
+      <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
+    </ng-container>
+    
     <ul *ngFor="let node of model.nodes.members; let i = index; let isOdd = odd">
         <li><fo-model-panel [node]="node"></fo-model-panel></li>
     </ul>

@@ -31,7 +31,7 @@ export class foHandle extends foNode {
         this._color = value;
     }
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foHandle>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

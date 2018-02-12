@@ -76,7 +76,7 @@ export class foStage extends foGlyph3D {
     _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
         this.setupPreDraw();
     }

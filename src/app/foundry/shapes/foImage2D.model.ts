@@ -8,7 +8,7 @@ import { Matrix2D } from './foMatrix2D'
 import { foHandle2D } from './foHandle2D'
 import { foGlue2D } from './foGlue2D'
 import { foCollection } from '../foCollection.model'
-import { foNode } from '../foNode.model'
+import { foGlyph2D } from './foGlyph2D.model'
 
 
 import { foShape2D } from './foShape2D.model'
@@ -45,7 +45,7 @@ export class foImage2D extends foShape2D {
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

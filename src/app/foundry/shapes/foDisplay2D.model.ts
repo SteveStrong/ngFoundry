@@ -9,7 +9,7 @@ import { foObject } from '../foObject.model';
 import { foCollection } from '../foCollection.model';
 import { foNode } from '../foNode.model';
 import { foConcept } from '../foConcept.model';
-import { foComponent } from '../foComponent.model';
+import { foGlyph2D } from './foGlyph2D.model';
 
 import { foShape2D } from './foShape2D.model'
 
@@ -36,7 +36,7 @@ export class foDisplay2D extends foShape2D {
 
     protected _bounds: iRect;
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 

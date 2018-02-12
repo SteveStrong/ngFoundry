@@ -10,10 +10,19 @@ import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
   styleUrls: ['./fo-model.component.css']
 })
 export class foModelComponent implements OnInit {
+  showDetails = false;
   workspace: foWorkspace = globalWorkspace;
   model: foModel;
   
   constructor() { }
+
+  doToggleDetails() {
+    this.showDetails = !this.showDetails;
+  }
+
+  doCommand(cmd: string) {
+    this.model[cmd] && this.model[cmd]();
+  }
 
   ngOnInit() {
     this.model = this.workspace.model.getItem('default')

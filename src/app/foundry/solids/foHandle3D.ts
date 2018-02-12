@@ -7,15 +7,13 @@ import { iPoint3D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
 import { foGlyph3D } from './foGlyph3D.model';
-import { foComponent } from '../foComponent.model';
 
 import { Lifecycle } from '../foLifecycle';
 import { BroadcastChange } from '../foChange';
 
 import { foHandle } from '../foHandle';
 import { Screen3D } from './threeDriver';
-import { foGlue3D } from 'app/foundry/solids/foGlue3D';
-import { foConnectionPoint3D } from 'app/foundry/solids/foConnectionPoint3D';
+
 
 export class foHandle3D extends foHandle {
 
@@ -56,7 +54,7 @@ export class foHandle3D extends foHandle {
 
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foHandle3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw();

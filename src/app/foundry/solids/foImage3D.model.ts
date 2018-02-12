@@ -3,7 +3,7 @@ import { cMargin } from '../shapes/foGeometry2D';
 
 import { foShape3D } from "./foShape3D.model";
 
-import { foNode } from "../foNode.model";
+import { foGlyph3D } from "./foGlyph3D.model";
 import { foObject } from "../foObject.model";
 
 import { Material, Geometry, TextureLoader, ImageLoader, BoxGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
@@ -31,7 +31,7 @@ export class foImage3D extends foShape3D {
   }
 
 
-  constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+  constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
     super(properties, subcomponents, parent);
   }
 

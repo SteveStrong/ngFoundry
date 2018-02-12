@@ -1,7 +1,6 @@
 import { Vector3, Mesh } from 'three';
 
 import { foObject } from '../foObject.model';
-import { foComponent } from '../foComponent.model';
 
 import { foHandle3D } from './foHandle3D';
 import { Screen3D } from './threeDriver';
@@ -37,7 +36,7 @@ export class foConnectionPoint3D extends foHandle3D {
     get size(): number { return this._size || 15.0; }
 
 
-    constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foHandle3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw()

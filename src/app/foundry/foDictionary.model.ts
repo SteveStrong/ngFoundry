@@ -16,7 +16,8 @@ export class foDictionary<T extends iObject> extends foObject {
         return result;
     }
 
-    add(obj: T): T {
+    add(obj: T, key?:string): T {
+        if ( key ) obj.myName = key;
         return this.addItem(obj.myName, obj);
     }
 

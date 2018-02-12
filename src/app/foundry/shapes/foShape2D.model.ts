@@ -52,7 +52,7 @@ export class foShape2D extends foGlyph2D {
     public rotationZ = (): number => { return this.angle; }
 
 
-    constructor(properties?: any, subcomponents?: Array<foNode>, parent?: foObject) {
+    constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
