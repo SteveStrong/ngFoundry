@@ -1,5 +1,8 @@
+import { WhereClause } from './foInterface'
+
 import { foKnowledge } from './foKnowledge.model'
 import { foConcept } from './foConcept.model'
+import { foAttribute } from './foAttribute.model'
 import { foComponent } from './foComponent.model'
 
 import { foLibrary } from './foLibrary.model'
@@ -14,11 +17,16 @@ class foSubStructSpec extends foKnowledge {
 }
 
 
+
+
 export class foStructure extends foKnowledge {
 
     private _concept: foConcept<foComponent>;
+    private _attributes: foDictionary<foAttribute>;
+    
     private _structures: foDictionary<foSubStructSpec>;
-
+    private _existWhen: Array<WhereClause<foComponent>>;
+    
     //return a new collection that could be destroyed
 
 
@@ -50,11 +58,10 @@ export class foStructure extends foKnowledge {
         }
     }
 
-    attribute(spec?: any) {
-        return this;
-    }
-
-    existWhen(spec?: any) {
+    attribute(name: string, spec?: any | foAttribute) {
+        if (!this._attributes) {
+            this._attributes = new foDictionary<foAttribute>();
+        }
         return this;
     }
 
@@ -69,14 +76,29 @@ export class foStructure extends foKnowledge {
         return this;
     }
 
+    existWhen(when: WhereClause<foComponent>) {
+        this._existWhen.push(when)
+        return this;
+    }
+
+    private canExist(context?: foComponent):boolean {
+        let result = true;
+        return result;
+    }
+
     newInstance(context?: foComponent): foComponent {
+
+        if ( !this.canExist(context) ) {
+            return;
+        }
+
         let concept = this._concept ? this._concept : new foConcept<foComponent>();
-        let result = concept.newInstance({}, [], context);
+        let result = concept.makeInstance({}, context);
 
         this.structures && this.structures.forEach(item => {
             let structure = item.structure;
             let child = structure.newInstance(result);
-            child.myName = item.name;
+            child && child.defaultName(item.name);
         });
         return result;
     }
