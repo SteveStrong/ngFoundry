@@ -15,13 +15,20 @@ import { Lifecycle } from '../foLifecycle';
 
 import { JSONLoader, Object3D, Matrix3, MultiMaterial, Material, Geometry, Mesh } from 'three';
 
-import { SphereGeometry } from 'three';
+import { SphereGeometry, ConeGeometry } from 'three';
 
 
 export class foSphere extends foShape3D {
     radius: number;
     geometry = (spec?: any): Geometry => {
         return new SphereGeometry(this.radius);
+    }
+}
+
+export class foCone extends foShape3D {
+    radius: number;
+    geometry = (spec?: any): Geometry => {
+        return new ConeGeometry(this.radius, this.height);
     }
 }
 

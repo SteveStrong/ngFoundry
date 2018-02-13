@@ -158,7 +158,13 @@ export class foGlyph3D extends foGlyph {
         }
     }
 
-
+    nullGeometry() {
+        this.geometry = (spec?: any): Geometry => {
+            return new BoxGeometry(0, 0, 0);
+        }
+        this.clearMesh();
+        return this;
+    }
 
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);
