@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { foModel } from "../../foundry/foModel.model";
+import { foModel } from "../foundry/foModel.model";
 
-import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
 @Component({
   selector: 'fo-model',

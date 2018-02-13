@@ -1,20 +1,20 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { Tools } from "../../foundry/foTools";
+import { Tools } from "../foundry/foTools";
 
-import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foGlyph2D } from "../../foundry/shapes/foGlyph2D.model";
+import { globalWorkspace } from "../foundry/foWorkspace.model";
+import { foGlyph3D } from "../foundry/solids/foGlyph3D.model";
 
 @Component({
-  selector: 'fo-page-panel',
-  templateUrl: './fo-page-panel.component.html',
-  styleUrls: ['./fo-page-panel.component.css']
+  selector: 'fo-stage-panel',
+  templateUrl: './fo-stage-panel.component.html',
+  styleUrls: ['./fo-stage-panel.component.css']
 })
-export class foPagePanelComponent implements OnInit {
+export class foStagePanelComponent implements OnInit {
   showDetails = false;
   
   @Input()
-  public node: foGlyph2D;
+  public node: foGlyph3D;
   public commands: Array<string>;
 
   constructor() { }

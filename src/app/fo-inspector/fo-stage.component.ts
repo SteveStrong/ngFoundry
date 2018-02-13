@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { foStage } from "../../foundry/solids/foStage.model";
-import { globalWorkspace } from "../../foundry/foWorkspace.model";
+import { foStage } from "../foundry/solids/foStage.model";
+import { globalWorkspace } from "../foundry/foWorkspace.model";
 
 @Component({
   selector: 'fo-stage',

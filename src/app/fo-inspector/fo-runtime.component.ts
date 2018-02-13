@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Tools } from "../../foundry/foTools";
-import { RuntimeType } from "../../foundry/foRuntimeType";
-import { Knowcycle } from "../../foundry/foLifecycle";
+import { Tools } from "../foundry/foTools";
+import { RuntimeType } from "../foundry/foRuntimeType";
+import { Knowcycle } from "../foundry/foLifecycle";
 
 @Component({
   selector: 'fo-runtime',

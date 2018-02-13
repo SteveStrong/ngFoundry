@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { foNode } from "../../foundry/foNode.model";
-import { foKnowledge } from "../../foundry/foKnowledge.model";
-import { Toast } from "../../common/emitter.service";
+import { foNode } from "../foundry/foNode.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Toast } from "../common/emitter.service";
 
 import { globalWorkspace } from 'app/foundry/foWorkspace.model';
 

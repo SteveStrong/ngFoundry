@@ -1,13 +1,13 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { Tools } from "../../foundry/foTools";
+import { Tools } from "../foundry/foTools";
 
-import { foModel } from "../../foundry/foModel.model";
-import { foNode } from "../../foundry/foNode.model";
-import { foKnowledge } from "../../foundry/foKnowledge.model";
-import { Toast } from "../../common/emitter.service";
+import { foModel } from "../foundry/foModel.model";
+import { foNode } from "../foundry/foNode.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Toast } from "../common/emitter.service";
 
-import { globalWorkspace } from "../../foundry/foWorkspace.model";
+import { globalWorkspace } from "../foundry/foWorkspace.model";
 
 @Component({
   selector: 'fo-concept-card',

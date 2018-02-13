@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { foLibrary } from 'app/foundry/foLibrary.model';
 
-import { globalWorkspace, foWorkspace } from "../../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
 
 

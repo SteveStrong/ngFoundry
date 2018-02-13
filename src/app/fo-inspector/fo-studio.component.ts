@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foStudio } from "../../foundry/solids/foStudio.model";
+import { globalWorkspace } from "../foundry/foWorkspace.model";
+import { foStudio } from "../foundry/solids/foStudio.model";
 
 @Component({
   selector: 'fo-studio',

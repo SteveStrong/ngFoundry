@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { StageComponent } from "../stage.component";
+import { StageComponent } from "./stage.component";
 
 @Component({
   selector: 'fo-command',
