@@ -19,6 +19,18 @@ import { LineCurve3, CurvePath, TubeGeometry, BoxGeometry, MultiMaterial, Materi
 export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName();
 
 
+class PinTest extends foShape3D {
+  public pinY = (): number => { return 0.0 * this.height; }
+}
+
+ShrineStencil.define<PinTest>('PinTest', PinTest, {
+  color: 'green',
+  width: 100,
+  height: 200,
+  depth: 100,
+}).onCreation(obj => {
+  obj.dropAt(0,0,0);
+})
 
 //https://threejs.org/examples/#webgl_geometry_shapes
 
@@ -195,7 +207,7 @@ let minibox = ShrineStencil.define<foShape3D>('box', foShape3D, {
       width: .95 * obj.width,
       height: .95 * obj.height - lightspace,
       depth: .95 * obj.depth,
-      y: obj.height / 2;
+      y: obj.height / 2,
       color: 'red'
     }).addAsSubcomponent(obj).dropAt(0, -lightspace / 2, 0).nullGeometry()
 
