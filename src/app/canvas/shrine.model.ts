@@ -18,13 +18,7 @@ import { LineCurve3, CurvePath, TubeGeometry, BoxGeometry, MultiMaterial, Materi
 
 export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName();
 
-ShrineStencil.define<foShape3D>('shrine body', foShape3D, {
-  color: 'green',
-  opacity: .3,
-  width: 200,
-  height: 400,
-  depth: 200
-});
+
 
 //https://threejs.org/examples/#webgl_geometry_shapes
 
@@ -34,55 +28,115 @@ class band extends foShape3D {
 
   get segments(): number { return this._segments || 10; }
   set segments(value: number) {
-      value != this._segments && this.clearMesh();
-      this._segments = value;
+    value != this._segments && this.clearMesh();
+    this._segments = value;
   }
   get radiusSegments(): number { return this._radiusSegments || 10; }
   set radiusSegments(value: number) {
-      value != this._radiusSegments && this.clearMesh();
-      this._radiusSegments = value;
+    value != this._radiusSegments && this.clearMesh();
+    this._radiusSegments = value;
   }
-  
+
   geometry = (spec?: any): Geometry => {
-    let begin = new Vector3(0,0,0)
-    let end = new Vector3(100,200,300)
+    let begin = new Vector3(0, 0, 0)
+    let end = new Vector3(100, 200, 300)
     let curve = new LineCurve3(begin, end)
     let radius = (this.height + this.depth) / 2;
     return new TubeGeometry(curve, this.segments, radius, this.radiusSegments, false);
+  }
 }
+
+
+
+
+
+
+function doBand(obj: foShape3D, setback) {
+  let bandwidth = 10;
+  let thickness = 5;
+  let width = obj.width + 2 * thickness;
+  let height = obj.height + 2 * thickness;
+
+  ShrineStencil.impermanent<foShape3D>('left', foShape3D)
+    .newInstance({
+      width: thickness,
+      height: height,
+      depth: bandwidth,
+      color: 'yellow'
+    }).addAsSubcomponent(obj).dropAt(obj.width / 2, 0, setback);
+
+  ShrineStencil.impermanent<foShape3D>('right', foShape3D)
+    .newInstance({
+      width: thickness,
+      height: height,
+      depth: bandwidth,
+      color: 'yellow'
+    }).addAsSubcomponent(obj).dropAt(-obj.width / 2, 0, setback)
+
+  ShrineStencil.impermanent<foShape3D>('top', foShape3D)
+    .newInstance({
+      width: width,
+      height: thickness,
+      depth: bandwidth,
+      color: 'yellow'
+    }).addAsSubcomponent(obj).dropAt(0, obj.height / 2, setback)
+
+  ShrineStencil.impermanent<foShape3D>('bottom', foShape3D)
+    .newInstance({
+      width: width,
+      height: thickness,
+      depth: bandwidth,
+      color: 'yellow'
+    }).addAsSubcomponent(obj).dropAt(0, -obj.height / 2, setback)
 }
 
-ShrineStencil.define<foShape3D>('band', band, {
-  color: 'yellow',
-  width: 200,
-  height: 400,
-  depth: 200
-});
-
-ShrineStencil.define<foShape3D>('boxsegment', foShape3D, {
-  color: 'yellow',
-  width: 200,
-  height: 10,
-  depth: 10
-});
-
-
-ShrineStencil.define<foShape3D>('openbox', foShape3D, {
-  color: 'yellow',
+let minibox = ShrineStencil.define<foShape3D>('box', foShape3D, {
+  color: 'blue',
   opacity: .5,
   width: 200,
   height: 400,
-  depth: 10
-});
-
+  depth: 200
+}).onCreation(obj => {
+  obj.y = obj.height / 2;
+  doBand(obj, (obj.depth / 2) - 40);
+  doBand(obj, (-obj.depth / 2) + 40)
+}).hide();
 
 ShrineStencil.define<foShape3D>('shrine', foShape3D, {
-  color: 'blue',
+  color: 'green',
   opacity: .1,
   width: 200,
   height: 400,
-  depth: 200
-}).subComponent('body',ShrineStencil.find<foShape3D>('shrine body' ), {
-  width: 20
-});
+  depth: 200,
+  y: function () { return this.height / 2 }
+}).onCreation(obj => {
+
+  let left = obj.width / 2;
+  let right = -obj.width / 2;
+
+  let step = obj.height / 2;
+
+  minibox.makeComponent(obj)
+    .dropAt(right, 0, 0)
+
+  ShrineStencil.impermanent<foShape3D>('bottom', foShape3D)
+    .newInstance({
+      width: obj.width,
+      height: step,
+      depth: obj.depth,
+      color: 'gray'
+    }).addAsSubcomponent(obj).dropAt(left, -step/2, 0)
+
+  minibox.makeComponent(obj)
+    .dropAt(left, step, 0)
+
+  minibox.makeComponent(obj)
+    .dropAt(right, 2 * step, 0)
+
+  minibox.makeComponent(obj)
+    .dropAt(left, 3 * step, 0)
+
+  minibox.makeComponent(obj)
+    .dropAt(right, 4 * step, 0)
+})
 

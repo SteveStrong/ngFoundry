@@ -131,7 +131,9 @@ export class foGlyph3D extends foGlyph {
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
             this.mesh.position.set(this.x, this.y, this.z)
-            Lifecycle.dropped(this, this.getLocation());
+            this.setupPreDraw();
+            let point = this.getGlobalPosition();
+            Lifecycle.dropped(this, point);
         }
         return this;
     }

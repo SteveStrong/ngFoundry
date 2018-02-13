@@ -26,7 +26,7 @@ export class foInstance extends foNode {
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
-            subcomponents: this._subcomponents && this._subcomponents.asJson() 
+            //subcomponents: this._subcomponents && this._subcomponents.asJson() 
         });
     }
 }

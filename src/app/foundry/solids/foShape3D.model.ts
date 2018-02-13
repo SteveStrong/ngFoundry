@@ -74,28 +74,30 @@ export class foShape3D extends foGlyph3D {
         return new BoxGeometry(this.width, this.height, this.depth);
     }
 
-    public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
-        let changed = super.didLocationChange(x, y, z);
-        return changed;
-    }
+    // public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
+    //     let changed = super.didLocationChange(x, y, z);
+    //     return changed;
+    // }
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
-        if (this.didLocationChange(x, y, z)) {
-            //this.enforceGlue();
-            let point = this.getGlobalPosition();
-            Lifecycle.dropped(this, point);
-        }
-        return this;
-    }
+    // public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
+    //     if (this.didLocationChange(x, y, z)) {
+    //         //this.enforceGlue();
+    //         this.mesh.position.set(this.x, this.y, this.z)
+    //         this.setupPreDraw();
+    //         let point = this.getGlobalPosition();
+    //         Lifecycle.dropped(this, point);
+    //     }
+    //     return this;
+    // }
 
-    public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        if (this.didLocationChange(x, y, angle)) {
-            //this.enforceGlue();
-            let point = this.getGlobalPosition();
-            Lifecycle.moved(this, point);
-        }
-        return this;
-    }
+    // public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+    //     if (this.didLocationChange(x, y, angle)) {
+    //         //this.enforceGlue();
+    //         let point = this.getGlobalPosition();
+    //         Lifecycle.moved(this, point);
+    //     }
+    //     return this;
+    // }
 
 
     enforceGlue() {
@@ -215,7 +217,7 @@ export class foShape3D extends foGlyph3D {
         this.draw3D && this.draw3D(screen);
 
         //this.drawHandles(screen);
-        this.drawConnectionPoints(screen);
+        //this.drawConnectionPoints(screen);
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
         });
