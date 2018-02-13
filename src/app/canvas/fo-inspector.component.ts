@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { StageComponent } from "../stage.component";
+import { StageComponent } from "./stage.component";
 
-import { RuntimeType } from 'app/foundry/foRuntimeType';
 
 
 //https://valor-software.com/ngx-bootstrap/#/tabs

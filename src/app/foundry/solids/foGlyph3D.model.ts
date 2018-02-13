@@ -131,7 +131,9 @@ export class foGlyph3D extends foGlyph {
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
         if (this.didLocationChange(x, y, z)) {
             this.mesh.position.set(this.x, this.y, this.z)
-            Lifecycle.dropped(this, this.getLocation());
+            this.setupPreDraw();
+            let point = this.getGlobalPosition();
+            Lifecycle.dropped(this, point);
         }
         return this;
     }
@@ -156,7 +158,13 @@ export class foGlyph3D extends foGlyph {
         }
     }
 
-
+    nullGeometry() {
+        this.geometry = (spec?: any): Geometry => {
+            return new BoxGeometry(0, 0, 0);
+        }
+        this.clearMesh();
+        return this;
+    }
 
     geometry = (spec?: any): Geometry => {
         return new BoxGeometry(this.width, this.height, this.depth);

@@ -9,6 +9,8 @@ import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
 import { foObject } from './foObject.model'
 
+import { ConceptDictionary } from './foDictionaries'
+
 import { foCollection } from './foCollection.model'
 import { WhereClause } from "./foInterface";
 
@@ -76,8 +78,10 @@ export class foWorkspace extends foKnowledge {
 
     private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
     private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
+    
     private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
-   
+    private _context: ConceptDictionary = new ConceptDictionary({myName: 'context'}, this);
+
     private _document: foDocument = new foDocument({}, [], this);
     private _studio: foStudio = new foStudio({}, [], this);
 
@@ -113,6 +117,10 @@ export class foWorkspace extends foKnowledge {
 
     get model() {
         return this._model;
+    }
+
+    get context() {
+        return this._context;
     }
 
     get library() {

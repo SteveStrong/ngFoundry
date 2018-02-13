@@ -1,6 +1,7 @@
 
 import { Tools } from '../foTools'
 import { cPoint2D } from './foGeometry2D';
+import { Vector2 } from 'three';
 import { iPoint2D, iFrame } from '../foInterface'
 
 import { foObject } from '../foObject.model'
@@ -50,6 +51,13 @@ export class foShape2D extends foGlyph2D {
     public pinX = (): number => { return 0.5 * this.width; }
     public pinY = (): number => { return 0.5 * this.height; }
     public rotationZ = (): number => { return this.angle; }
+
+    pinVector(): Vector2 {
+        return new Vector2(
+            this.pinX(),
+            this.pinY(),
+        )
+    }
 
 
     constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {

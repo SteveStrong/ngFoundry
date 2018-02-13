@@ -1,27 +1,25 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
-import { Tools } from "../../foundry/foTools";
+import { Tools } from "../foundry/foTools";
 
-import { foModel } from "../../foundry/foModel.model";
-import { foNode } from "../../foundry/foNode.model";
-import { foKnowledge } from "../../foundry/foKnowledge.model";
-import { Toast } from "../../common/emitter.service";
-
-//import { globalWorkspace } from "../../foundry/foWorkspace.model";
+import { foModel } from "../foundry/foModel.model";
+import { foNode } from "../foundry/foNode.model";
+import { foKnowledge } from "../foundry/foKnowledge.model";
+import { Toast } from "../common/emitter.service";
 
 @Component({
-  selector: 'fo-structure-card',
-  templateUrl: './fo-structure-card.component.html',
-  styleUrls: ['./fo-structure-card.component.css']
+  selector: 'fo-solution-card',
+  templateUrl: './fo-solution-card.component.html',
+  styleUrls: ['./fo-solution-card.component.css']
 })
-export class foStructureCardComponent implements OnInit, AfterViewInit {
+export class foSolutionCardComponent implements OnInit {
   lastCreated: foNode;
   showDetails = false;
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
   @Input()
-  public structure: foKnowledge;
+  public solution: foKnowledge;
 
   @Input()
   public model: foModel;
@@ -50,7 +48,7 @@ export class foStructureCardComponent implements OnInit, AfterViewInit {
     let canvas = nativeElement;
     let context = canvas.getContext("2d");
 
-    this.drawName(this.structure.myName, context)
+    this.drawName(this.solution.myName, context)
   }
 
   doToggleDetails() {
@@ -58,7 +56,7 @@ export class foStructureCardComponent implements OnInit, AfterViewInit {
   }
 
   doCreate() {
-    let obj = this.structure.makeComponent(this.model).defaultName();
+    let obj = this.solution.makeComponent(this.model).defaultName();
 
     Toast.info("Created", obj.displayName);
   }

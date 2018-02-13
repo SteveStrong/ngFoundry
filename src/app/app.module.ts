@@ -38,30 +38,32 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 
-import { foInspectorComponent } from './canvas/fo-inspector/fo-inspector.component';
-import { foStencilComponent } from './canvas/fo-inspector/fo-stencil.component';
-import { foModelComponent } from './canvas/fo-inspector/fo-model.component';
-import { foDrawingComponent } from './canvas/fo-inspector/fo-drawing.component';
-import { foRuntimeComponent } from './canvas/fo-inspector/fo-runtime.component';
-import { foCommandComponent } from './canvas/fo-inspector/fo-command.component';
-import { foKnowledgeComponent } from './canvas/fo-inspector/fo-knowledge.component';
-import { foStencilPanelComponent } from './canvas/fo-inspector/fo-stencil-panel.component';
-import { foPagePanelComponent } from './canvas/fo-inspector/fo-page-panel.component';
-import { foModelPanelComponent } from './canvas/fo-inspector/fo-model-panel.component';
+import { foCommandComponent } from './canvas/fo-command.component';
+import { foInspectorComponent } from './canvas/fo-inspector.component';
+
+import { foStencilComponent } from './fo-inspector/fo-stencil.component';
+import { foModelComponent } from './fo-inspector/fo-model.component';
+import { foDrawingComponent } from './fo-inspector/fo-drawing.component';
+import { foRuntimeComponent } from './fo-inspector/fo-runtime.component';
+
+import { foKnowledgeComponent } from './fo-inspector/fo-knowledge.component';
+import { foStencilPanelComponent } from './fo-inspector/fo-stencil-panel.component';
+import { foPagePanelComponent } from './fo-inspector/fo-page-panel.component';
+import { foModelPanelComponent } from './fo-inspector/fo-model-panel.component';
 
 import { DrawingComponent } from './canvas/drawing.component';
-import { foPageComponent } from './canvas/fo-inspector/fo-page.component';
-import { foStencilCardComponent } from './canvas/fo-inspector/fo-stencil-card.component';
-import { foConceptCardComponent } from './canvas/fo-inspector/fo-concept-card.component';
+import { foPageComponent } from './fo-inspector/fo-page.component';
+import { foStencilCardComponent } from './fo-inspector/fo-stencil-card.component';
+import { foConceptCardComponent } from './fo-inspector/fo-concept-card.component';
 import { WorldComponent } from './canvas/world.component';
-import { foEventsComponent } from './canvas/fo-inspector/fo-events.component';
+import { foEventsComponent } from './fo-inspector/fo-events.component';
 import { ZoneTestComponent } from './zone-test/zone-test.component';
-import { foStagePanelComponent } from './canvas/fo-inspector/fo-stage-panel.component';
-import { foStageComponent } from './canvas/fo-inspector/fo-stage.component';
-import { foStudioComponent } from './canvas/fo-inspector/fo-studio.component';
+import { foStagePanelComponent } from './fo-inspector/fo-stage-panel.component';
+import { foStageComponent } from './fo-inspector/fo-stage.component';
+import { foStudioComponent } from './fo-inspector/fo-studio.component';
 import { DomainComponent } from './canvas/domain.component';
-import { foStructureCardComponent } from './canvas/fo-inspector/fo-structure-card.component';
-import { foSolutionCardComponent } from './canvas/fo-inspector/fo-solution-card.component';
+import { foStructureCardComponent } from './fo-inspector/fo-structure-card.component';
+import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.component';
 
 @NgModule({
   declarations: [

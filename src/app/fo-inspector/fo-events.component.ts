@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Lifecycle, foLifecycleEvent, Knowcycle } from "../../foundry/foLifecycle";
-import { BroadcastChange, foChangeEvent } from '../../foundry/foChange';
+import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
+import { BroadcastChange, foChangeEvent } from '../foundry/foChange';
 
 
 @Component({

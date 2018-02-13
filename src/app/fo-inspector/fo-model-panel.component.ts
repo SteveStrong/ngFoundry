@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-//import { globalWorkspace } from "../../foundry/foWorkspace.model";
-import { foNode } from "../../foundry/foNode.model";
+//import { globalWorkspace } from "../foundry/foWorkspace.model";
+import { foNode } from "../foundry/foNode.model";
 
 @Component({
   selector: 'fo-model-panel',
