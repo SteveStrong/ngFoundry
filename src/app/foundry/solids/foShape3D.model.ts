@@ -1,7 +1,7 @@
 import { Tools } from '../foTools'
 
 import { foGlyph3D } from "./foGlyph3D.model";
-import { Geometry, BoxGeometry } from 'three';
+import { Geometry, BoxGeometry, Vector3 } from 'three';
 import { cPoint3D } from './foGeometry3D';
 
 import { foGlue3D } from './foGlue3D'
@@ -46,6 +46,13 @@ export class foShape3D extends foGlyph3D {
     public pinY = (): number => { return 0.5 * this.height; }
     public pinZ = (): number => { return 0.5 * this.depth; }
 
+    pinVector(): Vector3 {
+        return new Vector3(
+            this.pinX() - 0.5 * this.width,
+            this.pinY() - 0.5 * this.height,
+            this.pinZ() - 0.5 * this.depth,
+        )
+    }
 
     constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -74,30 +81,7 @@ export class foShape3D extends foGlyph3D {
         return new BoxGeometry(this.width, this.height, this.depth);
     }
 
-    // public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN): boolean {
-    //     let changed = super.didLocationChange(x, y, z);
-    //     return changed;
-    // }
 
-    // public dropAt(x: number = Number.NaN, y: number = Number.NaN, z: number = Number.NaN) {
-    //     if (this.didLocationChange(x, y, z)) {
-    //         //this.enforceGlue();
-    //         this.mesh.position.set(this.x, this.y, this.z)
-    //         this.setupPreDraw();
-    //         let point = this.getGlobalPosition();
-    //         Lifecycle.dropped(this, point);
-    //     }
-    //     return this;
-    // }
-
-    // public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-    //     if (this.didLocationChange(x, y, angle)) {
-    //         //this.enforceGlue();
-    //         let point = this.getGlobalPosition();
-    //         Lifecycle.moved(this, point);
-    //     }
-    //     return this;
-    // }
 
 
     enforceGlue() {
