@@ -54,7 +54,7 @@ export class foShape3D extends foGlyph3D {
         )
     }
 
-    private originPosition(): Vector3 {
+    protected originPosition(): Vector3 {
         let pin = this.pinVector();
         return new Vector3(
             this.x - pin.x,

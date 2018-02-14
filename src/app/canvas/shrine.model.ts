@@ -21,15 +21,25 @@ export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName(
 
 class PinTest extends foShape3D {
   public pinY = (): number => { return 0.0 * this.height; }
+
+  protected setMeshMatrix(obj: Mesh) {
+
+    let pos = this.originPosition();
+
+    obj.position.set(pos.x, pos.y, pos.z);
+    obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+    return obj;
+  }
 }
 
 ShrineStencil.define<PinTest>('PinTest', PinTest, {
   color: 'green',
+  opacity: .7,
   width: 100,
   height: 200,
   depth: 100,
 }).onCreation(obj => {
-  obj.dropAt(0,0,0);
+  obj.dropAt(0, 0, 0);
 })
 
 //https://threejs.org/examples/#webgl_geometry_shapes
@@ -64,10 +74,10 @@ function doCrown(obj: foShape3D) {
   let thickness = 12.5;
   let width = obj.width;
   let depth = obj.depth;
-  let y = (obj.height + thickness)/ 2;
+  let y = (obj.height + thickness) / 2;
 
-  let x = (width - thickness)/2
-  let z = (depth - thickness)/2
+  let x = (width - thickness) / 2
+  let z = (depth - thickness) / 2
 
   ShrineStencil.impermanent<foShape3D>('left', foShape3D)
     .newInstance({
