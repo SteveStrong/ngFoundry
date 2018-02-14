@@ -54,6 +54,15 @@ export class foShape3D extends foGlyph3D {
         )
     }
 
+    private originPosition(): Vector3 {
+        let pin = this.pinVector();
+        return new Vector3(
+            this.x - pin.x,
+            this.y - pin.y,
+            this.z - pin.z,
+        )
+    }
+
     constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
@@ -119,7 +128,7 @@ export class foShape3D extends foGlyph3D {
     }
 
     public glueConnectionPoints(target: foShape3D, sourceHandle?: string, targetHandle?: string) {
-        let glue = this.establishGlue(sourceHandle ? sourceHandle: shape3DNames.center, target, targetHandle ? targetHandle: shape3DNames.center);
+        let glue = this.establishGlue(sourceHandle ? sourceHandle : shape3DNames.center, target, targetHandle ? targetHandle : shape3DNames.center);
         return glue;
     }
 
