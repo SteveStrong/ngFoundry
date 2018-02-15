@@ -180,6 +180,12 @@ export class foGlyph3D extends foGlyph {
         return new MeshBasicMaterial(props);
     }
 
+    protected setMeshMatrix(obj:Mesh){
+        obj.position.set(this.x, this.y, this.z);
+        obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+        return obj;
+    }
+
     //children in the model map to children of a mesh
     //https://bl.ocks.org/mpmckenna8/e0e3a8f79c711b29c55f
     protected _mesh: Mesh;
@@ -189,9 +195,7 @@ export class foGlyph3D extends foGlyph {
             let mat = this.material()
             let obj = (geom && mat) && new Mesh(geom, mat);
             if (obj) {
-                obj.position.set(this.x, this.y, this.z);
-                obj.rotation.set(this.angleX, this.angleY, this.angleZ);
-                this._mesh = obj;
+                this._mesh = this.setMeshMatrix(obj);
             }
 
         }
@@ -338,9 +342,7 @@ export class foGlyph3D extends foGlyph {
 
     draw3D = (screen: Screen3D, deep: boolean = true) => {
         if (!this.hasMesh) return;
-        let obj = this.mesh;
-        obj.position.set(this.x, this.y, this.z);
-        obj.rotation.set(this.angleX, this.angleY, this.angleZ);
+        this.setMeshMatrix(this.mesh);
     };
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
