@@ -1,5 +1,6 @@
 import { foObject } from './foObject.model'
 import { foComponent } from './foComponent.model'
+import { foConcept } from './foConcept.model';
 
 export class foModel extends foComponent {
     
@@ -10,3 +11,9 @@ export class foModel extends foComponent {
 
 import { RuntimeType } from './foRuntimeType';
 RuntimeType.define(foModel);
+
+
+export class foContext<T extends foModel> extends foConcept<T> {
+
+
+}

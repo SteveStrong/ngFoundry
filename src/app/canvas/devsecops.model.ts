@@ -1,13 +1,25 @@
 
 import { foLibrary } from "../foundry/foLibrary.model";
 import { foStencilLibrary } from "../foundry/foStencil";
+import { foWorkspace } from "../foundry/foWorkspace.model";
 import { foComponent } from "../foundry/foComponent.model";
+import { foModel, foContext } from "../foundry/foModel.model";
 import { foImage2D } from "../foundry/shapes/foImage2D.model";
 import { foShape3D } from "../foundry/solids/foShape3D.model";
 
-export let DevSecOps: foLibrary = new foLibrary().defaultName('definitions');
+export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
 export let DevSecOpsSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
+export let DevSecOps: foWorkspace = new foWorkspace().defaultName('Dev Ops');
+
+DevSecOps.library.add(DevSecOpsKnowledge);
+DevSecOps.stencil.add(DevSecOpsShapes);
+DevSecOps.stencil.add(DevSecOpsSolids);
+
+DevSecOps.context.define('DevOpsFactory', foModel, {
+  title: 'Understand DevSecOps',
+  subtitle: 'Strutured Flexability'
+})
 
 DevSecOpsShapes.define<foImage2D>('Image', foImage2D, {
   background: 'green',
@@ -25,7 +37,7 @@ DevSecOpsSolids.define<foShape3D>('red box', foShape3D, {
 })
 
 function getConcept(name:string, spec?:any){
-  return DevSecOps.concepts.define(name,foComponent,spec).hide();
+  return DevSecOpsKnowledge.concepts.define(name,foComponent,spec).hide();
 }
 let root = getConcept('Root', {
   pipelineName: 'dave',
@@ -34,26 +46,26 @@ let root = getConcept('Root', {
 let compile = getConcept('compile');
 compile.subComponent('details', {})
 
-let s1 = DevSecOps.structures.define('stage1', {})
+let s1 = DevSecOpsKnowledge.structures.define('stage1', {})
   .concept(compile).hide();
-let s2 = DevSecOps.structures.define('stage2', {})
+let s2 = DevSecOpsKnowledge.structures.define('stage2', {})
   .concept(getConcept('test')).hide();
-let s3 = DevSecOps.structures.define('stage3', {})
+let s3 = DevSecOpsKnowledge.structures.define('stage3', {})
   .concept(getConcept('package')).hide()
   .subComponent('local', {})
 
-let pipe = DevSecOps.structures.define('Pipeline', {
+let pipe = DevSecOpsKnowledge.structures.define('Pipeline', {
 }).concept(root)
   .subComponent('s1', s1)
   .subComponent('s2', s2)
   .subComponent('s3', s3)
 
 
-  DevSecOps.solutions.define('DevOps')
+  DevSecOpsKnowledge.solutions.define('DevOps')
   .useStructure(pipe)
-  .subSolution('security', DevSecOps.solutions.define('security').hide() )
-  .subSolution('metrics', DevSecOps.solutions.define('metrics').hide() )
-  .subSolution('governance', DevSecOps.solutions.define('governance').hide() )
+  .subSolution('security', DevSecOpsKnowledge.solutions.define('security').hide() )
+  .subSolution('metrics', DevSecOpsKnowledge.solutions.define('metrics').hide() )
+  .subSolution('governance', DevSecOpsKnowledge.solutions.define('governance').hide() )
   //.useStructureWhen(pipe, function(c) { return true});
 
 

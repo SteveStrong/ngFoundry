@@ -13,6 +13,7 @@ import { foNode } from './foNode.model'
 import { RuntimeType } from './foRuntimeType';
 import { Lifecycle } from './foLifecycle';
 
+
 class foSubComponentSpec extends foKnowledge {
     concept: foKnowledge;
     name: string;
@@ -214,6 +215,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 
 RuntimeType.knowledge(foConcept);
+
+
 
 
 
