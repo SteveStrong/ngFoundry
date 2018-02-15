@@ -3,7 +3,9 @@ import { foComponent } from './foComponent.model'
 import { foConcept } from './foConcept.model';
 
 export class foModel extends foComponent {
-    
+    //title: string = 'No Title';
+    //subtitle: string = 'No Subtitle';
+
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }

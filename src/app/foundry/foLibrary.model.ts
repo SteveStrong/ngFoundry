@@ -19,6 +19,8 @@ import { WhereClause } from "./foInterface";
 
 export class foLibrary extends foKnowledge {
 
+    private _mixins:any = {};
+
     private _solutions: SolutionDictionary = new SolutionDictionary({
         myName: 'solutions'
     }, this);
@@ -64,6 +66,18 @@ export class foLibrary extends foKnowledge {
         });
     }
 
+    public mixin(key: string, specification?: any): any {
+        let found = specification;
+        if (found ) {
+            this._mixins[key] = found;
+        } else {
+            found = this._mixins[key];
+        }
+       
+        return found;
+    }
+
+
     get actions() {
         return this._actions;
     }
@@ -106,5 +120,6 @@ export class foLibrary extends foKnowledge {
 }
 
 import { RuntimeType } from './foRuntimeType';
+import { foDictionary } from './foDictionary.model';
 
 RuntimeType.knowledge(foLibrary);

@@ -118,6 +118,11 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
+    mixin(obj:any){
+        Tools.mixin(this.specification,obj);
+        return this;
+    }
+
 
     establishAttribute(key: string, spec?: any) {
         let attributes = this.attributes;
