@@ -10,7 +10,7 @@ import { foShape3D } from "../foundry/solids/foShape3D.model";
 export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
 export let DevSecOpsSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
-export let DevSecOps: foWorkspace = new foWorkspace().defaultName('Dev Ops');
+export let DevSecOps: foWorkspace = new foWorkspace().defaultName('Dev Sec Ops');
 
 DevSecOps.library.add(DevSecOpsKnowledge);
 DevSecOps.stencil.add(DevSecOpsShapes);
