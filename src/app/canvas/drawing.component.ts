@@ -19,9 +19,9 @@ import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 import { foChangeEvent } from '../foundry/foChange';
 
-import { foDocument } from 'app/foundry/shapes/foDocument.model';
-import { foStudio } from 'app/foundry/solids/foStudio.model';
-import { foStage } from 'app/foundry/solids/foStage.model';
+import { foDocument } from '../foundry/shapes/foDocument.model';
+import { foStudio } from '../foundry/solids/foStudio.model';
+import { foStage } from '../foundry/solids/foStage.model';
 
 
 import { ParticleStencil, foShape2D } from "./particle.model";

@@ -10,25 +10,21 @@
 </div>
 <div class="row">
 
-  <div class="col-md-5">
+  <div class="col-md-8">
+    <canvas #canvas></canvas>
+  </div>
+
+
+  <div class="col-md-4">
     <tabset type="pills">
       <tab heading='Knowledge'>
         <fo-knowledge [workspace]='workspace'></fo-knowledge>
       </tab>
-      <tab heading='Stencil'>
-        <fo-stencil [workspace]='workspace'></fo-stencil>
-      </tab>
-      <tab heading='Debug'>
-        <fo-events></fo-events>
-      </tab>
-
-    </tabset>
-  </div>
-
-  <div class="col-md-7">
-    <tabset type="pills">
       <tab heading='Model'>
         <fo-model [workspace]='workspace'></fo-model>
+      </tab>
+      <tab heading='Stencil'>
+        <fo-stencil [workspace]='workspace'></fo-stencil>
       </tab>
       <tab heading='Drawing'>
         <fo-drawing [workspace]='workspace'></fo-drawing>
@@ -36,7 +32,9 @@
       <tab heading='Studio'>
         <fo-studio [workspace]='workspace'></fo-studio>
       </tab>
+      <tab heading='Debug'>
+        <fo-events></fo-events>
+      </tab>
     </tabset>
   </div>
 </div>
-
