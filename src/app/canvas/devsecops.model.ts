@@ -8,6 +8,9 @@ import { foImage2D } from "../foundry/shapes/foImage2D.model";
 import { foShape3D } from "../foundry/solids/foShape3D.model";
 import { foShape2D } from "./particle.model";
 
+import { iPoint2D } from '../foundry/foInterface';
+import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
+
 export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
 export let DevSecOpsSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
@@ -38,6 +41,16 @@ class shapeDevOps extends foShape2D {
     //this.drawConnectionPoints(ctx);
     this.drawPin(ctx);
   }
+
+  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+    let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+
+    // if (deep) {
+    //     let child = this.findChildObjectUnderPoint(hit);
+    //     found = child ? child : found;
+    // }
+    return found;
+  }
 }
 
 let core = DevSecOpsShapes.mixin('core', {
@@ -67,7 +80,35 @@ class shapeUI extends shapeDevOps {
 }
 
 class shapeService extends shapeDevOps {
+  public draw = (ctx: CanvasRenderingContext2D): void => {
+    ctx.fillStyle = this.color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = this.opacity;
+    ctx.fillRect(0, 0, this.width, this.height);
+  }
 }
+
+class shapeEnv extends shapeDevOps {
+  radius:number;
+  drawSemiCircle(ctx: CanvasRenderingContext2D, x, y, r) {
+    ctx.beginPath();
+    ctx.arc(x, y, r, Math.PI, 2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  public draw = (ctx: CanvasRenderingContext2D): void => {
+    ctx.fillStyle = this.color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = this.opacity;
+    ctx.fillRect(0, this.height/2, this.width, this.height/2);
+    this.drawSemiCircle(ctx, this.width/2, this.height/2, this.radius)
+  }
+}
+
+DevSecOpsShapes.define<shapeDevOps>('Env', shapeEnv, {
+  radius: 10,
+}).mixin(core);
 
 class shapeData extends shapeDevOps {
 
@@ -95,6 +136,28 @@ DevSecOpsShapes.define<shapeDevOps>('Service', shapeService, {
 DevSecOpsShapes.define<shapeDevOps>('Data', shapeData, {
 }).mixin(core);
 
+
+class shapeApp extends shapeDevOps {
+}
+
+DevSecOpsShapes.define<shapeDevOps>('App', shapeApp, {
+  color: 'cyan',
+}).onCreation(obj => {
+
+  let UI = DevSecOpsShapes.find('UI').makeComponent(obj);
+  let Service = DevSecOpsShapes.find('Service').makeComponent(obj);
+  let Data = DevSecOpsShapes.find('Data').makeComponent(obj);
+
+  obj.width = 1.3 * UI.width;
+  obj.height = 3.3 * UI.height;
+  let x = obj.width / 2;
+  let y = obj.height / 6;
+  UI.dropAt(x, 1 * y);
+  Service.dropAt(x, 3 * y);
+  Data.dropAt(x, 5 * y);
+})
+
+
 DevSecOpsSolids.define<foShape3D>('red box', foShape3D, {
   color: 'red',
   opacity: .5,
@@ -102,6 +165,8 @@ DevSecOpsSolids.define<foShape3D>('red box', foShape3D, {
   height: 400,
   depth: 900
 })
+
+
 
 function getConcept(name: string, spec?: any) {
   return DevSecOpsKnowledge.concepts.define(name, foComponent, spec).hide();
