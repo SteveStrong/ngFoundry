@@ -1,7 +1,7 @@
 
 import { Tools } from '../foTools'
 import { cPoint2D } from './foGeometry2D';
-import { Vector2 } from 'three';
+import { Vector2, Vector3 } from 'three';
 import { iPoint2D, iFrame } from '../foInterface'
 
 import { foObject } from '../foObject.model'
@@ -52,11 +52,29 @@ export class foShape2D extends foGlyph2D {
     public pinY = (): number => { return 0.5 * this.height; }
     public rotationZ = (): number => { return this.angle; }
 
-    pinVector(): Vector2 {
-        return new Vector2(
+    pinVector(): Vector3 {
+        return new Vector3(
             this.pinX(),
             this.pinY(),
+            0,
         )
+    }    
+    
+    protected originPosition(): Vector3 {
+        let pin = this.pinVector();
+        return new Vector3(
+            this.x - pin.x,
+            this.y - pin.y,
+            0,
+        )
+    }
+
+    public pinLocation() {
+        return {
+            x: this.pinX(),
+            y: this.pinY(),
+            z: 0,
+        }
     }
 
 
@@ -150,13 +168,7 @@ export class foShape2D extends foGlyph2D {
         return false;
     }
 
-    public pinLocation() {
-        return {
-            x: this.pinX(),
-            y: this.pinY(),
-            z: 0,
-        }
-    }
+
 
     protected getGlue(name?: string) {
         let glue = name && this.glue.findMember(name);
