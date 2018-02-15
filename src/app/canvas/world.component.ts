@@ -18,6 +18,7 @@ import { ShapeStencil } from "./shapes.model";
 import { PersonDomain } from "./domain.model";
 import { SolidStencil } from "./solids.model";
 import { ShrineStencil } from "./shrine.model";
+import { PinStencil } from "./solidpin.model";
 
 @Component({
   selector: 'foundry-world',
@@ -92,6 +93,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
     libs.add(ParticleStencil).displayName = "Particle";
     libs.add(ShapeStencil).displayName = "Shape";
     libs.add(SolidStencil).displayName = "Solid";
+    libs.add(PinStencil).displayName = "Pins";
   
 
     this.rootWorkspace.library.add(PersonDomain);
