@@ -47,7 +47,6 @@ import { foDrawingComponent } from './fo-inspector/fo-drawing.component';
 import { foRuntimeComponent } from './fo-inspector/fo-runtime.component';
 
 import { foKnowledgeComponent } from './fo-inspector/fo-knowledge.component';
-import { foStencilPanelComponent } from './fo-inspector/fo-stencil-panel.component';
 import { foPagePanelComponent } from './fo-inspector/fo-page-panel.component';
 import { foModelPanelComponent } from './fo-inspector/fo-model-panel.component';
 
@@ -97,7 +96,7 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
     foRuntimeComponent,
     foCommandComponent,
     foKnowledgeComponent,
-    foStencilPanelComponent,
+
     foPagePanelComponent,
     foModelPanelComponent,
 

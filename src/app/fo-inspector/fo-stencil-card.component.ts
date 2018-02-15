@@ -4,7 +4,7 @@ import { foNode } from "../foundry/foNode.model";
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { Toast } from "../common/emitter.service";
 
-import { globalWorkspace } from 'app/foundry/foWorkspace.model';
+import { globalWorkspace, foWorkspace } from 'app/foundry/foWorkspace.model';
 
 @Component({
   selector: 'fo-stencil-card',
@@ -14,6 +14,9 @@ import { globalWorkspace } from 'app/foundry/foWorkspace.model';
 export class foStencilCardComponent implements OnInit, AfterViewInit {
   lastCreated: foNode;
   showDetails = false;
+
+  @Input()
+  workspace: foWorkspace;
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
@@ -25,6 +28,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
+    this.workspace = this.workspace || globalWorkspace;
   }
 
   public ngAfterViewInit() {
@@ -54,8 +58,8 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
   doCreate() {
     let result;
 
-    let page = globalWorkspace.activePage;
-    let stage = globalWorkspace.activeStage;
+    let page = this.workspace.activePage;
+    let stage = this.workspace.activeStage;
 
 
     if (this.knowledge['run']) {
