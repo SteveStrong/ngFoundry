@@ -13,10 +13,10 @@
   <div class="col-md-5">
     <tabset type="pills">
       <tab heading='Knowledge'>
-        <fo-knowledge></fo-knowledge>
+        <fo-knowledge [workspace]='workspace'></fo-knowledge>
       </tab>
       <tab heading='Stencil'>
-        <fo-stencil></fo-stencil>
+        <fo-stencil [workspace]='workspace'></fo-stencil>
       </tab>
       <tab heading='Debug'>
         <fo-events></fo-events>
@@ -28,13 +28,13 @@
   <div class="col-md-7">
     <tabset type="pills">
       <tab heading='Model'>
-        <fo-model></fo-model>
+        <fo-model [workspace]='workspace'></fo-model>
       </tab>
       <tab heading='Drawing'>
-        <fo-drawing></fo-drawing>
+        <fo-drawing [workspace]='workspace'></fo-drawing>
       </tab>
       <tab heading='Studio'>
-        <fo-studio></fo-studio>
+        <fo-studio [workspace]='workspace'></fo-studio>
       </tab>
     </tabset>
   </div>

@@ -24,6 +24,11 @@ export class DevSecOpsComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.workspace.model.addItem('default', new foModel({}));
+
+    this.model = this.workspace.model.getItem('default')
+    //this.model = workspace.context()
   }
 
 }

@@ -1,8 +1,8 @@
 <accordion>
   <accordion-group *ngFor="let item of list" [heading]="item.displayName" [isOpen]="true">
-      <fo-concept-card *ngFor="let concept of item.concepts.publicMembers" [model]="rootModel" [concept]="concept"></fo-concept-card>
-      <fo-structure-card *ngFor="let structure of item.structures.publicMembers" [model]="rootModel" [structure]="structure"></fo-structure-card>
-      <fo-solution-card *ngFor="let solution of item.solutions.publicMembers" [model]="rootModel" [solution]="solution"></fo-solution-card>
+      <fo-concept-card *ngFor="let concept of item.concepts.publicMembers" [model]="model" [concept]="concept"></fo-concept-card>
+      <fo-structure-card *ngFor="let structure of item.structures.publicMembers" [model]="model" [structure]="structure"></fo-structure-card>
+      <fo-solution-card *ngFor="let solution of item.solutions.publicMembers" [model]="model" [solution]="solution"></fo-solution-card>
     </accordion-group>
 </accordion>
 

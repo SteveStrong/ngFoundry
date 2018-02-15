@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { foModel } from "../foundry/foModel.model";
 
@@ -11,8 +11,10 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 })
 export class foModelComponent implements OnInit {
   showDetails = false;
-  workspace: foWorkspace = globalWorkspace;
+  @Input()
+  workspace: foWorkspace;
   model: foModel;
+  public commands: Array<string>;
   
   constructor() { }
 
@@ -25,7 +27,10 @@ export class foModelComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.workspace = this.workspace || globalWorkspace;
+
     this.model = this.workspace.model.getItem('default')
   }
+
 
 }

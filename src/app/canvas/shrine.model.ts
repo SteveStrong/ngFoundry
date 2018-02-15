@@ -22,30 +22,6 @@ export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName(
 
 //https://threejs.org/examples/#webgl_geometry_shapes
 
-class band extends foShape3D {
-  protected _segments: number;
-  protected _radiusSegments: number;
-
-  get segments(): number { return this._segments || 10; }
-  set segments(value: number) {
-    value != this._segments && this.clearMesh();
-    this._segments = value;
-  }
-  get radiusSegments(): number { return this._radiusSegments || 10; }
-  set radiusSegments(value: number) {
-    value != this._radiusSegments && this.clearMesh();
-    this._radiusSegments = value;
-  }
-
-  geometry = (spec?: any): Geometry => {
-    let begin = new Vector3(0, 0, 0)
-    let end = new Vector3(100, 200, 300)
-    let curve = new LineCurve3(begin, end)
-    let radius = (this.height + this.depth) / 2;
-    return new TubeGeometry(curve, this.segments, radius, this.radiusSegments, false);
-  }
-}
-
 
 
 function doCrown(obj: foShape3D) {
