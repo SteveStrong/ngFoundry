@@ -16,7 +16,7 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
 import { LineCurve3, TubeGeometry, BoxGeometry, MultiMaterial, Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
-export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let SolidStencil: foStencilLibrary = new foStencilLibrary().defaultName('Solid');
 
 SolidStencil.define<foGlyph3D>('block', foGlyph3D, {
   color: 'green',

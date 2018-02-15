@@ -4,7 +4,7 @@ import { Tools } from '../foundry/foTools';
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foStencilLibrary } from "../foundry/foStencil";
 
-export let ParticleStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let ParticleStencil: foStencilLibrary = new foStencilLibrary().defaultName('Particle');
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
 
 export class particle extends foShape2D {

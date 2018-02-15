@@ -10,7 +10,7 @@ import { foStencilLibrary } from "../foundry/foStencil";
 
 import { Mesh } from 'three';
 
-export let PinStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let PinStencil: foStencilLibrary = new foStencilLibrary().defaultName("Pins");
 
 
 class foPinnedShape3D extends foShape3D {

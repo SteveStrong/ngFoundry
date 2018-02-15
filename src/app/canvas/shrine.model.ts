@@ -16,7 +16,7 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
 import { LineCurve3, CurvePath, TubeGeometry, BoxGeometry, MultiMaterial, Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
-export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName('Shrine');
 
 
 
