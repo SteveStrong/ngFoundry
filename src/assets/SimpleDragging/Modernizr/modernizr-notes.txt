@@ -1,0 +1,8 @@
+The Modernizr JavaScript library is used here to detect support for HTML5 Canvas in the browser.
+The latest version of this library is available here:
+
+http://www.modernizr.com/license/
+
+Modernizr is available under the MIT and BSD licenses, detailed here:
+
+http://www.modernizr.com/license/

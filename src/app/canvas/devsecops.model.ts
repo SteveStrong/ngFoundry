@@ -89,10 +89,10 @@ class shapeService extends shapeDevOps {
 }
 
 class shapeEnv extends shapeDevOps {
-  radius:number;
+  radius: number;
   drawSemiCircle(ctx: CanvasRenderingContext2D, x, y, r) {
     ctx.beginPath();
-    ctx.arc(x, y, r, Math.PI, 2*Math.PI);
+    ctx.arc(x, y, r, Math.PI, 2 * Math.PI);
     ctx.closePath();
     ctx.fill();
   }
@@ -101,12 +101,38 @@ class shapeEnv extends shapeDevOps {
     ctx.fillStyle = this.color;
     ctx.lineWidth = 1;
     ctx.globalAlpha = this.opacity;
-    ctx.fillRect(0, this.height/2, this.width, this.height/2);
-    this.drawSemiCircle(ctx, this.width/2, this.height/2, this.radius)
+    ctx.fillRect(0, this.height / 2, this.width, this.height / 2);
+    this.drawSemiCircle(ctx, this.width / 2, this.height / 2, this.radius)
   }
 }
 
 DevSecOpsShapes.define<shapeDevOps>('Env', shapeEnv, {
+  radius: 10,
+}).mixin(core);
+
+
+class shapeInvEnv extends shapeDevOps {
+  radius: number;
+  drawSemiCircle(ctx: CanvasRenderingContext2D, x, y, r) {
+    ctx.save()
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  public draw = (ctx: CanvasRenderingContext2D): void => {
+    ctx.fillStyle = this.color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = this.opacity;
+    ctx.fillRect(0, 0, this.width, this.height / 2);
+    this.drawSemiCircle(ctx, this.width / 2, this.height / 2, this.radius)
+  }
+}
+
+DevSecOpsShapes.define<shapeDevOps>('InvEnv', shapeInvEnv, {
   radius: 10,
 }).mixin(core);
 
@@ -147,6 +173,7 @@ DevSecOpsShapes.define<shapeDevOps>('App', shapeApp, {
   let UI = DevSecOpsShapes.find('UI').makeComponent(obj);
   let Service = DevSecOpsShapes.find('Service').makeComponent(obj);
   let Data = DevSecOpsShapes.find('Data').makeComponent(obj);
+  let InvEnv = DevSecOpsShapes.find('InvEnv').makeComponent(obj);
 
   obj.width = 1.3 * UI.width;
   obj.height = 3.3 * UI.height;
@@ -155,6 +182,7 @@ DevSecOpsShapes.define<shapeDevOps>('App', shapeApp, {
   UI.dropAt(x, 1 * y);
   Service.dropAt(x, 3 * y);
   Data.dropAt(x, 5 * y);
+  InvEnv.dropAt(x, 7 * y);
 })
 
 
