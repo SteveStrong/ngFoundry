@@ -219,8 +219,7 @@ export class foPage extends foShape2D {
             let h: number;
             return (loc: cPoint2D, e: MouseEvent, keys) => {
                 clearTimeout(h);
-                h = setTimeout(() =>
-                    func(loc, e, keys), wait);
+                h = setTimeout(() => func(loc, e, keys), wait);
             };
         }
 
