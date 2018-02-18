@@ -17,6 +17,8 @@ import { foHandle2D } from './foHandle2D';
 import { Lifecycle } from '../foLifecycle';
 
 
+
+
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
 export class foPage extends foShape2D {
@@ -134,7 +136,7 @@ export class foPage extends foShape2D {
         this._dictionary.findItem(guid, () => {
             this._dictionary.addItem(guid, obj);
             super.addSubcomponent(obj, properties);
-        }, child => { 
+        }, child => {
             super.addSubcomponent(obj, properties)
         });
         return obj;
@@ -213,11 +215,20 @@ export class foPage extends foShape2D {
             }
         }
 
+        function debounce(func: (loc: cPoint2D, e: MouseEvent, keys) => void, wait = 50) {
+            let h: number;
+            return (loc: cPoint2D, e: MouseEvent, keys) => {
+                clearTimeout(h);
+                h = setTimeout(() =>
+                    func(loc, e, keys), wait);
+            };
+        }
+
         PubSub.Sub('onkeypress', (e: KeyboardEvent, keys) => {
             alert('code:' + keys.code)
         });
 
-        PubSub.Sub('mousedown', (loc: cPoint2D, e: MouseEvent, keys) => {
+        let mousedown = (loc: cPoint2D, e: MouseEvent, keys) => {
             this.onMouseLocationChanged(loc, "down", keys);
 
             grab = findHandle(loc);
@@ -244,9 +255,14 @@ export class foPage extends foShape2D {
                 handles.copyMembers(shape.handles);
             }
 
-        });
+        };
 
-        PubSub.Sub('mousemove', (loc: cPoint2D, e: MouseEvent, keys) => {
+        PubSub.Sub('mousedown', mousedown);
+
+
+
+        let mousemove = (loc: cPoint2D, e: MouseEvent, keys) => {
+
             if (findHandle(loc) && handles.length) {
                 //this.onHandleMoving(loc, handles.first(), keys);
                 this.onTrackHandles(loc, handles, keys);
@@ -313,9 +329,16 @@ export class foPage extends foShape2D {
                     float = null;
                 }
             }
-        });
 
-        PubSub.Sub('mouseup', (loc: cPoint2D, e: MouseEvent, keys) => {
+        };
+
+        let debounceMouseMove = debounce(mousemove,10)
+
+        PubSub.Sub('mousemove', debounceMouseMove);
+
+
+
+        let mouseup = (loc: cPoint2D, e: MouseEvent, keys) => {
             grab = null;
             this.onMouseLocationChanged(loc, "up", keys);
             if (!shape) return;
@@ -345,8 +368,9 @@ export class foPage extends foShape2D {
             }
 
             shape = shapeUnder = null;
+        };
 
-        });
+        PubSub.Sub('mouseup', mouseup);
 
         PubSub.Sub('wheel', (loc: cPoint2D, g: cPoint2D, zoom: number, e: WheelEvent, keys) => {
             this.onMouseLocationChanged(loc, "wheel", keys);
