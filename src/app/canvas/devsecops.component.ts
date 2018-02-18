@@ -13,6 +13,7 @@ import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
 import { SharingService } from "../common/sharing.service";
 import { DevSecOps, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
 
+import { Star }  from "konva";
 
 @Component({
   selector: 'fo-devsecops',
