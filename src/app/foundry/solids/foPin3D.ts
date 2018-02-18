@@ -1,4 +1,5 @@
-import { Vector3, Mesh } from 'three';
+import { Tools } from '../foTools';
+import { Vector3, Geometry, Material, SphereGeometry, Mesh, MeshBasicMaterial } from 'three';
 
 import { foObject } from '../foObject.model';
 
@@ -6,7 +7,7 @@ import { foHandle3D } from './foHandle3D';
 import { Screen3D } from './threeDriver';
 
 
-export class foConnectionPoint3D extends foHandle3D {
+export class foPin3D extends foHandle3D {
 
     protected _angleX: number;
     get angleX(): number { return this._angleX || 0.0; }
@@ -33,13 +34,27 @@ export class foConnectionPoint3D extends foHandle3D {
     get color(): string {
         return this._color || 'pink';
     }
-    get size(): number { return this._size || 15.0; }
+    get size(): number { return this._size || 10.0; }
 
 
     constructor(properties?: any, subcomponents?: Array<foHandle3D>, parent?: foObject) {
         super(properties, subcomponents, parent);
 
         this.setupPreDraw()
+    }
+
+    geometry = (spec?: any): Geometry => {
+        return new SphereGeometry(this.size);
+    }
+
+    
+    material = (spec?: any): Material => {
+        let props = Tools.mixin({
+            color: this.color,
+            transparent: false,
+            wireframe: false
+        }, spec)
+        return new MeshBasicMaterial(props);
     }
 
     get mesh(): Mesh {
@@ -87,7 +102,8 @@ export class foConnectionPoint3D extends foHandle3D {
 
 }
 
+
 import { RuntimeType } from '../foRuntimeType';
-RuntimeType.define(foConnectionPoint3D);
+RuntimeType.define(foPin3D);
 
 

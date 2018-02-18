@@ -26,6 +26,17 @@ class foPinnedShape3D extends foShape3D {
   }
 }
 
+PinStencil.define<foPinnedShape3D>('Center', foPinnedShape3D, {
+  color: 'green',
+  opacity: .7,
+  width: 100,
+  height: 200,
+  depth: 100,
+}).onCreation(obj => {
+  obj.dropAt(0, 0, 0);
+})
+
+
 class BottomCenter extends foPinnedShape3D {
   public pinY = (): number => { return 0.0 * this.height; }
 }
