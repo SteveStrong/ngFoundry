@@ -67,3 +67,16 @@ PinStencil.define<foPinnedShape3D>('LeftTopFront', LeftTopFront, {
   obj.dropAt(0, 0, 0);
 })
 
+PinStencil.define<foPinnedShape3D>('RightRearCenter', LeftTopFront, {
+  color: 'green',
+  opacity: .7,
+  width: 100,
+  height: 200,
+  depth: 100,
+}).onCreation(obj => {
+  obj.pinX = (): number => { return 1.0 * obj.width; }
+  obj.pinY = (): number => { return 0.5 * obj.height; }
+  obj.pinZ = (): number => { return 1.0 * obj.depth; }
+  obj.dropAt(0, 0, 0);
+})
+
