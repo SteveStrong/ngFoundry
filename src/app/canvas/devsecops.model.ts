@@ -10,6 +10,8 @@ import { foShape2D } from "./particle.model";
 
 import { iPoint2D } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
+import { foPath2D } from '../foundry/shapes/foPath2D.model';
+
 
 export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
@@ -59,6 +61,9 @@ let core = DevSecOpsShapes.mixin('core', {
   width: 50,
   height: 50
 });
+
+DevSecOpsShapes.define<shapeDevOps>('Thumb', foPath2D, {
+}).mixin(core);
 
 class shapeUI extends shapeDevOps {
 
