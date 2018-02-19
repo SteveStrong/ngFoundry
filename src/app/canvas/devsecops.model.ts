@@ -63,7 +63,11 @@ let core = DevSecOpsShapes.mixin('core', {
 });
 
 DevSecOpsShapes.define<shapeDevOps>('Thumb', foPath2D, {
-}).mixin(core);
+
+}).mixin(core).mixin({
+  width: 150,
+  height: 150
+});
 
 class shapeUI extends shapeDevOps {
 
