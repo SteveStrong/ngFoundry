@@ -47,7 +47,6 @@ import { foDrawingComponent } from './fo-inspector/fo-drawing.component';
 import { foRuntimeComponent } from './fo-inspector/fo-runtime.component';
 
 import { foKnowledgeComponent } from './fo-inspector/fo-knowledge.component';
-import { foStencilPanelComponent } from './fo-inspector/fo-stencil-panel.component';
 import { foPagePanelComponent } from './fo-inspector/fo-page-panel.component';
 import { foModelPanelComponent } from './fo-inspector/fo-model-panel.component';
 
@@ -64,6 +63,7 @@ import { foStudioComponent } from './fo-inspector/fo-studio.component';
 import { DomainComponent } from './canvas/domain.component';
 import { foStructureCardComponent } from './fo-inspector/fo-structure-card.component';
 import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.component';
+import { DevSecOpsComponent } from './canvas/devsecops.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +96,7 @@ import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.compone
     foRuntimeComponent,
     foCommandComponent,
     foKnowledgeComponent,
-    foStencilPanelComponent,
+
     foPagePanelComponent,
     foModelPanelComponent,
 
@@ -112,7 +112,8 @@ import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.compone
     foStudioComponent,
     DomainComponent,
     foStructureCardComponent,
-    foSolutionCardComponent
+    foSolutionCardComponent,
+    DevSecOpsComponent
   ],
   imports: [
     BrowserAnimationsModule,

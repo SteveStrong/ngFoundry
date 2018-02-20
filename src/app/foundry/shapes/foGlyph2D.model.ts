@@ -6,12 +6,12 @@ import { TweenLite, Back } from "gsap";
 
 
 import { iShape,  iPoint2D, iRect, iFrame } from '../foInterface';
+import { foGlyph } from '../foGlyph.model';
 
 import { foHandle2D } from './foHandle2D';
 import { foObject } from '../foObject.model';
 import { foCollection } from '../foCollection.model';
 
-import { foGlyph } from '../foGlyph.model';
 
 import { Lifecycle } from '../foLifecycle';
 

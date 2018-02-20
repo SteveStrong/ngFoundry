@@ -65,9 +65,9 @@ export class foShape3D extends foGlyph3D {
 
     public pinLocation() {
         return {
-            x: this.pinX(),
-            y: this.pinY(),
-            z: this.pinZ()
+            x: this.pinX() - 0.5 * this.width,
+            y: this.pinY() - 0.5 * this.height,
+            z: this.pinZ() - 0.5 * this.depth,
         }
     }
 
@@ -99,8 +99,6 @@ export class foShape3D extends foGlyph3D {
     }
 
 
-
-
     enforceGlue() {
         this.afterMeshCreated = () => {
             this.glue.forEach(item => {
@@ -108,8 +106,6 @@ export class foShape3D extends foGlyph3D {
             })
         }
     }
-
-
 
 
     protected getGlue(name?: string) {
@@ -207,16 +203,13 @@ export class foShape3D extends foGlyph3D {
         })
     }
 
-    public drawPin(screen: Screen3D) {
-        // this.connectionPoints.forEach(item => {
-        //     item.render3D(screen);
-        // })
-    }
+
 
     render3D = (screen: Screen3D, deep: boolean = true) => {
         this.preDraw3D && this.preDraw3D(screen)
         this.draw3D && this.draw3D(screen);
 
+        this.drawPin(screen);
         //this.drawHandles(screen);
         //this.drawConnectionPoints(screen);
         deep && this._subcomponents.forEach(item => {

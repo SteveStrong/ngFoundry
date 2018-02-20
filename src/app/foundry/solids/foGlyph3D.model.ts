@@ -11,6 +11,7 @@ import { foNode } from '../foNode.model'
 
 import { foGlyph } from '../foGlyph.model'
 import { foHandle3D } from './foHandle3D'
+import { foPin3D } from './foPin3D'
 
 import { Screen3D } from "./threeDriver";
 
@@ -31,6 +32,12 @@ export class foGlyph3D extends foGlyph {
     get handles(): foCollection<foHandle3D> {
         this._handles || this.createHandles();
         return this._handles;
+    }
+
+    protected _pin: foPin3D;
+    get pin(): foPin3D {
+        this._pin || this.createPin();
+        return this._pin;
     }
 
     protected _x: number;
@@ -180,7 +187,7 @@ export class foGlyph3D extends foGlyph {
         return new MeshBasicMaterial(props);
     }
 
-    protected setMeshMatrix(obj:Mesh){
+    protected setMeshMatrix(obj: Mesh) {
         obj.position.set(this.x, this.y, this.z);
         obj.rotation.set(this.angleX, this.angleY, this.angleZ);
         return obj;
@@ -350,6 +357,7 @@ export class foGlyph3D extends foGlyph {
         this.draw3D && this.draw3D(screen);
 
         //this.drawHandles(screen);
+        this.drawPin(screen);
         deep && this._subcomponents.forEach(item => {
             item.render3D(screen, deep);
         });
@@ -361,10 +369,31 @@ export class foGlyph3D extends foGlyph {
         })
     }
 
+    public drawPin(screen: Screen3D) {
+        this.pin.render3D(screen);
+    }
+
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         this.mesh.position.set(this.x, this.y, this.z);
         return this;
     }
+
+
+    public createPin(): foPin3D {
+
+        let pos = this.pinLocation();
+
+        let type = RuntimeType.define(foPin3D);
+        this._pin = new type({
+            x: pos.x,
+            y: pos.y,
+            z: pos.z,
+            myName: 'pin',
+        }, undefined, this) as foPin3D;
+
+        return this._pin;
+    }
+
 
     protected generateHandles(spec: Array<any>, proxy?: Array<any>): foCollection<foHandle3D> {
 

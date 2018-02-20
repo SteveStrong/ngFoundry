@@ -13,7 +13,7 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { Lifecycle } from 'app/foundry/foLifecycle';
 
 
-export let ShapeStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let ShapeStencil: foStencilLibrary = new foStencilLibrary().defaultName('Shape');
 
 
 class Line extends foShape1D {

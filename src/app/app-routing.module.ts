@@ -15,6 +15,7 @@ import { TestSvgComponent } from './networkview/test-svg.component';
 import { TestSvgCircleComponent } from './networkview/test-svg-circle.component';
 import { ZoneTestComponent } from './zone-test/zone-test.component';
 import { DomainComponent } from './canvas/domain.component';
+import { DevSecOpsComponent } from './canvas/devsecops.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'welcome' },
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'drawing', component: DrawingComponent },
   { path: 'world', component: WorldComponent },
   { path: 'domian', component: DomainComponent },
+  { path: 'devsecops', component: DevSecOpsComponent },
   { path: 'test', component: CanvasTestComponent },
   { path: 'svg', component: TestSvgComponent },
   { path: 'circle', component: TestSvgCircleComponent },

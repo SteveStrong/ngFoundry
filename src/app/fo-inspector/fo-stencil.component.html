@@ -1,7 +1,7 @@
 <accordion>
     <accordion-group *ngFor="let item of stencils" [heading]="item.displayName" [isOpen]="false">
-        <fo-stencil-card *ngFor="let concept of item.concepts.members" [knowledge]="concept"></fo-stencil-card>
-        <fo-stencil-card *ngFor="let factory of item.factories.members" [knowledge]="factory"></fo-stencil-card>
+        <fo-stencil-card *ngFor="let concept of item.concepts.members" [knowledge]="concept" [workspace]="workspace"></fo-stencil-card>
+        <fo-stencil-card *ngFor="let factory of item.factories.members" [knowledge]="factory" [workspace]="workspace"></fo-stencil-card>
     </accordion-group>
 
 </accordion>
