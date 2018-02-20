@@ -8,6 +8,9 @@ import { foGlyph2D } from './foGlyph2D.model'
 
 import { foShape2D } from './foShape2D.model'
 
+import { PathSVG } from './foPathSVG'
+
+
 let thumb = "M 263.9 190.1 C 263.9 182.1 257.4 175.6 249.4 175.6 C 249.4 175.6 248.3 175.6 246.6 175.6 C 238.6 175.6 216 175 216.1 168.7 C 216.1 166.8 216.2 164.7 216.4 162.4 C 216.7 159.7 217.2 157 217.4 154.7 C 218.8 138.1 213 129 208 129 C 206.8 129 197.7 129.6 198.3 134.5 C 198.5 136.8 199.5 148.4 196.5 158.3 C 191.7 167.1 177 183.2 168.1 190.5 C 167.9 189.8 167.6 189 167.4 188.3 C 166.8 186.2 166.2 184.1 165.6 182 C 163.4 182.6 161.3 183.2 159.2 183.9 C 150.8 186.3 142.5 188.8 134.1 191.3 C 132 191.9 129.9 192.5 127.8 193.1 C 128.4 195.3 129 197.4 129.6 199.5 C 135.8 220.4 141.9 241.3 148.1 262.3 C 148.7 264.4 149.4 266.5 150 268.6 C 152.1 268 154.2 267.4 156.4 266.8 C 164.7 264.3 173.1 261.8 181.4 259.4 C 183.6 258.7 185.7 258.1 187.8 257.5 C 187.2 255.4 186.6 253.2 185.9 251.1 C 184.5 246.3 183.1 241.5 181.7 236.7 C 184 236.1 187.7 235.6 193.3 235.6 C 196 235.6 199.1 235.7 202.6 236 C 213.2 237 223.2 237.7 228.8 238.4 C 230.1 238.6 231.6 238.7 233.1 238.7 C 238.1 238.7 243.6 237.5 245.1 233.3 C 245.6 232.1 245.8 231 246 229.9 C 250.5 228.2 254 224.1 254.2 219 C 254.3 218 254.2 217.1 254.1 216.2 C 257.5 214.2 259.9 210.6 260.1 206.4 C 260.2 204.4 259.8 202.5 259.1 200.8 C 262 198.1 263.9 194.4 263.9 190.1M 154.5 260.4 C 148.3 239.5 142.2 218.5 136 197.6 C 144.4 195.2 152.7 192.7 161.1 190.2 C 167.2 211.1 173.4 232.1 179.6 253 C 171.2 255.4 162.8 257.9 154.5 260.4z";
 let apple = "M 158.5 182 C 140.1 197 148.7 237 171.9 252 C 179 256.6 187 257.3 197.2 252.6 C 211.1 258 217.4 257.5 228.1 247.6 C 246.9 230.3 252.7 195.7 235.8 182 C 221.4 170.2 208.9 173.4 202.3 176.8 C 202.3 172.8 201.6 168.3 199.8 163.5 C 200.8 163 201.8 162.4 202.8 161.8 C 203.4 161.5 203.9 161.1 204.5 160.8 C 205.5 160.2 206.4 159.5 207.3 158.9 C 213.8 154.3 219.5 148.5 224.1 142.1 C 224.1 142.1 220.8 154.8 213.3 161.6 C 248.2 172.9 246.2 133.6 245.8 123.1 C 245.8 122.4 244.7 122.4 244.2 123 C 237.6 130.7 219.8 121.1 208.9 132.9 C 201.1 141.2 203 150.1 205.2 155.3 C 204.3 155.9 203.3 156.5 202.3 157.1 C 200.9 157.9 199.5 158.7 198 159.4 C 196.3 155.8 194 152.2 190.9 148.4 C 190 147.4 188.4 147.3 187.4 148.2 C 186.3 149.2 185.2 150.2 184.1 151.2 C 183.1 152.1 183 153.7 183.9 154.8 C 190.9 163.3 192.8 171.2 192.9 177.3 C 186.5 173.7 173.7 169.7 158.5 182z";
 let plug = "M 201.4 163.9 C 198.6 161.1 195.8 158.3 193 155.5 C 202.6 145.9 212.2 136.3 221.8 126.7 C 224.1 124.4 227.9 124.4 230.2 126.7 C 232.5 129 232.5 132.8 230.2 135.1 C 220.6 144.7 211 154.3 201.4 163.9M 270.3 166.8 C 268 164.5 264.2 164.5 261.9 166.8 C 252.3 176.4 242.7 186 233.1 195.6 C 235.9 198.4 238.7 201.3 241.5 204.1 C 251.1 194.5 260.7 184.9 270.3 175.3 C 272.7 172.9 272.7 169.2 270.3 166.8M 179.1 148.1 C 178.9 147.9 178.6 147.9 178.4 148.1 C 175.8 150.7 173.3 153.3 170.7 155.8 C 170.5 156 170.5 156.3 170.7 156.5 C 171.4 157.2 172.2 158 172.9 158.8 C 169.1 162.6 165.2 166.5 161.3 170.4 C 149.3 182.4 148.5 201.3 158.9 214.2 C 158.1 215 157.3 215.8 156.5 216.6 C 152.6 220.4 152 226.3 154.6 230.9 C 150.2 235.2 145.9 239.6 141.6 243.9 C 145.4 247.7 149.3 251.6 153.2 255.4 C 157.5 251.1 161.8 246.8 166.1 242.5 C 170.7 245 176.6 244.4 180.5 240.5 C 181.3 239.7 182 239 182.8 238.2 C 195.7 248.5 214.7 247.7 226.6 235.8 C 230.5 231.9 234.4 228 238.3 224.1 C 239 224.9 239.8 225.6 240.6 226.4 C 240.7 226.5 241 226.5 241.2 226.4 C 243.8 223.8 246.4 221.2 249 218.6 C 249.1 218.4 249.1 218.1 249 217.9 C 225.7 194.7 202.4 171.4 179.1 148.1z";
@@ -22,49 +25,48 @@ let rocket = "M 201.2 222.1 C 210 216.5 218.6 210.1 225.7 203 C 249.9 178.8 252.
 
 // https://codedump.io/share/uk73w56ISXrL/1/typescript-path2d-class-is-missing-a-string-constructor
 
-// Class
-interface Path2D {
-    addPath(path: Path2D, transform?: SVGMatrix);
-    closePath(): void;
-    moveTo(x: number, y: number): void;
-    lineTo(x: number, y: number): void;
-    bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
-    quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void;
-    arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void;
-    arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
-    /*ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void;*/
-    rect(x: number, y: number, w: number, h: number): void;
-}
-
-// Constructor
 interface Path2DConstructor {
-    new (): Path2D;
-    new (d: string): Path2D;
-    new (path: Path2D, fillRule?: string): Path2D;
+    new(): Path2D;
+    new(d: string): Path2D;
+    new(path: Path2D, fillRule?: string): Path2D;
     prototype: Path2D;
 }
 declare var Path2D: Path2DConstructor;
 
-// Extend CanvasRenderingContext2D
-// interface CanvasRenderingContext2D {
-//     fill(path: Path2D): void;
-//     stroke(path: Path2D): void;
-//     clip(path: Path2D, fillRule?: string): void;
-// }
-
 export class foPath2D extends foShape2D {
-    path: string = thumb;
+    path: string = heart;
 
     constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
 
+    drawBox(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = 'grey';
+        var p = new Path2D(`M0 0 h ${this.width} v ${this.height} h -${this.width} Z`);
+        ctx.fill(p);
+    }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
+        let scale = 2;
 
+        let [left, top, right, bottom] = PathSVG.pathBounds(this.path);
+        this.width = scale * (right - left);
+        this.height = scale * (bottom - top);
+
+        this.drawBox(ctx);
+
+        //https://github.com/jkroso/normalize-svg-path
+        let norm = PathSVG.convert(this.path);
+
+
+        //console.log (left, top, right, bottom);
+        ctx.save();
+        ctx.translate(-scale * left, -scale * top);
+        ctx.scale(scale, scale);
         ctx.fillStyle = this.color;
-        let path = new Path2D(thumb);
+        let path = new Path2D(norm);
         ctx.fill(path);
+        ctx.restore();
     }
 
 }
