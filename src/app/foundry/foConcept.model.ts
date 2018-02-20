@@ -13,6 +13,7 @@ import { foNode } from './foNode.model'
 import { RuntimeType } from './foRuntimeType';
 import { Lifecycle } from './foLifecycle';
 
+
 class foSubComponentSpec extends foKnowledge {
     concept: foKnowledge;
     name: string;
@@ -117,6 +118,11 @@ export class foConcept<T extends foNode> extends foKnowledge {
         return this;
     }
 
+    mixin(obj:any){
+        Tools.mixin(this.specification,obj);
+        return this;
+    }
+
 
     establishAttribute(key: string, spec?: any) {
         let attributes = this.attributes;
@@ -214,6 +220,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
 
 RuntimeType.knowledge(foConcept);
+
+
 
 
 

@@ -1,6 +1,6 @@
 
 import { Tools, foNames } from './foTools'
-import { iObject, iNode, Action } from './foInterface'
+import { iObject, iNode, WhereClause } from './foInterface'
 
 import { foObject } from './foObject.model'
 import { foCollection } from './foCollection.model'
@@ -60,6 +60,15 @@ export class foNode extends foObject implements iNode {
     //deep hook for syncing matrix2d with geometry 
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         return this;
+    }
+
+    findParent(where: WhereClause<foNode>) {
+        let parent = <foNode>this.myParent();
+        if (!parent) return;
+        if (where(parent)) {
+            return parent;
+        }
+        return parent.findParent(where);
     }
 
     reParent(newParent: foNode) {

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
-import { globalWorkspace } from "../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foStudio } from "../foundry/solids/foStudio.model";
 
 @Component({
@@ -9,13 +9,16 @@ import { foStudio } from "../foundry/solids/foStudio.model";
   styleUrls: ['./fo-studio.component.css']
 })
 export class foStudioComponent implements OnInit {
-
+  @Input()
+  workspace: foWorkspace;
   public studio: foStudio;
 
   constructor() { }
 
   ngOnInit() {
-    this.studio = globalWorkspace.studio;
+    this.workspace = this.workspace || globalWorkspace;
+
+    this.studio = this.workspace.studio;
   }
 
 }

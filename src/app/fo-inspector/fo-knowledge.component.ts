@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { foLibrary } from 'app/foundry/foLibrary.model';
 import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
@@ -11,8 +11,10 @@ import { foModel } from "../foundry/foModel.model";
   styleUrls: ['./fo-knowledge.component.css']
 })
 export class foKnowledgeComponent implements OnInit {
-  rootWorkspace: foWorkspace = globalWorkspace;
-  rootModel: foModel;
+  @Input()
+  workspace: foWorkspace;
+
+  model: foModel;
   list:Array<foLibrary> = new Array<foLibrary>();
 
 
@@ -21,9 +23,11 @@ export class foKnowledgeComponent implements OnInit {
 
 
   ngOnInit() {
-    this.rootModel = this.rootWorkspace.model.getItem('default')
+    this.workspace = this.workspace || globalWorkspace;
 
-    this.list = this.rootWorkspace.library.members;
+    this.model = this.workspace.model.getItem('default')
+
+    this.list = this.workspace.library.members;
 
   }
 

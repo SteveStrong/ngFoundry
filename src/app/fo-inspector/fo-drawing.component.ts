@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
-import { globalWorkspace } from "../foundry/foWorkspace.model";
+import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 import { foDocument } from "../foundry/shapes/foDocument.model";
 
 @Component({
@@ -9,13 +9,16 @@ import { foDocument } from "../foundry/shapes/foDocument.model";
   styleUrls: ['./fo-drawing.component.css']
 })
 export class foDrawingComponent implements OnInit {
-
+  @Input()
+  workspace: foWorkspace;
   public document: foDocument;
 
   constructor() { }
 
   ngOnInit() {
-    this.document = globalWorkspace.document;
+    this.workspace = this.workspace || globalWorkspace;
+
+    this.document = this.workspace.document;
   }
 
 }

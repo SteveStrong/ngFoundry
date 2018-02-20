@@ -9,7 +9,7 @@ import { foModel } from "../foundry/foModel.model";
 import { SharingService } from "../common/sharing.service";
 import { Lifecycle, foLifecycleEvent, Knowcycle } from "../foundry/foLifecycle";
 
-import { DevSecOps, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
+import { DevSecOpsKnowledge, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
 
 
 
@@ -31,7 +31,7 @@ export class DomainComponent implements OnInit {
   
     this.workspace.stencil.add(DevSecOpsShapes);
     this.workspace.stencil.add(DevSecOpsSolids);
-    this.workspace.library.add(DevSecOps);
+    this.workspace.library.add(DevSecOpsKnowledge);
     this.workspace.model.addItem('default', new foModel({}));
 
     this.model = this.workspace.model.getItem('default')

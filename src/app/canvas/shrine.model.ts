@@ -16,35 +16,11 @@ import { globalWorkspace, foWorkspace } from "../foundry/foWorkspace.model";
 
 import { LineCurve3, CurvePath, TubeGeometry, BoxGeometry, MultiMaterial, Material, Geometry, FontLoader, Font, TextGeometry, MeshPhongMaterial, MeshBasicMaterial, Mesh, Vector3 } from 'three';
 
-export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let ShrineStencil: foStencilLibrary = new foStencilLibrary().defaultName('Shrine');
 
 
 
 //https://threejs.org/examples/#webgl_geometry_shapes
-
-class band extends foShape3D {
-  protected _segments: number;
-  protected _radiusSegments: number;
-
-  get segments(): number { return this._segments || 10; }
-  set segments(value: number) {
-    value != this._segments && this.clearMesh();
-    this._segments = value;
-  }
-  get radiusSegments(): number { return this._radiusSegments || 10; }
-  set radiusSegments(value: number) {
-    value != this._radiusSegments && this.clearMesh();
-    this._radiusSegments = value;
-  }
-
-  geometry = (spec?: any): Geometry => {
-    let begin = new Vector3(0, 0, 0)
-    let end = new Vector3(100, 200, 300)
-    let curve = new LineCurve3(begin, end)
-    let radius = (this.height + this.depth) / 2;
-    return new TubeGeometry(curve, this.segments, radius, this.radiusSegments, false);
-  }
-}
 
 
 
@@ -57,37 +33,38 @@ function doCrown(obj: foShape3D) {
   let x = (width - thickness) / 2
   let z = (depth - thickness) / 2
 
-  ShrineStencil.impermanent<foShape3D>('left', foShape3D)
+  class Crown extends foShape3D {
+    color = 'cyan';
+    pinY = (): number => { return 0.0 * obj.height; }
+  }
+
+  ShrineStencil.impermanent<foShape3D>('left', Crown)
     .newInstance({
       width: thickness,
       height: thickness,
       depth: depth,
-      color: 'cyan'
     }).addAsSubcomponent(obj).dropAt(x, y, 0);
 
-  ShrineStencil.impermanent<foShape3D>('right', foShape3D)
+  ShrineStencil.impermanent<foShape3D>('right', Crown)
     .newInstance({
       width: thickness,
       height: thickness,
       depth: depth,
-      color: 'cyan'
     }).addAsSubcomponent(obj).dropAt(-x, y, 0);
 
 
-  ShrineStencil.impermanent<foShape3D>('front', foShape3D)
+  ShrineStencil.impermanent<foShape3D>('front', Crown)
     .newInstance({
       width: width,
       height: thickness,
       depth: thickness,
-      color: 'cyan'
     }).addAsSubcomponent(obj).dropAt(0, y, z);
 
-  ShrineStencil.impermanent<foShape3D>('back', foShape3D)
+  ShrineStencil.impermanent<foShape3D>('back', Crown)
     .newInstance({
       width: width,
       height: thickness,
       depth: thickness,
-      color: 'cyan'
     }).addAsSubcomponent(obj).dropAt(0, y, -z);
 
 }
@@ -99,36 +76,36 @@ function doBand(obj: foShape3D, setback) {
   let width = obj.width + 2 * thickness;
   let height = obj.height + 2 * thickness;
 
-  ShrineStencil.impermanent<foShape3D>('left', foShape3D)
+  class Band extends foShape3D {
+    color = 'yellow';
+  }
+
+  ShrineStencil.impermanent<foShape3D>('left', Band)
     .newInstance({
       width: thickness,
       height: height,
       depth: bandwidth,
-      color: 'yellow'
     }).addAsSubcomponent(obj).dropAt(obj.width / 2, 0, setback);
 
-  ShrineStencil.impermanent<foShape3D>('right', foShape3D)
+  ShrineStencil.impermanent<foShape3D>('right', Band)
     .newInstance({
       width: thickness,
       height: height,
       depth: bandwidth,
-      color: 'yellow'
     }).addAsSubcomponent(obj).dropAt(-obj.width / 2, 0, setback)
 
-  ShrineStencil.impermanent<foShape3D>('top', foShape3D)
+  ShrineStencil.impermanent<foShape3D>('top', Band)
     .newInstance({
       width: width,
       height: thickness,
       depth: bandwidth,
-      color: 'yellow'
     }).addAsSubcomponent(obj).dropAt(0, obj.height / 2, setback)
 
-  ShrineStencil.impermanent<foShape3D>('bottom', foShape3D)
+  ShrineStencil.impermanent<foShape3D>('bottom', Band)
     .newInstance({
       width: width,
       height: thickness,
       depth: bandwidth,
-      color: 'yellow'
     }).addAsSubcomponent(obj).dropAt(0, -obj.height / 2, setback)
 }
 
@@ -178,6 +155,7 @@ let minibox = ShrineStencil.define<foShape3D>('box', foShape3D, {
   height: 500,
   depth: 400
 }).onCreation(obj => {
+  obj.pinY = () => { return 0.0 };
 
   let lightspace = 100;
   let thickness = 12.5;

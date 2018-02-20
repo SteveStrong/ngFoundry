@@ -8,6 +8,9 @@ interface IDictionary {
     [name: string]: ISubscription[];
 }
 
+
+
+
 class foPubSub {
     private registry: IDictionary = {}
 

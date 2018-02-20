@@ -5,6 +5,7 @@ import { Action, Spec } from '../foundry/foInterface';
 import { foKnowledge } from './foKnowledge.model'
 import { foDictionary } from './foDictionary.model'
 import { foConcept } from './foConcept.model'
+import { foModel, foContext } from './foModel.model'
 import { foComponent } from './foComponent.model'
 import { foStructure } from './foStructure.model'
 import { foSolution } from './foSolution.model'
@@ -81,6 +82,33 @@ export class ConceptDictionary extends foDictionary<foKnowledge>{
             Knowcycle.defined(concept);
         }
         return concept;
+    }
+
+    constructor(properties?: any, parent?: foKnowledge) {
+        super(properties, parent);
+    }
+}
+
+export class ContextDictionary extends foDictionary<foKnowledge>{
+    public establish = (name: string): foKnowledge => {
+        this.findItem(name, () => {
+            this.addItem(name, new foContext({ myName: name }))
+        })
+        return this.getItem(name);
+    }
+
+    public define(key: string, type: { new(p?: any, s?: Array<foComponent>, r?: foComponent): foComponent; }, specification?: any): foContext<foModel> {
+        let context = this.getItem(key) as foContext<foModel>;
+        if (!context) {
+            let parent = this.myParent() as foKnowledge;
+            RuntimeType.define(type);
+            context = new foContext<foModel>({}, parent);
+            context.definePrimitive(type);
+            context.specification = specification || {};
+            this.add(context, key);
+            Knowcycle.defined(context);
+        }
+        return context;
     }
 
     constructor(properties?: any, parent?: foKnowledge) {

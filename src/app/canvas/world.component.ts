@@ -89,11 +89,11 @@ export class WorldComponent implements OnInit, AfterViewInit {
     })
 
     let libs = this.rootWorkspace.stencil;
-    libs.add(ShrineStencil).displayName = "Shrine";
-    libs.add(ParticleStencil).displayName = "Particle";
-    libs.add(ShapeStencil).displayName = "Shape";
-    libs.add(SolidStencil).displayName = "Solid";
-    libs.add(PinStencil).displayName = "Pins";
+    libs.add(ShrineStencil);
+    libs.add(ParticleStencil);
+    libs.add(ShapeStencil);
+    libs.add(SolidStencil);
+    libs.add(PinStencil)
   
 
     this.rootWorkspace.library.add(PersonDomain);

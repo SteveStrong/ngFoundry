@@ -10,7 +10,7 @@ import { foStencilLibrary } from "../foundry/foStencil";
 
 import { Mesh } from 'three';
 
-export let PinStencil: foStencilLibrary = new foStencilLibrary().defaultName();
+export let PinStencil: foStencilLibrary = new foStencilLibrary().defaultName("Pins");
 
 
 class foPinnedShape3D extends foShape3D {
@@ -25,6 +25,17 @@ class foPinnedShape3D extends foShape3D {
     return obj;
   }
 }
+
+PinStencil.define<foPinnedShape3D>('Center', foPinnedShape3D, {
+  color: 'green',
+  opacity: .7,
+  width: 100,
+  height: 200,
+  depth: 100,
+}).onCreation(obj => {
+  obj.dropAt(0, 0, 0);
+})
+
 
 class BottomCenter extends foPinnedShape3D {
   public pinY = (): number => { return 0.0 * this.height; }
@@ -53,6 +64,19 @@ PinStencil.define<foPinnedShape3D>('LeftTopFront', LeftTopFront, {
   height: 200,
   depth: 100,
 }).onCreation(obj => {
+  obj.dropAt(0, 0, 0);
+})
+
+PinStencil.define<foPinnedShape3D>('RightRearCenter', LeftTopFront, {
+  color: 'green',
+  opacity: .7,
+  width: 100,
+  height: 200,
+  depth: 100,
+}).onCreation(obj => {
+  obj.pinX = (): number => { return 1.0 * obj.width; }
+  obj.pinY = (): number => { return 0.5 * obj.height; }
+  obj.pinZ = (): number => { return 1.0 * obj.depth; }
   obj.dropAt(0, 0, 0);
 })
 
