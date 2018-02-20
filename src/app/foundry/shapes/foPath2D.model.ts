@@ -34,7 +34,8 @@ interface Path2DConstructor {
 declare var Path2D: Path2DConstructor;
 
 export class foPath2D extends foShape2D {
-    path: string = heart;
+    path: string;
+    scale: number;
 
     constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
@@ -47,16 +48,17 @@ export class foPath2D extends foShape2D {
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
-        let scale = 2;
+        let scale = this.scale ? this.scale : 1;
 
-        let [left, top, right, bottom] = PathSVG.pathBounds(this.path);
+        let data = this.path ? this.path : heart;
+        let [left, top, right, bottom] = PathSVG.pathBounds(data);
         this.width = scale * (right - left);
         this.height = scale * (bottom - top);
 
         this.drawBox(ctx);
 
         //https://github.com/jkroso/normalize-svg-path
-        let norm = PathSVG.convert(this.path);
+        let norm = PathSVG.convert(data);
 
 
         //console.log (left, top, right, bottom);
