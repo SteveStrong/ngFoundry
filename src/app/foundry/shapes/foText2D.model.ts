@@ -51,13 +51,13 @@ export class foText2D extends foShape2D {
     protected toJson(): any {
         return Tools.mixin(super.toJson(), {
             text: this.text,
-            background:this.background,
-            fontSize:this.fontSize,
-            margin:this.margin
+            background: this.background,
+            fontSize: this.fontSize,
+            margin: this.margin
         });
     }
 
-    get size():number {
+    get size(): number {
         return (this.fontSize || 12);
     }
 
@@ -82,25 +82,7 @@ export class foText2D extends foShape2D {
         this.preDraw = preDraw;
     }
 
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        ctx.save();
 
-        //this.drawOrigin(ctx);
-        this.updateContext(ctx);
-        //this.drawOriginX(ctx);
-
-        this.preDraw && this.preDraw(ctx);
-        this.draw(ctx);
-        this.drawHover && this.drawHover(ctx);
-        this.postDraw && this.postDraw(ctx);
-
-        this.isSelected && this.drawSelected(ctx);
-
-        deep && this._subcomponents.forEach(item => {
-            item.render(ctx, deep);
-        });
-        ctx.restore();
-    }
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
         ctx.beginPath()

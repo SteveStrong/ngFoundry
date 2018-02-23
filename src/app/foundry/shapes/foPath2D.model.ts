@@ -36,9 +36,23 @@ declare var Path2D: Path2DConstructor;
 export class foPath2D extends foShape2D {
     path: string;
     scale: number;
+    tx: number = 0;
+    ty: number = 0;
+
+    symbol: Path2D;
 
     constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw();
+    }
+
+    
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            path: this.path,
+            scale:this.scale,
+        });
     }
 
     drawBox(ctx: CanvasRenderingContext2D) {
@@ -47,28 +61,58 @@ export class foPath2D extends foShape2D {
         ctx.fill(p);
     }
 
+    setupPreDraw() {
+
+        let preDraw = (ctx: CanvasRenderingContext2D): void => {
+            let scale = this.scale ? this.scale : 1;
+            let data = this.path ? this.path : heart;
+
+            let result = PathSVG.pathBounds(data);
+            this.symbol = new Path2D(result.normal);
+
+            let [left, top, right, bottom] = result.bounds
+            this.width = scale * (right - left);
+            this.height = scale * (bottom - top);
+
+            this.tx = -scale * left;
+            this.ty = -scale * top;
+
+            //https://github.com/jkroso/normalize-svg-path
+
+            this.preDraw = undefined;
+        };
+
+        this.preDraw = preDraw;
+    }
+
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
         let scale = this.scale ? this.scale : 1;
-
-        let data = this.path ? this.path : heart;
-        let [left, top, right, bottom] = PathSVG.pathBounds(data);
-        this.width = scale * (right - left);
-        this.height = scale * (bottom - top);
-
         this.drawBox(ctx);
 
-        //https://github.com/jkroso/normalize-svg-path
-        let norm = PathSVG.convert(data);
-
-
-        //console.log (left, top, right, bottom);
         ctx.save();
-        ctx.translate(-scale * left, -scale * top);
+        ctx.translate(this.tx, this.ty);
         ctx.scale(scale, scale);
         ctx.fillStyle = this.color;
-        let path = new Path2D(norm);
-        ctx.fill(path);
+
+        ctx.fill(this.symbol);
         ctx.restore();
+    }
+
+    public drawOutline(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(0, 0, this.width, this.height);
+        ctx.stroke();
+    }
+
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
+        this.drawOutline(ctx);
+        this.drawHandles(ctx);
+        //this.drawConnectionPoints(ctx);
+        this.drawPin(ctx);
     }
 
 }
