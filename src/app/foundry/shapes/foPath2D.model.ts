@@ -88,7 +88,7 @@ export class foPath2D extends foShape2D {
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
         let scale = this.scale ? this.scale : 1;
-        this.drawBox(ctx);
+        //this.drawBox(ctx);
 
         ctx.save();
         ctx.translate(this.tx, this.ty);
