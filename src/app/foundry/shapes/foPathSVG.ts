@@ -407,6 +407,7 @@ export class foPathSVG {
         let a = this.parse(path);
         let b = this.absolutize(a);
         let c = this.normalize(b);
+        let normal = c.map(seg => seg.join(' ')).join('');
 
         var bounds = [Infinity, Infinity, -Infinity, -Infinity]
 
@@ -421,7 +422,10 @@ export class foPathSVG {
             }
         }
 
-        return bounds
+        return {
+            normal,
+            bounds
+        }
     }
 
 }
