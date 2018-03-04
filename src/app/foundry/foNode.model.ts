@@ -190,6 +190,10 @@ export class foNode extends foObject implements iNode {
         //var myType = Tools.getType(this);
         return type && Tools.matches(type, this.myType);
     }
+
+    renderIcon(ctx: CanvasRenderingContext2D, width: number, height: number) {
+        ctx.strokeText(this.myName, 10, 50);
+    }
 }
 
 import { RuntimeType } from './foRuntimeType';

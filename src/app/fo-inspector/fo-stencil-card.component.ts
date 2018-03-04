@@ -1,6 +1,8 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
 import { foNode } from "../foundry/foNode.model";
+import { foGlyph } from "../foundry/foGlyph.model";
+import { foInstance } from "../foundry/foInstance.model";
 import { foKnowledge } from "../foundry/foKnowledge.model";
 import { Toast } from "../common/emitter.service";
 
@@ -23,12 +25,21 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
   @Input()
   public knowledge: foKnowledge;
 
+  public sample: foInstance;
+  public sampleList: foKnowledge[];
 
   constructor() { }
 
 
   ngOnInit() {
     this.workspace = this.workspace || globalWorkspace;
+
+    if (this.knowledge['run']) {
+      this.sampleList = this.knowledge['run']();
+    } else {
+      this.sample = this.knowledge.newInstance()
+    }
+
   }
 
   public ngAfterViewInit() {
@@ -36,6 +47,7 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
   }
 
   drawName(text: string, ctx: CanvasRenderingContext2D) {
+
     ctx.save();
     ctx.font = '20pt Calibri';
     ctx.lineWidth = 3;
@@ -48,7 +60,12 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
     let canvas = nativeElement;
     let context = canvas.getContext("2d");
 
-    this.drawName(this.knowledge.myName, context)
+
+    if (this.sample && this.sample.is2D()) {
+      this.sample.renderIcon(context, canvas.width, canvas.height)
+    } else {
+      this.drawName(this.knowledge.myName, context);
+    }
   }
 
   doToggleDetails() {
@@ -75,13 +92,13 @@ export class foStencilCardComponent implements OnInit, AfterViewInit {
     } else {
 
       result = this.knowledge.newInstance().defaultName();
-      
+
       if (result.is2D()) {
         result.dropAt(page.centerX, page.centerY)
-        .addAsSubcomponent(page)
+          .addAsSubcomponent(page)
       } else {
         result.dropAt(stage.centerX, stage.centerY, stage.centerZ)
-        .addAsSubcomponent(stage)
+          .addAsSubcomponent(stage)
       }
 
 

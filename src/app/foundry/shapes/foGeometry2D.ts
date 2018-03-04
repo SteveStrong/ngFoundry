@@ -160,6 +160,12 @@ export class cFrame implements iFrame {
         return this.x1 <= x && x <= this.x2 && this.y1 <= y && y <= this.y2;
     }
 
+    asRect() {
+        let width = this.x2 - this.x1;
+        let height = this.y2 - this.y1;
+        return new cRect(this.x1, this.y1, width, height);
+    }
+
     draw(ctx: CanvasRenderingContext2D, fill?: boolean) {
         let width = this.x2 - this.x1;
         let height = this.y2 - this.y1;

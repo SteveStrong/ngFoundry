@@ -5,7 +5,7 @@ import { Matrix2D } from './foMatrix2D';
 import { TweenLite, Back } from "gsap";
 
 
-import { iShape,  iPoint2D, iRect, iFrame } from '../foInterface';
+import { iShape, iPoint2D, iRect, iFrame } from '../foInterface';
 import { foGlyph } from '../foGlyph.model';
 
 import { foHandle2D } from './foHandle2D';
@@ -26,9 +26,9 @@ export class foGlyph2D extends foGlyph implements iShape {
     }
 
     protected _handles: foCollection<foHandle2D>;
-    get handles(): foCollection<foHandle2D> { 
-        this._handles || this.createHandles(); 
-        return this._handles; 
+    get handles(): foCollection<foHandle2D> {
+        this._handles || this.createHandles();
+        return this._handles;
     }
 
 
@@ -292,7 +292,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
-    public getLocation = ():any => {
+    public getLocation = (): any => {
         return {
             x: this.x,
             y: this.y,
@@ -300,7 +300,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         }
     }
 
-    public pinLocation():any {
+    public pinLocation(): any {
         return {
             x: 0,
             y: 0,
@@ -391,7 +391,7 @@ export class foGlyph2D extends foGlyph implements iShape {
         if (this.overlapTest(hit)) {
             return this;
         }
-    } 
+    }
 
     public afterRender = (ctx: CanvasRenderingContext2D, deep: boolean = true) => {
         ctx.save();
@@ -403,6 +403,26 @@ export class foGlyph2D extends foGlyph implements iShape {
         deep && this.nodes.forEach(item => {
             item.afterRender(ctx, deep);
         });
+    }
+
+    renderIcon(ctx: CanvasRenderingContext2D, width: number, height: number) {
+        //might need to set scale and position
+        let rect = this.boundryFrame.asRect();
+        let scale = 1 * Math.max(rect.width / width, rect.height / height);
+       
+
+        ctx.save();
+
+        ctx.beginPath()
+        ctx.setLineDash([5, 5]);
+        ctx.rect(0, 0, width, height);
+        ctx.stroke();
+
+        ctx.translate(width/2+rect.x, height/2);
+        ctx.scale(scale,scale);
+
+        this.render(ctx);
+        ctx.restore();
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
