@@ -121,12 +121,11 @@ export class foText2D extends foShape2D {
 
 export class foInputText2D extends foText2D {
 
-    public openEditorxxx = (loc: cPoint2D, e: MouseEvent, keys) => {
-        let canvas = document.getElementById('canvasInput');
+    public openEditor = (canvas: HTMLCanvasElement, loc: cPoint2D, e: MouseEvent, keys) => {
         let input = new CanvasInput({
             canvas: canvas,
-            x: loc.x,
-            y: loc.y,
+            x: 100, //loc.x,
+            y: 100, //loc.y,
             fontSize: 18,
             fontFamily: 'Arial',
             fontColor: '#212121',

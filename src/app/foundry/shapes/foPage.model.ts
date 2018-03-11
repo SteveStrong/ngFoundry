@@ -25,6 +25,7 @@ export class foPage extends foShape2D {
     gridSizeX: number = 50;
     gridSizeY: number = 50;
     showBoundry: boolean = false;
+    canvas: HTMLCanvasElement = null;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -266,8 +267,8 @@ export class foPage extends foShape2D {
 
             if (found) {
                 shape = found;
-                if ( shape.isSelected && shape.openEditor) {
-                    shape.openEditor(loc,e,keys)
+                if ( this.canvas && shape.isSelected && shape.openEditor) {
+                    shape.openEditor(this.canvas, loc,e,keys)
                 } else {
                     this.nodes.moveToTop(shape);
                     shape.isSelected = true;
