@@ -101,10 +101,22 @@ export class Screen2D {
         //     return pt.set(x, y);
         // }
 
-        canvas.addEventListener('keypress', (e: KeyboardEvent) => {
+        canvas.ownerDocument.addEventListener('keypress', (e: KeyboardEvent) => {
             e.preventDefault();
-            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, meta: e.metaKey }
             PubSub.Pub('onkeypress', e, keys);
+        });
+
+        canvas.ownerDocument.addEventListener('keydown', (e: KeyboardEvent) => {
+            e.preventDefault();
+            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, meta: e.metaKey }
+            PubSub.Pub('onkeydown', e, keys);
+        });
+
+        canvas.ownerDocument.addEventListener('keyup', (e: KeyboardEvent) => {
+            e.preventDefault();
+            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey,  meta: e.metaKey }
+            PubSub.Pub('onkeyup', e, keys);
         });
 
 

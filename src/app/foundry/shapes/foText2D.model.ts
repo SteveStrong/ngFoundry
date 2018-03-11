@@ -7,7 +7,8 @@ import { foObject } from '../foObject.model'
 import { foGlyph2D } from './foGlyph2D.model'
 
 import { foShape2D } from './foShape2D.model'
-
+import { InputFromCanvas } from './canvasInput'
+import { WatchKeys, keycode } from './canvasKeypress'
 
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
 
@@ -116,55 +117,34 @@ export class foText2D extends foShape2D {
 
         ctx.fillText(this.text, this.pinX() + left, this.pinY() + top);
     }
+}
 
-    // drawSample(ctx) {
-    //     ctx.translate(-10, 25);
-    //     ctx.scale(1.2, 0.8);
-    //     ctx.rotate(5 * Math.PI / 180);
+export class foInputText2D extends foText2D {
 
-    //     var fillText = "fillText";
-    //     var strokeText = "strokeText";
+    public sendKeys = (e: KeyboardEvent, keys: any) => {
+        //alert('got code:' + keys.code);
+        if (e.keyCode >= 48 && e.keyCode <= 90) {
+            this.text += e.key;
+        } else if (e.keyCode == 32) {
+            this.text += e.key;
+        } else {
+            this.processKeys(e, keys)
+        }
+    }
 
-    //     ctx.textBaseline = "top";
-    //     ctx.font = "32pt Arial";
-
-    //     ctx.fillStyle = "orange";  // shadow color
-    //     ctx.fillText(fillText, 22, 22);
-    //     ctx.fillStyle = "red";
-    //     ctx.fillText(fillText, 20, 20);
-
-    //     ctx.strokeStyle = "blue";
-    //     ctx.strokeText(strokeText, 20, 80);
-    // }
-
-    // //http://tutorials.jenkov.com/html5-canvas/text.html
-    // /// expand with color, background etc.
-    // drawTextBG(ctx: CanvasRenderingContext2D, txt: string, font: string, x: number, y: number) {
-
-    //     ctx.save();
-
-    //     ctx.font = font;
-
-    //     /// draw text from top - makes life easier at the moment
-    //     ctx.textBaseline = 'top';
-
-    //     /// color for background
-    //     ctx.fillStyle = '#f50';
-
-    //     /// get width of text
-    //     var width = ctx.measureText(txt).width;
-
-    //     /// draw background rect assuming height of font
-    //     ctx.fillRect(x, y, width, parseInt(font, 10));
-
-    //     ctx.fillStyle = '#000';
-
-    //     /// draw text on top
-    //     ctx.fillText(txt, x, y);
-
-    //     ctx.restore();
-    // }
-
+    processKeys(e: KeyboardEvent, keys: any) {
+        switch (e.keyCode) {
+            case 8:  //"backspace"
+                let len = this.text.length;
+                this.text = len ? this.text.substring(0, len - 1) : this.text;
+                break;
+            default:
+                if ( e.key.length == 1){
+                    this.text += e.key;
+                }
+                break;
+        }
+    }
 
     // drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
 
@@ -191,9 +171,6 @@ export class foText2D extends foShape2D {
     //     }
 
     // }
-}
-
-export class foInputText2D extends foText2D {
 }
 
 import { RuntimeType } from '../foRuntimeType';

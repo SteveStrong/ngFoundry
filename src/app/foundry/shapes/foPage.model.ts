@@ -165,7 +165,7 @@ export class foPage extends foShape2D {
     }
 
     deleteSelected(onComplete?: Action<foGlyph2D>) {
-        let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
+        let found = this._subcomponents.find(item => { return item.isSelected; });
         if (found) {
             this.destroyed(found);
             onComplete && onComplete(found);
@@ -223,8 +223,27 @@ export class foPage extends foShape2D {
             };
         }
 
-        PubSub.Sub('onkeypress', (e: KeyboardEvent, keys) => {
-            alert('code:' + keys.code)
+        var lastFound;
+        function sendKeysToShape(e: KeyboardEvent, keys) {
+            if (lastFound && lastFound.isSelected) {
+                lastFound.sendKeys(e, keys);
+            } else {
+                let found = this._subcomponents.find(item => { return item.isSelected; });
+                if (found && found.sendKeys) {
+                    found.sendKeys(e, keys);
+                    lastFound = found;
+                }
+            }
+        }
+
+        PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
+            //alert('code:' + keys.code)
+            if (keys.ctrl) {
+
+            } else {
+                sendKeysToShape.bind(this)(e, keys);
+            }
+
         });
 
         let mousedown = (loc: cPoint2D, e: MouseEvent, keys) => {
@@ -255,9 +274,7 @@ export class foPage extends foShape2D {
             }
 
         };
-
         PubSub.Sub('mousedown', mousedown);
-
 
 
         let mousemove = (loc: cPoint2D, e: MouseEvent, keys) => {
@@ -331,8 +348,7 @@ export class foPage extends foShape2D {
 
         };
 
-        let debounceMouseMove = debounce(mousemove,10)
-
+        let debounceMouseMove = debounce(mousemove, 10)
         PubSub.Sub('mousemove', debounceMouseMove);
 
 
@@ -368,7 +384,6 @@ export class foPage extends foShape2D {
 
             shape = shapeUnder = null;
         };
-
         PubSub.Sub('mouseup', mouseup);
 
         PubSub.Sub('wheel', (loc: cPoint2D, g: cPoint2D, zoom: number, e: WheelEvent, keys) => {
