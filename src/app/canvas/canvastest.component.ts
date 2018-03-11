@@ -1,5 +1,7 @@
 import { Component, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 
+import { InputFromCanvas } from '../foundry/shapes/canvasInput'
+
 //https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
 import { Observable } from 'rxjs/Observable';
@@ -11,18 +13,41 @@ import 'rxjs/add/operator/switchMap';
 
 @Component({
   selector: 'app-testcanvas',
-  template: '<canvas #canvas></canvas>',
+  template: '<canvas #canvas></canvas> <canvas #input></canvas>',
   styles: ['canvas { border: 1px solid #000; }']
 })
 export class CanvasTestComponent implements AfterViewInit {
   // a reference to the canvas element from our template
   @ViewChild('canvas') public canvas: ElementRef;
+  @ViewChild('input') public input: ElementRef;
 
   // setting a width and height for the canvas
   @Input() public width = 400;
   @Input() public height = 400;
 
   private cx: CanvasRenderingContext2D;
+
+  public openEditor(canvas: HTMLCanvasElement, x:number, y:number) {
+
+    InputFromCanvas({
+        canvas: canvas,
+        x: x,
+        y: y,
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontColor: '#212121',
+        fontWeight: 'bold',
+        width: 300,
+        padding: 8,
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 3,
+        boxShadow: '1px 1px 0px #fff',
+        innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+        placeHolder: 'Enter message here...'
+    });
+
+}
 
   public ngAfterViewInit() {
     // get the context
@@ -37,6 +62,9 @@ export class CanvasTestComponent implements AfterViewInit {
     this.cx.lineWidth = 3;
     this.cx.lineCap = 'round';
     this.cx.strokeStyle = '#000';
+
+    const inputEl: HTMLCanvasElement = this.input.nativeElement;
+    this.openEditor(inputEl, 100, 50)
 
     // we'll implement this method to start capturing mouse events
     this.captureEvents(canvasEl);
