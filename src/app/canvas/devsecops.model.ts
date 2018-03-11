@@ -71,6 +71,14 @@ DevSecOpsShapes.define<shapeDevOps>('rocket', foPath2D, {
 
 }).mixin(core);
 
+DevSecOpsShapes.define<shapeDevOps>('body', foPath2D, {
+  path: "M13.38,201.93a101.41,101.41,0,0,1,2-19.62,99.45,99.45,0,0,1,27-50.85,96.1,96.1,0,0,1,21.5-16.3c1.32-.74,2-.19,2.86.56a64,64,0,0,0,82.22.46l2-1.62c34.2,17.57,52.4,55.17,51.68,87.36Z",
+}).mixin(core);
+
+DevSecOpsShapes.define<shapeDevOps>('head', foPath2D, {
+  path: "M55.62,66.49c-.22-28.7,23.73-52.88,53.65-52.41,28,.44,51.48,24.15,51.41,52.53a52.53,52.53,0,1,1-105.06-.13Z",
+}).mixin(core);
+
 class shapeUI extends shapeDevOps {
 
   drawTriangle(ctx: CanvasRenderingContext2D, x1, y1, x2, y2, x3, y3) {
