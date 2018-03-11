@@ -7,7 +7,7 @@ import { foObject } from '../foObject.model'
 import { foGlyph2D } from './foGlyph2D.model'
 
 import { foShape2D } from './foShape2D.model'
-import { InputFromCanvas } from './canvasInput'
+import { CanvasInput } from './canvasInput'
 import { WatchKeys, keycode } from './canvasKeypress'
 
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
@@ -123,7 +123,7 @@ export class foInputText2D extends foText2D {
 
     public openEditorxxx = (loc: cPoint2D, e: MouseEvent, keys) => {
         let canvas = document.getElementById('canvasInput');
-        InputFromCanvas({
+        let input = new CanvasInput({
             canvas: canvas,
             x: loc.x,
             y: loc.y,
@@ -140,6 +140,7 @@ export class foInputText2D extends foText2D {
             innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
             placeHolder: 'Enter message here...'
         });
+        return input;
 
     }
 

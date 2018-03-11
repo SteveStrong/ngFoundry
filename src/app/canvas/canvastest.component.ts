@@ -1,6 +1,6 @@
 import { Component, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 
-import { InputFromCanvas } from '../foundry/shapes/canvasInput'
+import { CanvasInput } from '../foundry/shapes/canvasInput'
 
 //https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
@@ -29,7 +29,7 @@ export class CanvasTestComponent implements AfterViewInit {
 
   public openEditor(canvas: HTMLCanvasElement, x:number, y:number) {
 
-    InputFromCanvas({
+    let input = new CanvasInput({
         canvas: canvas,
         x: x,
         y: y,
@@ -46,7 +46,7 @@ export class CanvasTestComponent implements AfterViewInit {
         innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
         placeHolder: 'Enter message here...'
     });
-
+    return input;
 }
 
   public ngAfterViewInit() {

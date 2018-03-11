@@ -42,11 +42,11 @@ export class CanvasInput {
   _selectionColor = 'rgba(179, 212, 253, 0.8)';
   _placeHolder = '';
   _value = '';
-  _onsubmit = function () { };
-  _onkeydown = function () { };
-  _onkeyup = function () { };
-  _onfocus = function () { };
-  _onblur = function () { };
+  _onsubmit = function (e, s) { };
+  _onkeydown = function (e, s) { };
+  _onkeyup = function (e, s) { };
+  _onfocus = function (e, s) { };
+  _onblur = function (e, s) { };
   _cursor = false;
   _cursorPos = 0;
   _hasFocus = false;
@@ -101,11 +101,11 @@ export class CanvasInput {
     self._selectionColor = o.selectionColor || 'rgba(179, 212, 253, 0.8)';
     self._placeHolder = o.placeHolder || '';
     self._value = (o.value || self._placeHolder) + '';
-    self._onsubmit = o.onsubmit || function () { };
-    self._onkeydown = o.onkeydown || function () { };
-    self._onkeyup = o.onkeyup || function () { };
-    self._onfocus = o.onfocus || function () { };
-    self._onblur = o.onblur || function () { };
+    self._onsubmit = o.onsubmit || function (e, s) { };
+    self._onkeydown = o.onkeydown || function (e, s) { };
+    self._onkeyup = o.onkeyup || function (e, s) { };
+    self._onfocus = o.onfocus || function (e, s) { };
+    self._onblur = o.onblur || function (e, s) { };
     self._cursor = false;
     self._cursorPos = 0;
     self._hasFocus = false;
@@ -221,8 +221,8 @@ export class CanvasInput {
     });
 
     // add this to the buffer
-    inputs.push(self);
-    self._inputsIndex = inputs.length - 1;
+    this.inputs.push(self);
+    self._inputsIndex = this.inputs.length - 1;
 
     // draw the text box
     self.render();
@@ -823,9 +823,9 @@ export class CanvasInput {
       self._onfocus(self);
 
       // remove focus from all other inputs
-      for (var i = 0; i < inputs.length; i++) {
-        if (inputs[i]._hasFocus) {
-          inputs[i].blur();
+      for (var i = 0; i < this.inputs.length; i++) {
+        if (this.inputs[i]._hasFocus) {
+          this.inputs[i].blur();
         }
       }
     }
@@ -1240,9 +1240,9 @@ export class CanvasInput {
     var self = this;
 
     // pull from the inputs array
-    var index = inputs.indexOf(self);
+    var index = this.inputs.indexOf(self);
     if (index != -1) {
-      inputs.splice(index, 1);
+      this.inputs.splice(index, 1);
     }
 
     // remove focus
@@ -1516,8 +1516,6 @@ export class CanvasInput {
       y: y - offsetY
     };
   }
+  
 };
 
-  };
-
-export let InputFromCanvas = new canvasInput();
