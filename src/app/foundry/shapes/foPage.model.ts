@@ -9,7 +9,6 @@ import { foDictionary } from "../foDictionary.model";
 
 import { foNode } from '../foNode.model'
 import { Matrix2D } from './foMatrix2D'
-import { foComponent } from '../foComponent.model'
 
 import { foGlyph2D } from './foGlyph2D.model'
 import { foShape2D } from './foShape2D.model'
@@ -267,8 +266,12 @@ export class foPage extends foShape2D {
 
             if (found) {
                 shape = found;
-                this.nodes.moveToTop(shape);
-                shape.isSelected = true;
+                if ( shape.isSelected && shape.openEditor) {
+                    shape.openEditor(loc,e,keys)
+                } else {
+                    this.nodes.moveToTop(shape);
+                    shape.isSelected = true;
+                }
                 offset = shape.getOffset(loc);
                 handles.copyMembers(shape.handles);
             }

@@ -1,7 +1,7 @@
 
 import { Tools } from '../foTools'
 import { cMargin } from './foGeometry2D';
-
+import { cPoint2D, cFrame } from './foGeometry2D';
 
 import { foObject } from '../foObject.model'
 import { foGlyph2D } from './foGlyph2D.model'
@@ -121,6 +121,28 @@ export class foText2D extends foShape2D {
 
 export class foInputText2D extends foText2D {
 
+    public openEditorxxx = (loc: cPoint2D, e: MouseEvent, keys) => {
+        let canvas = document.getElementById('canvasInput');
+        InputFromCanvas({
+            canvas: canvas,
+            x: loc.x,
+            y: loc.y,
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontColor: '#212121',
+            fontWeight: 'bold',
+            width: 300,
+            padding: 8,
+            borderWidth: 1,
+            borderColor: '#000',
+            borderRadius: 3,
+            boxShadow: '1px 1px 0px #fff',
+            innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+            placeHolder: 'Enter message here...'
+        });
+
+    }
+
     public sendKeys = (e: KeyboardEvent, keys: any) => {
         //alert('got code:' + keys.code);
         if (e.keyCode >= 48 && e.keyCode <= 90) {
@@ -139,7 +161,7 @@ export class foInputText2D extends foText2D {
                 this.text = len ? this.text.substring(0, len - 1) : this.text;
                 break;
             default:
-                if ( e.key.length == 1){
+                if (e.key.length == 1) {
                     this.text += e.key;
                 }
                 break;
