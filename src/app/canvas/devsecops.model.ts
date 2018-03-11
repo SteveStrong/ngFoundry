@@ -5,8 +5,10 @@ import { foWorkspace } from "../foundry/foWorkspace.model";
 import { foComponent } from "../foundry/foComponent.model";
 import { foModel } from "../foundry/foModel.model";
 import { foImage2D } from "../foundry/shapes/foImage2D.model";
+import { foText2D, foInputText2D } from "../foundry/shapes/foText2D.model";
+import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foShape3D } from "../foundry/solids/foShape3D.model";
-import { foShape2D } from "./particle.model";
+//import { foShape2D } from "./particle.model";
 
 import { iPoint2D } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
@@ -26,6 +28,11 @@ DevSecOps.context.define('DevOpsFactory', foModel, {
   title: 'Understand DevSecOps',
   subtitle: 'Strutured Flexability'
 })
+
+DevSecOpsShapes.define<foInputText2D>('Text', foInputText2D, {
+  text: 'Understand DevSecOps',
+  fontSize:30,
+});
 
 DevSecOpsShapes.define<foImage2D>('Image', foImage2D, {
   background: 'green',
@@ -180,6 +187,8 @@ DevSecOpsShapes.define<shapeDevOps>('Service', shapeService, {
 
 DevSecOpsShapes.define<shapeDevOps>('Data', shapeData, {
 }).mixin(core);
+
+
 
 
 class shapeApp extends shapeDevOps {
