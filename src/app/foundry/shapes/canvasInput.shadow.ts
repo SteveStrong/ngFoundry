@@ -24,7 +24,10 @@ export class CanvasInput {
   _placeHolderColor = '#bfbebd';
   _fontWeight = 'normal';
   _fontStyle = 'normal';
-
+  _fontShadowColor = '';
+  _fontShadowBlur = 0;
+  _fontShadowOffsetX = 0;
+  _fontShadowOffsetY = 0;
   _readonly = false;
   _maxlength = null;
   _width = 150;
@@ -34,7 +37,8 @@ export class CanvasInput {
   _borderColor = '#959595';
   _borderRadius = 3;
   _backgroundImage = '';
-
+  _boxShadow = '1px 1px 0px rgba(255, 255, 255, 1)';
+  _innerShadow = '0px 0px 4px rgba(0, 0, 0, 0.4)';
   _selectionColor = 'rgba(179, 212, 253, 0.8)';
   _placeHolder = '';
   _value = '';
@@ -51,7 +55,8 @@ export class CanvasInput {
 
   _renderCanvas;
   _renderCtx;
-
+  _shadowCanvas;
+  _shadowCtx;
   _backgroundColor;
   _mouseDown;
   _hiddenInput;
@@ -60,7 +65,12 @@ export class CanvasInput {
 
   outerH:number;
   outerW:number;
-
+  shadowL:number=0;
+  shadowT:number=0;
+  shadowB:number=0;
+  shadowR:number=0;
+  shadowW:number=0;
+  shadowH:number=0;
 
   // initialize the Canvas Input
   constructor(o) {
@@ -81,7 +91,10 @@ export class CanvasInput {
     self._placeHolderColor = o.placeHolderColor || '#bfbebd';
     self._fontWeight = o.fontWeight || 'normal';
     self._fontStyle = o.fontStyle || 'normal';
-
+    self._fontShadowColor = o.fontShadowColor || '';
+    self._fontShadowBlur = o.fontShadowBlur || 0;
+    self._fontShadowOffsetX = o.fontShadowOffsetX || 0;
+    self._fontShadowOffsetY = o.fontShadowOffsetY || 0;
     self._readonly = o.readonly || false;
     self._maxlength = o.maxlength || null;
     self._width = o.width || 150;
@@ -91,7 +104,8 @@ export class CanvasInput {
     self._borderColor = o.borderColor || '#959595';
     self._borderRadius = o.borderRadius >= 0 ? o.borderRadius : 3;
     self._backgroundImage = o.backgroundImage || '';
-
+    self._boxShadow = o.boxShadow || '1px 1px 0px rgba(255, 255, 255, 1)';
+    self._innerShadow = o.innerShadow || '0px 0px 4px rgba(0, 0, 0, 0.4)';
     self._selectionColor = o.selectionColor || 'rgba(179, 212, 253, 0.8)';
     self._placeHolder = o.placeHolder || '';
     self._value = (o.value || self._placeHolder) + '';
@@ -106,7 +120,8 @@ export class CanvasInput {
     self._selection = [0, 0];
     self._wasOver = false;
 
-
+    // parse box shadow
+    self.boxShadow(self._boxShadow, true);
 
     // calculate the full width and height with padding, borders and shadows
     self._calcWH();
@@ -117,6 +132,11 @@ export class CanvasInput {
     self._renderCanvas.setAttribute('height', self.outerH);
     self._renderCtx = self._renderCanvas.getContext('2d');
 
+    // setup another off-DOM canvas for inner-shadows
+    self._shadowCanvas = document.createElement('canvas');
+    self._shadowCanvas.setAttribute('width', self._width + self._padding * 2);
+    self._shadowCanvas.setAttribute('height', self._height + self._padding * 2);
+    self._shadowCtx = self._shadowCanvas.getContext('2d');
 
     // setup the background color
     if (typeof o.backgroundGradient !== 'undefined') {
@@ -404,8 +424,73 @@ export class CanvasInput {
     }
   }
 
+  /**
+   * Get/set the font shadow color.
+   * @param  {String} data Font shadow color.
+   * @return {Mixed}      CanvasInput or current font shadow color.
+   */
+  fontShadowColor(data) {
+    var self = this;
 
+    if (typeof data !== 'undefined') {
+      self._fontShadowColor = data;
 
+      return self.render();
+    } else {
+      return self._fontShadowColor;
+    }
+  }
+
+  /**
+   * Get/set the font shadow blur.
+   * @param  {String} data Font shadow blur.
+   * @return {Mixed}      CanvasInput or current font shadow blur.
+   */
+  fontShadowBlur(data) {
+    var self = this;
+
+    if (typeof data !== 'undefined') {
+      self._fontShadowBlur = data;
+
+      return self.render();
+    } else {
+      return self._fontShadowBlur;
+    }
+  }
+
+  /**
+   * Get/set the font shadow x-offset.
+   * @param  {String} data Font shadow x-offset.
+   * @return {Mixed}      CanvasInput or current font shadow x-offset.
+   */
+  fontShadowOffsetX(data) {
+    var self = this;
+
+    if (typeof data !== 'undefined') {
+      self._fontShadowOffsetX = data;
+
+      return self.render();
+    } else {
+      return self._fontShadowOffsetX;
+    }
+  }
+
+  /**
+   * Get/set the font shadow y-offset.
+   * @param  {String} data Font shadow y-offset.
+   * @return {Mixed}      CanvasInput or current font shadow y-offset.
+   */
+  fontShadowOffsetY(data) {
+    var self = this;
+
+    if (typeof data !== 'undefined') {
+      self._fontShadowOffsetY = data;
+
+      return self.render();
+    } else {
+      return self._fontShadowOffsetY;
+    }
+  }
 
   /**
    * Get/set the width of the text box.
@@ -560,7 +645,72 @@ export class CanvasInput {
     }
   }
 
+  /**
+   * Get/set the box shadow.
+   * @param  {String} data     Box shadow in CSS format (1px 1px 1px rgba(0, 0, 0.5)).
+   * @param  {Boolean} doReturn (optional) True to prevent a premature render.
+   * @return {Mixed}          CanvasInput or current box shadow.
+   */
+  boxShadow(data, doReturn) {
+    var self = this;
 
+    if (typeof data !== 'undefined') {
+      // parse box shadow
+      var boxShadow = data.split('px ');
+      self._boxShadow = {
+        x: self._boxShadow === 'none' ? 0 : parseInt(boxShadow[0], 10),
+        y: self._boxShadow === 'none' ? 0 : parseInt(boxShadow[1], 10),
+        blur: self._boxShadow === 'none' ? 0 : parseInt(boxShadow[2], 10),
+        color: self._boxShadow === 'none' ? '' : boxShadow[3]
+      };
+
+      // take into account the shadow and its direction
+      if (self._boxShadow.x < 0) {
+        self.shadowL = Math.abs(self._boxShadow.x) + self._boxShadow.blur;
+        self.shadowR = self._boxShadow.blur + self._boxShadow.x;
+      } else {
+        self.shadowL = Math.abs(self._boxShadow.blur - self._boxShadow.x);
+        self.shadowR = self._boxShadow.blur + self._boxShadow.x;
+      }
+      if (self._boxShadow.y < 0) {
+        self.shadowT = Math.abs(self._boxShadow.y) + self._boxShadow.blur;
+        self.shadowB = self._boxShadow.blur + self._boxShadow.y;
+      } else {
+        self.shadowT = Math.abs(self._boxShadow.blur - self._boxShadow.y);
+        self.shadowB = self._boxShadow.blur + self._boxShadow.y;
+      }
+
+      self.shadowW = self.shadowL + self.shadowR;
+      self.shadowH = self.shadowT + self.shadowB;
+
+      self._calcWH();
+
+      if (!doReturn) {
+        self._updateCanvasWH();
+
+        return self.render();
+      }
+    } else {
+      return self._boxShadow;
+    }
+  }
+
+  /**
+   * Get/set the inner shadow.
+   * @param  {String} data In the format of a CSS box shadow (1px 1px 1px rgba(0, 0, 0.5)).
+   * @return {Mixed}          CanvasInput or current inner shadow.
+   */
+  innerShadow(data) {
+    var self = this;
+
+    if (typeof data !== 'undefined') {
+      self._innerShadow = data;
+
+      return self.render();
+    } else {
+      return self._innerShadow;
+    }
+  }
 
   /**
    * Get/set the text selection color.
@@ -964,7 +1114,8 @@ export class CanvasInput {
       h = self.outerH,
       br = self._borderRadius,
       bw = self._borderWidth,
-
+      sw = self.shadowW,
+      sh = self.shadowH;
 
     if (!ctx) {
       return;
@@ -973,24 +1124,35 @@ export class CanvasInput {
     // clear the canvas
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+    // setup the box shadow
+    ctx.shadowOffsetX = self._boxShadow.x;
+    ctx.shadowOffsetY = self._boxShadow.y;
+    ctx.shadowBlur = self._boxShadow.blur;
+    ctx.shadowColor = self._boxShadow.color;
 
     // draw the border
     if (self._borderWidth > 0) {
       ctx.fillStyle = self._borderColor;
-      //self._roundedRect(ctx, self.shadowL, self.shadowT, w - sw, h - sh, br);
+      self._roundedRect(ctx, self.shadowL, self.shadowT, w - sw, h - sh, br);
       ctx.fill();
 
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowBlur = 0;
     }
 
     // draw the text box background
     self._drawTextBox(function () {
-
+      // make sure all shadows are reset
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowBlur = 0;
 
       // clip the text so that it fits within the box
       var text = self._clipText();
 
       // draw the selection
-      var paddingBorder = self._padding + self._borderWidth;
+      var paddingBorder = self._padding + self._borderWidth + self.shadowT;
       if (self._selection[1] > 0) {
         var selectOffset = self._textWidth(text.substring(0, self._selection[0])),
           selectWidth = self._textWidth(text.substring(self._selection[0], self._selection[1]));
@@ -1007,7 +1169,7 @@ export class CanvasInput {
       }
 
       // draw the text
-      var textX = self._padding + self._borderWidth,
+      var textX = self._padding + self._borderWidth + self.shadowL,
         textY = Math.round(paddingBorder + self._height / 2);
 
       // only remove the placeholder text if they have typed something
@@ -1015,11 +1177,58 @@ export class CanvasInput {
 
       ctx.fillStyle = (self._value !== '' && self._value !== self._placeHolder) ? self._fontColor : self._placeHolderColor;
       ctx.font = self._fontStyle + ' ' + self._fontWeight + ' ' + self._fontSize + 'px ' + self._fontFamily;
-
+      ctx.shadowColor = self._fontShadowColor;
+      ctx.shadowBlur = self._fontShadowBlur;
+      ctx.shadowOffsetX = self._fontShadowOffsetX;
+      ctx.shadowOffsetY = self._fontShadowOffsetY;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(text, textX, textY);
 
+      // parse inner shadow
+      var innerShadow = self._innerShadow.split('px '),
+        isOffsetX = self._innerShadow === 'none' ? 0 : parseInt(innerShadow[0], 10),
+        isOffsetY = self._innerShadow === 'none' ? 0 : parseInt(innerShadow[1], 10),
+        isBlur = self._innerShadow === 'none' ? 0 : parseInt(innerShadow[2], 10),
+        isColor = self._innerShadow === 'none' ? '' : innerShadow[3];
+
+      // draw the inner-shadow (damn you canvas, this should be easier than this...)
+      if (isBlur > 0) {
+        var shadowCtx = self._shadowCtx,
+          scw = shadowCtx.canvas.width,
+          sch = shadowCtx.canvas.height;
+
+        shadowCtx.clearRect(0, 0, scw, sch);
+        shadowCtx.shadowBlur = isBlur;
+        shadowCtx.shadowColor = isColor;
+
+        // top shadow
+        shadowCtx.shadowOffsetX = 0;
+        shadowCtx.shadowOffsetY = isOffsetY;
+        shadowCtx.fillRect(-1 * w, -100, 3 * w, 100);
+
+        // right shadow
+        shadowCtx.shadowOffsetX = isOffsetX;
+        shadowCtx.shadowOffsetY = 0;
+        shadowCtx.fillRect(scw, -1 * h, 100, 3 * h);
+
+        // bottom shadow
+        shadowCtx.shadowOffsetX = 0;
+        shadowCtx.shadowOffsetY = isOffsetY;
+        shadowCtx.fillRect(-1 * w, sch, 3 * w, 100);
+
+        // left shadow
+        shadowCtx.shadowOffsetX = isOffsetX;
+        shadowCtx.shadowOffsetY = 0;
+        shadowCtx.fillRect(-100, -1 * h, 100, 3 * h);
+
+        // create a clipping mask on the main canvas
+        self._roundedRect(ctx, bw + self.shadowL, bw + self.shadowT, w - bw * 2 - sw, h - bw * 2 - sh, br);
+        ctx.clip();
+
+        // draw the inner-shadow from the off-DOM canvas
+        ctx.drawImage(self._shadowCanvas, 0, 0, scw, sch, bw + self.shadowL, bw + self.shadowT, scw, sch);
+      }
 
       // draw to the visible canvas
       if (self._ctx) {
@@ -1044,11 +1253,17 @@ export class CanvasInput {
       this.inputs.splice(index, 1);
     }
 
+    // remove focus
+    if (self._hasFocus) {
+      self.blur();
+    }
 
     // remove the hidden input box
     document.body.removeChild(self._hiddenInput);
 
     // remove off-DOM canvas
+    self._renderCanvas = null;
+    self._shadowCanvas = null;
     self._renderCtx = null;
   }
 
@@ -1062,16 +1277,26 @@ export class CanvasInput {
       w = self.outerW,
       h = self.outerH,
       br = self._borderRadius,
-      bw = self._borderWidth;
-
+      bw = self._borderWidth,
+      sw = self.shadowW,
+      sh = self.shadowH;
 
     // only draw the background shape if no image is being used
-
+    if (self._backgroundImage === '') {
       ctx.fillStyle = self._backgroundColor;
-      self._roundedRect(ctx, bw + 0, bw + 0, w - bw * 2 - sw, h - bw * 2 - sh, br);
+      self._roundedRect(ctx, bw + self.shadowL, bw + self.shadowT, w - bw * 2 - sw, h - bw * 2 - sh, br);
       ctx.fill();
 
       fn();
+    } else {
+      var img = new Image();
+      img.src = self._backgroundImage;
+      img.onload = function () {
+        ctx.drawImage(img, 0, 0, img.width, img.height, bw + self.shadowL, bw + self.shadowT, w, h);
+
+        fn();
+      };
+    }
   }
 
   /**
@@ -1135,8 +1360,8 @@ export class CanvasInput {
     var self = this;
 
     // calculate the full width and height with padding, borders and shadows
-    self.outerW = self._width + self._padding * 2 + self._borderWidth;
-    self.outerH = self._height + self._padding * 2 + self._borderWidth;
+    self.outerW = self._width + self._padding * 2 + self._borderWidth * 2 + self.shadowW;
+    self.outerH = self._height + self._padding * 2 + self._borderWidth * 2 + self.shadowH;
   }
 
   /**
@@ -1150,7 +1375,8 @@ export class CanvasInput {
     // update off-DOM canvas
     self._renderCanvas.setAttribute('width', self.outerW);
     self._renderCanvas.setAttribute('height', self.outerH);
-
+    self._shadowCanvas.setAttribute('width', self._width + self._padding * 2);
+    self._shadowCanvas.setAttribute('height', self._height + self._padding * 2);
 
     // clear the main canvas
     if (self._ctx) {
