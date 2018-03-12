@@ -126,8 +126,8 @@ export class foInputText2D extends foText2D {
     public openEditor = (canvas: HTMLCanvasElement, loc: cPoint2D, e: MouseEvent, keys) => {
         this.input = new CanvasInput({
             canvas: canvas,
-            x: loc.x,
-            y: loc.y,
+            x: this.x - this.pinX(),
+            y: this.y - this.pinY(),
             fontSize: this.size,
             fontFamily: 'Arial',
             fontColor: '#212121',
@@ -137,8 +137,8 @@ export class foInputText2D extends foText2D {
             borderWidth: 1,
             borderColor: '#000',
             borderRadius: 3,
-            boxShadow: '1px 1px 0px #fff',
-            innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
+            //boxShadow: '1px 1px 0px #fff',
+            //innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
             placeHolder: this.text
         });
     }

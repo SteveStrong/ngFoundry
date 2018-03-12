@@ -58,11 +58,19 @@ export class CanvasInput {
   _shadowCanvas;
   _shadowCtx;
   _backgroundColor;
-  outerH;
   _mouseDown;
   _hiddenInput;
   _inputsIndex;
+  _selectionUpdated;
 
+  outerH:number;
+  outerW:number;
+  shadowL:number=0;
+  shadowT:number=0;
+  shadowB:number=0;
+  shadowR:number=0;
+  shadowW:number=0;
+  shadowH:number=0;
 
   // initialize the Canvas Input
   constructor(o) {
@@ -872,7 +880,7 @@ export class CanvasInput {
     self._hiddenInput.selectionEnd = hasSelection ? self._selection[1] : self._cursorPos;
 
     return self.render();
-  },
+  }
 
   /**
    * Removes focus from the CanvasInput box.
@@ -937,11 +945,11 @@ export class CanvasInput {
       self._onsubmit(e, self);
     } else if (keyCode === 9) { // tab key
       e.preventDefault();
-      if (inputs.length > 1) {
-        var next = (inputs[self._inputsIndex + 1]) ? self._inputsIndex + 1 : 0;
+      if (this.inputs.length > 1) {
+        var next = (this.inputs[self._inputsIndex + 1]) ? self._inputsIndex + 1 : 0;
         self.blur();
         setTimeout(function () {
-          inputs[next].focus();
+          this.inputs[next].focus();
         }, 10);
       }
     }
