@@ -121,11 +121,13 @@ export class foText2D extends foShape2D {
 
 export class foInputText2D extends foText2D {
 
+    input:CanvasInput;
+
     public openEditor = (canvas: HTMLCanvasElement, loc: cPoint2D, e: MouseEvent, keys) => {
-        let input = new CanvasInput({
+        this.input = new CanvasInput({
             canvas: canvas,
-            x: 100, //loc.x,
-            y: 100, //loc.y,
+            x: loc.x,
+            y: loc.y,
             fontSize: 18,
             fontFamily: 'Arial',
             fontColor: '#212121',
@@ -139,12 +141,11 @@ export class foInputText2D extends foText2D {
             innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
             placeHolder: 'Enter message here...'
         });
-        return input;
-
     }
 
     public sendKeys = (e: KeyboardEvent, keys: any) => {
         //alert('got code:' + keys.code);
+        if ( this.input ) return;
         if (e.keyCode >= 48 && e.keyCode <= 90) {
             this.text += e.key;
         } else if (e.keyCode == 32) {
@@ -165,6 +166,14 @@ export class foInputText2D extends foText2D {
                     this.text += e.key;
                 }
                 break;
+        }
+    }
+
+
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        super.render(ctx, deep);
+        if ( this.input ) {
+            this.input.render();
         }
     }
 

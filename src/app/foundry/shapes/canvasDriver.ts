@@ -17,9 +17,6 @@ export class Screen2D {
 
 
     public doAnimate = (): void => {
-        // if ( NgZone.assertInAngularZone() ) {
-        //     console.log('Screen2D: in the zone')
-        // }
         this.render(this.context);
         this._request = this.requestAnimation(this.doAnimate);
     }
