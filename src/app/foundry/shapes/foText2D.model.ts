@@ -139,7 +139,7 @@ export class foInputText2D extends foText2D {
             borderRadius: 3,
             boxShadow: '1px 1px 0px #fff',
             innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-            placeHolder: 'Enter message here...'
+            placeHolder: this.text
         });
     }
 
