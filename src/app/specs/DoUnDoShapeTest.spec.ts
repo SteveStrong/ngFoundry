@@ -1,37 +1,26 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
+﻿import { TestBed, async } from '@angular/core/testing';
 
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.core.js" />
-/// <reference path="../Foundry/Foundry.rules.factory.js" />
-/// <reference path="../Scripts/moment.min.js" />
+import { foPage } from '../foundry/shapes/foPage';
+import { foShape2D } from '../foundry/shapes/foShape2D';
+import { UnDo } from '../foundry/foUnDo';
 
-/// <reference path="../Apprentice/easeljs-0.7.0.min.js" />
-/// <reference path="../tweenjs/Tween.js" />
-
-/// <reference path="../Foundry/Foundry.rules.filtering.js" />
-/// <reference path="../Foundry/Foundry.undo.js" />
-/// <reference path="../Foundry/Foundry.canvas.js" />
-/// <reference path="../Foundry/Foundry.canvas.structure.js" />
-/// <reference path="../Foundry/Foundry.canvas.page2D.js" />
-/// <reference path="../Foundry/Foundry.canvas.shape2D.js" />
-/// <reference path="../Foundry/Foundry.canvas.document.js" />
-/// <reference path="../Foundry/Foundry.canvas.panzoom.js" />
+import * as moment from 'moment';
 
 describe("Do UnDo: Shapes", function () {
-    var root;
-    var buffer;
+    let root;
+    let buffer;
 
     beforeEach(function () {
 
-        root = fo.construct('Page');
-        list = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+        root = new foPage();
+        let list = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
         var i = 0;
 
         list.forEach(function (item) {
             var hour = i; i++;
-            var time = new moment();
+            var time = moment();
 
-            var comp = fo.construct('Shape2D', {
+            var comp = new foShape2D({
                 name: item,
                 number: hour,
                 hour: time.add('h', hour),
@@ -42,7 +31,7 @@ describe("Do UnDo: Shapes", function () {
 
         //inprovement in keeping geoms around now require we use a shape
         //but is should be ok if it does not have a stage..
-        buffer = fo.construct('Page');
+        buffer = new foPage();
 
         //this shows that a 'generic' component can be a place to store a shape
         //no harm in not requiring a root page...
@@ -71,8 +60,8 @@ describe("Do UnDo: Shapes", function () {
             return payload;
         }
 
-        fo.undo.clear();
-        fo.undo.registerActions('Reparent', beforeReparent, undoReparent);
+        UnDo.clear();
+        UnDo.registerActions('Reparent', beforeReparent, undoReparent);
 
     });
 
@@ -108,12 +97,12 @@ describe("Do UnDo: Shapes", function () {
         var item = root.Subcomponents.item(3);
         var payload = { newParent: buffer, child: item, index: item.myIndex() };
 
-        var undo = fo.undo.do('Reparent', payload);
+        var undo = UnDo.do('Reparent', payload);
 
         expect(item.myParent).toBe(buffer);
         expect(root.Subcomponents.count).toBe(10);
 
-        fo.undo.unDo(undo);
+        UnDo.unDo(undo);
 
         expect(item.myParent).toBe(root);
         expect(root.Subcomponents.count).toBe(11);
@@ -132,12 +121,12 @@ describe("Do UnDo: Shapes", function () {
         var item = root.Subcomponents.item(3);
         var payload = { newParent: buffer, child: item, index: item.myIndex() };
 
-        var undo = fo.undo.do('Reparent', payload);
+        var undo = UnDo.do('Reparent', payload);
 
         expect(item.myParent).toBe(buffer);
         expect(root.Subcomponents.count).toBe(10);
 
-        fo.undo.unDo(undo);
+        UnDo.unDo(undo);
 
         expect(item.myParent).toBe(root);
         expect(root.Subcomponents.count).toBe(11);

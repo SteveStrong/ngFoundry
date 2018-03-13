@@ -2,10 +2,10 @@ import { PubSub } from "./foPubSub";
 
 export class foUnDo {
 
-    _undoID:number = 0;
-    _isDoing:boolean = false;
-    _isUndoing:boolean = false;
-    _undoRing:any[] = [];
+    private _undoID:number = 0;
+    private _isDoing:boolean = false;
+    private _isUndoing:boolean = false;
+    private _undoRing:any[] = [];
 
     clear() {
         this._undoRing = [];
@@ -23,15 +23,15 @@ export class foUnDo {
         return this._isDoing;
     }
 
-    _doActions:any = {};
-    _undoActions:any = {};
-    _verifyKeep:any = {};
+    private _doActions:any = {};
+    private _undoActions:any = {};
+    private _verifyKeep:any = {};
 
     do(action, item) {
         this._isDoing = true;
         var func = this._doActions[action];
         var undo = { action: action, payload: item, undoID: this._undoID++ }
-        this._undoRing.push(undo);
+        this.addItem(undo);
         undo.payload = func ? func.call(undo, item) : item;
 
         this._isDoing = false;
@@ -39,13 +39,24 @@ export class foUnDo {
         return undo;
     }
 
-    unDo(myUnDo) {
+    addItem(item:any){
+        this._undoRing.push(item);
+        return this;
+    }
+
+    removeItem(item:any){
+        let index = this._undoRing.indexOf(item);
+        if (index !== -1) this._undoRing.splice(index, 1);
+        return this;
+    }
+
+    unDo(myUnDo?:any) {
         if (!this.canUndo()) return;
 
         this._isUndoing = true;
         var undo = myUnDo;
         if (undo) {
-            this._undoRing.removeItem(myUnDo);
+            this.removeItem(myUnDo);
         } else {
             var index = this._undoRing.length - 1;
             undo = this._undoRing.splice(index, 1)[0];
@@ -60,21 +71,26 @@ export class foUnDo {
     }
 
     //if the verify function return TRUE then keep the last undo action...
-    verifyKeep(undo, item) {
+    verifyKeep(undo:any, item:any) {
         if (!undo) return true;
         var action = undo.action;
         var func = this._verifyKeep[action];
         var keep = func ? func.call(undo, item, undo.payload) : true;
         if (!keep) { //remove Undo from the queue
-            this._undoRing.removeItem(undo); //item has been removed..
+            this.removeItem(undo); //item has been removed..
         }
         return keep; 
     }
 
-    registerActions(action, doFunc, undoFunc, verifyKeepFunc) {
+    registerActions(action, doFunc?, undoFunc?, verifyKeepFunc?) {
         this._doActions[action] = doFunc ? doFunc : function (p) { return p; };
         this._undoActions[action] = undoFunc ? undoFunc : function (p) { return p; };
         this._verifyKeep[action] = verifyKeepFunc ? verifyKeepFunc : function (p) { return true; };
+        return this;
     }
 
 }
+
+
+
+export let UnDo: foUnDo = new foUnDo();
