@@ -70,6 +70,7 @@ export class foText2D extends foShape2D {
         ctx.font = this.font || this.size + "px Georgia";
     };
 
+
     setupPreDraw() {
 
         let preDraw = (ctx: CanvasRenderingContext2D): void => {
@@ -77,6 +78,7 @@ export class foText2D extends foShape2D {
             this.width = textMetrics.width + ((this.margin && this.margin.width) || 0);
             this.height = this.size + ((this.margin && this.margin.height) || 0);
             this.createConnectionPoints();
+            this.createHandles();
             this.preDraw = undefined;
         };
 
@@ -92,7 +94,7 @@ export class foText2D extends foShape2D {
         ctx.stroke();
     }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    public drawDefaultSelected(ctx: CanvasRenderingContext2D) {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 1;
         this.drawOutline(ctx);
@@ -100,6 +102,8 @@ export class foText2D extends foShape2D {
         this.drawConnectionPoints(ctx);
         this.drawPin(ctx);
     }
+
+    public drawSelected = this.drawDefaultSelected;
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
 
@@ -122,78 +126,151 @@ export class foText2D extends foShape2D {
 export class foInputText2D extends foText2D {
 
     private isEditing: boolean = false;
+    private showCursor: boolean = false;
+    private cursorStart: number;
+    private cursorEnd: number;
 
+    private timer: any;
 
     public openEditor = () => {
         this.isEditing = true;
+        this.drawSelected = this.drawIsEditing;
+        this.timer = setInterval(() => { this.showCursor = !this.showCursor }, 600);
+        this.cursorStart = this.cursorEnd = this.text.length;
     }
 
     public closeEditor = () => {
         this.isEditing = false;
+        this.drawSelected = this.drawDefaultSelected;
+        clearInterval(this.timer);
+    }
+
+    public addCharacter(char) {
+        let text = this.text.slice(0, this.cursorStart) + char + this.text.slice(this.cursorEnd);
+        this.text = text;
+        this.cursorStart += 1;
+        this.cursorEnd = this.cursorStart;
+    }
+
+    public delCharacter() {
+        if (this.cursorStart == 0) return;
+        let text = this.text.slice(0, this.cursorStart - 1) + this.text.slice(this.cursorEnd);
+        this.text = text;
+        this.cursorStart -= 1;
+        this.cursorEnd = this.cursorStart;
     }
 
     public sendKeys = (e: KeyboardEvent, keys: any) => {
         //alert('got code:' + keys.code);
-        if (keys.ctrl) {
-            if (e.key == 'e') {
-                this.isEditing = !this.isEditing;
-            }
+        if (keys.ctrl && e.key == 'e') {
+            this.isEditing ? this.closeEditor() : this.openEditor();
         }
         else if (this.isEditing) {
-            this.editText(e, keys)
+            this.editText(e, keys);
+            this.setupPreDraw();
         }
     }
-    
+
     editText(e: KeyboardEvent, keys: any) {
-        if (e.keyCode >= 48 && e.keyCode <= 90) {
-            this.text += e.key;
-        } else if (e.keyCode == 32) {
-            this.text += e.key;
+        if (keys.ctrl && e.key == 'a') {
+            this.cursorStart = 0;
+            this.cursorEnd = this.text.length;
+        } else if (e.keyCode >= 48 && e.keyCode <= 90) {
+            this.addCharacter(e.key);
+        } else if (e.keyCode == 32) {  //space
+            this.addCharacter(e.key);
+        } else if (e.keyCode == 46) {  //del
+            this.delCharacter();
+        } else if (e.keyCode == 8) {  //backspace
+            this.delCharacter();
         } else {
             this.processKeys(e, keys)
         }
     }
 
+    // 27: "esc",
+    // 32: "space",
+    // 33: "pageup",
+    // 34: "pagedown",
+    // 35: "end",
+    // 36: "home",
+    // 37: "left",
+    // 38: "up",
+    // 39: "right",
+    // 45: "insert",
+    // 46: "delete",
+
     processKeys(e: KeyboardEvent, keys: any) {
+        let select = keys.shift;
         switch (e.keyCode) {
-            case 8:  //"backspace"
-                let len = this.text.length;
-                this.text = len ? this.text.substring(0, len - 1) : this.text;
+            case 36:  // home
+                this.cursorStart = 0;
+                if ( !select ) this.cursorEnd = this.cursorStart;
+                break;
+            case 35:  // end
+                this.cursorEnd = this.text.length;
+                if ( !select ) this.cursorStart = this.cursorEnd;
+                break;
+            case 37:  // left
+                if (this.cursorStart > 0) {
+                    this.cursorStart -= 1;
+                    if ( !select ) this.cursorEnd = this.cursorStart;
+                }
+                break;
+            case 39:  // right
+                if (this.cursorEnd < this.text.length) {
+                    this.cursorEnd += 1;
+                    if ( !select ) this.cursorStart = this.cursorEnd;
+                }
+                break;
+            case 13:  // return
+            case 27:  // esc
+                this.closeEditor();
                 break;
             default:
                 if (e.key.length == 1) {
-                    this.text += e.key;
+                    this.addCharacter(e.key);
                 }
                 break;
         }
     }
 
-    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-        if (this.isEditing) {
-            ctx.strokeStyle = "green";
-            ctx.lineWidth = 10;
-            ctx.beginPath()
-            ctx.rect(0, 0, this.width, this.height);
-            ctx.stroke();
-        } else {
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 1;
-            this.drawOutline(ctx);
-            this.drawHandles(ctx);
-            this.drawConnectionPoints(ctx);
-            this.drawPin(ctx);
-        }
-    }
 
     public drawIsEditing(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = "red";
-        ctx.lineWidth = 5;
+        ctx.strokeStyle = "green";
+        ctx.lineWidth = 1;
         ctx.beginPath()
-        //ctx.se.setLineDash([15, 5]);
         ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
+
+        this.drawSelect(ctx);
+        this.showCursor && this.drawCursor(ctx);
+        this.draw(ctx);
     }
 
+    public drawSelect(ctx: CanvasRenderingContext2D) {
+        if (this.cursorStart == this.cursorEnd) return
+
+        let textStart = this.text.substr(0, this.cursorStart);
+        let start = ctx.measureText(textStart);
+        let startPos = start.width + ((this.margin && this.margin.width) || 0);
+
+        let textEnd = this.text.substr(0, this.cursorEnd);
+        let end = ctx.measureText(textEnd);
+        let endPos = end.width + ((this.margin && this.margin.width) || 0);
+
+        ctx.fillStyle = 'yellow'
+        ctx.fillRect(startPos, 0, endPos - startPos, this.height);
+    }
+
+    public drawCursor(ctx: CanvasRenderingContext2D) {
+        let textStart = this.text.substr(0, this.cursorStart);
+        let start = ctx.measureText(textStart);
+        let startPos = start.width + ((this.margin && this.margin.width) || 0);
+
+        ctx.fillStyle = 'red'
+        ctx.fillRect(startPos, 0, 2, this.height);
+    }
 
     // drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
 
