@@ -27,7 +27,6 @@ export class CanvasTestComponent implements AfterViewInit {
   private cx: CanvasRenderingContext2D;
 
 
-
   public ngAfterViewInit() {
     // get the context
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
