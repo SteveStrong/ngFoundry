@@ -7,7 +7,7 @@ import { foObject } from '../foObject.model'
 import { foGlyph2D } from './foGlyph2D.model'
 
 import { foShape2D } from './foShape2D.model'
-import { CanvasInput } from './canvasInput'
+
 import { WatchKeys, keycode } from './canvasKeypress'
 
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
@@ -121,31 +121,30 @@ export class foText2D extends foShape2D {
 
 export class foInputText2D extends foText2D {
 
-    input:CanvasInput;
+    private isEditing: boolean = false;
 
-    public openEditor = (canvas: HTMLCanvasElement, loc: cPoint2D, e: MouseEvent, keys) => {
-        this.input = new CanvasInput({
-            canvas: canvas,
-            x: this.x - this.pinX(),
-            y: this.y - this.pinY(),
-            fontSize: this.size,
-            fontFamily: 'Arial',
-            fontColor: '#212121',
-            fontWeight: 'bold',
-            width: this.width,
-            padding: 8,
-            borderWidth: 1,
-            borderColor: '#000',
-            borderRadius: 3,
-            //boxShadow: '1px 1px 0px #fff',
-            //innerShadow: '0px 0px 5px rgba(0, 0, 0, 0.5)',
-            placeHolder: this.text
-        });
+
+    public openEditor = () => {
+        this.isEditing = true;
+    }
+
+    public closeEditor = () => {
+        this.isEditing = false;
     }
 
     public sendKeys = (e: KeyboardEvent, keys: any) => {
         //alert('got code:' + keys.code);
-        if ( this.input ) return;
+        if (keys.ctrl) {
+            if (e.key == 'e') {
+                this.isEditing = !this.isEditing;
+            }
+        }
+        else if (this.isEditing) {
+            this.editText(e, keys)
+        }
+    }
+    
+    editText(e: KeyboardEvent, keys: any) {
         if (e.keyCode >= 48 && e.keyCode <= 90) {
             this.text += e.key;
         } else if (e.keyCode == 32) {
@@ -169,13 +168,32 @@ export class foInputText2D extends foText2D {
         }
     }
 
-
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        super.render(ctx, deep);
-        if ( this.input ) {
-            this.input.render();
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        if (this.isEditing) {
+            ctx.strokeStyle = "green";
+            ctx.lineWidth = 10;
+            ctx.beginPath()
+            ctx.rect(0, 0, this.width, this.height);
+            ctx.stroke();
+        } else {
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 1;
+            this.drawOutline(ctx);
+            this.drawHandles(ctx);
+            this.drawConnectionPoints(ctx);
+            this.drawPin(ctx);
         }
     }
+
+    public drawIsEditing(ctx: CanvasRenderingContext2D) {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 5;
+        ctx.beginPath()
+        //ctx.se.setLineDash([15, 5]);
+        ctx.rect(0, 0, this.width, this.height);
+        ctx.stroke();
+    }
+
 
     // drawMultiLineText(ctx: CanvasRenderingContext2D, text: string) {
 

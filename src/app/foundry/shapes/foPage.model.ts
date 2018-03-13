@@ -239,7 +239,7 @@ export class foPage extends foShape2D {
         PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
             //alert('code:' + keys.code)
             if (keys.ctrl) {
-
+                sendKeysToShape.bind(this)(e, keys);
             } else {
                 sendKeysToShape.bind(this)(e, keys);
             }
@@ -267,12 +267,12 @@ export class foPage extends foShape2D {
 
             if (found) {
                 shape = found;
-                if ( this.canvas && shape.isSelected && shape.openEditor) {
-                    shape.openEditor(this.canvas, loc,e,keys)
-                } else {
+                // if ( shape.isSelected && shape.openEditor) {
+                //     shape.openEditor()
+                // } else {
                     this.nodes.moveToTop(shape);
                     shape.isSelected = true;
-                }
+                //}
                 offset = shape.getOffset(loc);
                 handles.copyMembers(shape.handles);
             }

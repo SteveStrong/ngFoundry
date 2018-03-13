@@ -718,8 +718,8 @@ export class CanvasInput {
    * @param  {Object} _this Reference to this.
    * @return {CanvasInput}
    */
-  blur(_this?) {
-    var self = _this || this;
+  blur(obj?) {
+    var self = this;
 
     self._onblur(self);
 

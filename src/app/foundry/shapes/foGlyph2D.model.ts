@@ -58,7 +58,8 @@ export class foGlyph2D extends foGlyph implements iShape {
     public rotationZ = (): number => { return 0; }
 
 
-    public openEditor: (canvas: HTMLCanvasElement, loc: cPoint2D, e: MouseEvent, keys) => void;
+    public openEditor: () => void;
+    public closeEditor: () => void;
     public sendKeys: (e: KeyboardEvent, keys:any) => void;
     public drawHover: (ctx: CanvasRenderingContext2D) => void;
     public preDraw: (ctx: CanvasRenderingContext2D) => void;
