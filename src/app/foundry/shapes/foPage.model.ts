@@ -216,7 +216,7 @@ export class foPage extends foShape2D {
         }
 
         function debounce(func: (loc: cPoint2D, e: MouseEvent, keys) => void, wait = 50) {
-            let h: number;
+            let h: any;
             return (loc: cPoint2D, e: MouseEvent, keys) => {
                 clearTimeout(h);
                 h = setTimeout(() => func(loc, e, keys), wait);

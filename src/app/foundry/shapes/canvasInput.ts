@@ -38,11 +38,11 @@ export class CanvasInput {
   _selectionColor = 'rgba(179, 212, 253, 0.8)';
   _placeHolder = '';
   _value = '';
-  _onsubmit = function (e, s) { };
-  _onkeydown = function (e, s) { };
-  _onkeyup = function (e, s) { };
-  _onfocus = function (e, s) { };
-  _onblur = function (e, s) { };
+  _onsubmit = function (e?, s?) { };
+  _onkeydown = function (e?, s?) { };
+  _onkeyup = function (e?, s?) { };
+  _onfocus = function (e?, s?) { };
+  _onblur = function (e?, s?) { };
   _cursor = false;
   _cursorPos = 0;
   _hasFocus = false;
@@ -57,6 +57,7 @@ export class CanvasInput {
   _hiddenInput;
   _inputsIndex;
   _selectionUpdated;
+  _cursorInterval;
 
   outerH:number;
   outerW:number;
@@ -737,7 +738,7 @@ export class CanvasInput {
    * @param  {Object} _this Reference to this.
    * @return {CanvasInput}
    */
-  blur(_this) {
+  blur(_this?) {
     var self = _this || this;
 
     self._onblur(self);
@@ -963,7 +964,7 @@ export class CanvasInput {
       w = self.outerW,
       h = self.outerH,
       br = self._borderRadius,
-      bw = self._borderWidth,
+      bw = self._borderWidth;
 
 
     if (!ctx) {
@@ -1068,7 +1069,7 @@ export class CanvasInput {
     // only draw the background shape if no image is being used
 
       ctx.fillStyle = self._backgroundColor;
-      self._roundedRect(ctx, bw + 0, bw + 0, w - bw * 2 - sw, h - bw * 2 - sh, br);
+      self._roundedRect(ctx, bw + 0, bw + 0, w - bw * 2 - 0, h - bw * 2 - 0, br);
       ctx.fill();
 
       fn();
@@ -1102,7 +1103,7 @@ export class CanvasInput {
    * @param  {String} value The text to clip.
    * @return {String} The clipped text.
    */
-  _clipText(value) {
+  _clipText(value?) {
     var self = this;
     value = (typeof value === 'undefined') ? self._value : value;
 
