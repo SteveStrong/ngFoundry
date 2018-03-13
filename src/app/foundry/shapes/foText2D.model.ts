@@ -132,6 +132,8 @@ export class foInputText2D extends foText2D {
 
     private timer: any;
 
+
+
     public openEditor = () => {
         this.isEditing = true;
         this.drawSelected = this.drawIsEditing;

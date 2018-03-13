@@ -262,17 +262,14 @@ export class foPage extends foShape2D {
                 handles.clearAll();
                 this.nodes.forEach(item => {
                     item.unSelect(true, found);
+                    item.closeEditor && item.closeEditor()
                 });
             }
 
             if (found) {
                 shape = found;
-                // if ( shape.isSelected && shape.openEditor) {
-                //     shape.openEditor()
-                // } else {
-                    this.nodes.moveToTop(shape);
-                    shape.isSelected = true;
-                //}
+                this.nodes.moveToTop(shape);
+                shape.isSelected = true;
                 offset = shape.getOffset(loc);
                 handles.copyMembers(shape.handles);
             }
