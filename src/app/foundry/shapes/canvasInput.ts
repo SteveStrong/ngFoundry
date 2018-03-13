@@ -59,162 +59,149 @@ export class CanvasInput {
   _selectionUpdated;
   _cursorInterval;
 
-  outerH:number;
-  outerW:number;
+  outerH: number;
+  outerW: number;
 
 
   // initialize the Canvas Input
   constructor(o) {
-    var self = this;
+    // var self = this;
 
     o = o ? o : {};
 
     // setup the defaults
-    self._canvas = o.canvas || null;
-    self._ctx = self._canvas ? self._canvas.getContext('2d') : null;
-    self._x = o.x || 0;
-    self._y = o.y || 0;
-    self._extraX = o.extraX || 0;
-    self._extraY = o.extraY || 0;
-    self._fontSize = o.fontSize || 14;
-    self._fontFamily = o.fontFamily || 'Arial';
-    self._fontColor = o.fontColor || '#000';
-    self._placeHolderColor = o.placeHolderColor || '#bfbebd';
-    self._fontWeight = o.fontWeight || 'normal';
-    self._fontStyle = o.fontStyle || 'normal';
+    this._canvas = o.canvas || null;
+    this._ctx = this._canvas ? this._canvas.getContext('2d') : null;
+    this._x = o.x || 0;
+    this._y = o.y || 0;
+    this._extraX = o.extraX || 0;
+    this._extraY = o.extraY || 0;
+    this._fontSize = o.fontSize || 14;
+    this._fontFamily = o.fontFamily || 'Arial';
+    this._fontColor = o.fontColor || '#000';
+    this._placeHolderColor = o.placeHolderColor || '#bfbebd';
+    this._fontWeight = o.fontWeight || 'normal';
+    this._fontStyle = o.fontStyle || 'normal';
 
-    self._readonly = o.readonly || false;
-    self._maxlength = o.maxlength || null;
-    self._width = o.width || 150;
-    self._height = o.height || self._fontSize;
-    self._padding = o.padding >= 0 ? o.padding : 5;
-    self._borderWidth = o.borderWidth >= 0 ? o.borderWidth : 1;
-    self._borderColor = o.borderColor || '#959595';
-    self._borderRadius = o.borderRadius >= 0 ? o.borderRadius : 3;
-    self._backgroundImage = o.backgroundImage || '';
+    this._readonly = o.readonly || false;
+    this._maxlength = o.maxlength || null;
+    this._width = o.width || 150;
+    this._height = o.height || this._fontSize;
+    this._padding = o.padding >= 0 ? o.padding : 5;
+    this._borderWidth = o.borderWidth >= 0 ? o.borderWidth : 1;
+    this._borderColor = o.borderColor || '#959595';
+    this._borderRadius = o.borderRadius >= 0 ? o.borderRadius : 3;
+    this._backgroundImage = o.backgroundImage || '';
 
-    self._selectionColor = o.selectionColor || 'rgba(179, 212, 253, 0.8)';
-    self._placeHolder = o.placeHolder || '';
-    self._value = (o.value || self._placeHolder) + '';
-    self._onsubmit = o.onsubmit || function (e, s) { };
-    self._onkeydown = o.onkeydown || function (e, s) { };
-    self._onkeyup = o.onkeyup || function (e, s) { };
-    self._onfocus = o.onfocus || function (e, s) { };
-    self._onblur = o.onblur || function (e, s) { };
-    self._cursor = false;
-    self._cursorPos = 0;
-    self._hasFocus = false;
-    self._selection = [0, 0];
-    self._wasOver = false;
+    this._selectionColor = o.selectionColor || 'rgba(179, 212, 253, 0.8)';
+    this._placeHolder = o.placeHolder || '';
+    this._value = (o.value || this._placeHolder) + '';
+    this._onsubmit = o.onsubmit || function (e, s) { };
+    this._onkeydown = o.onkeydown || function (e, s) { };
+    this._onkeyup = o.onkeyup || function (e, s) { };
+    this._onfocus = o.onfocus || function (e, s) { };
+    this._onblur = o.onblur || function (e, s) { };
+    this._cursor = false;
+    this._cursorPos = 0;
+    this._hasFocus = false;
+    this._selection = [0, 0];
+    this._wasOver = false;
 
 
 
     // calculate the full width and height with padding, borders and shadows
-    self._calcWH();
+    this._calcWH();
 
     // setup the off-DOM canvas
-    self._renderCanvas = document.createElement('canvas');
-    self._renderCanvas.setAttribute('width', self.outerW);
-    self._renderCanvas.setAttribute('height', self.outerH);
-    self._renderCtx = self._renderCanvas.getContext('2d');
+    this._renderCanvas = document.createElement('canvas');
+    this._renderCanvas.setAttribute('width', this.outerW);
+    this._renderCanvas.setAttribute('height', this.outerH);
+    this._renderCtx = this._renderCanvas.getContext('2d');
 
 
     // setup the background color
     if (typeof o.backgroundGradient !== 'undefined') {
-      self._backgroundColor = self._renderCtx.createLinearGradient(
+      this._backgroundColor = this._renderCtx.createLinearGradient(
         0,
         0,
         0,
-        self.outerH
+        this.outerH
       );
-      self._backgroundColor.addColorStop(0, o.backgroundGradient[0]);
-      self._backgroundColor.addColorStop(1, o.backgroundGradient[1]);
+      this._backgroundColor.addColorStop(0, o.backgroundGradient[0]);
+      this._backgroundColor.addColorStop(1, o.backgroundGradient[1]);
     } else {
-      self._backgroundColor = o.backgroundColor || '#fff';
+      this._backgroundColor = o.backgroundColor || '#fff';
     }
 
     // setup main canvas events
-    if (self._canvas) {
-      self._canvas.addEventListener('mousemove', function (e) {
-        e = e || window.event;
-        self.mousemove(e, self);
-      }, false);
 
-      self._canvas.addEventListener('mousedown', function (e) {
-        e = e || window.event;
-        self.mousedown(e, self);
-      }, false);
-
-      self._canvas.addEventListener('mouseup', function (e) {
-        e = e || window.event;
-        self.mouseup(e, self);
-      }, false);
-    }
-
-    // setup a global mouseup to blur the input outside of the canvas
-    var autoBlur = function (e) {
+    this._canvas.addEventListener('mousemove',  (e) => {
       e = e || window.event;
+      this.mousemove(e, this);
+    }, false);
 
-      if (self._hasFocus && !self._mouseDown) {
-        self.blur();
-      }
-    };
-    window.addEventListener('mouseup', autoBlur, true);
-    window.addEventListener('touchend', autoBlur, true);
+    this._canvas.addEventListener('mousedown',  (e) => {
+      e = e || window.event;
+      this.mousedown(e, this);
+    }, false);
+
+    this._canvas.addEventListener('mouseup',  (e) => {
+      e = e || window.event;
+      this.mouseup(e, this);
+    }, false);
+
+
 
     // create the hidden input element
-    self._hiddenInput = document.createElement('input');
-    self._hiddenInput.type = 'text';
-    self._hiddenInput.style.position = 'absolute';
-    self._hiddenInput.style.opacity = 0;
-    self._hiddenInput.style.pointerEvents = 'none';
-    self._hiddenInput.style.zIndex = 0;
+    this._hiddenInput = document.createElement('input');
+    this._hiddenInput.type = 'text';
+    this._hiddenInput.style.position = 'absolute';
+    this._hiddenInput.style.opacity = 0;
+    this._hiddenInput.style.pointerEvents = 'none';
+    this._hiddenInput.style.zIndex = 0;
     // hide native blue text cursor on iOS
-    self._hiddenInput.style.transform = 'scale(0)';
+    this._hiddenInput.style.transform = 'scale(0)';
 
-    self._updateHiddenInput();
-    if (self._maxlength) {
-      self._hiddenInput.maxLength = self._maxlength;
+    this._updateHiddenInput();
+    if (this._maxlength) {
+      this._hiddenInput.maxLength = this._maxlength;
     }
-    document.body.appendChild(self._hiddenInput);
-    self._hiddenInput.value = self._value;
+    document.body.appendChild(this._hiddenInput);
+    this._hiddenInput.value = this._value;
 
     // setup the keydown listener
-    self._hiddenInput.addEventListener('keydown', function (e) {
+    this._hiddenInput.addEventListener('keydown',  (e) => {
       e = e || window.event;
 
-      if (self._hasFocus) {
+      if (this._hasFocus) {
         // hack to fix touch event bug in iOS Safari
         window.focus();
-        self._hiddenInput.focus();
+        this._hiddenInput.focus();
 
         // continue with the keydown event
-        self.keydown(e, self);
+        this.keydown(e, this);
       }
     });
 
     // setup the keyup listener
-    self._hiddenInput.addEventListener('keyup', function (e) {
+    this._hiddenInput.addEventListener('keyup',  (e) => {
       e = e || window.event;
 
       // update the canvas input state information from the hidden input
-      self._value = self._hiddenInput.value;
-      self._cursorPos = self._hiddenInput.selectionStart;
+      this._value = this._hiddenInput.value;
+      this._cursorPos = this._hiddenInput.selectionStart;
       // update selection to hidden input's selection in case user did keyboard-based selection
-      self._selection = [self._hiddenInput.selectionStart, self._hiddenInput.selectionEnd];
-      self.render();
+      this._selection = [this._hiddenInput.selectionStart, this._hiddenInput.selectionEnd];
+      this.render();
 
-      if (self._hasFocus) {
-        self._onkeyup(e, self);
+      if (this._hasFocus) {
+        this._onkeyup(e, this);
       }
     });
 
-    // add this to the buffer
-    this.inputs.push(self);
-    self._inputsIndex = this.inputs.length - 1;
 
     // draw the text box
-    self.render();
+    this.render();
   };
 
 
@@ -680,13 +667,6 @@ export class CanvasInput {
     // only fire the focus event when going from unfocussed
     if (!self._hasFocus) {
       self._onfocus(self);
-
-      // remove focus from all other inputs
-      for (var i = 0; i < this.inputs.length; i++) {
-        if (this.inputs[i]._hasFocus) {
-          this.inputs[i].blur();
-        }
-      }
     }
 
     // remove selection
@@ -791,19 +771,6 @@ export class CanvasInput {
       return self;
     }
 
-    if (keyCode === 13) { // enter key
-      e.preventDefault();
-      self._onsubmit(e, self);
-    } else if (keyCode === 9) { // tab key
-      e.preventDefault();
-      if (this.inputs.length > 1) {
-        var next = (this.inputs[self._inputsIndex + 1]) ? self._inputsIndex + 1 : 0;
-        self.blur();
-        setTimeout(function () {
-          this.inputs[next].focus();
-        }, 10);
-      }
-    }
 
     // update the canvas input state information from the hidden input
     self._value = self._hiddenInput.value;
@@ -1039,12 +1006,6 @@ export class CanvasInput {
   destroy() {
     var self = this;
 
-    // pull from the inputs array
-    var index = this.inputs.indexOf(self);
-    if (index != -1) {
-      this.inputs.splice(index, 1);
-    }
-
 
     // remove the hidden input box
     document.body.removeChild(self._hiddenInput);
@@ -1068,11 +1029,11 @@ export class CanvasInput {
 
     // only draw the background shape if no image is being used
 
-      ctx.fillStyle = self._backgroundColor;
-      self._roundedRect(ctx, bw + 0, bw + 0, w - bw * 2 - 0, h - bw * 2 - 0, br);
-      ctx.fill();
+    ctx.fillStyle = self._backgroundColor;
+    self._roundedRect(ctx, bw + 0, bw + 0, w - bw * 2 - 0, h - bw * 2 - 0, br);
+    ctx.fill();
 
-      fn();
+    fn();
   }
 
   /**
@@ -1299,6 +1260,6 @@ export class CanvasInput {
       y: y - offsetY
     };
   }
-  
+
 };
 
