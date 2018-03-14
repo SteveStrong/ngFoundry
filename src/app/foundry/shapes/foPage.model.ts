@@ -9,7 +9,6 @@ import { foDictionary } from "../foDictionary.model";
 
 import { foNode } from '../foNode.model'
 import { Matrix2D } from './foMatrix2D'
-import { foComponent } from '../foComponent.model'
 
 import { foGlyph2D } from './foGlyph2D.model'
 import { foShape2D } from './foShape2D.model'
@@ -26,6 +25,7 @@ export class foPage extends foShape2D {
     gridSizeX: number = 50;
     gridSizeY: number = 50;
     showBoundry: boolean = false;
+    canvas: HTMLCanvasElement = null;
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -149,6 +149,8 @@ export class foPage extends foShape2D {
             (<foGlyph2D>obj).isSelected = false;
             this._dictionary.removeItem(guid);
             super.removeSubcomponent(obj);
+        }, child => {
+            super.removeSubcomponent(obj);
         });
         return obj;
     }
@@ -165,11 +167,25 @@ export class foPage extends foShape2D {
     }
 
     deleteSelected(onComplete?: Action<foGlyph2D>) {
-        let found = this._subcomponents.filter(item => { return item.isSelected; })[0];
+        let found = this._subcomponents.find(item => { return item.isSelected; });
         if (found) {
             this.destroyed(found);
             onComplete && onComplete(found);
         }
+    }
+
+    duplicateSelected(onComplete?: Action<foGlyph2D>) {
+        let found = this._subcomponents.find(item => { return item.isSelected; });
+        if (found) {
+            this.duplicate(found);
+            onComplete && onComplete(found);
+        }
+    }
+
+    duplicate(obj: foNode) {
+        //this.removeSubcomponent(obj);
+        //Lifecycle.destroyed(obj);
+        return obj;
     }
 
     zoomBy(zoom: number) {
@@ -216,15 +232,40 @@ export class foPage extends foShape2D {
         }
 
         function debounce(func: (loc: cPoint2D, e: MouseEvent, keys) => void, wait = 50) {
-            let h: number;
+            let h: any;
             return (loc: cPoint2D, e: MouseEvent, keys) => {
                 clearTimeout(h);
                 h = setTimeout(() => func(loc, e, keys), wait);
             };
         }
 
-        PubSub.Sub('onkeypress', (e: KeyboardEvent, keys) => {
-            alert('code:' + keys.code)
+        var lastFound;
+        function sendKeysToShape(e: KeyboardEvent, keys) {
+            if (lastFound && lastFound.isSelected) {
+                lastFound.sendKeys(e, keys);
+            } else {
+                let found = this._subcomponents.find(item => { return item.isSelected; });
+                if (found && found.sendKeys) {
+                    found.sendKeys(e, keys);
+                    lastFound = found;
+                }
+            }
+        }
+
+        PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
+            if (keys.ctrl && e.key == 'd') {
+                //duplicate
+                this.duplicateSelected();
+            } else if (keys.ctrl && e.key == 'c') {
+                //copy
+            } else if (keys.ctrl && e.key == 'x') {
+                //cut
+                this.deleteSelected();
+            } else if (keys.ctrl && e.key == 'v') {
+                //paste               
+            } else {
+                sendKeysToShape.bind(this)(e, keys);
+            }
         });
 
         let mousedown = (loc: cPoint2D, e: MouseEvent, keys) => {
@@ -243,6 +284,7 @@ export class foPage extends foShape2D {
                 handles.clearAll();
                 this.nodes.forEach(item => {
                     item.unSelect(true, found);
+                    item.closeEditor && item.closeEditor()
                 });
             }
 
@@ -255,9 +297,7 @@ export class foPage extends foShape2D {
             }
 
         };
-
         PubSub.Sub('mousedown', mousedown);
-
 
 
         let mousemove = (loc: cPoint2D, e: MouseEvent, keys) => {
@@ -331,8 +371,7 @@ export class foPage extends foShape2D {
 
         };
 
-        let debounceMouseMove = debounce(mousemove,10)
-
+        let debounceMouseMove = debounce(mousemove, 10)
         PubSub.Sub('mousemove', debounceMouseMove);
 
 
@@ -368,7 +407,6 @@ export class foPage extends foShape2D {
 
             shape = shapeUnder = null;
         };
-
         PubSub.Sub('mouseup', mouseup);
 
         PubSub.Sub('wheel', (loc: cPoint2D, g: cPoint2D, zoom: number, e: WheelEvent, keys) => {

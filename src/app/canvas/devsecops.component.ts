@@ -109,6 +109,8 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
   doSetCurrentPage(page: foPage) {
 
     this.screen2D.clear();
+    page.canvas = this.canvasRef.nativeElement;
+    
     //with the render function you could
     //1) render a single page
     //2) render pages like layers

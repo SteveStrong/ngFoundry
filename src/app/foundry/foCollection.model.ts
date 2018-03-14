@@ -33,6 +33,10 @@ export class foCollection<T extends iObject> extends foObject {
         return this._members.length;
     }
 
+    get count() {
+        return this._members.length;
+    }
+
     get hasMembers(): boolean {
         return this.length > 0;
     }
@@ -55,6 +59,10 @@ export class foCollection<T extends iObject> extends foObject {
 
     filter(funct: Func<T, boolean>) {
         return this._members.filter(funct);
+    }
+
+    find(funct: Func<T, boolean>) {
+        return this._members.find(funct);
     }
 
     findMember(name: string): T {

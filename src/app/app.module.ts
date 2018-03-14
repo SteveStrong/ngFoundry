@@ -9,6 +9,7 @@ import { HttpModule } from '@angular/http';
 
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { MaptoKeysPipe, ModelJsonPipe } from './common/maptokeys.pipe';
+import { DateFormatPipe, MomentModule } from 'angular2-moment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -122,6 +123,7 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
     TabsModule.forRoot(),
     ToastModule.forRoot(),
 
+    MomentModule,
     BrowserModule,
     FormsModule,
     HttpModule,
@@ -129,6 +131,7 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
   ],
   providers: [
     DockerecosystemService, 
+    DateFormatPipe,
     SwimService, 
     SignalRService,
     SharingService
