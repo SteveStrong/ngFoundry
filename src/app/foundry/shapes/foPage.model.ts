@@ -149,6 +149,8 @@ export class foPage extends foShape2D {
             (<foGlyph2D>obj).isSelected = false;
             this._dictionary.removeItem(guid);
             super.removeSubcomponent(obj);
+        }, child => {
+            super.removeSubcomponent(obj);
         });
         return obj;
     }

@@ -36,7 +36,12 @@ export interface iNode {
     addAsSubcomponent(obj: iNode);
     addSubcomponent(obj: iNode);
     removeSubcomponent(obj: iNode);
+
+    // canCaptureSubcomponent(obj:iNode):boolean;
+    // captureSubcomponent(obj:iNode);
 }
+
+
 
 export interface iKnowledge extends iObject {
 }

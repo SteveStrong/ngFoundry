@@ -33,6 +33,10 @@ export class foCollection<T extends iObject> extends foObject {
         return this._members.length;
     }
 
+    get count() {
+        return this._members.length;
+    }
+
     get hasMembers(): boolean {
         return this.length > 0;
     }

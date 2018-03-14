@@ -108,7 +108,7 @@ export class foNode extends foObject implements iNode {
 
     removeSubcomponent(obj: foNode) {
         if (!obj) return;
-        let parent = this.myParent && this.myParent();
+        let parent = obj.myParent && obj.myParent();
         if (parent == this) {
             obj.myParent = undefined;
         }
@@ -172,6 +172,51 @@ export class foNode extends foObject implements iNode {
         let list = this.nodes;
         return list && list.hasMembers;
     }
+
+    canCaptureSubcomponent(obj: foNode): boolean {
+        if (!obj || !obj.isInstanceOf(foNode)) return false;
+        //this should look up the complete chain to prevent cycles
+        return this !== obj && this !== obj.myParent();
+    }
+
+    captureSubcomponent(obj: foNode, name?: string, join: boolean = false) {
+        let newParent = this;
+        let oldParent = obj.myParent() as foNode;
+        if (newParent.canCaptureSubcomponent(obj)) {
+            if (name) {
+                obj.myName = name;
+                if (join) newParent[name] = obj;
+            }
+            if (oldParent && oldParent != newParent) {
+                oldParent.removeSubcomponent(obj);
+                if (join) delete oldParent[name];
+            }
+            newParent.addSubcomponent(obj);
+            return oldParent;
+        }
+    }
+
+    // insertSubcomponent(index:number, obj:foNode, name?:string) {
+    //     if (ns.utils.isaComponent(obj)) {
+    //         component.myParent = this;
+    //         if (name) component.myName = name;
+    //         this.Subcomponents.insertNoDupe(index, component);
+    //         return obj;
+    //     }
+    // },
+
+    // captureInsertSubcomponent:(index, component, name) {
+    //     var newParent = this;
+    //     var oldParent = component.myParent;
+    //     if (newParent.canCaptureSubcomponent(component)) {
+    //         ns.runWithUIRefreshLock(function () {
+    //             if (name) component.myName = name;
+    //             if (oldParent) oldParent.removeSubcomponent(component)
+    //             newParent.insertSubcomponent(index, component);
+    //         });
+    //         return oldParent;
+    //     }
+    // }
 
     isInstanceOf(type) {
         return this instanceof type ? true : false;
