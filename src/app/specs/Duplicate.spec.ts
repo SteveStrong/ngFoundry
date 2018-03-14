@@ -5,7 +5,7 @@ import { foShape2D } from '../foundry/shapes/foShape2D.model'
 import { foText2D, foInputText2D } from '../foundry/shapes/foText2D.model'
 
 
-describe("Foundry: Duplicate", function () {
+describe("Foundry: Duplicate testing", function () {
     let block: foComponent | any;
     let shape: foShape2D | any;
     let text: foInputText2D | any;
@@ -27,21 +27,38 @@ describe("Foundry: Duplicate", function () {
         text: 'Hello World'
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
         block = new foComponent(specBlock);
         shape = new foShape2D(specShape);
         text = new foInputText2D(specShape);
     });
 
-    it("should work correctly", function() {
+    it("should have block work correctly", () => {
         expect(block.height).toEqual(1);
         expect(block.width).toEqual(2);
         expect(block.depth).toEqual(3);
         expect(block.volume).toEqual(1 * 2 * 3);
     });
 
-    it("should compute the right volume", function () {
+    it("should have foComponent be able to createCopy",  () => {
+        let copy = block.createCopy();
 
+        expect(block.width).toEqual(specBlock.width);
+        expect(block.width).toEqual(copy.width);
+    });
+
+    it("should have foShape2D be able to createCopy",  () => {
+        let copy = shape.createCopy();
+
+        expect(shape.text).toEqual(specShape.text);
+        expect(shape.text).toEqual(copy.text);
+    });
+
+    it("should have foInputText2D be able to createCopy",  () => {
+        let copy = text.createCopy();
+
+        expect(text.text).toEqual(specShape.text);
+        expect(text.text).toEqual(copy.text);
     });
 
 

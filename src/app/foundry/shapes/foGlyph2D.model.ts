@@ -128,6 +128,11 @@ export class foGlyph2D extends foGlyph implements iShape {
         });
     }
 
+    createCopy() {
+        let data = this.asJson;
+        return data;
+    }
+
     public initialize(x: number = Number.NaN, y: number = Number.NaN, ang: number = Number.NaN) {
         return this;
     }

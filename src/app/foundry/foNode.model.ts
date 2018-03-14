@@ -218,6 +218,11 @@ export class foNode extends foObject implements iNode {
     //     }
     // }
 
+    createCopy() {
+        let data = this.asJson;
+        return data;
+    }
+    
     isInstanceOf(type) {
         return this instanceof type ? true : false;
     }
