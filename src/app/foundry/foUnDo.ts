@@ -93,4 +93,4 @@ export class foUnDo {
 
 
 
-export let UnDo: foUnDo = new foUnDo();
+export let globalUnDo: foUnDo = new foUnDo();

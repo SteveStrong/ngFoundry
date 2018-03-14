@@ -10,6 +10,8 @@ import { foShape2D } from './foShape2D.model'
 
 import { WatchKeys, keycode } from './canvasKeypress'
 
+import { globalUnDo, foUnDo } from '../foUnDo';
+
 // ctx.textAlign = "left" || "right" || "center" || "start" || "end";
 
 // ctx.textBaseline = "top" || "hanging" || "middle" || "alphabetic" || "ideographic" || "bottom";
@@ -123,31 +125,56 @@ export class foText2D extends foShape2D {
     }
 }
 
-export class foInputText2D extends foText2D {
 
+
+export class foInputText2D extends foText2D {
+    private UnDo: foUnDo = new foUnDo()
     private isEditing: boolean = false;
     private showCursor: boolean = false;
     private cursorStart: number;
     private cursorEnd: number;
 
     private timer: any;
+    private undoRoot: any;
+    private initState: any;
 
+    private setState(state: any) {
+        this.text = state.text;
+        this.cursorStart = state.start;
+        this.cursorEnd = state.end;
+    }
 
+    private getState() {
+        return { text: this.text, start: this.cursorStart, end: this.cursorEnd }
+    }
 
     public openEditor = () => {
         this.isEditing = true;
         this.drawSelected = this.drawIsEditing;
         this.timer = setInterval(() => { this.showCursor = !this.showCursor }, 600);
         this.cursorStart = this.cursorEnd = this.text.length;
+        this.initState = this.getState();
+
+        this.UnDo.registerActions('shapeTextChanged',
+            (p) => { return p },
+            (p) => { return p },
+            (o, n) => { return o != n });
+
     }
 
     public closeEditor = () => {
         this.isEditing = false;
         this.drawSelected = this.drawDefaultSelected;
         clearInterval(this.timer);
+        this.UnDo.clear();
     }
 
     public addCharacter(char) {
+        let state = this.getState();
+        if (this.UnDo.verifyKeep(this.undoRoot, state)) {
+            this.undoRoot = this.UnDo.do('shapeTextChanged', state);
+        }
+
         let text = this.text.slice(0, this.cursorStart) + char + this.text.slice(this.cursorEnd);
         this.text = text;
         this.cursorStart += 1;
@@ -156,6 +183,12 @@ export class foInputText2D extends foText2D {
 
     public delCharacter() {
         if (this.cursorStart == 0) return;
+
+        let state = this.getState();
+        if (this.UnDo.verifyKeep(this.undoRoot, state)) {
+            this.undoRoot = this.UnDo.do('shapeTextChanged', state);
+        }
+
         let text = this.text.slice(0, this.cursorStart - 1) + this.text.slice(this.cursorEnd);
         this.text = text;
         this.cursorStart -= 1;
@@ -163,14 +196,19 @@ export class foInputText2D extends foText2D {
     }
 
     public sendKeys = (e: KeyboardEvent, keys: any) => {
-        //alert('got code:' + keys.code);
         if (keys.ctrl && e.key == 'e') {
             this.isEditing ? this.closeEditor() : this.openEditor();
         }
+        else if (keys.ctrl && e.key == 'z') {
+            this.UnDo.canUndo() && this.setState(this.UnDo.unDo());
+        }
+        else if (keys.ctrl) {
+            return;
+        }
         else if (this.isEditing) {
             this.editText(e, keys);
-            this.setupPreDraw();
         }
+        this.setupPreDraw();
     }
 
     editText(e: KeyboardEvent, keys: any) {
@@ -207,26 +245,29 @@ export class foInputText2D extends foText2D {
         switch (e.keyCode) {
             case 36:  // home
                 this.cursorStart = 0;
-                if ( !select ) this.cursorEnd = this.cursorStart;
+                if (!select) this.cursorEnd = this.cursorStart;
                 break;
             case 35:  // end
                 this.cursorEnd = this.text.length;
-                if ( !select ) this.cursorStart = this.cursorEnd;
+                if (!select) this.cursorStart = this.cursorEnd;
                 break;
             case 37:  // left
                 if (this.cursorStart > 0) {
                     this.cursorStart -= 1;
-                    if ( !select ) this.cursorEnd = this.cursorStart;
+                    if (!select) this.cursorEnd = this.cursorStart;
                 }
                 break;
             case 39:  // right
                 if (this.cursorEnd < this.text.length) {
                     this.cursorEnd += 1;
-                    if ( !select ) this.cursorStart = this.cursorEnd;
+                    if (!select) this.cursorStart = this.cursorEnd;
                 }
                 break;
             case 13:  // return
+                this.closeEditor();
+                break;
             case 27:  // esc
+                this.setState(this.initState);
                 this.closeEditor();
                 break;
             default:
