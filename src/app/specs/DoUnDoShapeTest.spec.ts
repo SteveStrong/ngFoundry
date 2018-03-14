@@ -2,7 +2,7 @@
 
 import { foPage } from '../foundry/shapes/foPage.model';
 import { foShape2D } from '../foundry/shapes/foShape2D.model';
-import { UnDo } from '../foundry/foUnDo';
+import { globalUnDo } from '../foundry/foUnDo';
 import { foComponent } from '../foundry/foComponent.model';
 
 import * as moment from 'moment';
@@ -61,8 +61,8 @@ describe("Do UnDo: Shapes", function () {
             return payload;
         }
 
-        UnDo.clear();
-        UnDo.registerActions('Reparent', beforeReparent, undoReparent);
+        globalUnDo.clear();
+        globalUnDo.registerActions('Reparent', beforeReparent, undoReparent);
 
     });
 
@@ -97,12 +97,12 @@ describe("Do UnDo: Shapes", function () {
         var item = root.nodes.getChildAt(3);
         var payload = { newParent: buffer, child: item, index: item.index };
 
-        var undo = UnDo.do('Reparent', payload);
+        var undo = globalUnDo.do('Reparent', payload);
 
         expect(item.myParent()).toBe(buffer);
         expect(root.nodes.count).toBe(10);
 
-        UnDo.unDo(undo);
+        globalUnDo.unDo(undo);
 
         expect(item.myParent()).toBe(root);
         expect(root.nodes.count).toBe(11);
@@ -120,12 +120,12 @@ describe("Do UnDo: Shapes", function () {
     //     var item = root.nodes.getChildAt(3);
     //     var payload = { newParent: buffer, child: item, index: item.index };
 
-    //     var undo = UnDo.do('Reparent', payload);
+    //     var undo = globalUnDo.do('Reparent', payload);
 
     //     expect(item.myParent()).toBe(buffer);
     //     expect(root.nodes.count).toBe(10);
 
-    //     UnDo.unDo(undo);
+    //     globalUnDo.unDo(undo);
 
     //     expect(item.myParent()).toBe(root);
     //     expect(root.nodes.count).toBe(11);

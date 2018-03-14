@@ -174,6 +174,20 @@ export class foPage extends foShape2D {
         }
     }
 
+    duplicateSelected(onComplete?: Action<foGlyph2D>) {
+        let found = this._subcomponents.find(item => { return item.isSelected; });
+        if (found) {
+            this.duplicate(found);
+            onComplete && onComplete(found);
+        }
+    }
+
+    duplicate(obj: foNode) {
+        //this.removeSubcomponent(obj);
+        //Lifecycle.destroyed(obj);
+        return obj;
+    }
+
     zoomBy(zoom: number) {
         this.scaleX *= zoom;
         this.scaleY *= zoom;
@@ -239,13 +253,19 @@ export class foPage extends foShape2D {
         }
 
         PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
-            //alert('code:' + keys.code)
-            if (keys.ctrl) {
-                sendKeysToShape.bind(this)(e, keys);
+            if (keys.ctrl && e.key == 'd') {
+                //duplicate
+                this.duplicateSelected();
+            } else if (keys.ctrl && e.key == 'c') {
+                //copy
+            } else if (keys.ctrl && e.key == 'x') {
+                //cut
+                this.deleteSelected();
+            } else if (keys.ctrl && e.key == 'v') {
+                //paste               
             } else {
                 sendKeysToShape.bind(this)(e, keys);
             }
-
         });
 
         let mousedown = (loc: cPoint2D, e: MouseEvent, keys) => {

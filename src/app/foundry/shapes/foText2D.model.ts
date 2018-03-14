@@ -159,7 +159,6 @@ export class foInputText2D extends foText2D {
             (p) => { return p },
             (p) => { return p },
             (o, n) => { return o != n });
-
     }
 
     public closeEditor = () => {
@@ -202,9 +201,7 @@ export class foInputText2D extends foText2D {
         else if (keys.ctrl && e.key == 'z') {
             this.UnDo.canUndo() && this.setState(this.UnDo.unDo());
         }
-        else if (keys.ctrl) {
-            return;
-        }
+
         else if (this.isEditing) {
             this.editText(e, keys);
         }
@@ -215,6 +212,8 @@ export class foInputText2D extends foText2D {
         if (keys.ctrl && e.key == 'a') {
             this.cursorStart = 0;
             this.cursorEnd = this.text.length;
+        } else if (keys.ctrl) {
+            return;
         } else if (e.keyCode >= 48 && e.keyCode <= 90) {
             this.addCharacter(e.key);
         } else if (e.keyCode == 32) {  //space

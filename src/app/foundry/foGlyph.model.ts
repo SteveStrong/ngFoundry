@@ -110,6 +110,12 @@ export class foGlyph extends foInstance {  //foNode {
         return false;
     }
 
+    duplicate(obj: foNode) {
+        //this.removeSubcomponent(obj);
+        //Lifecycle.destroyed(obj);
+        return obj;
+    }
+
     destroyed(obj: foNode) {
         this.removeSubcomponent(obj);
         Lifecycle.destroyed(obj);
