@@ -7,6 +7,8 @@ import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
 import { foDictionary } from "../foDictionary.model";
 
+import { foSelectionBuffer, foCopyPasteBuffer } from "../foSelectionBuffer";
+
 import { foNode } from '../foNode.model'
 import { Matrix2D } from './foMatrix2D'
 
@@ -26,6 +28,8 @@ export class foPage extends foShape2D {
     gridSizeY: number = 50;
     showBoundry: boolean = false;
     canvas: HTMLCanvasElement = null;
+
+    protected _selectionBuffer: foSelectionBuffer = new foSelectionBuffer();
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }

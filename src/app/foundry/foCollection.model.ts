@@ -66,10 +66,10 @@ export class foCollection<T extends iObject> extends foObject {
     }
 
     findMember(name: string): T {
-        let found = this._members.filter(item => {
+        let found = this._members.find(item => {
             return item.myName == name || item.myGuid == name;
         });
-        return found.length > 0 ? found[0] : undefined;
+        return found;
     }
 
     getMember(id): T {
@@ -81,6 +81,11 @@ export class foCollection<T extends iObject> extends foObject {
             this.addMember(item);
         });
         return this;
+    }
+
+    isMember(item: T) {
+        let loc = this._members.indexOf(item);
+        return loc != -1;
     }
 
     addMember(obj: T): T {
