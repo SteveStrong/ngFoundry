@@ -1,6 +1,3 @@
-"use strict";
-
-
 export enum foNames {
     UNKNOWN = "unknown",
     AT = '@',

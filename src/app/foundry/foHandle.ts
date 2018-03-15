@@ -1,17 +1,8 @@
-
-import { Tools } from './foTools';
-
-
-import { iName,  iFrame } from './foInterface';
-import { cFrame } from './shapes/foGeometry2D';
-
 import { foObject } from './foObject.model';
-import { foCollection } from './foCollection.model';
-import { foNode } from './foNode.model';
+import { foInstance } from './foInstance.model';
 
-import { Lifecycle } from './foLifecycle';
 
-export class foHandle extends foNode {
+export class foHandle extends foInstance {
     doMoveProxy: (loc: any) => void;
 
     protected _size: number;

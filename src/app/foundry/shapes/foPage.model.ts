@@ -7,6 +7,8 @@ import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
 import { foDictionary } from "../foDictionary.model";
 
+import { foSelectionBuffer, foCopyPasteBuffer } from "../foBuffer";
+
 import { foNode } from '../foNode.model'
 import { Matrix2D } from './foMatrix2D'
 
@@ -26,6 +28,8 @@ export class foPage extends foShape2D {
     gridSizeY: number = 50;
     showBoundry: boolean = false;
     canvas: HTMLCanvasElement = null;
+
+    protected selections: foSelectionBuffer = new foSelectionBuffer();
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -167,17 +171,26 @@ export class foPage extends foShape2D {
     }
 
     deleteSelected(onComplete?: Action<foGlyph2D>) {
-        let found = this._subcomponents.find(item => { return item.isSelected; });
+        let found = this.selections.findSelected();
         if (found) {
+            this.selections.clear();
             this.destroyed(found);
+           
             onComplete && onComplete(found);
         }
     }
 
     duplicateSelected(onComplete?: Action<foGlyph2D>) {
-        let found = this._subcomponents.find(item => { return item.isSelected; });
+        let found = this.selections.findSelected();
         if (found) {
+            let parent = found.myParent && found.myParent() as foNode;
+            this.selections.clear();
             let copy = found.createCopy() as foGlyph2D;
+            parent.addSubcomponent(copy, {
+                x: found.x + 0.3 * found.width,
+                y: found.y + found.height,
+            })
+            this.selections.addSelection(copy);
             onComplete && onComplete(copy);
         }
     }
@@ -208,23 +221,17 @@ export class foPage extends foShape2D {
         //page.updatePIP();
     }
 
+
+
     setupMouseEvents() {
         let shape: foGlyph2D = null;
         let shapeUnder: foGlyph2D = null;
         let hovershape: foGlyph2D = null;
         let offset: iPoint2D = null;
-        let handles: foCollection<foHandle2D> = new foCollection<foHandle2D>()
+
         let grab: foHandle2D = null;
         let float: foHandle2D = null;
 
-        function findHandle(loc: cPoint2D): foHandle2D {
-            for (var i: number = 0; i < handles.length; i++) {
-                let handle: foHandle2D = handles.getChildAt(i);
-                if (handle.hitTest(loc)) {
-                    return handle;
-                }
-            }
-        }
 
         function debounce(func: (loc: cPoint2D, e: MouseEvent, keys) => void, wait = 50) {
             let h: any;
@@ -234,18 +241,7 @@ export class foPage extends foShape2D {
             };
         }
 
-        var lastFound;
-        function sendKeysToShape(e: KeyboardEvent, keys) {
-            if (lastFound && lastFound.isSelected) {
-                lastFound.sendKeys(e, keys);
-            } else {
-                let found = this._subcomponents.find(item => { return item.isSelected; });
-                if (found && found.sendKeys) {
-                    found.sendKeys(e, keys);
-                    lastFound = found;
-                }
-            }
-        }
+
 
         PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
             if (keys.ctrl && e.key == 'd') {
@@ -259,36 +255,29 @@ export class foPage extends foShape2D {
             } else if (keys.ctrl && e.key == 'v') {
                 //paste               
             } else {
-                sendKeysToShape.bind(this)(e, keys);
+                this.selections.sendKeysToShape(e, keys);
             }
         });
 
         let mousedown = (loc: cPoint2D, e: MouseEvent, keys) => {
             this.onMouseLocationChanged(loc, "down", keys);
 
-            grab = findHandle(loc);
+            grab = this.selections.findHandle(loc);
             if (grab) {
                 offset = grab.getOffset(loc);
                 return;
             }
 
             let found = this.findHitShape(loc) as foGlyph2D;
-
-            if (!keys.shift) {
-                grab = null;
-                handles.clearAll();
-                this.nodes.forEach(item => {
-                    item.unSelect(true, found);
-                    item.closeEditor && item.closeEditor()
-                });
-            }
-
+            
             if (found) {
                 shape = found;
-                this.nodes.moveToTop(shape);
-                shape.isSelected = true;
                 offset = shape.getOffset(loc);
-                handles.copyMembers(shape.handles);
+                this.nodes.moveToTop(shape);
+                this.selections.addSelection(shape,!keys.shift)
+            } else {
+                grab = null;
+                this.selections.clear()
             }
 
         };
@@ -297,7 +286,8 @@ export class foPage extends foShape2D {
 
         let mousemove = (loc: cPoint2D, e: MouseEvent, keys) => {
 
-            if (findHandle(loc) && handles.length) {
+            let handles = this.selections.handles;
+            if (this.selections.findHandle(loc) && handles.length) {
                 //this.onHandleMoving(loc, handles.first(), keys);
                 this.onTrackHandles(loc, handles, keys);
             }
@@ -350,7 +340,7 @@ export class foPage extends foShape2D {
                 }
 
 
-                let handle = findHandle(loc);
+                let handle = this.selections.findHandle(loc);
                 if (handle && handle == float) {
                     float = handle;
                     this.onHandleHoverEnter(loc, handle, keys)
