@@ -8,8 +8,8 @@ import { foKnowledge } from './foKnowledge.model'
 
 export class foInstance extends foNode {
 
-    public createdFrom: () => foKnowledge;    
-    setCreatedFrom(source:any) {
+    public createdFrom: () => foKnowledge;
+    setCreatedFrom(source: any) {
         this.createdFrom = () => { return source; };
         this.myClass = source.myName;
     }
@@ -28,6 +28,19 @@ export class foInstance extends foNode {
         return Tools.mixin(super.toJson(), {
             //subcomponents: this._subcomponents && this._subcomponents.asJson() 
         });
+    }
+
+    createCopy(keys?: string[]) {
+        let data = this.extractCopySpec(keys);
+        let { myType } = data;
+
+        let concept = this.createdFrom && this.createdFrom();
+        let copy = concept && concept.newInstance(data);
+
+        let type = RuntimeType.find(myType);
+        copy = copy ? copy : RuntimeType.create(type, data);
+
+        return copy;
     }
 }
 

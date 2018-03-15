@@ -1,6 +1,6 @@
 ﻿import { TestBed, async } from '@angular/core/testing';
 
-import { UnDo } from '../foundry/foUnDo';
+import { globalUnDo } from '../foundry/foUnDo';
 
 
 
@@ -28,22 +28,22 @@ describe('Do UnDo: state', () => {
         function undoDelete(payload) { return payload; }
         function verifyKeepDelete(pOld, pNew) { return pOld != pNew; }
 
-        UnDo.clear();
-        UnDo.registerActions('delete', beforeDelete, undoDelete, verifyKeepDelete);
-        expect(UnDo.canUndo()).toBe(false);
+        globalUnDo.clear();
+        globalUnDo.registerActions('delete', beforeDelete, undoDelete, verifyKeepDelete);
+        expect(globalUnDo.canUndo()).toBe(false);
 
-        var undo = UnDo.do('delete', 'Dave');
-        expect(UnDo.canUndo()).toBe(true);
+        var undo = globalUnDo.do('delete', 'Dave');
+        expect(globalUnDo.canUndo()).toBe(true);
         expect(undo.action).toBe('delete');
         expect(undo.payload).toBe('Dave');
 
-        var keep = UnDo.verifyKeep(undo, 'mike');
+        var keep = globalUnDo.verifyKeep(undo, 'mike');
         expect(keep).toBe(true);
-        expect(UnDo.canUndo()).toBe(true);
+        expect(globalUnDo.canUndo()).toBe(true);
 
-        var keep = UnDo.verifyKeep(undo, 'Dave');
+        var keep = globalUnDo.verifyKeep(undo, 'Dave');
         expect(keep).toBe(false);
-        expect(UnDo.canUndo()).toBe(false);
+        expect(globalUnDo.canUndo()).toBe(false);
     });
 
 
@@ -54,34 +54,34 @@ describe('Do UnDo: state', () => {
             return payload;
         }
 
-        UnDo.clear();
-        UnDo.registerActions('edit', beforeDelete, undoDelete, verifyKeepDelete);
-        expect(UnDo.canUndo()).toBe(false);
+        globalUnDo.clear();
+        globalUnDo.registerActions('edit', beforeDelete, undoDelete, verifyKeepDelete);
+        expect(globalUnDo.canUndo()).toBe(false);
 
         var target = 'hello';
 
-        var undo = UnDo.do('edit', target);
-        expect(UnDo.canUndo()).toBe(true);
+        var undo = globalUnDo.do('edit', target);
+        expect(globalUnDo.canUndo()).toBe(true);
         expect(undo.payload).toEqual(target);
 
         target = target.toLocaleUpperCase();
 
-        var keep = UnDo.verifyKeep(undo, target);
+        var keep = globalUnDo.verifyKeep(undo, target);
         expect(keep).toBe(true);
-        expect(UnDo.canUndo()).toBe(true);
+        expect(globalUnDo.canUndo()).toBe(true);
 
         expect(target).toEqual('HELLO');
 
 
-        target = UnDo.unDo();
-        expect(UnDo.canUndo()).toBe(false);
+        target = globalUnDo.unDo();
+        expect(globalUnDo.canUndo()).toBe(false);
         expect(target).toEqual('hello');
     });
 
 
     //set up the conditions for removing items in an array
 
-    UnDo.registerActions('deleteItemInArray',
+    globalUnDo.registerActions('deleteItemInArray',
         function (payload) { //do before payload is stored
             return payload;
         },
@@ -111,7 +111,7 @@ describe('Do UnDo: state', () => {
         expect(data[0].name).toBe("zero");
         expect(data[data.length - 1].name).toBe("ten");
 
-        UnDo.clear();
+        globalUnDo.clear();
 
         //prepare for undo by deleting item and storing it
         var target = data[0];
@@ -119,19 +119,19 @@ describe('Do UnDo: state', () => {
 
         removeItem(data, target);
         expect(data[0].name).toBe("one");
-        expect(UnDo.canUndo()).toBe(false);
+        expect(globalUnDo.canUndo()).toBe(false);
 
 
-        var undo = UnDo.do('deleteItemInArray', payload);
-        expect(UnDo.canUndo()).toBe(true);
+        var undo = globalUnDo.do('deleteItemInArray', payload);
+        expect(globalUnDo.canUndo()).toBe(true);
 
         //even the array members have changed, the undo should be kept
-        var keep = UnDo.verifyKeep(undo, { source: data });
+        var keep = globalUnDo.verifyKeep(undo, { source: data });
         expect(keep).toBe(true);
-        expect(UnDo.canUndo()).toBe(true);
+        expect(globalUnDo.canUndo()).toBe(true);
 
-        UnDo.unDo();
-        expect(UnDo.canUndo()).toBe(false);
+        globalUnDo.unDo();
+        expect(globalUnDo.canUndo()).toBe(false);
         expect(data[0].name).toBe("zero");
     });
 

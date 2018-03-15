@@ -9,7 +9,7 @@ import { Lifecycle } from './foLifecycle';
 
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlyph extends foInstance {  //foNode {
+export class foGlyph extends foInstance {  
 
     static DEG_TO_RAD = Math.PI / 180;
     static RAD_TO_DEG = 180 / Math.PI;
@@ -110,11 +110,7 @@ export class foGlyph extends foInstance {  //foNode {
         return false;
     }
 
-    duplicate(obj: foNode) {
-        //this.removeSubcomponent(obj);
-        //Lifecycle.destroyed(obj);
-        return obj;
-    }
+
 
     destroyed(obj: foNode) {
         this.removeSubcomponent(obj);

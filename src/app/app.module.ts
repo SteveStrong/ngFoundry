@@ -65,6 +65,7 @@ import { DomainComponent } from './canvas/domain.component';
 import { foStructureCardComponent } from './fo-inspector/fo-structure-card.component';
 import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.component';
 import { DevSecOpsComponent } from './canvas/devsecops.component';
+import { ShapeTestingComponent } from './specs/shape-testing/shape-testing.component';
 
 @NgModule({
   declarations: [
@@ -114,7 +115,8 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
     DomainComponent,
     foStructureCardComponent,
     foSolutionCardComponent,
-    DevSecOpsComponent
+    DevSecOpsComponent,
+    ShapeTestingComponent
   ],
   imports: [
     BrowserAnimationsModule,

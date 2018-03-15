@@ -177,16 +177,11 @@ export class foPage extends foShape2D {
     duplicateSelected(onComplete?: Action<foGlyph2D>) {
         let found = this._subcomponents.find(item => { return item.isSelected; });
         if (found) {
-            this.duplicate(found);
-            onComplete && onComplete(found);
+            let copy = found.createCopy() as foGlyph2D;
+            onComplete && onComplete(copy);
         }
     }
 
-    duplicate(obj: foNode) {
-        //this.removeSubcomponent(obj);
-        //Lifecycle.destroyed(obj);
-        return obj;
-    }
 
     zoomBy(zoom: number) {
         this.scaleX *= zoom;
