@@ -71,6 +71,24 @@ export class foKnowledge extends foObject {
         return result;
     }
 
+    extractCopySpec(keys?:string[]){
+        let spec = this.asJson;
+        keys && keys.forEach(key => {
+            spec[key] = this[key];
+        })
+        return spec;
+    }
+
+    createCopy(keys?:string[]) {
+        let data = this.extractCopySpec(keys);
+        let { myType } = data;
+
+        let type = RuntimeType.find(myType);
+        if (type) {
+            let copy = RuntimeType.construct(type,data);
+            return copy;
+        }
+    }
 
 }
 

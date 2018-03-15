@@ -7,7 +7,7 @@ import { foAttribute, foViewAttribute } from './foAttribute.model'
 import { Action } from "./foInterface";
 
 import { foObject } from './foObject.model'
-import { foComponent } from './foComponent.model'
+import { foInstance } from './foInstance.model'
 import { foNode } from './foNode.model'
 
 import { RuntimeType } from './foRuntimeType';
@@ -181,7 +181,7 @@ export class foConcept<T extends foNode> extends foKnowledge {
         let spec = Tools.union(this.specification, properties);
 
         let result = this.newInstance(spec, [], parent) as T;
-        if (result instanceof foComponent) {
+        if (result instanceof foInstance) {
             result.setCreatedFrom(this);
         }
         parent && parent.addSubcomponent(result);

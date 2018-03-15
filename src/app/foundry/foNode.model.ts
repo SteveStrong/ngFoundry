@@ -218,9 +218,24 @@ export class foNode extends foObject implements iNode {
     //     }
     // }
 
-    createCopy() {
-        let data = this.asJson;
-        return data;
+    extractCopySpec(keys?:string[]){
+        let spec = this.asJson;
+        delete spec.myGuid;
+        keys && keys.forEach(key => {
+            spec[key] = this[key];
+        })
+        return spec;
+    }
+
+    createCopy(keys?:string[]) {
+        let data = this.extractCopySpec(keys);
+        let { myType } = data;
+
+        let type = RuntimeType.find(myType);
+        if (type) {
+            let copy = RuntimeType.create(type,data);
+            return copy;
+        }
     }
     
     isInstanceOf(type) {
