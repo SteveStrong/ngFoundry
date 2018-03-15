@@ -27,10 +27,19 @@ export class foHandleBuffer extends foBuffer<foHandle2D> {
 }
 
 export class foSelectionBuffer extends foBuffer<foGlyph2D> {
-    protected handles:foHandleBuffer = new foHandleBuffer();
+    protected _handles:foHandleBuffer = new foHandleBuffer();
+    protected lastFound:foGlyph2D;
+
+    findHandle(loc: cPoint2D): foHandle2D {
+        return this._handles.findHandle(loc);
+    };
+
+    get handles() {
+        return this._handles;
+    }
 
     clear(exclude: foGlyph2D = null) {
-        this.handles.clearAll()
+        this._handles.clearAll()
         this.forEach( item => {
             item.unSelect(true, exclude);
             item.closeEditor && item.closeEditor()
@@ -44,9 +53,25 @@ export class foSelectionBuffer extends foBuffer<foGlyph2D> {
         item.isSelected = true;
         if ( !this.isMember(item) ) {
             this.addMember(item);
-            this.handles.copyMembers(item.handles);
+            this._handles.copyMembers(item.handles);
         }
+    }
 
+    findSelected(){
+        return this.find(item => { return item.isSelected; })
+    }
+
+
+    sendKeysToShape(e: KeyboardEvent, keys) {
+        if (this.lastFound && this.lastFound.isSelected) {
+            this.lastFound.sendKeys(e, keys);
+        } else {
+            let found = this.findSelected();
+            if (found && found.sendKeys) {
+                found.sendKeys(e, keys);
+                this.lastFound = found;
+            }
+        }
     }
 }
 
