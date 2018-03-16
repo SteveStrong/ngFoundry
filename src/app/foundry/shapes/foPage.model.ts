@@ -17,6 +17,8 @@ import { foGlyph2D } from './foGlyph2D.model'
 import { foShape2D, foGroup2D } from './foShape2D.model'
 import { foHandle2D } from './foHandle2D';
 import { Lifecycle } from '../foLifecycle';
+import { RuntimeType } from "../foRuntimeType";
+import { foShape1D } from "./foShape1D.model";
 
 
 
@@ -29,6 +31,10 @@ export class foPage extends foShape2D {
     gridSizeY: number = 50;
     showBoundry: boolean = false;
     canvas: HTMLCanvasElement = null;
+
+    defaultGroupType = RuntimeType.find('foGroup2D');
+    defaultConnectType = RuntimeType.find('foConnect1D');
+    
 
     protected selections: foSelectionBuffer = new foSelectionBuffer();
     protected copyPasteBuffer: foCopyPasteBuffer = new foCopyPasteBuffer();
@@ -182,10 +188,49 @@ export class foPage extends foShape2D {
         }
     }
 
-    groupSelected(onComplete?: Action<foGlyph2D>) {
-        let found = this.selections.findSelected();
-        if (found) {
+    savePage(onComplete?: Action<foPage>) {
+        alert('implement save')
+    };
 
+    selectAll(onComplete?: Action<foGlyph2D>) {
+        this.selections.clear();
+        this.nodes.forEach( item => { 
+            this.selections.addSelection(item, false);
+        })
+    };
+
+    connectSelected(onComplete?: Action<foGlyph2D>) {
+        let total = this.selections.count;
+        if (total > 1) {
+
+            let previous:foShape2D;
+            this.selections.forEach(item => {
+                let next = item as foShape2D;
+                if ( !previous) {
+                    previous = item as foShape2D;
+                } else {
+                    let line = new this.defaultConnectType() as foShape1D;
+                    line.addAsSubcomponent(this);
+                    this.nodes.moveToTop(line);
+                    line.glueStartTo(previous);
+                    line.glueFinishTo(next);
+                    previous = next;
+                }
+    
+            });
+
+
+
+            this.selections.clear();
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
+    groupSelected(onComplete?: Action<foGlyph2D>) {
+        let total = this.selections.count;
+        if (total > 1) {
+            let found = this.selections.findSelected();
             let boundry: cFrame = new cFrame(found);
             found.computeBoundry(boundry);
 
@@ -199,7 +244,7 @@ export class foPage extends foShape2D {
                 return item;
             }) as Array<foGlyph2D>;
 
-            let copy = new foGroup2D(
+            let copy = new this.defaultGroupType(
                 {
                     color: 'white',
                     x: boundry.centerX(),
@@ -366,12 +411,21 @@ export class foPage extends foShape2D {
             } else if (keys.ctrl && e.key == 'v') {
                 //paste    
                 this.pasteFromBuffer();
+            } else if (keys.ctrl && e.key == 'l') {
+                //connect    
+                this.connectSelected();
             } else if (keys.ctrl && e.key == 'g') {
                 //group    
                 this.groupSelected();
             } else if (keys.ctrl && e.key == 'u') {
                 //un-group    
                 this.unGroupSelected();
+            } else if (keys.ctrl && e.key == 'a') {
+                //select all    
+                this.selectAll();
+            } else if (keys.ctrl && e.key == 's') {
+                //select all    
+                this.savePage();
             } else {
                 this.selections.sendKeysToShape(e, keys);
             }

@@ -312,7 +312,7 @@ export class foShape2D extends foGlyph2D {
         ctx.globalAlpha = this.opacity;
         ctx.fillRect(0, 0, this.width, this.height);
     }
-
+    
 }
 
 
