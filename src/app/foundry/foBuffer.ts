@@ -8,9 +8,24 @@ class foBuffer<T extends foInstance> extends foCollection<T> {
 
 }
 
-export class foCopyPasteBuffer<T extends foInstance> extends foBuffer<T> {
-} 
 
+
+export class foCopyPasteBuffer extends foBuffer<foInstance> {
+
+    clear(exclude: foInstance = null) {
+        this.clearAll();
+    }
+
+    addSelection(item:foInstance, clear:boolean=true) {
+        clear && this.clear(item);
+
+        
+        if ( !this.isMember(item) ) {
+            this.addMember(item);
+        }
+    }
+
+} 
 
 
 export class foHandleBuffer extends foBuffer<foHandle2D> {

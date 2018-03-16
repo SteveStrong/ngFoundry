@@ -10,6 +10,7 @@ import { foDictionary } from "../foDictionary.model";
 import { foSelectionBuffer, foCopyPasteBuffer } from "../foBuffer";
 
 import { foNode } from '../foNode.model'
+import { foInstance } from '../foInstance.model'
 import { Matrix2D } from './foMatrix2D'
 
 import { foGlyph2D } from './foGlyph2D.model'
@@ -30,6 +31,7 @@ export class foPage extends foShape2D {
     canvas: HTMLCanvasElement = null;
 
     protected selections: foSelectionBuffer = new foSelectionBuffer();
+    protected copyPasteBuffer: foCopyPasteBuffer = new foCopyPasteBuffer();
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -195,6 +197,41 @@ export class foPage extends foShape2D {
         }
     }
 
+    cutSelected(onComplete?: Action<foInstance>) {
+        let found = this.selections.findSelected();
+        if (found) {
+            this.selections.clear();
+            found.removeFromParent()
+            this.copyPasteBuffer.addSelection(found);
+            onComplete && onComplete(found);
+        }
+    }
+
+    copySelected(onComplete?: Action<foInstance>) {
+        let found = this.selections.findSelected();
+        if (found) {
+            this.selections.clear();
+            let copy = found.createCopy();
+            this.copyPasteBuffer.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
+    pasteFromBuffer(onComplete?: Action<foInstance>) {
+        let found = this.copyPasteBuffer.first() as foGlyph2D;;
+        if (found) {
+            let reference = (this.selections.findSelected() || found)  as foGlyph2D;;
+            this.selections.clear();
+            let copy = found.createCopy();
+            this.addSubcomponent(copy, {
+                x: reference.x + 0.3 * reference.width,
+                y: reference.y + reference.height,
+            })
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
 
     zoomBy(zoom: number) {
         this.scaleX *= zoom;
@@ -249,11 +286,13 @@ export class foPage extends foShape2D {
                 this.duplicateSelected();
             } else if (keys.ctrl && e.key == 'c') {
                 //copy
+                this.copySelected();
             } else if (keys.ctrl && e.key == 'x') {
                 //cut
                 this.deleteSelected();
             } else if (keys.ctrl && e.key == 'v') {
-                //paste               
+                //paste    
+                this.pasteFromBuffer();           
             } else {
                 this.selections.sendKeysToShape(e, keys);
             }
