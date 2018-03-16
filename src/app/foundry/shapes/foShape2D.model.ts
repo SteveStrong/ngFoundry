@@ -315,6 +315,12 @@ export class foShape2D extends foGlyph2D {
 
 }
 
+
 import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape2D);
+
+export class foGroup2D extends foShape2D {
+}
+
+RuntimeType.define(foGroup2D);
 
