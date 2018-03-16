@@ -193,16 +193,58 @@ export class foPage extends foShape2D {
                 boundry.merge(item.boundryFrame);
             });
 
+            let list = this.selections.map( item => {
+                item.x -= boundry.x1;
+                item.y -= boundry.y1;
+                return item;
+            }) as Array<foGlyph2D>;
+
             let copy = new foShape2D(
                 {
-                    x: boundry.x1,
-                    y: boundry.y1,
+                    color: 'white',
+                    x: boundry.centerX(),
+                    y: boundry.centerY(),
                     width: boundry.width(),
                     height: boundry.heigth(),
                 },
-                this.selections.members,
-                this) as foGlyph2D;
+                list,
+                this).addAsSubcomponent(this);
 
+            this.selections.clear();
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
+    unGroupSelected(onComplete?: Action<foGlyph2D>) {
+        let found = this.selections.findSelected();
+        if (found) {
+
+            let boundry: cFrame = new cFrame(found);
+            found.computeBoundry(boundry);
+
+            this.selections.forEach(item => {
+                boundry.merge(item.boundryFrame);
+            });
+
+            let list = this.selections.map( item => {
+                item.x -= boundry.x1;
+                item.y -= boundry.y1;
+                return item;
+            }) as Array<foGlyph2D>;
+
+            let copy = new foShape2D(
+                {
+                    color: 'white',
+                    x: boundry.centerX(),
+                    y: boundry.centerY(),
+                    width: boundry.width(),
+                    height: boundry.heigth(),
+                },
+                list,
+                this).addAsSubcomponent(this);
+
+            this.selections.clear();
             this.selections.addSelection(copy);
             onComplete && onComplete(copy);
         }
@@ -327,6 +369,9 @@ export class foPage extends foShape2D {
             } else if (keys.ctrl && e.key == 'g') {
                 //group    
                 this.groupSelected();
+            } else if (keys.ctrl && e.key == 'u') {
+                //un-group    
+                this.unGroupSelected();
             } else {
                 this.selections.sendKeysToShape(e, keys);
             }

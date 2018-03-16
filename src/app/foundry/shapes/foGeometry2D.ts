@@ -140,6 +140,14 @@ export class cFrame implements iFrame {
         return this.y2 - this.y1;
     }
 
+    centerX(): number {
+        return (this.x2 + this.x1) / 2.0;
+    }
+
+    centerY(): number {
+        return (this.y2 + this.y1) / 2.0;
+    }
+
     init(obj: iPoint2D): iFrame {
         this.x1 = obj.x;
         this.y1 = obj.y;
