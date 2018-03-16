@@ -132,6 +132,14 @@ export class cFrame implements iFrame {
         return this;
     }
 
+    width(): number {
+        return this.x2 - this.x1;
+    }
+
+    heigth(): number {
+        return this.y2 - this.y1;
+    }
+
     init(obj: iPoint2D): iFrame {
         this.x1 = obj.x;
         this.y1 = obj.y;

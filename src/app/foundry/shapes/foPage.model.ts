@@ -177,8 +177,34 @@ export class foPage extends foShape2D {
         if (found) {
             this.selections.clear();
             this.destroyed(found);
-           
+
             onComplete && onComplete(found);
+        }
+    }
+
+    groupSelected(onComplete?: Action<foGlyph2D>) {
+        let found = this.selections.findSelected();
+        if (found) {
+
+            let boundry: cFrame = new cFrame(found);
+            found.computeBoundry(boundry);
+
+            this.selections.forEach(item => {
+                boundry.merge(item.boundryFrame);
+            });
+
+            let copy = new foShape2D(
+                {
+                    x: boundry.x1,
+                    y: boundry.y1,
+                    width: boundry.width(),
+                    height: boundry.heigth(),
+                },
+                this.selections.members,
+                this) as foGlyph2D;
+
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
         }
     }
 
@@ -220,7 +246,7 @@ export class foPage extends foShape2D {
     pasteFromBuffer(onComplete?: Action<foInstance>) {
         let found = this.copyPasteBuffer.first() as foGlyph2D;;
         if (found) {
-            let reference = (this.selections.findSelected() || found)  as foGlyph2D;;
+            let reference = (this.selections.findSelected() || found) as foGlyph2D;;
             this.selections.clear();
             let copy = found.createCopy();
             this.addSubcomponent(copy, {
@@ -278,7 +304,12 @@ export class foPage extends foShape2D {
             };
         }
 
-
+        let command = {
+            d: this.duplicateSelected,
+            c: this.copySelected,
+            x: this.deleteSelected,
+            v: this.pasteFromBuffer,
+        }
 
         PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
             if (keys.ctrl && e.key == 'd') {
@@ -292,7 +323,10 @@ export class foPage extends foShape2D {
                 this.deleteSelected();
             } else if (keys.ctrl && e.key == 'v') {
                 //paste    
-                this.pasteFromBuffer();           
+                this.pasteFromBuffer();
+            } else if (keys.ctrl && e.key == 'g') {
+                //group    
+                this.groupSelected();
             } else {
                 this.selections.sendKeysToShape(e, keys);
             }
@@ -308,12 +342,12 @@ export class foPage extends foShape2D {
             }
 
             let found = this.findHitShape(loc) as foGlyph2D;
-            
+
             if (found) {
                 shape = found;
                 offset = shape.getOffset(loc);
                 this.nodes.moveToTop(shape);
-                this.selections.addSelection(shape,!keys.shift)
+                this.selections.addSelection(shape, !keys.shift)
             } else {
                 grab = null;
                 this.selections.clear()

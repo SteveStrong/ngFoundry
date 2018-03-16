@@ -53,12 +53,16 @@ export class foSelectionBuffer extends foBuffer<foGlyph2D> {
         return this._handles;
     }
 
-    clear(exclude: foGlyph2D = null) {
+    unselect(exclude: foGlyph2D = null) {
         this._handles.clearAll()
         this.forEach( item => {
             item.unSelect(true, exclude);
             item.closeEditor && item.closeEditor()
         });
+    }
+
+    clear(exclude: foGlyph2D = null) {
+        this.unselect(exclude);
         this.clearAll();
     }
 
