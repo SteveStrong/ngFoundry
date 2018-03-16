@@ -10,10 +10,11 @@ import { foDictionary } from "../foDictionary.model";
 import { foSelectionBuffer, foCopyPasteBuffer } from "../foBuffer";
 
 import { foNode } from '../foNode.model'
+import { foInstance } from '../foInstance.model'
 import { Matrix2D } from './foMatrix2D'
 
 import { foGlyph2D } from './foGlyph2D.model'
-import { foShape2D } from './foShape2D.model'
+import { foShape2D, foGroup2D } from './foShape2D.model'
 import { foHandle2D } from './foHandle2D';
 import { Lifecycle } from '../foLifecycle';
 
@@ -30,6 +31,7 @@ export class foPage extends foShape2D {
     canvas: HTMLCanvasElement = null;
 
     protected selections: foSelectionBuffer = new foSelectionBuffer();
+    protected copyPasteBuffer: foCopyPasteBuffer = new foCopyPasteBuffer();
 
     protected _marginX: number;
     get marginX(): number { return this._marginX || 0.0; }
@@ -175,8 +177,76 @@ export class foPage extends foShape2D {
         if (found) {
             this.selections.clear();
             this.destroyed(found);
-           
+
             onComplete && onComplete(found);
+        }
+    }
+
+    groupSelected(onComplete?: Action<foGlyph2D>) {
+        let found = this.selections.findSelected();
+        if (found) {
+
+            let boundry: cFrame = new cFrame(found);
+            found.computeBoundry(boundry);
+
+            this.selections.forEach(item => {
+                boundry.merge(item.boundryFrame);
+            });
+
+            let list = this.selections.map( item => {
+                item.x -= boundry.x1;
+                item.y -= boundry.y1;
+                return item;
+            }) as Array<foGlyph2D>;
+
+            let copy = new foGroup2D(
+                {
+                    color: 'white',
+                    x: boundry.centerX(),
+                    y: boundry.centerY(),
+                    width: boundry.width(),
+                    height: boundry.heigth(),
+                },
+                list,
+                this).addAsSubcomponent(this);
+
+            this.selections.clear();
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
+    unGroupSelected(onComplete?: Action<foGlyph2D>) {
+        let found = this.selections.findSelected();
+        if (found) {
+
+            let boundry: cFrame = new cFrame(found);
+            found.computeBoundry(boundry);
+
+            this.selections.forEach(item => {
+                boundry.merge(item.boundryFrame);
+            });
+
+            let list = this.selections.map( item => {
+                item.x -= boundry.x1;
+                item.y -= boundry.y1;
+                return item;
+            }) as Array<foGlyph2D>;
+
+            let copy = new foShape2D(
+                {
+                    color: 'white',
+                    x: boundry.centerX(),
+                    y: boundry.centerY(),
+                    width: boundry.width(),
+                    height: boundry.heigth(),
+                },
+                list,
+                this).addAsSubcomponent(this);
+
+            this.selections.clear();
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
         }
     }
 
@@ -189,6 +259,41 @@ export class foPage extends foShape2D {
             parent.addSubcomponent(copy, {
                 x: found.x + 0.3 * found.width,
                 y: found.y + found.height,
+            })
+            this.selections.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
+    cutSelected(onComplete?: Action<foInstance>) {
+        let found = this.selections.findSelected();
+        if (found) {
+            this.selections.clear();
+            found.removeFromParent()
+            this.copyPasteBuffer.addSelection(found);
+            onComplete && onComplete(found);
+        }
+    }
+
+    copySelected(onComplete?: Action<foInstance>) {
+        let found = this.selections.findSelected();
+        if (found) {
+            this.selections.clear();
+            let copy = found.createCopy();
+            this.copyPasteBuffer.addSelection(copy);
+            onComplete && onComplete(copy);
+        }
+    }
+
+    pasteFromBuffer(onComplete?: Action<foInstance>) {
+        let found = this.copyPasteBuffer.first() as foGlyph2D;;
+        if (found) {
+            let reference = (this.selections.findSelected() || found) as foGlyph2D;;
+            this.selections.clear();
+            let copy = found.createCopy();
+            this.addSubcomponent(copy, {
+                x: reference.x + 0.3 * reference.width,
+                y: reference.y + reference.height,
             })
             this.selections.addSelection(copy);
             onComplete && onComplete(copy);
@@ -241,7 +346,12 @@ export class foPage extends foShape2D {
             };
         }
 
-
+        let command = {
+            d: this.duplicateSelected,
+            c: this.copySelected,
+            x: this.deleteSelected,
+            v: this.pasteFromBuffer,
+        }
 
         PubSub.Sub('onkeydown', (e: KeyboardEvent, keys) => {
             if (keys.ctrl && e.key == 'd') {
@@ -249,11 +359,19 @@ export class foPage extends foShape2D {
                 this.duplicateSelected();
             } else if (keys.ctrl && e.key == 'c') {
                 //copy
+                this.copySelected();
             } else if (keys.ctrl && e.key == 'x') {
                 //cut
                 this.deleteSelected();
             } else if (keys.ctrl && e.key == 'v') {
-                //paste               
+                //paste    
+                this.pasteFromBuffer();
+            } else if (keys.ctrl && e.key == 'g') {
+                //group    
+                this.groupSelected();
+            } else if (keys.ctrl && e.key == 'u') {
+                //un-group    
+                this.unGroupSelected();
             } else {
                 this.selections.sendKeysToShape(e, keys);
             }
@@ -269,12 +387,12 @@ export class foPage extends foShape2D {
             }
 
             let found = this.findHitShape(loc) as foGlyph2D;
-            
+
             if (found) {
                 shape = found;
                 offset = shape.getOffset(loc);
                 this.nodes.moveToTop(shape);
-                this.selections.addSelection(shape,!keys.shift)
+                this.selections.addSelection(shape, !keys.shift)
             } else {
                 grab = null;
                 this.selections.clear()

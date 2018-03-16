@@ -73,16 +73,21 @@ export class foGlyph2D extends foGlyph implements iShape {
         this._invMatrix = undefined;
     }
 
+    computeBoundry(frame:cFrame): cFrame {
+        let mtx = this.getGlobalMatrix();
+        //this is a buffer so we create less garbage
+        let pt = frame.point;
+        frame.init(mtx.transformPoint(0, 0, pt))
+        frame.minmax(mtx.transformPoint(0, this.height, pt));
+        frame.minmax(mtx.transformPoint(this.width, 0, pt));
+        frame.minmax(mtx.transformPoint(this.width, this.height, pt));
+        return frame;
+    }
+
 
     protected _boundry: cFrame = new cFrame(this);
     get boundryFrame(): cFrame {
-        let mtx = this.getGlobalMatrix();
-        //this is a buffer so we create less garbage
-        let pt = this._boundry.point;
-        this._boundry.init(mtx.transformPoint(0, 0, pt))
-        this._boundry.minmax(mtx.transformPoint(0, this.height, pt));
-        this._boundry.minmax(mtx.transformPoint(this.width, 0, pt));
-        this._boundry.minmax(mtx.transformPoint(this.width, this.height, pt));
+        this.computeBoundry(this._boundry);
 
         this.nodes.forEach(item => {
             this._boundry.merge(item.boundryFrame);

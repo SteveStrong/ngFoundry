@@ -41,7 +41,7 @@ export class foNode extends foObject implements iNode {
 
         this._subcomponents = new foCollection<foNode>();
         this._subcomponents.myName = 'Subparts';
-        subcomponents && subcomponents.forEach(item => this.addSubcomponent(item));
+        subcomponents && subcomponents.forEach(item => this.captureSubcomponent(item));
         return this;
     }
 
