@@ -200,6 +200,12 @@ export class foPage extends foShape2D {
         manager.writeTextAsBlob(payload,'stevetest', '.txt')
     };
 
+    openPage(onComplete?: Action<foPage>) {
+        //https://github.com/rapid7/savery
+        let manager = new foFileManager();
+        manager.userOpenFileDialog(onComplete,'stevetest', '.txt')
+    };
+
     selectAll(onComplete?: Action<foGlyph2D>) {
         this.selections.clear();
         this.nodes.forEach( item => { 
@@ -432,8 +438,11 @@ export class foPage extends foShape2D {
                 //select all    
                 this.selectAll();
             } else if (keys.ctrl && e.key == 's') {
-                //select all    
+                //save   
                 this.savePage();
+            } else if (keys.ctrl && e.key == 'o') {
+                //open   
+                this.openPage();
             } else {
                 this.selections.sendKeysToShape(e, keys);
             }
