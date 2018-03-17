@@ -387,5 +387,9 @@ export class foShape1D extends foShape2D {
 import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape1D);
 
+export class foConnect1D extends foShape1D {
+}
+
+RuntimeType.define(foConnect1D);
 
 
