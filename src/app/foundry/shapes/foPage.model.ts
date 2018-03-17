@@ -20,6 +20,9 @@ import { Lifecycle } from '../foLifecycle';
 import { RuntimeType } from "../foRuntimeType";
 import { foShape1D } from "./foShape1D.model";
 
+import { foFileManager } from "../foFileManager";
+
+
 
 
 
@@ -189,7 +192,12 @@ export class foPage extends foShape2D {
     }
 
     savePage(onComplete?: Action<foPage>) {
-        alert('implement save')
+        //https://github.com/rapid7/savery
+        let manager = new foFileManager();
+        let payload = {
+            steve: 'strong'
+        }
+        manager.writeTextAsBlob(payload,'stevetest', '.txt')
     };
 
     selectAll(onComplete?: Action<foGlyph2D>) {
@@ -199,8 +207,10 @@ export class foPage extends foShape2D {
         })
     };
 
-    connectSelected(onComplete?: Action<foGlyph2D>) {
+    connectSelected(onComplete?: Action<Array<foGlyph2D>>) {
         let total = this.selections.count;
+        let list = new Array<foGlyph2D>();
+
         if (total > 1) {
 
             let previous:foShape2D;
@@ -215,15 +225,13 @@ export class foPage extends foShape2D {
                     line.glueStartTo(previous);
                     line.glueFinishTo(next);
                     previous = next;
+
+                    list.push(line);
                 }
     
             });
 
-
-
-            this.selections.clear();
-            this.selections.addSelection(copy);
-            onComplete && onComplete(copy);
+            onComplete && onComplete(list);
         }
     }
 

@@ -11,7 +11,7 @@ interface IDictionary {
 
 
 
-class foPubSub {
+export class foPubSub {
     private registry: IDictionary = {}
 
     Pub(name: string, ...args: any[]) {
