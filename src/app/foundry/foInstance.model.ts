@@ -42,6 +42,15 @@ export class foInstance extends foNode {
 
         return copy;
     }
+
+    public hydrate(json:any, deep:boolean=true) {
+        return this;
+    }
+
+    public dehydrate(context?:any, deep:boolean=true) {
+        return this.asJson;
+    }
+
 }
 
 import { RuntimeType } from './foRuntimeType';

@@ -31,7 +31,7 @@ describe("Foundry: Hydration Save Restore", function () {
 
     let specText = {
         text: 'Understand DevSecOps',
-        fontSize:30,
+        fontSize: 30,
         moreDate: 50,
     }
 
@@ -62,17 +62,31 @@ describe("Foundry: Hydration Save Restore", function () {
     it("should be able to use create copy", () => {
         //this works but on copy computed values end up static
         let copy = block1.createCopy();
-  
+
         expect(block1.myGuid).not.toEqual(copy.myGuid);
         expect(block1.width).toEqual(copy.width);
     });
 
-    it("should save and restore a block", () => {
-        let manager = new foFileManager()
-        let copy = block1.dehi();
-  
-        expect(block1.myGuid).not.toEqual(copy.myGuid);
-        expect(block.width).toEqual(copy.width);
+    it("should save and restore a block", (done) => {
+        let ext = '.txt'
+        let fileName = 'test1'
+
+        let manager = new foFileManager(true)
+        let source = block1.createdFrom();
+        let body = block1.dehydrate();
+
+
+        expect(block.width).toEqual(body.width);
+
+        manager.writeTextAsBlob(JSON.stringify(body), fileName, ext, () => {
+            manager.readTextAsBlob(fileName, ext, item => {
+                let result = JSON.parse(item);
+                let block2 = source.makeComponent(undefined, result);
+                expect(block.width).toEqual(block2.width);
+                done()
+            })
+        });
+
     });
 
 
