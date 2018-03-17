@@ -29,6 +29,12 @@ describe("Foundry: Hydration Save Restore", function () {
         surfaceArea: function () { return 2.0 * this.baseArea + 2.0 * this.side1Area + 2.0 * this.side2Area },
     };
 
+    let specText = {
+        text: 'Understand DevSecOps',
+        fontSize:30,
+        moreDate: 50,
+    }
+
     let specShape = {
         width: 100,
         height: 400,
@@ -39,19 +45,9 @@ describe("Foundry: Hydration Save Restore", function () {
     let lShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
     let lSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
 
-    let cBlock = lKnowledge.define<foComponent>('Block', foComponent, specBlock);
-
-    let cText = lShapes.define<foInputText2D>('Text', foInputText2D, {
-        text: 'Understand DevSecOps',
-        fontSize:30,
-        moreDate: 50,
-      });
-
-      let cBox = lSolids.define<foShape3D>('Box', foShape3D, {
-        text: 'Understand DevSecOps',
-        fontSize:30,
-        moreDate: 50,
-      });
+    let cBlock = lKnowledge.concepts.define('Block', foComponent, specBlock);
+    let cText = lShapes.define('Text', foInputText2D, specText);
+    let cBox = lSolids.define('Box', foShape3D, specShape);
 
     beforeEach(() => {
         block = new foComponent(specBlock);
@@ -63,15 +59,19 @@ describe("Foundry: Hydration Save Restore", function () {
         text1 = cText.makeComponent()
     });
 
-
+    it("should be able to use create copy", () => {
+        //this works but on copy computed values end up static
+        let copy = block1.createCopy();
+  
+        expect(block1.myGuid).not.toEqual(copy.myGuid);
+        expect(block1.width).toEqual(copy.width);
+    });
 
     it("should save and restore a block", () => {
-        //this works but on copy computed values end up static
-        let copy = block.createCopy(Object.keys(specBlock));
-
-        
-        expect(block.myGuid).not.toEqual(copy.myGuid);
-        expect(block.width).toEqual(specBlock.width);
+        let manager = new foFileManager()
+        let copy = block1.dehi();
+  
+        expect(block1.myGuid).not.toEqual(copy.myGuid);
         expect(block.width).toEqual(copy.width);
     });
 
