@@ -73,7 +73,7 @@ describe("Foundry: Hydration Save Restore", function () {
 
         let manager = new foFileManager(true)
         let source = block1.createdFrom();
-        let body = block1.dehydrate();
+        let body = block1.deHydrate();
 
 
         expect(block.width).toEqual(body.width);
@@ -83,6 +83,11 @@ describe("Foundry: Hydration Save Restore", function () {
                 let result = JSON.parse(item);
                 let block2 = source.makeComponent(undefined, result);
                 expect(block.width).toEqual(block2.width);
+
+                block2.width = 3;
+                expect(block.baseArea).toEqual(1 * 3);
+                expect(block.volume).toEqual(1 * 3 * 3);
+
                 done()
             })
         });

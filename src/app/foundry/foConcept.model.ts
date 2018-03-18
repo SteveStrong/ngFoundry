@@ -46,6 +46,16 @@ export class foConcept<T extends foNode> extends foKnowledge {
     get specification(): any { return this._specification; }
     set specification(value: any) { this._specification = value; }
 
+    specReadWriteKeys():string[] { 
+        let keys:string[] = [];
+        Tools.forEachKeyValue(this._specification, (k,v) => {
+            if ( !Tools.isFunction(v) ) {
+                keys.push(k);
+            }
+        }); 
+        return keys;
+    }
+
 
     private _attributes: foDictionary<foAttribute>;
     get attributes() {

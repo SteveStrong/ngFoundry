@@ -3,6 +3,7 @@ import { iObject, iNode, Action } from './foInterface'
 
 import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
+import { foConcept } from './foConcept.model';
 import { foCollection } from './foCollection.model'
 import { foKnowledge } from './foKnowledge.model'
 
@@ -43,17 +44,21 @@ export class foInstance extends foNode {
         return copy;
     }
 
-    public hydrate(json:any, deep:boolean=true) {
+    public reHydrate(json:any, deep:boolean=true) {
         return this;
     }
 
-    public dehydrate(context?:any, deep:boolean=true) {
-        return this.asJson;
+    public deHydrate(context?:any, deep:boolean=true) {
+        let concept = this.createdFrom && this.createdFrom();
+        let keys = concept.specReadWriteKeys();
+        let data = this.extractCopySpec(keys);
+        return data;
     }
 
 }
 
 import { RuntimeType } from './foRuntimeType';
+
 RuntimeType.define<foInstance>(foInstance);
 
 Tools['isaInstance'] = function (obj) {
