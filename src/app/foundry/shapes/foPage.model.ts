@@ -194,9 +194,7 @@ export class foPage extends foShape2D {
     savePage(onComplete?: Action<foPage>) {
         //https://github.com/rapid7/savery
         let manager = new foFileManager();
-        let payload = {
-            steve: 'strong'
-        }
+        let payload = this.deHydrate();
         manager.writeTextAsBlob(payload,'stevetest', '.txt')
     };
 

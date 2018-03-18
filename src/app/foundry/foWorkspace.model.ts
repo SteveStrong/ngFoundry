@@ -151,7 +151,7 @@ export class foWorkspace extends foKnowledge {
     public autoSaveFile(onComplete?:(item:fileSpec)=>void) {
         let manager = new foFileManager();
         let payload = this.activePage.deHydrate();
-        manager.writeTextFileAsync(payload, 'stevetest', '.ext', (result) => {
+        manager.writeTextFileAsync(payload, 'stevetest', '.txt', (result) => {
             onComplete && onComplete(result);
         })
     }

@@ -71,7 +71,8 @@ export class foFileManager {
 
     writeTextAsBlob(payload, name: string, ext: string = '.txt', onSuccess?: (item: string) => void) {
         let filenameExt = `${name}${ext}`;
-        let blob = new Blob([payload], { type: "text/plain;charset=utf-8" });
+        let data = Tools.isString(payload) ? payload : JSON.stringify(payload, undefined, 3)
+        let blob = new Blob([data], { type: "text/plain;charset=utf-8" });
         if (this.isTesting) {
             this.writeBlobLocal(blob, filenameExt, onSuccess);
         } else {
