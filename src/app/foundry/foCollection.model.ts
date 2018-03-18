@@ -130,4 +130,9 @@ export class foCollection<T extends iObject> extends foObject {
         let list = !this.hasMembers ?[] : this._members.map( item => item.asJson )
         return Tools.mixin(super.toJson(), list );
     }
+
+    public isEqualTo(obj: foCollection<T>, deep: boolean = true) {
+        let result = true;
+        return result;
+    }
 }

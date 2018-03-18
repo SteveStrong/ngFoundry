@@ -94,8 +94,19 @@ describe("Foundry: Hydration Save Restore", function () {
 
     });
 
+    it("should do integretyTest for block", (done) => {
 
+        let manager = new foFileManager(true);
+        manager.integretyTest(block1, true, block2 => {
+            expect(block2.width).toEqual(block.width);
 
+            block2.width = 3;
+            expect(block2.baseArea).toEqual(1 * 3);
+            expect(block2.volume).toEqual(1 * 3 * 3);
+
+            done()
+        })
+    });
 
 
 

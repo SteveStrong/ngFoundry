@@ -199,7 +199,12 @@ export class foConcept<T extends foNode> extends foKnowledge {
     newInstance(properties?: any, subcomponents?: any, parent?: any): T {
         let spec = Tools.union(this.specification, properties);
         let result = this._create(spec, subcomponents, parent) as T;
-        result.myClass = this.myName;
+
+        if (result instanceof foInstance) {
+            result.setCreatedFrom(this);
+        } else {
+            result.myClass = this.myName;
+        }
 
         result.initialize();
         this._onCreation && this._onCreation(result);

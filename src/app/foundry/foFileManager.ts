@@ -1,5 +1,6 @@
 import { Tools } from './foTools'
 import { PubSub } from './foPubSub'
+import { foInstance } from './foInstance.model'
 
 // ES2015+  https://www.npmjs.com/package/savery
 import savery from 'savery';
@@ -63,7 +64,7 @@ export class foFileManager {
         }
     };
 
-    readTextAsBlob(name: string|File, ext: string = '.txt', onSuccess?) {
+    readTextAsBlob(name: string | File, ext: string = '.txt', onSuccess?) {
         let filenameExt = `${name}${ext}`;
         if (this.isTesting) {
             this.readBlobLocal(filenameExt, onSuccess);
@@ -71,6 +72,36 @@ export class foFileManager {
             this.readBlobFile(name, onSuccess);
         }
     };
+
+    rehydrationTest(instance: foInstance, deep: boolean = true, done: (obj: any) => void) {
+        let source = instance.createdFrom();
+        let body = instance.deHydrate();
+
+        let data = JSON.stringify(body)
+        let json = JSON.parse(data);
+        let result = source.makeComponent(undefined, json);
+        done(result)
+
+        return instance.isEqualTo(result, deep)
+    }
+
+    integretyTest(instance: foInstance, deep: boolean = true, done: (obj: any) => void) {
+        this.isTesting = true;
+        let ext = '.txt'
+        let fileName = instance.myGuid;
+
+        let source = instance.createdFrom();
+        let body = instance.deHydrate();
+        let data = JSON.stringify(body)
+
+        this.writeTextAsBlob(data, fileName, ext, () => {
+            this.readTextAsBlob(fileName, ext, item => {
+                let json = JSON.parse(item);
+                let result = source.makeComponent(undefined, json);
+                done(result)
+            })
+        });
+    }
 
     writeTextFileAsync(payload, name, ext, onComplete) {
         this.writeTextAsBlob(payload, name, ext);

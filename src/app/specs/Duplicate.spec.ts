@@ -115,5 +115,18 @@ describe("Foundry: Duplicate testing", function () {
         expect(text1.moreDate).toEqual(copy.moreDate);
     });
 
+    it("should be equal to itself ", () => {
+        let result = text1.isEqualTo(text1);
+
+        expect(result).toEqual(true);
+    });
+
+    it("should be equal to copy ", () => {
+        let copy = text1.createCopy();
+        let result = text1.isEqualTo(copy);
+
+        expect(result).toEqual(true);
+    });
+
 
 });

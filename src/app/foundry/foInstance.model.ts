@@ -44,11 +44,45 @@ export class foInstance extends foNode {
         return copy;
     }
 
-    public reHydrate(json:any, deep:boolean=true) {
+    public isEqualTo(obj: foInstance, deep: boolean = true) {
+        let result = true;
+
+        Object.keys(this).forEach(key => {
+            let local: any = this[key];
+            let other: any = obj[key];
+
+            let isLocal = local instanceof foInstance;
+            let isOther = other instanceof foInstance;
+
+            let isLocalCol = local instanceof foCollection;
+            let isOtherCol = other instanceof foCollection;
+
+            let isLocalFn = Tools.isFunction(local);
+            let isOtherFn = Tools.isFunction(other);
+
+            if ((isLocal && isOther) || (isLocalCol && isOtherCol)) {
+                result = local.isEqualTo(other) ? result : false;
+            } else if (isLocalFn && isOtherFn) {
+
+            } else if (key == 'myGuid' || key.startsWith('_') || key == 'UnDo') {
+                //skip over myGuid 
+            } else {
+                result = (local == other) ? result : false;
+            }
+
+            if (!result) {
+                return false;
+            }
+
+        })
+        return result;
+    }
+
+    public reHydrate(json: any, deep: boolean = true) {
         return this;
     }
 
-    public deHydrate(context?:any, deep:boolean=true) {
+    public deHydrate(context?: any, deep: boolean = true) {
         let concept = this.createdFrom && this.createdFrom();
         let keys = concept ? concept.specReadWriteKeys() : [];
         let data = this.extractCopySpec(keys);
