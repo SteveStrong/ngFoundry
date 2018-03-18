@@ -195,7 +195,7 @@ export class foPage extends foShape2D {
         //https://github.com/rapid7/savery
         let manager = new foFileManager();
         let payload = this.deHydrate();
-        manager.writeTextAsBlob(payload,'stevetest', '.txt')
+        manager.writeTextAsBlob(payload,'stevetest', '.json')
     };
 
     openPage(onComplete?: Action<foPage>) {

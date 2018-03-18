@@ -69,7 +69,7 @@ export class foFileManager {
         }
     };
 
-    writeTextAsBlob(payload, name: string, ext: string = '.txt', onSuccess?: (item: string) => void) {
+    writeTextAsBlob(payload, name: string, ext: string = '.json', onSuccess?: (item: string) => void) {
         let filenameExt = `${name}${ext}`;
         let data = Tools.isString(payload) ? payload : JSON.stringify(payload, undefined, 3)
         let blob = new Blob([data], { type: "text/plain;charset=utf-8" });
@@ -80,7 +80,7 @@ export class foFileManager {
         }
     };
 
-    readTextAsBlob(name: string | File, ext: string = '.txt', onSuccess?) {
+    readTextAsBlob(name: string | File, ext: string = '.json', onSuccess?) {
         let filenameExt = `${name}${ext}`;
         if (this.isTesting) {
             this.readBlobLocal(filenameExt, onSuccess);
@@ -103,7 +103,7 @@ export class foFileManager {
 
     integretyTest(instance: foInstance, deep: boolean = true, done: (obj: any) => void) {
         this.isTesting = true;
-        let ext = '.txt'
+        let ext = '.json'
         let fileName = instance.myGuid;
 
         let source = instance.createdFrom();
@@ -187,7 +187,7 @@ export class foFileManager {
                 Tools.matches(ext, '.knt') ||
                 Tools.matches(ext, '.csv') ||
                 Tools.matches(ext, '.json') ||
-                Tools.matches(ext, '.txt')) {
+                Tools.matches(ext, '.json')) {
                 this.readTextFileAsync(file, ext, onComplete);
             }
         }

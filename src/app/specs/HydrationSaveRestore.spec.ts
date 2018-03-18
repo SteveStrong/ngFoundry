@@ -73,7 +73,7 @@ describe("Foundry: Hydration Save Restore", function () {
     });
 
     it("should save and restore a block", (done) => {
-        let ext = '.txt'
+        let ext = '.json'
         let fileName = 'test1'
 
         let manager = new foFileManager(true)
