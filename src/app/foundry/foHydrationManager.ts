@@ -46,27 +46,36 @@ export class foHydrationManager {
     }
 
     private reHydrate(parent:foInstance, json:any){
-        json.forEach(spec => {
-            let { subcomponents } = spec;
-            let item = this.establishInstance(spec);
-            item.addAsSubcomponent(parent);
-            subcomponents && this.reHydrate(item, subcomponents);
+
+        json && json.forEach(spec => {
+            let { subcomponents, myName, myGuid } = spec;
+            let found = parent.nodes.find(child => child.myName == myName || child.myName == myGuid );
+            let data = this.extractSpec(spec);
+
+            if ( found) { 
+                found.reHydrate(data)
+            } else {
+                found = this.establishInstance(data);
+                found.addAsSubcomponent(parent);
+            }
+
+            subcomponents && this.reHydrate(found, subcomponents);
         });
     }
 
 
-    private establishInstance(json: any):foInstance {
+    private establishInstance(spec: any):foInstance {
 
-        let { myClass, myType, myGuid } = json;
-        let spec = this.extractSpec(json);
+        let { myClass, myType } = spec;
+ 
         let concept = this.workspace.select(item => Tools.matches(item.myName, myClass)).first();
-        let type = RuntimeType.find(myType);
-
+       
         let obj = concept && concept.newInstance(spec);
-        obj = obj ? obj : RuntimeType.create(type, spec);
+        if ( obj ) return obj;
 
-        //this is duplicate work, no reason to do this
-        obj.reHydrate(spec);
+        let type = RuntimeType.find(myType);
+        obj = RuntimeType.create(type, spec);
+
         return obj;
     }
 
