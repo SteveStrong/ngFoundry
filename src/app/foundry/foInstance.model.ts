@@ -86,6 +86,13 @@ export class foInstance extends foNode {
         let concept = this.createdFrom && this.createdFrom();
         let keys = concept ? concept.specReadWriteKeys() : [];
         let data = this.extractCopySpec(keys);
+
+        if ( deep && this.nodes.count ) {
+            data.subcomponents = this.nodes.map(item => {
+                let child = item.deHydrate(context, deep);
+                return child;
+            })
+        }
         return data;
     }
 
