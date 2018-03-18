@@ -12,7 +12,6 @@ export class foInstance extends foNode {
     public createdFrom: () => foKnowledge;
     setCreatedFrom(source: any) {
         this.createdFrom = () => { return source; };
-        this.myClass = source.myName;
     }
 
     constructor(properties?: any, subcomponents?: Array<foInstance>, parent?: foObject) {

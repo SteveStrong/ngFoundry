@@ -102,6 +102,17 @@ export class foConcept<T extends foNode> extends foKnowledge {
         super(properties, parent);
     }
 
+    get nameSpace():string {
+        return '';
+    }
+
+    get classAndNamespace():string {
+        let name = this.nameSpace;
+        if ( name ) {
+            return `${name}::${this.myName}`;
+        }
+        return this.myName;
+    }
 
     definePrimitive(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         RuntimeType.define(type);
@@ -202,9 +213,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
 
         if (result instanceof foInstance) {
             result.setCreatedFrom(this);
-        } else {
-            result.myClass = this.myName;
         }
+        result.myClass = this.classAndNamespace;
 
         result.initialize();
         this._onCreation && this._onCreation(result);

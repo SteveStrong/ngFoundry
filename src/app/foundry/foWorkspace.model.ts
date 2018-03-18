@@ -145,13 +145,13 @@ export class foWorkspace extends foKnowledge {
             //let result = source.makeComponent(undefined, json);
             onComplete && onComplete(result);
 
-        }, '.txt', this.myName)
+        }, '.json', this.myName)
     }
 
     public autoSaveFile(onComplete?:(item:fileSpec)=>void) {
         let manager = new foFileManager();
         let payload = this.activePage.deHydrate();
-        manager.writeTextFileAsync(payload, 'stevetest', '.txt', (result) => {
+        manager.writeTextFileAsync(payload, 'stevetest', '.json', (result) => {
             onComplete && onComplete(result);
         })
     }
