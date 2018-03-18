@@ -40,6 +40,19 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
     private sharing: SharingService) {
   }
 
+  doOpen() {
+
+    this.workspace.openFile();
+  }
+
+  doSave() {
+    this.workspace.autoSaveFile();
+  }
+
+  doClear() {
+    this.workspace.clearActivePage();
+  }
+
   ngOnInit() {
     this.currentDocument = this.workspace.document.override({
       pageWidth: this.pageWidth,

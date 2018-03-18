@@ -9,6 +9,8 @@ import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
 import { foObject } from './foObject.model'
 
+import { foFileManager, fileSpec } from './foFileManager'
+
 import { ContextDictionary } from './foDictionaries'
 
 import { foCollection } from './foCollection.model'
@@ -76,11 +78,13 @@ export class ModelDictionary extends foDictionary<foModel>{
 
 export class foWorkspace extends foKnowledge {
 
+    public filenameExt: string;
+
     private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
     private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
-    
+
     private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
-    private _context: ContextDictionary = new ContextDictionary({myName: 'context'}, this);
+    private _context: ContextDictionary = new ContextDictionary({ myName: 'context' }, this);
 
     private _document: foDocument = new foDocument({}, [], this);
     private _studio: foStudio = new foStudio({}, [], this);
@@ -103,7 +107,7 @@ export class foWorkspace extends foKnowledge {
         this.library.select(where, result, deep);
 
         this.stencil.select(where, result, deep);
-  
+
         return result;
     }
 
@@ -129,6 +133,31 @@ export class foWorkspace extends foKnowledge {
 
     get stencil() {
         return this._stencil;
+    }
+
+    public openFile(onComplete?:(item:fileSpec)=>void) {
+        let manager = new foFileManager();
+        manager.userOpenFileDialog(result => {
+            let { payload, name, ext } = result;
+
+            this.filenameExt = `${name}${ext}`
+            let json = JSON.parse(payload);
+            //let result = source.makeComponent(undefined, json);
+            onComplete && onComplete(result);
+
+        }, '.txt', this.myName)
+    }
+
+    public autoSaveFile(onComplete?:(item:fileSpec)=>void) {
+        let manager = new foFileManager();
+        let payload = this.activePage.deHydrate();
+        manager.writeTextFileAsync(payload, 'stevetest', '.ext', (result) => {
+            onComplete && onComplete(result);
+        })
+    }
+
+    public clearActivePage() {
+        this.activePage.clearPage();
     }
 
 }

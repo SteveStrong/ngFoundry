@@ -203,7 +203,9 @@ export class foPage extends foShape2D {
     openPage(onComplete?: Action<foPage>) {
         //https://github.com/rapid7/savery
         let manager = new foFileManager();
-        manager.userOpenFileDialog(onComplete,'stevetest', '.txt')
+        manager.userOpenFileDialog((result)=>{
+            onComplete && onComplete(this)
+        },'stevetest', '.txt')
     };
 
     selectAll(onComplete?: Action<foGlyph2D>) {

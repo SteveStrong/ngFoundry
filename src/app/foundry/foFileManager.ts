@@ -5,6 +5,21 @@ import { foInstance } from './foInstance.model'
 // ES2015+  https://www.npmjs.com/package/savery
 import savery from 'savery';
 
+export class fileSpec {
+    payload: string;
+    name: string;
+    ext: string;
+
+    constructor(payload: string, name: string, ext: string) {
+        this.payload = payload;
+        this.name = name;
+        this.ext = ext;
+    }
+    get filename() {
+        return `${this.name}${this.ext}`;
+    }
+}
+
 export class foFileManager {
     isTesting: boolean = false;
     files: any = {}
@@ -23,7 +38,7 @@ export class foFileManager {
             });
     };
 
-    private readBlobFile(file, onComplete) {
+    private readBlobFile(file, onComplete: (item: string) => void) {
         let reader = new FileReader();
         reader.onload = (evt) => {
             let payload = evt.target['result'];
@@ -39,7 +54,7 @@ export class foFileManager {
         onSuccess && onSuccess();
     };
 
-    private readBlobLocal(filenameExt: string, onSuccess?, onFail?) {
+    private readBlobLocal(filenameExt: string, onSuccess?: (item: string) => void, onFail?) {
         let reader = new FileReader();
         let blob = this.files[filenameExt];
 
@@ -54,7 +69,7 @@ export class foFileManager {
         }
     };
 
-    writeTextAsBlob(payload, name: string, ext: string = '.txt', onSuccess?) {
+    writeTextAsBlob(payload, name: string, ext: string = '.txt', onSuccess?: (item: string) => void) {
         let filenameExt = `${name}${ext}`;
         let blob = new Blob([payload], { type: "text/plain;charset=utf-8" });
         if (this.isTesting) {
@@ -103,42 +118,42 @@ export class foFileManager {
         });
     }
 
-    writeTextFileAsync(payload, name, ext, onComplete) {
+    writeTextFileAsync(payload, name, ext, onComplete: (item: fileSpec) => void) {
         this.writeTextAsBlob(payload, name, ext);
-        if (onComplete) {
-            onComplete(payload, name, ext)
-        }
-        PubSub.Pub('textFileSaved', [payload, name, ext]);
+        let result = new fileSpec(payload, name, ext)
+        onComplete && onComplete(result)
+
+        PubSub.Pub('textFileSaved', [result]);
     };
 
-    readTextFileAsync(file, ext, onComplete) {
+    readTextFileAsync(file, ext, onComplete: (item: fileSpec) => void) {
         this.readTextAsBlob(file, ext, (payload) => {
 
             let filename = file.name;
             let name = filename.replace(ext, '');
-            if (onComplete) {
-                onComplete(payload, name, ext);
-            }
-            PubSub.Pub('textFileDropped', [payload, name, ext]);
+
+            let result = new fileSpec(payload, name, ext)
+
+            onComplete && onComplete(result)
+            PubSub.Pub('textFileDropped', [result]);
         })
     };
 
-    readImageFileAsync(file, ext, onComplete) {
+    readImageFileAsync(file, ext, onComplete: (item: fileSpec) => void) {
         let reader = new FileReader();
         reader.onload = (evt) => {
             let filename = file.name;
             let name = filename.replace(ext, '');
             let payload = evt.target['result'];
-            if (onComplete) {
-                onComplete(payload, name, ext);
-            }
-            PubSub.Pub('imageFileDropped', [payload, name, ext]);
+            let result = new fileSpec(payload, name, ext)
+            onComplete && onComplete(result)
+            PubSub.Pub('imageFileDropped', [result]);
         }
         reader.readAsDataURL(file);
     }
 
 
-    userOpenFileDialog(onComplete, defaultExt: string, defaultValue: string) {
+    userOpenFileDialog(onComplete: (item: fileSpec) => void, defaultExt: string, defaultValue: string) {
 
         //http://stackoverflow.com/questions/181214/file-input-accept-attribute-is-it-useful
         //accept='image/*|audio/*|video/*'
