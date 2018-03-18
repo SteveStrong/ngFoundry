@@ -41,6 +41,11 @@ describe("Foundry: Hydration Save Restore", function () {
         text: 'Hello World'
     }
 
+    function justKeys(spec) {
+        let keys: string[] = Tools.extractReadWriteKeys(spec);
+        return keys;
+    }
+
     let lKnowledge: foLibrary = new foLibrary().defaultName('definitions');
     let lShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
     let lSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
@@ -108,8 +113,34 @@ describe("Foundry: Hydration Save Restore", function () {
         })
     });
 
+    it("should be equal to copy shape", () => {
+        let copy = shape.createCopy(justKeys(specShape));
+        let result = shape.isEqualTo(copy);
+
+        expect(result).toEqual(true);
+    });
+
+    it("should be equal to copy shape1", () => {
+        let copy = shape1.createCopy();
+        let result = shape1.isEqualTo(copy);
+
+        expect(result).toEqual(true);
+    });
 
 
+    it("should be equal to copy text", () => {
+        let copy = text.createCopy();
+        let result = text.isEqualTo(copy);
+
+        expect(result).toEqual(true);
+    });
+
+    it("should be equal to copy text1", () => {
+        let copy = text1.createCopy();
+        let result = text1.isEqualTo(copy);
+
+        expect(result).toEqual(true);
+    });
 
 
 
