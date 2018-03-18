@@ -32,13 +32,14 @@ export class foInstance extends foNode {
 
     createCopy(keys?: string[]) {
         let data = this.extractCopySpec(keys);
-        let { myType } = data;
 
         let concept = this.createdFrom && this.createdFrom();
         let copy = concept && concept.newInstance(data);
+        if ( copy ) return copy;
 
+        let { myType } = data;
         let type = RuntimeType.find(myType);
-        copy = copy ? copy : RuntimeType.create(type, data);
+        copy = RuntimeType.create(type, data);
 
         return copy;
     }
