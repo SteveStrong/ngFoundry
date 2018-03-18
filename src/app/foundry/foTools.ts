@@ -275,6 +275,14 @@ export class foTools {
         return target;
     };
 
+    extract(target, keys?: string[]) {
+        let spec = {}
+        keys && keys.forEach(key => {
+            spec[key] = target[key];
+        });
+        return spec;
+    }
+
     mixMap(target, source) {
         if (!source) return target;
         var result = {};
@@ -330,7 +338,7 @@ export class foTools {
             enumerable: true,
             configurable: true,
             get: func,    //.call(self, self),
-            set: function(value) { 
+            set: function (value) {
                 this[`_${name}`] = value;
             }
         });
@@ -396,6 +404,26 @@ export class foTools {
         }
         return obj;
     };
+
+    extractReadWriteKeys(spec) {
+        let keys: string[] = [];
+        Tools.forEachKeyValue(spec, (k, v) => {
+            if (!Tools.isFunction(v)) {
+                keys.push(k);
+            }
+        });
+        return keys;
+    }
+
+    extractComputedKeys(spec) {
+        let keys: string[] = [];
+        Tools.forEachKeyValue(spec, (k, v) => {
+            if (Tools.isFunction(v)) {
+                keys.push(k);
+            }
+        });
+        return keys;
+    }
 
     overrideComputed(obj: any, properties: any) {
         Tools.forEachKeyValue(properties, function (key, value) {

@@ -131,6 +131,14 @@ export class foObject implements iObject {
         return undefined;
     }
 
+    public extract(keys?:string[], target?) {
+        let spec = target ? target : {}
+        keys && keys.forEach(key=> {
+            spec[key] = this[key];
+        })
+        return spec;
+    }
+
     public override(properties?: any) {
         properties && Tools.overrideComputed(this, properties);
         return this;

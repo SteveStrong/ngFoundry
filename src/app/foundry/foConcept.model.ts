@@ -47,13 +47,8 @@ export class foConcept<T extends foNode> extends foKnowledge {
     set specification(value: any) { this._specification = value; }
 
     specReadWriteKeys():string[] { 
-        let keys:string[] = [];
-        Tools.forEachKeyValue(this._specification, (k,v) => {
-            if ( !Tools.isFunction(v) ) {
-                keys.push(k);
-            }
-        }); 
-        return keys;
+        let keys:string[] = Tools.extractReadWriteKeys(this._specification);
+        return keys || [];
     }
 
 
@@ -179,11 +174,11 @@ export class foConcept<T extends foNode> extends foKnowledge {
         });
     }
 
-    extract(target: any) {
-        let result = {};
-        Object.keys(this.specification).forEach(key => {
+    extractReadWriteKeys(target: any, spec?:any) {
+        let result = spec || {};
+        this.specReadWriteKeys().forEach(key => {
             result[key] = target[key]
-        })
+        });
         return result;
     }
 

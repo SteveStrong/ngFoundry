@@ -82,11 +82,11 @@ describe("Foundry: Hydration Save Restore", function () {
             manager.readTextAsBlob(fileName, ext, item => {
                 let result = JSON.parse(item);
                 let block2 = source.makeComponent(undefined, result);
-                expect(block.width).toEqual(block2.width);
+                expect(block2.width).toEqual(block.width);
 
                 block2.width = 3;
-                expect(block.baseArea).toEqual(1 * 3);
-                expect(block.volume).toEqual(1 * 3 * 3);
+                expect(block2.baseArea).toEqual(1 * 3);
+                expect(block2.volume).toEqual(1 * 3 * 3);
 
                 done()
             })

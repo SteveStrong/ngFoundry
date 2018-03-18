@@ -26,9 +26,9 @@ export class foInstance extends foNode {
     }
 
     protected toJson(): any {
-        return Tools.mixin(super.toJson(), {
-            //subcomponents: this._subcomponents && this._subcomponents.asJson() 
-        });
+        let concept = this.createdFrom && this.createdFrom();
+        let keys = concept ? concept.specReadWriteKeys() : [];
+        return Tools.mixin(super.toJson(), this.extract(keys));
     }
 
     createCopy(keys?: string[]) {
@@ -50,7 +50,7 @@ export class foInstance extends foNode {
 
     public deHydrate(context?:any, deep:boolean=true) {
         let concept = this.createdFrom && this.createdFrom();
-        let keys = concept.specReadWriteKeys();
+        let keys = concept ? concept.specReadWriteKeys() : [];
         let data = this.extractCopySpec(keys);
         return data;
     }
