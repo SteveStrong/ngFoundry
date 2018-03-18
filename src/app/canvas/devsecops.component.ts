@@ -45,6 +45,7 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
 
     this.workspace.openFile(result => {
       Toast.info('open', result.filename);
+      this.workspace.reHydratePayload(result.payload);
     });
   }
 

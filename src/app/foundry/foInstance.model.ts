@@ -77,7 +77,9 @@ export class foInstance extends foNode {
         return result;
     }
 
-    public reHydrate(json: any, deep: boolean = true) {
+    
+    public reHydrate(json: any) {
+        this.override(json);
         return this;
     }
 

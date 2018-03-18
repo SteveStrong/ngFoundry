@@ -776,8 +776,8 @@ export class foPage extends foShape2D {
 
 
     public preDraw = (ctx: CanvasRenderingContext2D): void => {
-        //ctx.fillStyle = this.color;
-        //ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(0, 0, this.width, this.height);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
@@ -788,6 +788,7 @@ export class foPage extends foShape2D {
     }
 }
 
+RuntimeType.define(foPage);
 
 
 
