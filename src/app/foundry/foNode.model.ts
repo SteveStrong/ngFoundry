@@ -221,9 +221,7 @@ export class foNode extends foObject implements iNode {
     extractCopySpec(keys?:string[]){
         let spec = this.asJson;
         delete spec.myGuid;
-        keys && keys.forEach(key => {
-            spec[key] = this[key];
-        })
+        spec = this.extract(keys,spec);
         return spec;
     }
 

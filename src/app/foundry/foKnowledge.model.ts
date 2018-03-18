@@ -38,6 +38,9 @@ export class foKnowledge extends foObject {
         return [];
     }
 
+    specReadWriteKeys():string[] { 
+        return [];
+    }
 
     defaultName(name?: string) {
         if (name) {

@@ -194,16 +194,16 @@ export class foPage extends foShape2D {
     savePage(onComplete?: Action<foPage>) {
         //https://github.com/rapid7/savery
         let manager = new foFileManager();
-        let payload = {
-            steve: 'strong'
-        }
-        manager.writeTextAsBlob(payload,'stevetest', '.txt')
+        let payload = this.deHydrate();
+        manager.writeTextAsBlob(payload,'stevetest', '.json')
     };
 
     openPage(onComplete?: Action<foPage>) {
         //https://github.com/rapid7/savery
         let manager = new foFileManager();
-        manager.userOpenFileDialog(onComplete,'stevetest', '.txt')
+        manager.userOpenFileDialog((result)=>{
+            onComplete && onComplete(this)
+        },'stevetest', '.txt')
     };
 
     selectAll(onComplete?: Action<foGlyph2D>) {
@@ -776,8 +776,8 @@ export class foPage extends foShape2D {
 
 
     public preDraw = (ctx: CanvasRenderingContext2D): void => {
-        //ctx.fillStyle = this.color;
-        //ctx.fillRect(0, 0, this.pageWidth, this.pageHeight);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(0, 0, this.width, this.height);
     }
 
     public draw = (ctx: CanvasRenderingContext2D): void => {
@@ -788,6 +788,7 @@ export class foPage extends foShape2D {
     }
 }
 
+RuntimeType.define(foPage);
 
 
 

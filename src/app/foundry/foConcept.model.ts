@@ -46,6 +46,11 @@ export class foConcept<T extends foNode> extends foKnowledge {
     get specification(): any { return this._specification; }
     set specification(value: any) { this._specification = value; }
 
+    specReadWriteKeys():string[] { 
+        let keys:string[] = Tools.extractReadWriteKeys(this._specification);
+        return keys || [];
+    }
+
 
     private _attributes: foDictionary<foAttribute>;
     get attributes() {
@@ -97,6 +102,17 @@ export class foConcept<T extends foNode> extends foKnowledge {
         super(properties, parent);
     }
 
+    get nameSpace():string {
+        return '';
+    }
+
+    get classAndNamespace():string {
+        let name = this.nameSpace;
+        if ( name ) {
+            return `${name}::${this.myName}`;
+        }
+        return this.myName;
+    }
 
     definePrimitive(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {
         RuntimeType.define(type);
@@ -169,11 +185,11 @@ export class foConcept<T extends foNode> extends foKnowledge {
         });
     }
 
-    extract(target: any) {
-        let result = {};
-        Object.keys(this.specification).forEach(key => {
+    extractReadWriteKeys(target: any, spec?:any) {
+        let result = spec || {};
+        this.specReadWriteKeys().forEach(key => {
             result[key] = target[key]
-        })
+        });
         return result;
     }
 
@@ -194,7 +210,11 @@ export class foConcept<T extends foNode> extends foKnowledge {
     newInstance(properties?: any, subcomponents?: any, parent?: any): T {
         let spec = Tools.union(this.specification, properties);
         let result = this._create(spec, subcomponents, parent) as T;
-        result.myClass = this.myName;
+
+        if (result instanceof foInstance) {
+            result.setCreatedFrom(this);
+        }
+        result.myClass = this.classAndNamespace;
 
         result.initialize();
         this._onCreation && this._onCreation(result);

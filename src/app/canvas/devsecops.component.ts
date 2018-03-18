@@ -10,6 +10,7 @@ import { foDocument } from '../foundry/shapes/foDocument.model';
 import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
 
+import { Toast } from "../common/emitter.service";
 import { SharingService } from "../common/sharing.service";
 import { DevSecOps, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
 
@@ -38,6 +39,24 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
   
   constructor(
     private sharing: SharingService) {
+  }
+
+  doOpen() {
+
+    this.workspace.openFile(result => {
+      Toast.info('open', result.filename);
+      this.workspace.reHydratePayload(result.payload);
+    });
+  }
+
+  doSave() {
+    this.workspace.autoSaveFile(result => {
+      Toast.info('saved', result.filename);
+    });
+  }
+
+  doClear() {
+    this.workspace.clearActivePage();
   }
 
   ngOnInit() {

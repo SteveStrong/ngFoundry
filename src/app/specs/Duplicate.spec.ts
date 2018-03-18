@@ -34,15 +34,18 @@ describe("Foundry: Duplicate testing", function () {
         text: 'Hello World'
     }
 
-    let lKnowledge: foLibrary = new foLibrary().defaultName('definitions');
+    function justKeys(spec) {
+        let keys: string[] = Tools.extractReadWriteKeys(spec);
+        return keys;
+    }
+
     let lShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
-    let lSolids: foStencilLibrary = new foStencilLibrary().defaultName('solids');
 
     let cText = lShapes.define<foInputText2D>('Text', foInputText2D, {
         text: 'Understand DevSecOps',
-        fontSize:30,
+        fontSize: 30,
         moreDate: 50,
-      });
+    });
 
     beforeEach(() => {
         block = new foComponent(specBlock);
@@ -61,16 +64,32 @@ describe("Foundry: Duplicate testing", function () {
 
     it("should have foComponent be able to createCopy", () => {
         //this works but on copy computed values end up static
-        let copy = block.createCopy(Object.keys(specBlock));
+        let copy = block.createCopy(justKeys(specBlock));
 
-        
+
         expect(block.myGuid).not.toEqual(copy.myGuid);
-        expect(block.width).toEqual(specBlock.width);
         expect(block.width).toEqual(copy.width);
+        expect(copy.baseArea).not.toBeDefined();
+    });
+
+    it("should have foComponent be able to Extend createCopy", () => {
+        //this works but on copy computed values end up static
+        let copy = block.createCopy(justKeys(specBlock));
+        
+        let spec =  Tools.extractComputedKeys(specBlock);
+        let properties = Tools.extract(specBlock,spec);
+        Tools.overrideComputed(copy, properties);
+
+        expect(copy.myGuid).not.toEqual(block.myGuid);
+        expect(copy.width).toEqual(block.width);
+        expect(copy.baseArea).toBeDefined();
+        expect(copy.volume).toEqual(1 * 2 * 3);
+        copy.width = 3;
+        expect(copy.volume).toEqual(1 * 3 * 3);
     });
 
     it("should have foShape2D be able to createCopy", () => {
-        let copy = shape.createCopy(Object.keys(specShape));
+        let copy = shape.createCopy(justKeys(specShape));
 
         expect(shape.myGuid).not.toEqual(copy.myGuid);
 
@@ -79,7 +98,7 @@ describe("Foundry: Duplicate testing", function () {
     });
 
     it("should have foInputText2D be able to createCopy", () => {
-        let copy = text.createCopy(Object.keys(specShape));
+        let copy = text.createCopy(justKeys(specShape));
 
         expect(text.myGuid).not.toEqual(copy.myGuid);
         expect(text.text).toEqual(specShape.text);
@@ -94,6 +113,19 @@ describe("Foundry: Duplicate testing", function () {
         expect(text1.fontSize).toEqual(copy.fontSize);
         expect(text1.text).toEqual(copy.text);
         expect(text1.moreDate).toEqual(copy.moreDate);
+    });
+
+    it("should be equal to itself ", () => {
+        let result = text1.isEqualTo(text1);
+
+        expect(result).toEqual(true);
+    });
+
+    it("should be equal to copy ", () => {
+        let copy = text1.createCopy();
+        let result = text1.isEqualTo(copy);
+
+        expect(result).toEqual(true);
     });
 
 
