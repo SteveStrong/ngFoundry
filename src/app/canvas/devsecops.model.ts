@@ -31,7 +31,7 @@ DevSecOps.context.define('DevOpsFactory', foModel, {
 
 DevSecOpsShapes.define<foInputText2D>('Text', foInputText2D, {
   text: 'Understand DevSecOps',
-  fontSize:30,
+  fontSize: 30,
 });
 
 DevSecOpsShapes.define<foImage2D>('Image', foImage2D, {
@@ -192,16 +192,23 @@ DevSecOpsShapes.define<shapeDevOps>('Data', shapeData, {
 
 
 class shapeApp extends shapeDevOps {
+  
+  //override the storage of subcomponents because
+  //they get created during on creation
+  public deHydrate(context?: any, deep: boolean = true) {
+    return super.deHydrate(context, false);
+  }
 }
 
 DevSecOpsShapes.define<shapeDevOps>('App', shapeApp, {
   color: 'cyan',
 }).onCreation(obj => {
 
-  let UI = DevSecOpsShapes.find('UI').makeComponent(obj);
-  let Service = DevSecOpsShapes.find('Service').makeComponent(obj);
-  let Data = DevSecOpsShapes.find('Data').makeComponent(obj);
-  let InvEnv = DevSecOpsShapes.find('InvEnv').makeComponent(obj);
+  //with predefined names, save and restore is easire
+  let UI = DevSecOpsShapes.find('UI').makeComponent(obj).setName('UI');
+  let Service = DevSecOpsShapes.find('Service').makeComponent(obj).setName('Service');
+  let Data = DevSecOpsShapes.find('Data').makeComponent(obj).setName('Data');
+  let InvEnv = DevSecOpsShapes.find('InvEnv').makeComponent(obj).setName('InvEnv');
 
   obj.width = 1.3 * UI.width;
   obj.height = 3.3 * UI.height;

@@ -8,7 +8,7 @@ export interface IDisposable {
 }
 
 export function using<T extends IDisposable>(resource: T, func: (resource: T) => any) {
-    let result:any;
+    let result: any;
     try {
         result = func(resource);
     } finally {
@@ -43,7 +43,7 @@ export class foObject implements iObject {
     set isInvisible(value: boolean) { this._isVisible = !value; }
 
     show(value?: boolean) {
-        this._isVisible = value ? true: false;
+        this._isVisible = value ? true : false;
         return this;
     }
     hide() {
@@ -112,6 +112,11 @@ export class foObject implements iObject {
         this._displayName = value;
     }
 
+    setName(name) {
+        this.myName = name;
+        return this;
+    }
+
     is2D() { return false; }
     is3D() { return false; }
 
@@ -158,9 +163,9 @@ export class foObject implements iObject {
         return undefined;
     }
 
-    public extract(keys?:string[], target?) {
+    public extract(keys?: string[], target?) {
         let spec = target ? target : {}
-        keys && keys.forEach(key=> {
+        keys && keys.forEach(key => {
             spec[key] = this[key];
         })
         return spec;
