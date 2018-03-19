@@ -1,0 +1,875 @@
+{
+    "model": [
+        {
+            "myType": "note",
+            "name": "fbe1240b-b956-4f6a-f0af-a2bea4aec32f",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We need a partner who has the resources, people and money",
+            "headerText": "We need a partner",
+            "lastModified": "2013-08-01T15:30:17.095Z",
+            "uniqueID": "fbe1240b-b956-4f6a-f0af-a2bea4aec32f"
+        },
+        {
+            "myType": "note",
+            "name": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We have most of what we need to pitch",
+            "lastModified": "2013-08-01T15:34:13.338Z",
+            "uniqueID": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+            "Subcomponents": [
+                {
+                    "myType": "note",
+                    "name": "8c2e9eba-bc01-47aa-845d-040762be4fd2",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "author": "anonymous",
+                    "userId": "unknown",
+                    "noteText": "We have a communication target",
+                    "lastModified": "2013-08-01T15:32:37.691Z",
+                    "uniqueID": "8c2e9eba-bc01-47aa-845d-040762be4fd2"
+                },
+                {
+                    "myType": "note",
+                    "name": "947828af-8794-4685-ca5f-f92d1a436bc4",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "author": "anonymous",
+                    "userId": "unknown",
+                    "noteText": "We are protecting our IC",
+                    "lastModified": "2013-08-01T15:29:45.881Z",
+                    "uniqueID": "947828af-8794-4685-ca5f-f92d1a436bc4"
+                },
+                {
+                    "myType": "note",
+                    "name": "f6681ae0-a038-43da-d5a2-d678bb50977d",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "author": "anonymous",
+                    "userId": "unknown",
+                    "noteText": "We have our 'evidence'",
+                    "lastModified": "2013-08-01T15:33:21.133Z",
+                    "uniqueID": "f6681ae0-a038-43da-d5a2-d678bb50977d"
+                },
+                {
+                    "myType": "note",
+                    "name": "9d856d1a-b0f0-431a-ab58-5f8f076b7e35",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "author": "anonymous",
+                    "userId": "unknown",
+                    "lastModified": "2013-08-01T15:37:08.713Z",
+                    "uniqueID": "9d856d1a-b0f0-431a-ab58-5f8f076b7e35"
+                }
+            ]
+        },
+        {
+            "myType": "note",
+            "name": "f4aa27bb-0faf-444b-87fd-c8bc34ab3c2d",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "E Discovery companies are our primary targets",
+            "headerText": "E Discovery companies primary targets",
+            "lastModified": "2013-08-01T14:43:28.015Z",
+            "uniqueID": "f4aa27bb-0faf-444b-87fd-c8bc34ab3c2d"
+        },
+        {
+            "myType": "note",
+            "name": "ad6e618d-595c-4453-fb96-0945c65d2489",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "Kroll, Kcura, FTI Technologies and other magic quadrant winners are the first targets",
+            "headerText": "Magic quadrant winners first targets",
+            "lastModified": "2013-08-01T14:44:24.270Z",
+            "uniqueID": "ad6e618d-595c-4453-fb96-0945c65d2489"
+        },
+        {
+            "myType": "note",
+            "name": "bf8e236c-9642-46f4-ac2f-0309bd16a152",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "TSOK explains the big picture of what we are doing",
+            "headerText": "TSOK has our vision",
+            "lastModified": "2013-08-01T14:33:38.865Z",
+            "uniqueID": "bf8e236c-9642-46f4-ac2f-0309bd16a152"
+        },
+        {
+            "myType": "note",
+            "name": "880db6ad-4758-4e2f-9575-ed107537c4c2",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We have a patent for the Legal Apprentice system",
+            "headerText": "Legal Apprentice Patent",
+            "lastModified": "2013-08-01T14:17:16.190Z",
+            "uniqueID": "880db6ad-4758-4e2f-9575-ed107537c4c2"
+        },
+        {
+            "myType": "note",
+            "name": "fd68f5da-7709-4acc-9163-920319e37d05",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We will get a provisional patent for KnowtShare",
+            "headerText": "KnowtShare Provisional Patent",
+            "lastModified": "2013-08-01T14:19:56.202Z",
+            "uniqueID": "fd68f5da-7709-4acc-9163-920319e37d05"
+        },
+        {
+            "myType": "note",
+            "name": "f430d3a3-5039-4eb1-866b-b15e39e4e624",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "Everything doesn't have to be built to pitch the idea!!",
+            "headerText": "Everything doesn't have to be built",
+            "lastModified": "2013-08-01T14:38:07.460Z",
+            "uniqueID": "f430d3a3-5039-4eb1-866b-b15e39e4e624"
+        },
+        {
+            "myType": "note",
+            "name": "383fdfbf-de3b-48b7-ec04-9347bc7c31e7",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We have videos of template building, case editing and analysis",
+            "headerText": "We have videos of LA capabilities",
+            "lastModified": "2013-08-01T14:38:55.858Z",
+            "uniqueID": "383fdfbf-de3b-48b7-ec04-9347bc7c31e7"
+        },
+        {
+            "myType": "note",
+            "name": "9a1c5f04-26b2-429d-f069-ad315d804892",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "KnowtShare is live demo-able and shows real time, mobile collaboration",
+            "headerText": "KnowtShare shows collaboration",
+            "lastModified": "2013-08-01T14:39:50.698Z",
+            "uniqueID": "9a1c5f04-26b2-429d-f069-ad315d804892"
+        },
+        {
+            "myType": "note",
+            "name": "d2b28ece-f4e3-439e-be98-e026ad99da14",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We need a story",
+            "lastModified": "2013-08-01T15:35:31.573Z",
+            "uniqueID": "d2b28ece-f4e3-439e-be98-e026ad99da14",
+            "Subcomponents": [
+                {
+                    "myType": "note",
+                    "name": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                    "parentHydrateId": "d2b28ece-f4e3-439e-be98-e026ad99da14",
+                    "author": "anonymous",
+                    "userId": "unknown",
+                    "noteText": "LA brings new benefits to clients",
+                    "lastModified": "2013-08-01T15:28:38.875Z",
+                    "uniqueID": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "e4ca73dd-c731-41c4-fa65-8449ef4cda6c",
+                            "parentHydrateId": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                            "author": "anonymous",
+                            "userId": "unknown",
+                            "noteText": "Current solutions focus on compliance and efficiency",
+                            "lastModified": "2013-08-01T15:27:35.620Z",
+                            "uniqueID": "e4ca73dd-c731-41c4-fa65-8449ef4cda6c"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "67a43b24-72ba-4363-9ae4-d05837b9f23a",
+                            "parentHydrateId": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                            "author": "anonymous",
+                            "userId": "unknown",
+                            "noteText": "LA is about winning",
+                            "lastModified": "2013-08-01T15:26:40.349Z",
+                            "uniqueID": "67a43b24-72ba-4363-9ae4-d05837b9f23a"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "myType": "note",
+            "name": "b327f913-237b-4611-c155-beda2ffb95e1",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "Session Share",
+            "noteText": "We can help before and after E Discovery",
+            "lastModified": "2013-08-01T15:23:31.885Z",
+            "uniqueID": "b327f913-237b-4611-c155-beda2ffb95e1",
+            "Subcomponents": [
+                {
+                    "myType": "note",
+                    "name": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                    "parentHydrateId": "b327f913-237b-4611-c155-beda2ffb95e1",
+                    "author": "anonymous",
+                    "userId": "Session Share",
+                    "noteText": "We can help during E Discovery",
+                    "lastModified": "2013-08-01T15:21:56.111Z",
+                    "uniqueID": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "b5a897e2-973e-43af-abc2-8c322287af1d",
+                            "parentHydrateId": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                            "author": "anonymous",
+                            "userId": "unknown",
+                            "noteText": "Identification, review and analysis are EDRM steps where we can play a role.",
+                            "headerText": "We can play a role in EDRM",
+                            "lastModified": "2013-08-01T14:51:11.569Z",
+                            "uniqueID": "b5a897e2-973e-43af-abc2-8c322287af1d"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "17d90315-302e-4472-f730-7dea770a9836",
+                            "parentHydrateId": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                            "author": "anonymous",
+                            "userId": "unknown",
+                            "noteText": "E Discovery Reference Model lays out the steps of the process",
+                            "headerText": "EDRM lays out the process",
+                            "lastModified": "2013-08-01T14:46:31.151Z",
+                            "uniqueID": "17d90315-302e-4472-f730-7dea770a9836"
+                        }
+                    ]
+                },
+                {
+                    "myType": "note",
+                    "name": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                    "parentHydrateId": "b327f913-237b-4611-c155-beda2ffb95e1",
+                    "author": "anonymous",
+                    "userId": "Session Share",
+                    "noteText": "We can help with predictive coding",
+                    "lastModified": "2013-08-01T15:19:06.531Z",
+                    "uniqueID": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "02bcfac6-c586-4703-f366-0fcd40a24bcd",
+                            "parentHydrateId": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                            "author": "anonymous",
+                            "userId": "Session Share",
+                            "noteText": "LA could help Predictive coding score documents for their positive or negative impact on the case",
+                            "headerText": "LA could help predictive coding score impact on case",
+                            "lastModified": "2013-08-01T15:09:41.499Z",
+                            "uniqueID": "02bcfac6-c586-4703-f366-0fcd40a24bcd"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "9b057619-14f6-4096-c062-cc8ed7605e33",
+                            "parentHydrateId": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                            "author": "anonymous",
+                            "userId": "Session Share",
+                            "noteText": "Predictive coding for review enhancement scores documents based on their likelihood of being relevant.",
+                            "headerText": "Predictive coding is for review enhancement",
+                            "lastModified": "2013-08-01T15:08:23.328Z",
+                            "uniqueID": "9b057619-14f6-4096-c062-cc8ed7605e33"
+                        }
+                    ]
+                },
+                {
+                    "myType": "note",
+                    "name": "8226b166-76da-4315-9920-5002a81d82ed",
+                    "parentHydrateId": "b327f913-237b-4611-c155-beda2ffb95e1",
+                    "author": "anonymous",
+                    "userId": "Session Share",
+                    "noteText": "We can help with early case assessment",
+                    "lastModified": "2013-08-01T15:20:33.575Z",
+                    "uniqueID": "8226b166-76da-4315-9920-5002a81d82ed",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "6128a368-dddb-4dce-b439-85e1e6f27d3b",
+                            "parentHydrateId": "8226b166-76da-4315-9920-5002a81d82ed",
+                            "author": "anonymous",
+                            "userId": "unknown",
+                            "noteText": "LA can help ECA by including keywords that relate to the cause of action and patterns of success in arguing them.",
+                            "headerText": "LA will improve ECA keywords and strategy",
+                            "lastModified": "2013-08-01T15:02:39.058Z",
+                            "uniqueID": "6128a368-dddb-4dce-b439-85e1e6f27d3b"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "7405f621-37d0-4b0a-a0a0-8029dfb75ebc",
+                            "parentHydrateId": "8226b166-76da-4315-9920-5002a81d82ed",
+                            "author": "anonymous",
+                            "userId": "unknown",
+                            "noteText": "\"Identification\" is about early case assessment, case strategy and selecting keywords",
+                            "headerText": "Identification includes Early Case Assessment",
+                            "lastModified": "2013-08-01T15:01:31.131Z",
+                            "uniqueID": "7405f621-37d0-4b0a-a0a0-8029dfb75ebc"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "myType": "note",
+            "name": "7bbdd6c4-91bb-44fe-fd33-6ecb06873f61",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "Legal Software today is about document management and client management, not winning cases",
+            "headerText": "Legal Software about documents and clients, not winning",
+            "lastModified": "2013-08-01T14:54:27.247Z",
+            "uniqueID": "7bbdd6c4-91bb-44fe-fd33-6ecb06873f61"
+        },
+        {
+            "myType": "note",
+            "name": "b7a7a932-df74-4994-8456-2bc7e38a0951",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "E discovery is a means to an end, the 'end' is to win the case.",
+            "headerText": "E Discovery is a means to win the case",
+            "lastModified": "2013-08-01T14:53:22.029Z",
+            "uniqueID": "b7a7a932-df74-4994-8456-2bc7e38a0951"
+        },
+        {
+            "myType": "note",
+            "name": "d7265cdb-b903-4719-953a-c32631cd6655",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "LA is about collaborating to prepare the best case possible.",
+            "headerText": "LA is about collaborating for the best case",
+            "lastModified": "2013-08-01T14:56:57.639Z",
+            "uniqueID": "d7265cdb-b903-4719-953a-c32631cd6655"
+        },
+        {
+            "myType": "note",
+            "name": "c3c76303-758e-4d98-b63c-c0013a29d2ac",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "There are some things we need to do",
+            "lastModified": "2013-08-01T15:37:47.476Z",
+            "uniqueID": "c3c76303-758e-4d98-b63c-c0013a29d2ac"
+        },
+        {
+            "myType": "note",
+            "name": "5a19997e-6ee2-40ee-b7ae-17b10b21ae46",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "Session Share",
+            "noteText": "We need to study predictive coding in-depth and go after the leader or its competitors",
+            "headerText": "We need to study predictive coding in-depth",
+            "lastModified": "2013-08-01T15:11:12.810Z",
+            "uniqueID": "5a19997e-6ee2-40ee-b7ae-17b10b21ae46"
+        },
+        {
+            "myType": "note",
+            "name": "c21136fe-d29e-48b6-cee3-9bf72fda9ec7",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "You can build LA Templates collaboratively with KS",
+            "headerText": "Build LA Templates with KS",
+            "lastModified": "2013-08-01T14:32:06.430Z",
+            "uniqueID": "c21136fe-d29e-48b6-cee3-9bf72fda9ec7"
+        },
+        {
+            "myType": "note",
+            "name": "c524cf34-612f-40f8-b0ed-60d6086e336c",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "Need to build a dynamic checklist model for KnowtShare",
+            "headerText": "Dynamic Checklist for KnowtShare",
+            "lastModified": "2013-08-01T14:22:09.330Z",
+            "uniqueID": "c524cf34-612f-40f8-b0ed-60d6086e336c"
+        },
+        {
+            "myType": "note",
+            "name": "dc0892c5-a88f-48de-febb-f25f91134e05",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "There are things that can wait",
+            "lastModified": "2013-08-01T15:38:25.385Z",
+            "uniqueID": "dc0892c5-a88f-48de-febb-f25f91134e05"
+        },
+        {
+            "myType": "note",
+            "name": "bc60920a-7371-45c5-89fa-634aeea8c7af",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "Need to rebuild Legal Apprentice using KnowtShare approach",
+            "headerText": "Rebuild LA a la KnowtShare  ",
+            "lastModified": "2013-08-01T14:28:22.416Z",
+            "uniqueID": "bc60920a-7371-45c5-89fa-634aeea8c7af"
+        },
+        {
+            "myType": "note",
+            "name": "aef8c486-2809-4cec-fafd-4e93a1c736eb",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "KS is not the best environment for creating cases based on templates.  We need to create a case editor in JavaScript.",
+            "headerText": "Need JavaScript case editor",
+            "lastModified": "2013-08-01T14:35:26.609Z",
+            "uniqueID": "aef8c486-2809-4cec-fafd-4e93a1c736eb"
+        },
+        {
+            "myType": "note",
+            "name": "8a59b183-9801-4680-b94f-1df82f9d0b61",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "LA analysis provides insight into the patterns of winning and losing",
+            "headerText": "LA analysis provides insight into winning",
+            "lastModified": "2013-08-01T14:56:57.905Z",
+            "uniqueID": "8a59b183-9801-4680-b94f-1df82f9d0b61"
+        },
+        {
+            "myType": "note",
+            "name": "6b5bde9b-c74b-4586-840b-7055c6d54927",
+            "parentHydrateId": "MODEL",
+            "author": "anonymous",
+            "userId": "unknown",
+            "noteText": "We play an even bigger role in what happens after E Discovery!",
+            "headerText": "We play a bigger role after E Discovery",
+            "lastModified": "2013-08-01T14:52:15.434Z",
+            "uniqueID": "6b5bde9b-c74b-4586-840b-7055c6d54927"
+        }
+    ],
+    "drawing": [
+        {
+            "myType": "note",
+            "name": "f4aa27bb-0faf-444b-87fd-c8bc34ab3c2d",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 50,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "f4aa27bb-0faf-444b-87fd-c8bc34ab3c2d"
+        },
+        {
+            "myType": "note",
+            "name": "ad6e618d-595c-4453-fb96-0945c65d2489",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 100,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "ad6e618d-595c-4453-fb96-0945c65d2489"
+        },
+        {
+            "myType": "note",
+            "name": "bf8e236c-9642-46f4-ac2f-0309bd16a152",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 50,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "bf8e236c-9642-46f4-ac2f-0309bd16a152"
+        },
+        {
+            "myType": "note",
+            "name": "880db6ad-4758-4e2f-9575-ed107537c4c2",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 100,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "880db6ad-4758-4e2f-9575-ed107537c4c2"
+        },
+        {
+            "myType": "note",
+            "name": "f430d3a3-5039-4eb1-866b-b15e39e4e624",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 50,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "f430d3a3-5039-4eb1-866b-b15e39e4e624"
+        },
+        {
+            "myType": "note",
+            "name": "383fdfbf-de3b-48b7-ec04-9347bc7c31e7",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 100,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "383fdfbf-de3b-48b7-ec04-9347bc7c31e7"
+        },
+        {
+            "myType": "note",
+            "name": "7bbdd6c4-91bb-44fe-fd33-6ecb06873f61",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 50,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "7bbdd6c4-91bb-44fe-fd33-6ecb06873f61"
+        },
+        {
+            "myType": "note",
+            "name": "d7265cdb-b903-4719-953a-c32631cd6655",
+            "parentHydrateId": "DRAWING",
+            "pinX": 10,
+            "pinY": 50,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "d7265cdb-b903-4719-953a-c32631cd6655"
+        },
+        {
+            "myType": "note",
+            "name": "c524cf34-612f-40f8-b0ed-60d6086e336c",
+            "parentHydrateId": "DRAWING",
+            "pinX": 26.10510057149844,
+            "pinY": 428.61823000000015,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "c524cf34-612f-40f8-b0ed-60d6086e336c"
+        },
+        {
+            "myType": "note",
+            "name": "b7a7a932-df74-4994-8456-2bc7e38a0951",
+            "parentHydrateId": "DRAWING",
+            "pinX": 158.16692525778575,
+            "pinY": 668.5100300000001,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "b7a7a932-df74-4994-8456-2bc7e38a0951"
+        },
+        {
+            "myType": "note",
+            "name": "c21136fe-d29e-48b6-cee3-9bf72fda9ec7",
+            "parentHydrateId": "DRAWING",
+            "pinX": 164.60896548638513,
+            "pinY": 91.94745,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "c21136fe-d29e-48b6-cee3-9bf72fda9ec7"
+        },
+        {
+            "myType": "note",
+            "name": "aef8c486-2809-4cec-fafd-4e93a1c736eb",
+            "parentHydrateId": "DRAWING",
+            "pinX": 222.58732754377956,
+            "pinY": 331.91344000000003,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "aef8c486-2809-4cec-fafd-4e93a1c736eb"
+        },
+        {
+            "myType": "note",
+            "name": "8a59b183-9801-4680-b94f-1df82f9d0b61",
+            "parentHydrateId": "DRAWING",
+            "pinX": 354.9860918871677,
+            "pinY": 583.3013800000001,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "8a59b183-9801-4680-b94f-1df82f9d0b61"
+        },
+        {
+            "myType": "note",
+            "name": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+            "parentHydrateId": "DRAWING",
+            "pinX": 382.68250001430016,
+            "pinY": 837.5627305000003,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "width": 700,
+            "minHeight": 150,
+            "uniqueID": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+            "Subcomponents": [
+                {
+                    "myType": "note",
+                    "name": "8c2e9eba-bc01-47aa-845d-040762be4fd2",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "8c2e9eba-bc01-47aa-845d-040762be4fd2"
+                },
+                {
+                    "myType": "note",
+                    "name": "947828af-8794-4685-ca5f-f92d1a436bc4",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "947828af-8794-4685-ca5f-f92d1a436bc4"
+                },
+                {
+                    "myType": "note",
+                    "name": "f6681ae0-a038-43da-d5a2-d678bb50977d",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "f6681ae0-a038-43da-d5a2-d678bb50977d"
+                },
+                {
+                    "myType": "note",
+                    "name": "9d856d1a-b0f0-431a-ab58-5f8f076b7e35",
+                    "parentHydrateId": "ac68f934-a489-4a24-c53d-a4b46855e0b6",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "9d856d1a-b0f0-431a-ab58-5f8f076b7e35"
+                }
+            ]
+        },
+        {
+            "myType": "note",
+            "name": "bc60920a-7371-45c5-89fa-634aeea8c7af",
+            "parentHydrateId": "DRAWING",
+            "pinX": 390.08037348736343,
+            "pinY": 37.11592000000002,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "bc60920a-7371-45c5-89fa-634aeea8c7af"
+        },
+        {
+            "myType": "note",
+            "name": "fbe1240b-b956-4f6a-f0af-a2bea4aec32f",
+            "parentHydrateId": "DRAWING",
+            "pinX": 521.7661543584709,
+            "pinY": 304.74160210000025,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "fbe1240b-b956-4f6a-f0af-a2bea4aec32f"
+        },
+        {
+            "myType": "note",
+            "name": "9a1c5f04-26b2-429d-f069-ad315d804892",
+            "parentHydrateId": "DRAWING",
+            "pinX": 609.1097412597425,
+            "pinY": 539.7434200000001,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "9a1c5f04-26b2-429d-f069-ad315d804892"
+        },
+        {
+            "myType": "note",
+            "name": "fd68f5da-7709-4acc-9163-920319e37d05",
+            "parentHydrateId": "DRAWING",
+            "pinX": 679.9721837743356,
+            "pinY": 83.96909,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "fd68f5da-7709-4acc-9163-920319e37d05"
+        },
+        {
+            "myType": "note",
+            "name": "5a19997e-6ee2-40ee-b7ae-17b10b21ae46",
+            "parentHydrateId": "DRAWING",
+            "pinX": 860.3493101751181,
+            "pinY": 364.0494500000001,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "5a19997e-6ee2-40ee-b7ae-17b10b21ae46"
+        },
+        {
+            "myType": "note",
+            "name": "b327f913-237b-4611-c155-beda2ffb95e1",
+            "parentHydrateId": "DRAWING",
+            "pinX": 1151.8516305192404,
+            "pinY": 201.38794000000004,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "width": 530,
+            "minHeight": 150,
+            "uniqueID": "b327f913-237b-4611-c155-beda2ffb95e1",
+            "Subcomponents": [
+                {
+                    "myType": "note",
+                    "name": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                    "parentHydrateId": "b327f913-237b-4611-c155-beda2ffb95e1",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "b5a897e2-973e-43af-abc2-8c322287af1d",
+                            "parentHydrateId": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "b5a897e2-973e-43af-abc2-8c322287af1d"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "17d90315-302e-4472-f730-7dea770a9836",
+                            "parentHydrateId": "2ef9fed9-765e-4e3a-8604-a34ce3a471fc",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "17d90315-302e-4472-f730-7dea770a9836"
+                        }
+                    ]
+                },
+                {
+                    "myType": "note",
+                    "name": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                    "parentHydrateId": "b327f913-237b-4611-c155-beda2ffb95e1",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "02bcfac6-c586-4703-f366-0fcd40a24bcd",
+                            "parentHydrateId": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "02bcfac6-c586-4703-f366-0fcd40a24bcd"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "9b057619-14f6-4096-c062-cc8ed7605e33",
+                            "parentHydrateId": "3073ebc9-ed16-4ab6-94a3-ee734d0b73b4",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "9b057619-14f6-4096-c062-cc8ed7605e33"
+                        }
+                    ]
+                },
+                {
+                    "myType": "note",
+                    "name": "8226b166-76da-4315-9920-5002a81d82ed",
+                    "parentHydrateId": "b327f913-237b-4611-c155-beda2ffb95e1",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "8226b166-76da-4315-9920-5002a81d82ed",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "6128a368-dddb-4dce-b439-85e1e6f27d3b",
+                            "parentHydrateId": "8226b166-76da-4315-9920-5002a81d82ed",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "6128a368-dddb-4dce-b439-85e1e6f27d3b"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "7405f621-37d0-4b0a-a0a0-8029dfb75ebc",
+                            "parentHydrateId": "8226b166-76da-4315-9920-5002a81d82ed",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "7405f621-37d0-4b0a-a0a0-8029dfb75ebc"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "myType": "note",
+            "name": "d2b28ece-f4e3-439e-be98-e026ad99da14",
+            "parentHydrateId": "DRAWING",
+            "pinX": 1228.216365687021,
+            "pinY": 623.2843749999997,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "width": 910,
+            "minHeight": 150,
+            "uniqueID": "d2b28ece-f4e3-439e-be98-e026ad99da14",
+            "Subcomponents": [
+                {
+                    "myType": "note",
+                    "name": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                    "parentHydrateId": "d2b28ece-f4e3-439e-be98-e026ad99da14",
+                    "showSubcomponents": true,
+                    "minWidth": 150,
+                    "minHeight": 150,
+                    "uniqueID": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                    "Subcomponents": [
+                        {
+                            "myType": "note",
+                            "name": "e4ca73dd-c731-41c4-fa65-8449ef4cda6c",
+                            "parentHydrateId": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "e4ca73dd-c731-41c4-fa65-8449ef4cda6c"
+                        },
+                        {
+                            "myType": "note",
+                            "name": "67a43b24-72ba-4363-9ae4-d05837b9f23a",
+                            "parentHydrateId": "70338d7d-74f4-4eaf-a01e-a14dc8348751",
+                            "showSubcomponents": true,
+                            "minWidth": 150,
+                            "minHeight": 150,
+                            "uniqueID": "67a43b24-72ba-4363-9ae4-d05837b9f23a"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "myType": "note",
+            "name": "c3c76303-758e-4d98-b63c-c0013a29d2ac",
+            "parentHydrateId": "DRAWING",
+            "pinX": 1695.7146645652346,
+            "pinY": 915.4376048266979,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "c3c76303-758e-4d98-b63c-c0013a29d2ac"
+        },
+        {
+            "myType": "note",
+            "name": "6b5bde9b-c74b-4586-840b-7055c6d54927",
+            "parentHydrateId": "DRAWING",
+            "pinX": 1849.6074278915703,
+            "pinY": 378.6182300000001,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "6b5bde9b-c74b-4586-840b-7055c6d54927"
+        },
+        {
+            "myType": "note",
+            "name": "dc0892c5-a88f-48de-febb-f25f91134e05",
+            "parentHydrateId": "DRAWING",
+            "pinX": 1952.7707924248757,
+            "pinY": 1110.809619758198,
+            "showSubcomponents": true,
+            "minWidth": 150,
+            "minHeight": 150,
+            "uniqueID": "dc0892c5-a88f-48de-febb-f25f91134e05"
+        }
+    ],
+    "sessionID": "NO_SESSION",
+    "title": "untitled",
+    "subTitle": "",
+    "lastModified": "2013-09-01T23:46:56.737Z",
+    "userNickName": "anonymous",
+    "userId": "unknown"
+}

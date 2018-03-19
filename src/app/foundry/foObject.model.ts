@@ -3,6 +3,33 @@ import { iObject, ModelRef } from './foInterface'
 //import { setTimeout } from 'timers';
 
 
+export interface IDisposable {
+    dispose();
+}
+
+export function using<T extends IDisposable>(resource: T, func: (resource: T) => any) {
+    let result:any;
+    try {
+        result = func(resource);
+    } finally {
+        resource.dispose();
+    }
+    return result;
+}
+
+// // Example use:
+// class Camera implements IDisposable {
+//     takePicture() { /* omitted */ }
+//     // etc...
+//     dispose() {
+//         navigator.camera.cleanup();
+//     }
+// }
+
+// using(new Camera(), (camera) => {
+//     camera.takePicture();
+// });
+
 
 export class foObject implements iObject {
     private _myGuid: string;
