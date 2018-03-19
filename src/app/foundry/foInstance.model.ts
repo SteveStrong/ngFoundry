@@ -1,9 +1,8 @@
-import { Tools, foNames } from './foTools'
-import { iObject, iNode, Action } from './foInterface'
+import { Tools } from './foTools'
 
 import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
-import { foConcept } from './foConcept.model';
+
 import { foCollection } from './foCollection.model'
 import { foKnowledge } from './foKnowledge.model'
 
@@ -46,7 +45,7 @@ export class foInstance extends foNode {
 
     createDeepCopy(): foInstance {
         let copy = this.createCopy();
-        
+
         this.nodes.forEach(item => {
             let child = item.createDeepCopy();
             copy.addSubcomponent(child);

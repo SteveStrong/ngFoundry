@@ -14,7 +14,7 @@ import { foInstance } from '../foInstance.model'
 import { Matrix2D } from './foMatrix2D'
 
 import { foGlyph2D } from './foGlyph2D.model'
-import { foShape2D, foGroup2D } from './foShape2D.model'
+import { foShape2D } from './foShape2D.model'
 import { foHandle2D } from './foHandle2D';
 import { Lifecycle } from '../foLifecycle';
 import { RuntimeType } from "../foRuntimeType";

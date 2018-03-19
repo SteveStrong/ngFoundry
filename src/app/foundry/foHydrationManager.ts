@@ -1,10 +1,8 @@
-import { Tools, foNames } from './foTools'
-import { iObject, iNode, Action } from './foInterface'
+import { Tools } from './foTools'
+
 
 import { IDisposable } from './foObject.model'
 import { foInstance } from './foInstance.model'
-import { foConcept } from './foConcept.model';
-import { foCollection } from './foCollection.model'
 
 import { RuntimeType } from './foRuntimeType';
 import { foPage } from './shapes/foPage.model';
@@ -45,7 +43,7 @@ export class foHydrationManager implements IDisposable {
     public reHydrate(json: any): foInstance {
         let result: foInstance;
 
-        let { myGuid, myType, myName } = json;
+        let { myType, myName } = json;
 
         let type = RuntimeType.find(myType);
         let payload = json[myType];
@@ -115,7 +113,7 @@ export class foHydrationManager implements IDisposable {
     private hydrateInstance(obj: foInstance, json: any) {
         if (!obj) return false;
 
-        let { myClass, myName, myType, myGuid } = json;
+        let { myClass, myName, myType } = json;
 
         if (obj.myClass != myClass) return false;
         if (obj.myName != myName) return false;

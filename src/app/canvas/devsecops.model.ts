@@ -5,7 +5,7 @@ import { foWorkspace } from "../foundry/foWorkspace.model";
 import { foComponent } from "../foundry/foComponent.model";
 import { foModel } from "../foundry/foModel.model";
 import { foImage2D } from "../foundry/shapes/foImage2D.model";
-import { foText2D, foInputText2D } from "../foundry/shapes/foText2D.model";
+import { foInputText2D } from "../foundry/shapes/foText2D.model";
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foShape3D } from "../foundry/solids/foShape3D.model";
 //import { foShape2D } from "./particle.model";

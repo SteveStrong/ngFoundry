@@ -162,33 +162,19 @@ export class foWorkspace extends foKnowledge {
         this.activePage.clearPage();
     }
 
+
     public deHydrateInstance(obj: foInstance) {
-        let manager  = new foHydrationManager(this);
-        let result = manager.deHydrate(obj);
-        manager.dispose()
-        return result;
+        return using(new foHydrationManager(this), manager => {
+            return manager.deHydrate(obj);
+        });
     }
 
     public reHydratePayload(payload: any) {
-        let manager  = new foHydrationManager(this);
-        let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
-        let result = manager.reHydrate(data);
-        manager.dispose()
-        return result;
+        return using(new foHydrationManager(this), manager => {
+            let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
+            return manager.reHydrate(data);
+        });
     }
-
-    // public deHydrateInstance(obj: foInstance) {
-    //     return using(new foHydrationManager(this), manager => {
-    //         return manager.deHydrate(obj);
-    //     });
-    // }
-
-    // public reHydratePayload(payload: any) {
-    //     return using(new foHydrationManager(this), manager => {
-    //         let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
-    //         return manager.reHydrate(data);
-    //     });
-    // }
 
 }
 
