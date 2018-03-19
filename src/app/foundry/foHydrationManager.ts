@@ -3,6 +3,7 @@ import { Tools } from './foTools'
 
 import { IDisposable } from './foObject.model'
 import { foInstance } from './foInstance.model'
+import { foKnowledge } from './foKnowledge.model'
 
 import { RuntimeType } from './foRuntimeType';
 import { foPage } from './shapes/foPage.model';
@@ -22,7 +23,9 @@ export class foHydrationManager implements IDisposable {
         delete this.workspace;
     }
 
-    public deHydrate(source: foInstance): any {
+
+
+    public deHydrate(source: foInstance | foKnowledge): any {
         let result: any = {
             author: '',
             version: '',

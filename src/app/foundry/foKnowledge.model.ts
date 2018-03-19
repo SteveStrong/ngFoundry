@@ -93,6 +93,16 @@ export class foKnowledge extends foObject {
         }
     }
 
+    public reHydrate(json: any) {
+        this.override(json);
+        return this;
+    }
+
+    public deHydrate(context?: any, deep: boolean = true) {
+        let data = this.extractCopySpec();
+        return data;
+    }
+
 }
 
 import { RuntimeType } from './foRuntimeType';

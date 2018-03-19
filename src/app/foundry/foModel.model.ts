@@ -3,12 +3,12 @@ import { foComponent } from './foComponent.model'
 import { foConcept } from './foConcept.model';
 
 export class foModel extends foComponent {
-    //title: string = 'No Title';
-    //subtitle: string = 'No Subtitle';
 
     constructor(properties?: any, subcomponents?: Array<foComponent>, parent?: foObject) {
         super(properties, subcomponents, parent);
     }
+
+
 }
 
 import { RuntimeType } from './foRuntimeType';
@@ -17,5 +17,5 @@ RuntimeType.define(foModel);
 
 export class foContext<T extends foModel> extends foConcept<T> {
 
-
 }
+

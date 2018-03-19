@@ -18,6 +18,21 @@ export class fileSpec {
     get filename() {
         return `${this.name}${this.ext}`;
     }
+
+    static setFilenameExt(filenameExt:string, defaultExt?:string){
+        let list = filenameExt.split('.');
+        let name:string;
+        let ext:string;
+
+        if ( list.length == 1){
+            name = filenameExt;
+            ext = defaultExt;
+        } else {
+            ext = list[list.length-1];
+            name = filenameExt.replace(ext,'');
+        }
+        return new fileSpec('', name, ext)
+    }
 }
 
 export class foFileManager {
@@ -187,7 +202,7 @@ export class foFileManager {
                 Tools.matches(ext, '.knt') ||
                 Tools.matches(ext, '.csv') ||
                 Tools.matches(ext, '.json') ||
-                Tools.matches(ext, '.json')) {
+                Tools.matches(ext, '.txt')) {
                 this.readTextFileAsync(file, ext, onComplete);
             }
         }
