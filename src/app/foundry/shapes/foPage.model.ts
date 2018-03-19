@@ -314,7 +314,8 @@ export class foPage extends foShape2D {
         if (found) {
             let parent = found.myParent && found.myParent() as foNode;
             this.selections.clear();
-            let copy = found.createDeepCopy() as foGlyph2D;;
+            let copy = found.createDeepCopy().generateName() as foGlyph2D;
+
             parent.addSubcomponent(copy, {
                 x: found.x + 0.3 * found.width,
                 y: found.y + found.height,
@@ -338,7 +339,7 @@ export class foPage extends foShape2D {
         let found = this.selections.findSelected();
         if (found) {
             this.selections.clear();
-            let copy = found.createDeepCopy() as foGlyph2D;;
+            let copy = found.createDeepCopy().generateName() as foGlyph2D;
             this.copyPasteBuffer.addSelection(copy);
             onComplete && onComplete(copy);
         }
@@ -349,7 +350,7 @@ export class foPage extends foShape2D {
         if (found) {
             let reference = (this.selections.findSelected() || found) as foGlyph2D;;
             this.selections.clear();
-            let copy = found.createDeepCopy() as foGlyph2D;;
+            let copy = found.createDeepCopy().generateName() as foGlyph2D;
             this.addSubcomponent(copy, {
                 x: reference.x + 0.3 * reference.width,
                 y: reference.y + reference.height,
