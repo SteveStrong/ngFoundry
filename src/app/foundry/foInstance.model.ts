@@ -1,9 +1,8 @@
-import { Tools, foNames } from './foTools'
-import { iObject, iNode, Action } from './foInterface'
+import { Tools } from './foTools'
 
 import { foObject } from './foObject.model'
 import { foNode } from './foNode.model'
-import { foConcept } from './foConcept.model';
+
 import { foCollection } from './foCollection.model'
 import { foKnowledge } from './foKnowledge.model'
 
@@ -32,14 +31,25 @@ export class foInstance extends foNode {
 
     createCopy(keys?: string[]) {
         let data = this.extractCopySpec(keys);
-        let { myType } = data;
 
         let concept = this.createdFrom && this.createdFrom();
         let copy = concept && concept.newInstance(data);
+        if (copy) return copy;
 
+        let { myType } = data;
         let type = RuntimeType.find(myType);
-        copy = copy ? copy : RuntimeType.create(type, data);
+        copy = RuntimeType.create(type, data);
 
+        return copy;
+    }
+
+    createDeepCopy(): foInstance {
+        let copy = this.createCopy();
+
+        this.nodes.forEach(item => {
+            let child = item.createDeepCopy();
+            copy.addSubcomponent(child);
+        })
         return copy;
     }
 
@@ -77,7 +87,7 @@ export class foInstance extends foNode {
         return result;
     }
 
-    
+
     public reHydrate(json: any) {
         this.override(json);
         return this;
@@ -88,7 +98,7 @@ export class foInstance extends foNode {
         let keys = concept ? concept.specReadWriteKeys() : [];
         let data = this.extractCopySpec(keys);
 
-        if ( deep && this.nodes.count ) {
+        if (deep && this.nodes.count) {
             data.subcomponents = this.nodes.map(item => {
                 let child = item.deHydrate(context, deep);
                 return child;

@@ -7,10 +7,11 @@ import { foDictionary } from './foDictionary.model'
 
 import { foLibrary } from './foLibrary.model'
 import { foModel } from './foModel.model'
-import { foObject } from './foObject.model'
+import { foObject, using } from './foObject.model'
 
 import { foFileManager, fileSpec } from './foFileManager'
 import { foHydrationManager } from './foHydrationManager'
+import { foInstance } from './foInstance.model'
 
 import { ContextDictionary } from './foDictionaries'
 
@@ -150,7 +151,8 @@ export class foWorkspace extends foKnowledge {
 
     public autoSaveFile(onComplete?: (item: fileSpec) => void) {
         let manager = new foFileManager();
-        let payload = this.activePage.deHydrate();
+        let payload = this.deHydrateInstance(this.activePage);
+
         manager.writeTextFileAsync(payload, 'stevetest', '.json', (result) => {
             onComplete && onComplete(result);
         })
@@ -160,14 +162,18 @@ export class foWorkspace extends foKnowledge {
         this.activePage.clearPage();
     }
 
-    public reHydratePayload(payload) {
-        let manager = new foHydrationManager(this)
-        let data = JSON.parse(payload);
 
-        if (manager.reHydrateJson(data)) {
-            return true;
-        }
-        return false;
+    public deHydrateInstance(obj: foInstance) {
+        return using(new foHydrationManager(this), manager => {
+            return manager.deHydrate(obj);
+        });
+    }
+
+    public reHydratePayload(payload: any) {
+        return using(new foHydrationManager(this), manager => {
+            let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
+            return manager.reHydrate(data);
+        });
     }
 
 }

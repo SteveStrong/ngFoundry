@@ -118,14 +118,25 @@ export class foNode extends foObject implements iNode {
         return obj;
     }
 
+    public incrementNameCounter()
+    {
+        foNode._counter += 1;
+        return foNode._counter;
+    }
+
+    public generateName() {
+        let counter = this.incrementNameCounter();
+        let count = ("0000" + counter).slice(-4);
+        this.myName = `${this.myType}_${count}`;     
+        return this;  
+    }
+
     public defaultName(name?: string) {
         if (name) {
             this.myName = name;
         }
         else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
-            foNode._counter += 1;
-            let count = ("0000" + foNode._counter).slice(-4);
-            this.myName = `${this.myType}_${count}`;
+            this.generateName();
         }
         return this;
     }
@@ -224,6 +235,8 @@ export class foNode extends foObject implements iNode {
         spec = this.extract(keys,spec);
         return spec;
     }
+
+
 
     createCopy(keys?:string[]) {
         let data = this.extractCopySpec(keys);

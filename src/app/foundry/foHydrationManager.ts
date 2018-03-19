@@ -1,16 +1,14 @@
-import { Tools, foNames } from './foTools'
-import { iObject, iNode, Action } from './foInterface'
+import { Tools } from './foTools'
 
-import { foObject } from './foObject.model'
+
+import { IDisposable } from './foObject.model'
 import { foInstance } from './foInstance.model'
-import { foConcept } from './foConcept.model';
-import { foCollection } from './foCollection.model'
 
 import { RuntimeType } from './foRuntimeType';
 import { foPage } from './shapes/foPage.model';
 import { foWorkspace } from './foWorkspace.model'
 
-export class foHydrationManager {
+export class foHydrationManager implements IDisposable {
     workspace: foWorkspace;
     isTesting: boolean = false;
     files: any = {}
@@ -20,60 +18,102 @@ export class foHydrationManager {
         this.isTesting = test;
     }
 
-    public reHydrateJson(json) {
-
-        let { myClass, myName, myType, myGuid } = json;
-
-        let type = RuntimeType.find(myType);
-        if (type == foPage) {
-            let page = this.workspace.document.findPage(myName);
-            page && this.hydrateInstance(page, json);
-            this.reHydrate(page, json.subcomponents);
-        }
-
+    dispose() {
         delete this.workspace;
-        return true;
     }
 
-    private extractSpec(json:any){
+    public deHydrate(source: foInstance): any {
+        let result: any = {
+            author: '',
+            version: '',
+            sessionId: '',
+            creationDate: (new Date()).toISOString(),
+        }
+
+        let { myType, myGuid, myName } = source;
+
+        result['myGuid'] = myGuid;
+        result['myType'] = myType;
+        result['myName'] = myName;
+        result[myType] = source.deHydrate();
+      
+        return result;
+    }
+
+    public reHydrate(json: any): foInstance {
+        let result: foInstance;
+
+        let { myType, myName } = json;
+
+        let type = RuntimeType.find(myType);
+        let payload = json[myType];
+        let data = this.extractSpec(payload);
+
+        if (type == foPage) {
+            let page = this.workspace.document.findPage(myName);
+            page && this.hydrateInstance(page, data);
+            this.reHydrateModel(page, payload.subcomponents,true);
+        }
+
+        return result;
+    }
+
+    private extractSpec(json: any) {
         let spec = {}
-        Tools.forEachKeyValue(json, (key, value)=>{
-            if ( !Tools.matches(key,'subcomponents')) {
+        Tools.forEachKeyValue(json, (key, value) => {
+            if (!Tools.matches(key, 'subcomponents')) {
                 spec[key] = value;
             }
         })
         return spec;
     }
 
-    private reHydrate(parent:foInstance, json:any){
-        json.forEach(spec => {
-            let { subcomponents } = spec;
-            let item = this.establishInstance(spec);
-            item.addAsSubcomponent(parent);
-            subcomponents && this.reHydrate(item, subcomponents);
+    private reHydrateModel(parent: foInstance, json: any, rename:boolean=false) {
+
+        let list = [];
+        json && json.forEach(spec => {
+            let data = this.extractSpec(spec);
+            let { subcomponents, myName, myGuid } = spec;
+
+            let found = parent.nodes.find(child => child.myName == myName || child.myName == myGuid);
+            
+            if (found) {
+                found.reHydrate(data)
+            } else {
+                found = this.establishInstance(data)
+                list.push(found);
+            }
+            
+            rename && found.generateName();
+            subcomponents && this.reHydrateModel(found, subcomponents, false);
         });
+
+        list.forEach( found => {
+            found.addAsSubcomponent(parent);
+        })
+       
     }
 
 
-    private establishInstance(json: any):foInstance {
+    private establishInstance(spec: any): foInstance {
 
-        let { myClass, myType, myGuid } = json;
-        let spec = this.extractSpec(json);
+        let { myClass, myType } = spec;
+
         let concept = this.workspace.select(item => Tools.matches(item.myName, myClass)).first();
-        let type = RuntimeType.find(myType);
 
         let obj = concept && concept.newInstance(spec);
-        obj = obj ? obj : RuntimeType.create(type, spec);
+        if (obj) return obj;
 
-        //this is duplicate work, no reason to do this
-        obj.reHydrate(spec);
+        let type = RuntimeType.find(myType);
+        obj = RuntimeType.create(type, spec);
+
         return obj;
     }
 
     private hydrateInstance(obj: foInstance, json: any) {
         if (!obj) return false;
 
-        let { myClass, myName, myType, myGuid } = json;
+        let { myClass, myName, myType } = json;
 
         if (obj.myClass != myClass) return false;
         if (obj.myName != myName) return false;
@@ -81,6 +121,5 @@ export class foHydrationManager {
 
         let data = this.extractSpec(json);
         obj.reHydrate(data);
-
     }
 }
