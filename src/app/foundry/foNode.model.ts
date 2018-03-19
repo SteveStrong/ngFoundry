@@ -118,13 +118,19 @@ export class foNode extends foObject implements iNode {
         return obj;
     }
 
+    public incrementNameCounter()
+    {
+        foNode._counter += 1;
+        return foNode._counter;
+    }
+
     public defaultName(name?: string) {
         if (name) {
             this.myName = name;
         }
         else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
-            foNode._counter += 1;
-            let count = ("0000" + foNode._counter).slice(-4);
+            let counter = this.nameCounter();
+            let count = ("0000" + counter).slice(-4);
             this.myName = `${this.myType}_${count}`;
         }
         return this;

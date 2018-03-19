@@ -195,7 +195,7 @@ class shapeApp extends shapeDevOps {
   
   //override the storage of subcomponents because
   //they get created during on creation
-  public deHydrate(context?: any, deep: boolean = true) {
+  public deHydrate(context?: any, deep: boolean = false) {
     return super.deHydrate(context, false);
   }
 }

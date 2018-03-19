@@ -56,7 +56,7 @@ export class foHydrationManager implements IDisposable {
             page && this.hydrateInstance(page, data);
             this.reHydrateModel(page, payload.subcomponents);
         }
-        
+
         return result;
     }
 
@@ -81,6 +81,7 @@ export class foHydrationManager implements IDisposable {
                 found.reHydrate(data)
             } else {
                 found = this.establishInstance(data);
+                found.incrementNameCounter();  //need a way to pervent names from being duplicated locally
                 found.addAsSubcomponent(parent);
             }
 
