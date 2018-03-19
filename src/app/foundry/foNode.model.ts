@@ -129,7 +129,7 @@ export class foNode extends foObject implements iNode {
             this.myName = name;
         }
         else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
-            let counter = this.nameCounter();
+            let counter = this.incrementNameCounter();
             let count = ("0000" + counter).slice(-4);
             this.myName = `${this.myType}_${count}`;
         }

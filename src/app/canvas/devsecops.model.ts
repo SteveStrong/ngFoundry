@@ -14,6 +14,7 @@ import { iPoint2D } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 import { foPath2D } from '../foundry/shapes/foPath2D.model';
 
+import { RuntimeType } from '../foundry/foRuntimeType';
 
 export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
@@ -42,6 +43,14 @@ DevSecOpsShapes.define<foImage2D>('Image', foImage2D, {
 });
 
 class shapeDevOps extends foShape2D {
+
+  doAnimation = () => { };
+  
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.doAnimation();
+    super.render(ctx, deep);
+  }
+
   public drawSelected = (ctx: CanvasRenderingContext2D): void => {
     ctx.strokeStyle = "red";
     ctx.lineWidth = 4;
@@ -96,6 +105,8 @@ class shapeUI extends shapeDevOps {
     ctx.closePath();
     ctx.fill();
   }
+
+
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
     ctx.fillStyle = this.color;
@@ -218,6 +229,12 @@ DevSecOpsShapes.define<shapeDevOps>('App', shapeApp, {
   Service.dropAt(x, 3 * y);
   Data.dropAt(x, 5 * y);
   InvEnv.dropAt(x, 7 * y);
+
+  UI.doAnimation = function (): void {
+    let angle = this.angle + 2;
+    angle = angle >= 360 ? 0 : angle;
+    this.angle = angle;
+  }
 })
 
 
@@ -262,5 +279,93 @@ DevSecOpsKnowledge.solutions.define('DevOps')
   .subSolution('metrics', DevSecOpsKnowledge.solutions.define('metrics').hide())
   .subSolution('governance', DevSecOpsKnowledge.solutions.define('governance').hide())
   //.useStructureWhen(pipe, function(c) { return true});
+
+
+
+  class legoCore extends foShape2D {
+
+    description: string;
+    size: string = '0:0';
+  
+    constructor(properties?: any) {
+      super(properties);
+      this.description = this.myType;
+  
+      this.override({
+        height: function () {
+          let size = parseInt(this.size.split(':')[1]);
+          return 25 * size;
+        },
+        width: function () {
+          let size = parseInt(this.size.split(':')[0]);
+          return 25 * size;
+        }
+      });
+  
+    }
+  
+    doAnimation = () => { };
+  
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+      this.doAnimation();
+      super.render(ctx, deep);
+    }
+  
+    public postDraw = (ctx: CanvasRenderingContext2D): void => {
+      this.drawPin(ctx);
+    }
+  
+  }
+
+  class TwoByFour extends legoCore {
+    public pinX = (): number => { return 0 * this.width / 2; }
+    public pinY = (): number => { return 1 * this.height / 2 }
+    constructor(properties?: any) {
+      super(properties);
+      this.size = '2:4';
+    }
+  }
+  RuntimeType.define(TwoByFour);
+
+  class TenByTen extends legoCore {
+    constructor(properties?: any) {
+      super(properties);
+      this.size = '10:10';
+    }
+  }
+  RuntimeType.define(TenByTen);
+
+  DevSecOpsShapes.factory('animation', (spec?: any) => {
+
+    let results = Array<foGlyph2D>();
+
+    let shape = RuntimeType.create(TenByTen, {
+      myGuid: spec && spec.shape,
+      opacity: .5,
+      color: 'gray',
+      angle: 10
+    }).dropAt(600, 300).pushTo(results).defaultName();
+
+    let subShape = RuntimeType.create(TwoByFour, {
+      myGuid: spec && spec.subShape,
+      color: 'red',
+    }).addAsSubcomponent(shape, {
+      x: function () { return shape.width / 4; },
+      y: 150,
+      angle: 0,
+    }).setName('spinner');
+
+    subShape.doAnimation = function (): void {
+      let angle = this.angle + 5;
+      angle = angle >= 360 ? 0 : angle;
+      this.angle = angle;
+    }
+
+    return results;
+    
+  });
+
+
+
 
 
