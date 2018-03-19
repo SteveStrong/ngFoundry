@@ -72,20 +72,28 @@ export class foHydrationManager implements IDisposable {
 
     private reHydrateModel(parent: foInstance, json: any, rename:boolean=false) {
 
+        let list = [];
         json && json.forEach(spec => {
-            let { subcomponents, myName, myGuid } = spec;
-            let found = parent.nodes.find(child => child.myName == myName || child.myName == myGuid);
             let data = this.extractSpec(spec);
+            let { subcomponents, myName, myGuid } = spec;
 
+            let found = parent.nodes.find(child => child.myName == myName || child.myName == myGuid);
+            
             if (found) {
                 found.reHydrate(data)
             } else {
-                found = this.establishInstance(data);
-                found.addAsSubcomponent(parent);
+                found = this.establishInstance(data)
+                list.push(found);
             }
-
-            subcomponents && this.reHydrateModel(found, subcomponents);
+            
+            rename && found.generateName();
+            subcomponents && this.reHydrateModel(found, subcomponents, false);
         });
+
+        list.forEach( found => {
+            found.addAsSubcomponent(parent);
+        })
+       
     }
 
 
