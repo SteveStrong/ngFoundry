@@ -324,6 +324,12 @@ DevSecOpsKnowledge.solutions.define('DevOps')
       super(properties);
       this.size = '2:4';
     }
+
+    doAnimation = function (): void {
+      let angle = this.angle + 5;
+      angle = angle >= 360 ? 0 : angle;
+      this.angle = angle;
+    }
   }
   RuntimeType.define(TwoByFour);
 
@@ -355,11 +361,11 @@ DevSecOpsKnowledge.solutions.define('DevOps')
       angle: 0,
     }).setName('spinner');
 
-    subShape.doAnimation = function (): void {
-      let angle = this.angle + 5;
-      angle = angle >= 360 ? 0 : angle;
-      this.angle = angle;
-    }
+    // subShape.doAnimation = function (): void {
+    //   let angle = this.angle + 5;
+    //   angle = angle >= 360 ? 0 : angle;
+    //   this.angle = angle;
+    // }
 
     return results;
     
