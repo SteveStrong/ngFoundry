@@ -29,6 +29,7 @@ export class DomainComponent implements OnInit {
 
   ngOnInit() {
   
+    globalWorkspace.setName('Domain Model')
     this.workspace.stencil.add(DevSecOpsShapes);
     this.workspace.stencil.add(DevSecOpsSolids);
     this.workspace.library.add(DevSecOpsKnowledge);
@@ -36,5 +37,10 @@ export class DomainComponent implements OnInit {
 
     this.model = this.workspace.model.getItem('default')
   }
+
+  doSave() {}
+  doOpen() {}
+  doClear() {}
+  
 
 }
