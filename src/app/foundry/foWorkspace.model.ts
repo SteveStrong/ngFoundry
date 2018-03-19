@@ -164,15 +164,14 @@ export class foWorkspace extends foKnowledge {
 
     public deHydrateInstance(obj: foInstance) {
         let manager  = new foHydrationManager(this);
-        let payload = manager.deHydrate(obj);
-        let result = manager.deHydrate(payload);
+        let result = manager.deHydrate(obj);
         manager.dispose()
         return result;
     }
 
     public reHydratePayload(payload: any) {
         let manager  = new foHydrationManager(this);
-        let data = JSON.parse(payload);
+        let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
         let result = manager.reHydrate(data);
         manager.dispose()
         return result;
@@ -180,14 +179,13 @@ export class foWorkspace extends foKnowledge {
 
     // public deHydrateInstance(obj: foInstance) {
     //     return using(new foHydrationManager(this), manager => {
-    //         let payload = manager.deHydrate(obj);
-    //         return manager.deHydrate(payload);
+    //         return manager.deHydrate(obj);
     //     });
     // }
 
     // public reHydratePayload(payload: any) {
     //     return using(new foHydrationManager(this), manager => {
-    //         let data = JSON.parse(payload);
+    //         let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
     //         return manager.reHydrate(data);
     //     });
     // }
