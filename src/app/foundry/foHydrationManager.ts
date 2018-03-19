@@ -54,7 +54,7 @@ export class foHydrationManager implements IDisposable {
         if (type == foPage) {
             let page = this.workspace.document.findPage(myName);
             page && this.hydrateInstance(page, data);
-            this.reHydrateModel(page, payload.subcomponents);
+            this.reHydrateModel(page, payload.subcomponents,true);
         }
 
         return result;
@@ -70,7 +70,7 @@ export class foHydrationManager implements IDisposable {
         return spec;
     }
 
-    private reHydrateModel(parent: foInstance, json: any) {
+    private reHydrateModel(parent: foInstance, json: any, rename:boolean=false) {
 
         json && json.forEach(spec => {
             let { subcomponents, myName, myGuid } = spec;
@@ -81,7 +81,6 @@ export class foHydrationManager implements IDisposable {
                 found.reHydrate(data)
             } else {
                 found = this.establishInstance(data);
-                //found.incrementNameCounter();  //need a way to pervent names from being duplicated locally
                 found.addAsSubcomponent(parent);
             }
 

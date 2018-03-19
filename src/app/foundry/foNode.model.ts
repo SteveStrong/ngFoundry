@@ -231,6 +231,8 @@ export class foNode extends foObject implements iNode {
         return spec;
     }
 
+
+
     createCopy(keys?:string[]) {
         let data = this.extractCopySpec(keys);
         let { myType } = data;
