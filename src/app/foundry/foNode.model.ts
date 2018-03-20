@@ -18,8 +18,7 @@ export class foNode extends foObject implements iNode {
 
     private _class: string;
     get myClass(): string {
-        //let comp: any = this.constructor;
-        return this._class; // || comp.name;
+        return this._class;
     }
     set myClass(value: string) {
         this._class = value;
@@ -247,6 +246,24 @@ export class foNode extends foObject implements iNode {
             let copy = RuntimeType.create(type,data);
             return copy;
         }
+    }
+
+    public reHydrate(json: any) {
+        this.override(json);
+        return this;
+    }
+
+    public deHydrate(context?: any, deep: boolean = true) {
+
+        let data = this.extractCopySpec();
+
+        if (deep && this.nodes.count) {
+            data.subcomponents = this.nodes.map(item => {
+                let child = item.deHydrate(context, deep);
+                return child;
+            })
+        }
+        return data;
     }
     
     isInstanceOf(type) {

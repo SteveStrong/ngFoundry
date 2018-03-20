@@ -38,6 +38,10 @@ export class foComponent extends foInstance {
         return Tools.mixin(super.toJson(), members );
     }
 
+    clearAll() {
+        this.nodes.clearAll();
+    }
+
 }
 
 import { RuntimeType } from './foRuntimeType';

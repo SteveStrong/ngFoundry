@@ -1,5 +1,6 @@
 import { Tools } from './foTools'
 
+
 import { foDocument } from './shapes/foDocument.model'
 import { foStudio } from './solids/foStudio.model'
 import { foKnowledge } from "./foKnowledge.model";
@@ -20,17 +21,7 @@ import { WhereClause } from "./foInterface";
 
 
 
-// Feature detect + local reference
-export let storage = (function () {
-    let uid = (new Date()).toISOString();
-    let result;
-    try {
-        localStorage.setItem(uid, uid);
-        result = localStorage.getItem(uid) == uid;
-        localStorage.removeItem(uid);
-        return result && localStorage;
-    } catch (exception) { }
-}());
+
 
 export class LibraryDictionary extends foDictionary<foLibrary>{
     public establish = (name: string): foLibrary => {
@@ -149,19 +140,63 @@ export class foWorkspace extends foKnowledge {
         }, '.json', this.myName)
     }
 
-    public autoSaveFile(onComplete?: (item: fileSpec) => void) {
+    public SaveInstanceAs(obj:foInstance, name:string, ext:string='.json', onComplete?: (item: fileSpec) => void) {
         let manager = new foFileManager();
-        let payload = this.deHydrateInstance(this.activePage);
+        let payload = this.deHydrateInstance(obj);
 
-        manager.writeTextFileAsync(payload, 'stevetest', '.json', (result) => {
+        manager.writeTextFileAsync(payload, name, ext, result => {
+            this.filenameExt = result.filename;
             onComplete && onComplete(result);
         })
+        return true;
+    }
+
+    public SaveFileAs(name:string, ext:string='.json', onComplete?: (item: fileSpec) => void) {
+        let manager = new foFileManager();
+        let payload = this.deHydrateWorkspace();
+
+        manager.writeTextFileAsync(payload, name, ext, result => {
+            this.filenameExt = result.filename;
+            onComplete && onComplete(result);
+        })
+        return true;
+    }
+
+    public autoSaveFile(onComplete?: (item: fileSpec) => void) {
+        if ( !this.filenameExt ) return false;
+
+        let filespec = fileSpec.setFilenameExt(this.filenameExt)
+        let manager = new foFileManager();
+        let payload = this.deHydrateWorkspace();
+
+        manager.writeTextFileAsync(payload, filespec.name, filespec.ext, (result) => {
+            onComplete && onComplete(result);
+        })
+        return true;
     }
 
     public clearActivePage() {
         this.activePage.clearPage();
     }
 
+    //special for workspace
+    public reHydrate(json: any) {
+        return this;
+    }
+
+    //special for workspace
+    public deHydrate(context?: any, deep: boolean = true) {
+        let data = {}
+
+        return data;
+    }
+
+    
+    public deHydrateWorkspace() {
+        return using(new foHydrationManager(this), manager => {
+            return manager.deHydrate(this);
+        });
+    }
 
     public deHydrateInstance(obj: foInstance) {
         return using(new foHydrationManager(this), manager => {

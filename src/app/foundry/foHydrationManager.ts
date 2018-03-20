@@ -1,11 +1,13 @@
 import { Tools } from './foTools'
-
+import { VERSION } from '../../environments/version'
 
 import { IDisposable } from './foObject.model'
 import { foInstance } from './foInstance.model'
+import { foKnowledge } from './foKnowledge.model'
 
 import { RuntimeType } from './foRuntimeType';
 import { foPage } from './shapes/foPage.model';
+import { foModel } from './foModel.model';
 import { foWorkspace } from './foWorkspace.model'
 
 export class foHydrationManager implements IDisposable {
@@ -22,10 +24,12 @@ export class foHydrationManager implements IDisposable {
         delete this.workspace;
     }
 
-    public deHydrate(source: foInstance): any {
+
+
+    public deHydrate(source: foInstance | foKnowledge): any {
         let result: any = {
             author: '',
-            version: '',
+            version: VERSION.version,
             sessionId: '',
             creationDate: (new Date()).toISOString(),
         }
@@ -53,6 +57,12 @@ export class foHydrationManager implements IDisposable {
             let page = this.workspace.document.findPage(myName);
             page && this.hydrateInstance(page, data);
             this.reHydrateModel(page, payload.subcomponents,true);
+        }
+
+        if (type == foModel) {
+            let model = this.workspace.model.find('default');
+            model && this.hydrateInstance(model, data);
+            this.reHydrateModel(model, payload.subcomponents,true);
         }
 
         return result;
