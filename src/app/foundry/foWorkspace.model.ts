@@ -85,11 +85,12 @@ export class foWorkspace extends foKnowledge {
     private _document: foDocument = new foDocument({}, [], this);
     private _studio: foStudio = new foStudio({}, [], this);
 
-    private _controller: foDictionary<foController> = new foDictionary<foController>({}, this);
+    private _controller: foDictionary<foController> = new foDictionary<foController>({ displayName: 'controls' }, this);
 
 
     constructor(spec?: any) {
         super(spec);
+        
     }
 
     //special for workspace

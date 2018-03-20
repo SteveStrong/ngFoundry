@@ -17,6 +17,15 @@ export let globalBoidList: foCollection<boidMixin> = new foCollection<boidMixin>
 //http://www.kfish.org/boids/pseudocode.html
 
 class boidController extends foController {
+  applyRule1:boolean=false;
+  applyRule2:boolean=false;
+  applyRule3:boolean=false;
+
+  applyRules(b:boidMixin){
+    this.applyRule1 && this.rule1(b);
+    this.applyRule2 && this.rule2(b)
+    this.applyRule3 && this.rule3(b)
+  };
 
   //Rule 1: Boids try to fly towards the centre of mass of neighbouring boids. 
   rule1(b:boidMixin){
@@ -33,10 +42,19 @@ class boidController extends foController {
     
   }
 
+  doRule1(){
+    this.applyRule1 = !this.applyRule1;
+  }
+  doRule2(){
+    this.applyRule2 = !this.applyRule2;
+  }
+  doRule3(){
+    this.applyRule3 = !this.applyRule3;
+  }
 }
 
 export let boidBehaviour: boidController = new boidController();
-boidBehaviour.addCommands("doStart", "doStop", "doRotate");
+boidBehaviour.addCommands("doRule1", "doRule3", "doRule2");
 
 class boidMixin extends foShape2D {
 
@@ -44,6 +62,8 @@ class boidMixin extends foShape2D {
   public p: cPoint2D = new cPoint2D(0, 0);
 
   doAnimation = () => {
+    boidBehaviour.applyRules(this);
+
     this.v.sumTo(this.p); 
     this.x = this.p.x;
     this.y = this.p.y;
