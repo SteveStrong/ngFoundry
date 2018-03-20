@@ -121,10 +121,12 @@ export class foDictionary<T extends iObject> extends foObject {
     }
 
     public deHydrate(context?: any, deep: boolean = true) {
-        let data = this.asJson();
+        let data = {
+            subcomponents: []
+        }
  
-        if (deep && this._lookup.count) {
-            data.subcomponents = this._lookup.mapKeyValue((key,item) => {
+        if (deep ) {
+            data.subcomponents = this.mapKeyValue((key,item) => {
                 let child = item.deHydrate(context, deep);
                 return child;
             })

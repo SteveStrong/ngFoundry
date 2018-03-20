@@ -12,7 +12,7 @@ import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
 
 import { Toast } from "../common/emitter.service";
 import { SharingService } from "../common/sharing.service";
-import { DevSecOps, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
+import { DevSecOps } from "./devsecops.model";
 
 import { Star }  from "konva";
 
@@ -71,9 +71,8 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
       pageHeight: this.pageHeight,
     });
 
-    this.workspace.model.addItem('default', new foModel({}));
 
-    this.model = this.workspace.model.getItem('default')
+    this.model = this.workspace.model.establish('default')
     //this.model = workspace.context()
   }
 
