@@ -35,13 +35,13 @@ export class DomainComponent implements OnInit {
     this.workspace.stencil.add(DevSecOpsShapes);
     this.workspace.stencil.add(DevSecOpsSolids);
     this.workspace.library.add(DevSecOpsKnowledge);
-    this.workspace.model.addItem('default', new foModel({}));
 
-    this.model = this.workspace.model.getItem('default') as foModel;
+    this.model = new foModel().defaultName('Domain Model');
+    this.workspace.model.addItem('default', this.model);
   }
 
   doSave() { 
-    this.workspace.SaveInstanceAs(this.model, 'model', '.json', result => {
+    this.workspace.SaveInstanceAs(this.model, this.model.myName, '.json', result => {
       Toast.info('saved', result.filename);
     });
   }

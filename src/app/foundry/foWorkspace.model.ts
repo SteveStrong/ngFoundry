@@ -1,5 +1,6 @@
 import { Tools } from './foTools'
 
+
 import { foDocument } from './shapes/foDocument.model'
 import { foStudio } from './solids/foStudio.model'
 import { foKnowledge } from "./foKnowledge.model";
@@ -20,17 +21,7 @@ import { WhereClause } from "./foInterface";
 
 
 
-// Feature detect + local reference
-export let storage = (function () {
-    let uid = (new Date()).toISOString();
-    let result;
-    try {
-        localStorage.setItem(uid, uid);
-        result = localStorage.getItem(uid) == uid;
-        localStorage.removeItem(uid);
-        return result && localStorage;
-    } catch (exception) { }
-}());
+
 
 export class LibraryDictionary extends foDictionary<foLibrary>{
     public establish = (name: string): foLibrary => {

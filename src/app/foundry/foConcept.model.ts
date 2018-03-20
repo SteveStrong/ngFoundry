@@ -1,4 +1,4 @@
-import { Tools } from './foTools'
+import { Tools, foNames } from './foTools'
 import { PubSub } from './foPubSub'
 
 import { foKnowledge } from './foKnowledge.model'
@@ -107,11 +107,14 @@ export class foConcept<T extends foNode> extends foKnowledge {
     }
 
     get classAndNamespace():string {
-        let name = this.nameSpace;
-        if ( name ) {
-            return `${name}::${this.myName}`;
+        if ( !Tools.matches(this.myName, foNames.UNKNOWN)) {
+            let name = this.nameSpace;
+            if ( name ) {
+                return `${name}::${this.myName}`;
+            }    
+            return this.myName;
         }
-        return this.myName;
+
     }
 
     definePrimitive(type: { new(p?: any, s?: Array<T>, r?: T): T; }) {

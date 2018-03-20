@@ -5,6 +5,17 @@ import { foInstance } from './foInstance.model'
 // ES2015+  https://www.npmjs.com/package/savery
 import savery from 'savery';
 
+// Feature detect + local reference
+export let clientStorage = (function () {
+    let uid = (new Date()).toISOString();
+    try {
+        localStorage.setItem(uid, uid);
+        let result = localStorage.getItem(uid) == uid;
+        localStorage.removeItem(uid);
+        return result && localStorage;
+    } catch (exception) { }
+}());
+
 export class fileSpec {
     payload: string;
     name: string;
@@ -15,6 +26,7 @@ export class fileSpec {
         this.name = name;
         this.ext = ext;
     }
+    
     get filename() {
         return `${this.name}${this.ext}`;
     }
