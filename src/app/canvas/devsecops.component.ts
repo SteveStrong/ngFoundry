@@ -14,6 +14,8 @@ import { Toast } from "../common/emitter.service";
 import { SharingService } from "../common/sharing.service";
 import { DevSecOps } from "./devsecops.model";
 
+import { BoidStencil } from "./boid.model";
+
 import { Star }  from "konva";
 
 @Component({
@@ -66,6 +68,8 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.workspace.stencil.add(BoidStencil);
+    
     this.currentDocument = this.workspace.document.override({
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,
