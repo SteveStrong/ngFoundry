@@ -1,31 +1,59 @@
 import { Tools } from '../foundry/foTools';
 
 import { iPoint2D } from '../foundry/foInterface';
+import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foStencilLibrary } from "../foundry/foStencil";
+import { foCollection } from "../foundry/foCollection.model";
+import { foController } from "../foundry/foController";
 
 export let BoidStencil: foStencilLibrary = new foStencilLibrary().defaultName('Boids');
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
 
+
+export let globalBoidList: foCollection<boidMixin> = new foCollection<boidMixin>().setName('All Boids');
 //http://www.kfish.org/boids/pseudocode.html
+
+class boidController extends foController {
+
+  //Rule 1: Boids try to fly towards the centre of mass of neighbouring boids. 
+  rule1(b:boidMixin){
+
+  }
+
+  //Rule 2: Boids try to keep a small distance away from other objects (including other boids). 
+  rule2(b:boidMixin){
+    
+  }
+
+  //Rule 3: Boids try to match velocity with near boids. 
+  rule3(b:boidMixin){
+    
+  }
+
+}
+
+export let boidBehaviour: boidController = new boidController();
+boidBehaviour.addCommands("doStart", "doStop", "doRotate");
 
 class boidMixin extends foShape2D {
 
-  public vx: number;
-  public vy: number;
+  public v: cPoint2D = new cPoint2D(1, 1);
+  public p: cPoint2D = new cPoint2D(0, 0);
 
   doAnimation = () => {
-    this.x += this.vx;
-    this.y += this.vy;
+    this.v.sumTo(this.p); 
+    this.x = this.p.x;
+    this.y = this.p.y;
 
     if (this.isOffCanvasX) {
-      this.vx = -this.vx;
+      this.v.x = -this.v.x;
     }
 
     if (this.isOffCanvasY) {
-      this.vy = -this.vy;
+      this.v.y = -this.v.y;
     }
   };
 
@@ -66,14 +94,20 @@ class BoidShape extends boidMixin {
   }
 }
 
+
+
 export class Boid extends BoidShape {
 
-  // constructor(properties?: any) {
-  //   super(properties);
-  //   this.width = 10;
-  //   this.height = 10;
-  //   this.color = Tools.randomRGBColor()
-  // }
+  constructor(properties?: any) {
+    super(properties);
+    globalBoidList.addMember(this);  
+  }
+
+  public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
+    super.dropAt(x,y,angle);
+    this.p = new cPoint2D(this.x, this.y);
+    return this;
+}
 
   drawTriangle(ctx: CanvasRenderingContext2D, x1, y1, x2, y2, x3, y3) {
     ctx.beginPath();
@@ -98,15 +132,13 @@ let core = BoidStencil.mixin('core', {
   opacity: .5,
   width: 50,
   height: 50,
-  vx: Tools.randomInt(-7, 7),
-  vy: Tools.randomInt(-7, 7),
+  v: new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
 
 BoidStencil.define('Boid', Boid, {
   width: 20,
   height: 20,
-  vx: function() { return Tools.randomInt(-7, 7)},
-  vy: function() { return Tools.randomInt(-7, 7)},
+  v: function() { return new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))}
 });
 
 BoidStencil.define('Boid+', Boid, {
@@ -118,9 +150,9 @@ BoidStencil.define('Boid++', Boid, {
   width: 30,
   height: 30,
 
-}).onCreation( obj => {
-  obj.vx = Tools.randomInt(-7, 7);
-  obj.vy = Tools.randomInt(-7, 7);
+}).onCreation(obj => {
+  obj.color = Tools.randomRGBColor()
+  obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
 
 import { RuntimeType } from '../foundry/foRuntimeType';

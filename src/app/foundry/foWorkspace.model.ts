@@ -18,6 +18,7 @@ import { ContextDictionary } from './foDictionaries'
 
 import { foCollection } from './foCollection.model'
 import { WhereClause } from "./foInterface";
+import { foController } from './foController';
 
 
 
@@ -84,6 +85,9 @@ export class foWorkspace extends foKnowledge {
     private _document: foDocument = new foDocument({}, [], this);
     private _studio: foStudio = new foStudio({}, [], this);
 
+    private _controller: foDictionary<foController> = new foDictionary<foController>({}, this);
+
+
     constructor(spec?: any) {
         super(spec);
     }
@@ -123,6 +127,10 @@ export class foWorkspace extends foKnowledge {
         this.stencil.select(where, result, deep);
 
         return result;
+    }
+
+    get controller() {
+        return this._controller;
     }
 
     get studio() {

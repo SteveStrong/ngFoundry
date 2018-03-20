@@ -32,6 +32,8 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         return this;
     }
 
+
+
     subtractPoint(x: number = 0, y: number = 0) {
         this.x -= x;
         this.y -= y;
@@ -43,6 +45,17 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         let y = (this.y + pt.y) / 2;
         return new cPoint2D(x, y, 'midpoint');
     }
+
+    sumTo(p:cPoint2D) {
+        p.x += this.x;
+        p.y += this.y;
+        return p;
+    }
+    subtractTo(p:cPoint2D) {
+        p.x -= this.x;
+        p.y -= this.y;
+        return p;
+    }  
 }
 
 export class cRect implements iRect {
