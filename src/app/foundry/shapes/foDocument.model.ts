@@ -65,6 +65,23 @@ export class foDocument extends foNode {
             BroadcastChange.changed('currentPage', this);
         }
     }
+
+    public reHydrate(json: any) {
+        this.override(json);
+        return this;
+    }
+
+    public deHydrate(context?: any, deep: boolean = true) {
+        let data = this.extractCopySpec();
+ 
+        if (deep && this.pages.count) {
+            data.subcomponents = this.pages.mapKeyValue((key,item) => {
+                let child = item.deHydrate(context, deep);
+                return child;
+            })
+        }
+        return data;
+    }
 }
 
 import { RuntimeType } from '../foRuntimeType';

@@ -50,13 +50,19 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
   }
 
   doSave() {
-    this.workspace.autoSaveFile(result => {
+    this.workspace.SaveInstanceAs(this.workspace.activePage, 'page1', '.json', result => {
       Toast.info('saved', result.filename);
     });
   }
 
   doClear() {
     this.workspace.clearActivePage();
+  }
+
+  doSaveWorkspace() {
+    this.workspace.SaveFileAs('work', '.json', result => {
+      Toast.info('saved', result.filename);
+    });
   }
 
   ngOnInit() {

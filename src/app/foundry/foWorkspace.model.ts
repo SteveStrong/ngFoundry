@@ -88,6 +88,25 @@ export class foWorkspace extends foKnowledge {
         super(spec);
     }
 
+    //special for workspace
+    public reHydrate(json: any) {
+        return this;
+    }
+
+    //special for workspace
+    public deHydrate(context?: any, deep: boolean = true) {
+        let data = {
+            library: this._library.deHydrate(context, deep),
+            stencil: this._stencil.deHydrate(context, deep),
+            model: this._model.deHydrate(context, deep),
+            context: this._context.deHydrate(context, deep),
+            document: this._document.deHydrate(context, deep),
+            studio: this._studio.deHydrate(context, deep),
+        }
+
+        return data;
+    }
+
     get activePage() {
         return this._document.currentPage
     }
@@ -140,7 +159,7 @@ export class foWorkspace extends foKnowledge {
         }, '.json', this.myName)
     }
 
-    public SaveInstanceAs(obj:foInstance, name:string, ext:string='.json', onComplete?: (item: fileSpec) => void) {
+    public SaveInstanceAs(obj: foInstance, name: string, ext: string = '.json', onComplete?: (item: fileSpec) => void) {
         let manager = new foFileManager();
         let payload = this.deHydrateInstance(obj);
 
@@ -151,7 +170,7 @@ export class foWorkspace extends foKnowledge {
         return true;
     }
 
-    public SaveFileAs(name:string, ext:string='.json', onComplete?: (item: fileSpec) => void) {
+    public SaveFileAs(name: string, ext: string = '.json', onComplete?: (item: fileSpec) => void) {
         let manager = new foFileManager();
         let payload = this.deHydrateWorkspace();
 
@@ -163,7 +182,7 @@ export class foWorkspace extends foKnowledge {
     }
 
     public autoSaveFile(onComplete?: (item: fileSpec) => void) {
-        if ( !this.filenameExt ) return false;
+        if (!this.filenameExt) return false;
 
         let filespec = fileSpec.setFilenameExt(this.filenameExt)
         let manager = new foFileManager();
@@ -179,19 +198,9 @@ export class foWorkspace extends foKnowledge {
         this.activePage.clearPage();
     }
 
-    //special for workspace
-    public reHydrate(json: any) {
-        return this;
-    }
 
-    //special for workspace
-    public deHydrate(context?: any, deep: boolean = true) {
-        let data = {}
 
-        return data;
-    }
 
-    
     public deHydrateWorkspace() {
         return using(new foHydrationManager(this), manager => {
             return manager.deHydrate(this);
@@ -206,7 +215,7 @@ export class foWorkspace extends foKnowledge {
 
     public reHydratePayload(payload: any) {
         return using(new foHydrationManager(this), manager => {
-            let data = Tools.isString(payload) ?  JSON.parse(payload) : payload;
+            let data = Tools.isString(payload) ? JSON.parse(payload) : payload;
             return manager.reHydrate(data);
         });
     }
