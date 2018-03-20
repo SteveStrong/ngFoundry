@@ -103,14 +103,25 @@ let core = BoidStencil.mixin('core', {
 });
 
 BoidStencil.define('Boid', Boid, {
-  width: 10,
-  height: 10,
+  width: 20,
+  height: 20,
   vx: function() { return Tools.randomInt(-7, 7)},
   vy: function() { return Tools.randomInt(-7, 7)},
 });
 
-BoidStencil.define('Boid++', Boid, {
+BoidStencil.define('Boid+', Boid, {
 }).mixin(core);
+
+BoidStencil.define('Boid++', Boid, {
+  color: 'green',
+  opacity: .5,
+  width: 30,
+  height: 30,
+
+}).onCreation( obj => {
+  obj.vx = Tools.randomInt(-7, 7);
+  obj.vy = Tools.randomInt(-7, 7);
+});
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(Boid);
