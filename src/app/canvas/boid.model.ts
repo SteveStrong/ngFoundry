@@ -17,38 +17,69 @@ export let globalBoidList: foCollection<boidMixin> = new foCollection<boidMixin>
 //http://www.kfish.org/boids/pseudocode.html
 
 class boidController extends foController {
-  applyRule1:boolean=false;
-  applyRule2:boolean=false;
-  applyRule3:boolean=false;
+  applyRule1: boolean = false;
+  applyRule2: boolean = false;
+  applyRule3: boolean = false;
 
-  applyRules(b:boidMixin){
-    this.applyRule1 && this.rule1(b);
-    this.applyRule2 && this.rule2(b)
-    this.applyRule3 && this.rule3(b)
+  applyRules(boid: boidMixin) {
+    if (this.applyRule1) {
+      this.rule1(boid).sumTo(boid.v);
+    }
+
+    if (this.applyRule2) {
+      this.rule2(boid).sumTo(boid.v);
+    }
+
+    if (this.applyRule2) {
+      this.rule3(boid).sumTo(boid.v);
+    }
   };
 
   //Rule 1: Boids try to fly towards the centre of mass of neighbouring boids. 
-  rule1(b:boidMixin){
+  rule1(boid: boidMixin) {
+    //center of mass sum up all the locations for all the others
 
+    let center = new cPoint2D();
+    if (globalBoidList.length <= 1) {
+      return center;
+    }
+
+    globalBoidList.forEach(item => {
+      if (item != boid) {
+        item.p.sumTo(center);
+      }
+    })
+
+    center = new cPoint2D(300,300);
+
+    let g = 1.0 / (globalBoidList.length - 1);
+    center.scale(g);
+    boid.p.subtractTo(center)
+    center.scale(0.01);
+    return center;
   }
 
   //Rule 2: Boids try to keep a small distance away from other objects (including other boids). 
-  rule2(b:boidMixin){
-    
+  rule2(boid: boidMixin) {
+    let center = new cPoint2D();
+    return center;
   }
 
   //Rule 3: Boids try to match velocity with near boids. 
-  rule3(b:boidMixin){
-    
+  rule3(boid: boidMixin) {
+    let center = new cPoint2D();
+    return center;
   }
 
-  doRule1(){
+  doRule1() {
     this.applyRule1 = !this.applyRule1;
   }
-  doRule2(){
+
+  doRule2() {
     this.applyRule2 = !this.applyRule2;
   }
-  doRule3(){
+
+  doRule3() {
     this.applyRule3 = !this.applyRule3;
   }
 }
@@ -58,13 +89,13 @@ boidBehaviour.addCommands("doRule1", "doRule3", "doRule2");
 
 class boidMixin extends foShape2D {
 
-  public v: cPoint2D = new cPoint2D(1, 1);
+  public v: cPoint2D = new cPoint2D(0, 0);
   public p: cPoint2D = new cPoint2D(0, 0);
 
   doAnimation = () => {
     boidBehaviour.applyRules(this);
 
-    this.v.sumTo(this.p); 
+    this.v.sumTo(this.p);
     this.x = this.p.x;
     this.y = this.p.y;
 
@@ -120,14 +151,14 @@ export class Boid extends BoidShape {
 
   constructor(properties?: any) {
     super(properties);
-    globalBoidList.addMember(this);  
+    globalBoidList.addMember(this);
   }
 
   public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-    super.dropAt(x,y,angle);
+    super.dropAt(x, y, angle);
     this.p = new cPoint2D(this.x, this.y);
     return this;
-}
+  }
 
   drawTriangle(ctx: CanvasRenderingContext2D, x1, y1, x2, y2, x3, y3) {
     ctx.beginPath();
@@ -152,13 +183,13 @@ let core = BoidStencil.mixin('core', {
   opacity: .5,
   width: 50,
   height: 50,
-  v: new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
+  //v: new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
 
 BoidStencil.define('Boid', Boid, {
   width: 20,
   height: 20,
-  v: function() { return new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))}
+  //v: function () { return new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7)) }
 });
 
 BoidStencil.define('Boid+', Boid, {
@@ -172,7 +203,7 @@ BoidStencil.define('Boid++', Boid, {
 
 }).onCreation(obj => {
   obj.color = Tools.randomRGBColor()
-  obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
+  //obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
 
 import { RuntimeType } from '../foundry/foRuntimeType';

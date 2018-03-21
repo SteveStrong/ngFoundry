@@ -34,7 +34,6 @@ export class foControllerCardComponent implements OnInit {
     this.showDetails = !this.showDetails;
   }
 
-
   doCommand(cmd: string) {
     this.control[cmd]();
   }

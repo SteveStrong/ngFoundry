@@ -56,6 +56,12 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         p.y -= this.y;
         return p;
     }  
+
+    scale(s:number) {
+        this.x *= s;
+        this.y *= s;
+        return this;
+    }
 }
 
 export class cRect implements iRect {
