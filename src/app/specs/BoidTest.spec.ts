@@ -58,7 +58,7 @@ describe("Boid", function () {
         let pt1 = new cPoint2D(50,50);
         let pt2 = new cPoint2D(50,50);
         pt1.sumTo(result)
-        let answer = pt2.deltaTo(result)
+        let answer = pt2.deltaBetween(result)
 
 
         expect(answer.x).toEqual(0);
@@ -90,7 +90,7 @@ describe("Boid", function () {
         //let answer = new cPoint2D();
         let pt1 = new cPoint2D(50,50);
         let pt2 = new cPoint2D(150,150);
-        let answer = pt2.deltaTo(pt1);
+        let answer = pt2.deltaBetween(pt1);
         answer.scale(0.01);
 
         expect(answer.x).toEqual(1);

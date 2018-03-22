@@ -22,25 +22,25 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         return this;
     }
 
-    clonePoint() {
+    clonePoint(): cPoint2D {
         return new cPoint2D(this.x, this.y, this.myName);
     }
 
-    isEqualTo(p: cPoint2D){
-        return this.x == p.x && this.y == p.y; 
+    isEqualTo(p: cPoint2D):boolean {
+        return this.x == p.x && this.y == p.y;
     }
 
-    isNear(p: cPoint2D, radius:number){
+    isNear(p: cPoint2D, radius: number):boolean {
         let dx = Math.abs(p.x - this.x);
-        if ( dx > radius) return false;
+        if (dx > radius) return false;
 
         let dy = Math.abs(p.y - this.y);
-        if ( dy > radius) return false;
+        if (dy > radius) return false;
         return true;
 
     }
 
-    addPoint(x: number = 0, y: number = 0) {
+    addPoint(x: number = 0, y: number = 0):cPoint2D {
         this.x += x;
         this.y += y;
         return this;
@@ -48,31 +48,31 @@ export class cPoint2D extends Vector2 implements iPoint2D {
 
 
 
-    subtractPoint(x: number = 0, y: number = 0) {
+    subtractPoint(x: number = 0, y: number = 0):cPoint2D {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
-    midPoint(pt: cPoint2D) {
+    midPoint(pt: cPoint2D): cPoint2D {
         let x = (this.x + pt.x) / 2;
         let y = (this.y + pt.y) / 2;
         return new cPoint2D(x, y, 'midpoint');
     }
 
-    sumTo(p:cPoint2D) {
+    sumTo(p: cPoint2D):cPoint2D {
         p.x += this.x;
         p.y += this.y;
         return p;
     }
-    
-    deltaTo(p:cPoint2D) {
-        let x = this.x - p.x;
-        let y = this.y - p.y;
-        return new cPoint2D(x, y, 'delta');
-    }  
 
-    scale(s:number) {
+    deltaBetween(pt: cPoint2D): cPoint2D {
+        let x = this.x - pt.x;
+        let y = this.y - pt.y;
+        return new cPoint2D(x, y, 'delta');
+    }
+
+    scale(s: number):cPoint2D {
         this.x *= s;
         this.y *= s;
         return this;

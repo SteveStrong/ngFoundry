@@ -52,7 +52,7 @@ class boidController extends foController {
 
     let g = 1.0 / (globalBoidList.length - 1);
     center.scale(g);
-    let delta = boid.p.deltaTo(center)
+    let delta = boid.p.deltaBetween(center)
     delta.scale(0.01);
     return delta;
   }
@@ -185,13 +185,13 @@ let core = BoidStencil.mixin('core', {
   opacity: .5,
   width: 50,
   height: 50,
-  //v: new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
+  v: new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
 
 BoidStencil.define('Boid', Boid, {
   width: 20,
   height: 20,
-  //v: function () { return new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7)) }
+  v: function () { return new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7)) }
 });
 
 BoidStencil.define('Boid+', Boid, {
@@ -205,7 +205,7 @@ BoidStencil.define('Boid++', Boid, {
 
 }).onCreation(obj => {
   obj.color = Tools.randomRGBColor()
-  //obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
+  obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
 
 import { RuntimeType } from '../foundry/foRuntimeType';
