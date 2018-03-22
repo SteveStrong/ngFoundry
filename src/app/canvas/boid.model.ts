@@ -87,7 +87,7 @@ class boidController extends foController {
 export let boidBehaviour: boidController = new boidController();
 boidBehaviour.addCommands("doRule1", "doRule3", "doRule2");
 
-class boidMixin extends foShape2D {
+export class boidMixin extends foShape2D {
 
   public v: cPoint2D = new cPoint2D(0, 0);
   public p: cPoint2D = new cPoint2D(0, 0);
@@ -110,15 +110,19 @@ class boidMixin extends foShape2D {
 
 
   get isOffCanvasX(): boolean { // off the right side off the left side off the bottom
-    let parent = (<foShape2D>this.myParent());
-    let width = parent.width;
-    return this.x > width || this.x < 0;
+    let parent = this.myParent && this.myParent() as foShape2D;
+    if ( parent) {      
+      let width = parent.width;
+      return this.x > width || this.x < 0;
+    }
   }
 
   get isOffCanvasY(): boolean { // off the right side off the left side off the bottom
-    let parent = (<foShape2D>this.myParent())
-    let height = parent.height;
-    return this.y > height || this.y < 0;
+    let parent = this.myParent && this.myParent() as foShape2D;
+    if ( parent) {
+      let height = parent.height;
+      return this.y > height || this.y < 0;
+    }
   }
 
 }
