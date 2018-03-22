@@ -50,13 +50,11 @@ class boidController extends foController {
       }
     })
 
-    center = new cPoint2D(300,300);
-
     let g = 1.0 / (globalBoidList.length - 1);
     center.scale(g);
-    boid.p.subtractTo(center)
-    center.scale(0.01);
-    return center;
+    let delta = boid.p.deltaTo(center)
+    delta.scale(0.01);
+    return delta;
   }
 
   //Rule 2: Boids try to keep a small distance away from other objects (including other boids). 

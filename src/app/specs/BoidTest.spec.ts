@@ -5,6 +5,13 @@ import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 
 describe("Boid", function () {
 
+    function makeBoid(p:cPoint2D, v:cPoint2D){
+        let result = new boidMixin();
+        result.p = p;
+        result.v = v;
+        globalBoidList.addMember(result);
+        return result;
+    }
 
     beforeEach(function() {
         globalBoidList.clearAll()
@@ -51,20 +58,18 @@ describe("Boid", function () {
         let pt1 = new cPoint2D(50,50);
         let pt2 = new cPoint2D(50,50);
         pt1.sumTo(result)
-        pt2.subtractTo(result)
+        let answer = pt2.deltaTo(result)
 
 
-        expect(result.x).toEqual(0);
-        expect(result.y).toEqual(0);
+        expect(answer.x).toEqual(0);
+        expect(answer.y).toEqual(0);
         
     });
 
     it("should be able create boid mixin", function() {
-        let result = new boidMixin();
+        let result = makeBoid(new cPoint2D(50,55), new cPoint2D(10,5));
 
-        result.p = new cPoint2D(50,55);
-        result.v = new cPoint2D(10,5);
-
+        expect(globalBoidList.length).toEqual(1);
         result.doAnimation();
 
 
@@ -73,6 +78,38 @@ describe("Boid", function () {
 
         expect(result.v.x).toEqual(10);
         expect(result.v.y).toEqual(5);
+        
+    });
+
+    it("should be able validate rule1", function() {
+        let b1 = makeBoid(new cPoint2D(50,50), new cPoint2D(10,10));
+        let b2 = makeBoid(new cPoint2D(150,150), new cPoint2D(10,10));
+
+        expect(globalBoidList.length).toEqual(2);
+
+        //let answer = new cPoint2D();
+        let pt1 = new cPoint2D(50,50);
+        let pt2 = new cPoint2D(150,150);
+        let answer = pt2.deltaTo(pt1);
+        answer.scale(0.01);
+
+        expect(answer.x).toEqual(1);
+        expect(answer.y).toEqual(1);
+        
+        let result = boidBehaviour.rule1(b1);
+        expect(result.x).toEqual(60);
+        expect(result.y).toEqual(60);
+
+
+        result = boidBehaviour.rule1(b2);
+        expect(result.x).toEqual(70);
+        expect(result.y).toEqual(70);
+
+        //b1.doAnimation();
+        //b2.doAnimation();
+
+
+
         
     });
 

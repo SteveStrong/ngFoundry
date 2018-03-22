@@ -65,10 +65,11 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         p.y += this.y;
         return p;
     }
-    subtractTo(p:cPoint2D) {
-        p.x -= this.x;
-        p.y -= this.y;
-        return p;
+    
+    deltaTo(p:cPoint2D) {
+        let x = this.x - p.x;
+        let y = this.y - p.y;
+        return new cPoint2D(x, y, 'delta');
     }  
 
     scale(s:number) {
