@@ -26,6 +26,20 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         return new cPoint2D(this.x, this.y, this.myName);
     }
 
+    isEqualTo(p: cPoint2D){
+        return this.x == p.x && this.y == p.y; 
+    }
+
+    isNear(p: cPoint2D, radius:number){
+        let dx = Math.abs(p.x - this.x);
+        if ( dx > radius) return false;
+
+        let dy = Math.abs(p.y - this.y);
+        if ( dy > radius) return false;
+        return true;
+
+    }
+
     addPoint(x: number = 0, y: number = 0) {
         this.x += x;
         this.y += y;
