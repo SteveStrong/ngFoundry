@@ -130,7 +130,7 @@ export class foHandle3D extends foHandle {
         let point = target.getGlobalPosition();
         let center = this.getGlobalPosition();
 
-        let distance = point.deltaBetween(center);
+        let distance = Math.sqrt(point.distanceToSquared(center));
         let dist = point.add(center.negate());
         if (distance > 1) {
             parent.setGlobalPosition(dist);
