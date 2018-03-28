@@ -99,6 +99,16 @@ export class foDictionary<T extends iObject> extends foObject {
         });
     };
 
+    mapKeyValue(mapFunc) {  //funct has 2 args.. key,value
+        let result = [];
+        let keys = this.keys;
+        keys.forEach(key => {
+            let value = this._lookup[key];
+            result.push(mapFunc(key, value));
+        });
+        return result;
+    };
+
     applyTo(mapFunc) {  //funct has 1 args.. value
         for (let key in this._lookup) {
             let value = this._lookup[key];
@@ -108,6 +118,20 @@ export class foDictionary<T extends iObject> extends foObject {
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), this.jsonMerge(this._lookup));
+    }
+
+    public deHydrate(context?: any, deep: boolean = true) {
+        let data = {
+            subcomponents: []
+        }
+ 
+        if (deep ) {
+            data.subcomponents = this.mapKeyValue((key,item) => {
+                let child = item.deHydrate(context, deep);
+                return child;
+            })
+        }
+        return data;
     }
 
 }

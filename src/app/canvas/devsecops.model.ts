@@ -55,18 +55,11 @@ class shapeDevOps extends foShape2D {
     ctx.strokeStyle = "red";
     ctx.lineWidth = 4;
     this.drawOutline(ctx);
-    //this.drawHandles(ctx);
-    //this.drawConnectionPoints(ctx);
     this.drawPin(ctx);
   }
 
   findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
     let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
-
-    // if (deep) {
-    //     let child = this.findChildObjectUnderPoint(hit);
-    //     found = child ? child : found;
-    // }
     return found;
   }
 }

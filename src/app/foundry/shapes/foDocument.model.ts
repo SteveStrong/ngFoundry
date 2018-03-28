@@ -24,11 +24,19 @@ export class foDocument extends foNode {
         return this._pages;
     }
 
-    findPage(name: string) {
+    findPage(name: string): foPage {
         return this._pages.find(name);
     }
 
-    findPageByGuid(guid: string) {
+
+    establishPage(name: string): foPage {
+        this._pages.findItem(name, () => {
+            this._pages.addItem(name, this.createPage({ myName: name }))
+        })
+        return this._pages.getItem(name);
+    }
+
+    findPageByGuid(guid: string): foPage {
         if (!Object.keys(this._pageByGuid).length) {
             this.pages.forEachKeyValue((key, page) => {
                 this._pageByGuid[page.myGuid] = page;
@@ -37,15 +45,16 @@ export class foDocument extends foNode {
         return this._pageByGuid[guid];
     }
 
-    createPage(properties?: any) {
+    createPage(properties?: any): foPage {
         this._pageByGuid = {};
         let nextPage = `Page-${this.pages.count + 1}`;
         let spec = Tools.union(properties, {
-            myName: nextPage,
+            myName: (properties && properties.myName) || nextPage,
             width: this.pageWidth || 1000,
             height: this.pageHeight || 800,
         });
         this.currentPage = new foPage(spec);
+        this.currentPage.displayName = nextPage;
 
         Lifecycle.event('syncPage', this.currentPage);
         return this.currentPage;
@@ -64,6 +73,23 @@ export class foDocument extends foNode {
             this.pages.addItem(page.myName, page);
             BroadcastChange.changed('currentPage', this);
         }
+    }
+
+    public reHydrate(json: any) {
+        this.override(json);
+        return this;
+    }
+
+    public deHydrate(context?: any, deep: boolean = true) {
+        let data = this.extractCopySpec();
+ 
+        if (deep && this.pages.count) {
+            data.subcomponents = this.pages.mapKeyValue((key,item) => {
+                let child = item.deHydrate(context, deep);
+                return child;
+            })
+        }
+        return data;
     }
 }
 

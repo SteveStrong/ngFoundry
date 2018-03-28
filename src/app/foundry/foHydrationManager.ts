@@ -60,7 +60,7 @@ export class foHydrationManager implements IDisposable {
         }
 
         if (type == foModel) {
-            let model = this.workspace.model.find('default');
+            let model = this.workspace.model.establish(myName);
             model && this.hydrateInstance(model, data);
             this.reHydrateModel(model, payload.subcomponents,true);
         }

@@ -12,7 +12,9 @@ import { foGlyph2D } from "../foundry/shapes/foGlyph2D.model";
 
 import { Toast } from "../common/emitter.service";
 import { SharingService } from "../common/sharing.service";
-import { DevSecOps, DevSecOpsShapes, DevSecOpsSolids } from "./devsecops.model";
+import { DevSecOps } from "./devsecops.model";
+
+import { BoidStencil, boidBehaviour } from "./boid.model";
 
 import { Star }  from "konva";
 
@@ -50,7 +52,7 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
   }
 
   doSave() {
-    this.workspace.autoSaveFile(result => {
+    this.workspace.SaveInstanceAs(this.workspace.activePage, 'page1', '.json', result => {
       Toast.info('saved', result.filename);
     });
   }
@@ -59,15 +61,23 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
     this.workspace.clearActivePage();
   }
 
+  doSaveWorkspace() {
+    this.workspace.SaveFileAs('work', '.json', result => {
+      Toast.info('saved', result.filename);
+    });
+  }
+
   ngOnInit() {
+    this.workspace.stencil.add(BoidStencil);
+    this.workspace.controller.add(boidBehaviour);
+
     this.currentDocument = this.workspace.document.override({
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,
     });
 
-    this.workspace.model.addItem('default', new foModel({}));
 
-    this.model = this.workspace.model.getItem('default')
+    this.model = this.workspace.model.establish('default')
     //this.model = workspace.context()
   }
 
