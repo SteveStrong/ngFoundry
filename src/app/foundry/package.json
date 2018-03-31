@@ -1,5 +1,5 @@
 {
-  "name": "foundry",
+  "name": "ngfoundry",
   "version": "1.0.0",
   "description": "typescript lib for foundry",
   "main": "index.js",
