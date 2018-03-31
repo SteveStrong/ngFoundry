@@ -1,3 +1,3 @@
-export.message = function() {
+exports.message = function() {
     console.log("it works");
 }
