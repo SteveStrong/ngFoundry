@@ -67,6 +67,10 @@ import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.compone
 import { DevSecOpsComponent } from './canvas/devsecops.component';
 import { ShapeTestingComponent } from './specs/shape-testing/shape-testing.component';
 import { foControllerCardComponent } from './fo-inspector/fo-controller-card.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { CardAComponent } from './dashboard/card-a.component';
+import { CardBComponent } from './dashboard/card-b.component';
+import { CardCComponent } from './dashboard/card-c.component';
 
 @NgModule({
   declarations: [
@@ -118,7 +122,16 @@ import { foControllerCardComponent } from './fo-inspector/fo-controller-card.com
     foSolutionCardComponent,
     DevSecOpsComponent,
     ShapeTestingComponent,
-    foControllerCardComponent
+    foControllerCardComponent,
+    DashboardComponent,
+    CardAComponent,
+    CardBComponent,
+    CardCComponent
+  ],
+  entryComponents: [
+    CardAComponent,
+    CardBComponent,
+    CardCComponent
   ],
   imports: [
     BrowserAnimationsModule,
