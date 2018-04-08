@@ -9,7 +9,7 @@ import { foDictionary } from './foDictionary.model'
 
 import { RuntimeType } from './foRuntimeType';
 
-class foSubStructureSpec extends foKnowledge {
+export class foSubStructureSpec extends foKnowledge {
     structure: foStructure;
     name: string;
     order: number = 0;

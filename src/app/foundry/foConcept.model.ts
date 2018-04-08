@@ -14,7 +14,7 @@ import { RuntimeType } from './foRuntimeType';
 import { Lifecycle } from './foLifecycle';
 
 
-class foSubComponentSpec extends foKnowledge {
+export class foSubComponentSpec extends foKnowledge {
     concept: foKnowledge;
     name: string;
     order: number = 0;

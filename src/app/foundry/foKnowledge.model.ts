@@ -106,5 +106,5 @@ export class foKnowledge extends foObject {
 }
 
 import { RuntimeType } from './foRuntimeType';
-import { foCollection } from 'app/foundry/foCollection.model';
+import { foCollection } from './foCollection.model';
 RuntimeType.knowledge(foKnowledge);

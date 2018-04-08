@@ -1,10 +1,10 @@
 "use strict";
 
-interface ISubscription {
+export interface ISubscription {
     (...args: any[]): void;
 }
 
-interface IDictionary {
+export interface IDictionary {
     [name: string]: ISubscription[];
 }
 

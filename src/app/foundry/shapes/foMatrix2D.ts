@@ -143,12 +143,7 @@ export class Matrix2D {
         return this;
     };
 
-    /**
- * Applies a clockwise rotation transformation to the matrix.
- * @method rotate
- * @param {Number} angle The angle to rotate by, in degrees. To use a value in radians, multiply it by `180/Math.PI`.
- * @return {Matrix2D} This matrix. Useful for chaining method calls.
- **/
+
     rotate(angle: number) {
         angle = angle * Matrix2D.DEG_TO_RAD;
         var cos = Math.cos(angle);
@@ -222,14 +217,7 @@ export class Matrix2D {
         return this.tx === matrix.tx && this.ty === matrix.ty && this.a === matrix.a && this.b === matrix.b && this.c === matrix.c && this.d === matrix.d;
     };
 
-    /**
- * Transforms a point according to this matrix.
- * @method transformPoint
- * @param {Number} x The x component of the point to transform.
- * @param {Number} y The y component of the point to transform.
- * @param {Point | Object} [pt] An object to copy the result into. If omitted a generic object with x/y properties will be returned.
- * @return {Point} This matrix. Useful for chaining method calls.
- **/
+
     transformPoint(x: number, y: number, pt?: cPoint2D): cPoint2D {
         pt = pt || new cPoint2D();
         pt.x = x * this.a + y * this.c + this.tx;
