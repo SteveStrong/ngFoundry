@@ -1,7 +1,7 @@
 
 import { Scene, DirectionalLight, AmbientLight, PerspectiveCamera, OrthographicCamera, BoxGeometry, MeshBasicMaterial, MeshPhongMaterial, Mesh, WebGLRenderer } from 'three';
 
-import { MeshFaceMaterial, JSONLoader, Vector3, Vector2, Object3D, Quaternion, GridHelper, AxesHelper, SphereGeometry, TextureLoader, Euler, EventDispatcher } from 'three';
+import { MeshFaceMaterial, JSONLoader, Vector3, Vector2, Object3D, Quaternion, GridHelper, AxisHelper, SphereGeometry, TextureLoader, Euler, EventDispatcher } from 'three';
 
 let STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5 };
 
@@ -854,7 +854,7 @@ export class Screen3D {
     }
 
     addAxisHelper(size?: number, onCompete?) {
-        var axisHelper = new AxesHelper(size || 50);
+        var axisHelper = new AxisHelper(size || 50);
         var scene = this.scene;
         scene.add(axisHelper);
         onCompete && onCompete(axisHelper, scene);
