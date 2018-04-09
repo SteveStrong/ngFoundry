@@ -9,7 +9,7 @@ import { foStructure } from './foStructure.model'
 
 import { RuntimeType } from './foRuntimeType';
 
-class foAltStructureSpec extends foKnowledge {
+export class foAltStructureSpec extends foKnowledge {
     structure: foStructure;
     exist: WhereClause<foComponent>;
     priority: number = 100;
@@ -26,7 +26,7 @@ class foAltStructureSpec extends foKnowledge {
     }
 }
 
-class foSubSolutionSpec extends foKnowledge {
+export class foSubSolutionSpec extends foKnowledge {
     solution: foSolution;
     name: string;
     order: number = 0;

@@ -2,9 +2,9 @@ import { Tools } from '../foundry/foTools'
 import { Action, Spec } from '../foundry/foInterface';
 
 import { foNode } from './foNode.model'
-import { foConcept } from 'app/foundry/foConcept.model';
-import { foMethod, foFactory } from 'app/foundry/foMethod.model';
-import { foLibrary } from 'app/foundry/foLibrary.model';
+import { foConcept } from './foConcept.model';
+import { foMethod, foFactory } from './foMethod.model';
+import { foLibrary } from './foLibrary.model';
 
 
 import { RuntimeType } from './foRuntimeType';

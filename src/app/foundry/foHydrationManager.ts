@@ -1,5 +1,4 @@
 import { Tools } from './foTools'
-import { VERSION } from '../../environments/version'
 
 import { IDisposable } from './foObject.model'
 import { foInstance } from './foInstance.model'
@@ -29,7 +28,7 @@ export class foHydrationManager implements IDisposable {
     public deHydrate(source: foInstance | foKnowledge): any {
         let result: any = {
             author: '',
-            version: VERSION.version,
+            version: 'xxx',
             sessionId: '',
             creationDate: (new Date()).toISOString(),
         }

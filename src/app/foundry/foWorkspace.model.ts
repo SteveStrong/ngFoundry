@@ -19,8 +19,8 @@ import { ContextDictionary } from './foDictionaries'
 import { foCollection } from './foCollection.model'
 import { WhereClause } from "./foInterface";
 import { foController } from './foController';
-
-
+import { foPage } from './shapes/foPage.model';
+import { foStage } from './solids/foStage.model';
 
 
 
@@ -112,11 +112,11 @@ export class foWorkspace extends foKnowledge {
         return data;
     }
 
-    get activePage() {
+    get activePage(): foPage {
         return this._document.currentPage
     }
 
-    get activeStage() {
+    get activeStage(): foStage {
         return this._studio.currentStage
     }
 

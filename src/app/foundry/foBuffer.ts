@@ -4,7 +4,7 @@ import { cPoint2D, cFrame } from './shapes/foGeometry2D';
 import { foGlyph2D } from './shapes/foGlyph2D.model'
 import { foHandle2D } from './shapes/foHandle2D';
 
-class foBuffer<T extends foInstance> extends foCollection<T> {
+export class foBuffer<T extends foInstance> extends foCollection<T> {
 
 }
 
