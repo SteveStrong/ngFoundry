@@ -1,18 +1,17 @@
 import { Tools } from '../foundry/foTools';
 
-import { iPoint2D } from '../foundry/foInterface';
+import { iPoint2D, Action } from '../foundry/foInterface';
 import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foStencilLibrary } from "../foundry/foStencil";
 import { foCollection } from "../foundry/foCollection.model";
-import { foController, foToggle, foCommand } from "../foundry/foController";
+import { foController, foToggle } from "../foundry/foController";
 
 export let BoidStencil: foStencilLibrary = new foStencilLibrary().defaultName('Boids');
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
 
-import { foWorkspace } from 'app/foundry/foWorkspace.model';
 
 
 export let globalBoidList: foCollection<boidMixin> = new foCollection<boidMixin>().setName('All Boids');
@@ -23,88 +22,155 @@ class boidController extends foController {
   applyRule2: boolean = false;
   applyRule3: boolean = false;
 
-  applyRules(boid: boidMixin) {
+  applyRules(boid: boidMixin, func:Action<cPoint2D>) {
+    let v = new cPoint2D();
     if (this.applyRule1) {
-      this.rule1(boid).sumTo(boid.v);
+      this.rule1(boid).sumTo(v);
     }
 
     if (this.applyRule2) {
-      this.rule2(boid).sumTo(boid.v);
+      this.rule2(boid).sumTo(v);
     }
 
-    if (this.applyRule2) {
-      this.rule3(boid).sumTo(boid.v);
+    if (this.applyRule3) {
+      this.rule3(boid).sumTo(v);
+    }
+    if ( this.applyRule1 || this.applyRule2 || this.applyRule3) {
+      func(v);
     }
   };
 
-  //Rule 1: Boids try to fly towards the centre of mass of neighbouring boids. 
-  rule1(boid: boidMixin) {
+  ruleCenter(boid: boidMixin): cPoint2D {
     //center of mass sum up all the locations for all the others
 
-    let center = new cPoint2D();
+
     if (globalBoidList.length <= 1) {
-      return center;
+      return boid.p;
     }
 
+    let count = 0;
+    let center = new cPoint2D();
     globalBoidList.forEach(item => {
-      if (item != boid) {
+      if (item.myIndex > 1) {
         item.p.sumTo(center);
+        count++;
       }
     })
 
-    let g = 1.0 / (globalBoidList.length - 1);
-    center.scale(g);
-    let delta = boid.p.deltaBetween(center)
-    delta.scale(0.01);
-    return delta;
+    if (count) {
+      let g = 1.0 / count;
+      center.scale(g);
+    }
+    return center;
+  }
+
+
+  //Rule 1: Boids try to fly towards the centre of mass of neighbouring boids. 
+  rule1(boid: boidMixin): cPoint2D {
+    //center of mass sum up all the locations for all the others
+
+    let count = 0;
+    let center = new cPoint2D();
+
+    globalBoidList.forEach(item => {
+      if (item != boid || item.myIndex > 1) {
+        item.p.sumTo(center);
+        count++;
+      }
+    })
+
+    if (count) {
+      let g = 1.0 / count;
+      center.scale(g);
+      let delta = boid.p.deltaBetween(center)
+      delta.scale(-0.1);
+      return delta;
+    }
+    return center;
+
   }
 
   //Rule 2: Boids try to keep a small distance away from other objects (including other boids). 
-  rule2(boid: boidMixin) {
+  rule2(boid: boidMixin): cPoint2D {
     let center = new cPoint2D();
     return center;
   }
 
   //Rule 3: Boids try to match velocity with near boids. 
-  rule3(boid: boidMixin) {
+  rule3(boid: boidMixin): cPoint2D {
     let center = new cPoint2D();
     return center;
   }
 
 
-  toggleRule1:foToggle =  new foToggle('Rule 1', ()=> { this.applyRule1 = !this.applyRule1 }, () => { return {active: this.applyRule1}})
-  toggleRule2:foToggle =  new foToggle('Rule 2', ()=> { this.applyRule2 = !this.applyRule2 }, () => { return {active: this.applyRule2}})
-  toggleRule3:foToggle =  new foToggle('Rule 3', ()=> { this.applyRule3 = !this.applyRule3 }, () => { return {active: this.applyRule3}})
+  toggleRule1: foToggle = new foToggle('Rule 1', () => { this.applyRule1 = !this.applyRule1 }, () => { return { active: this.applyRule1 } })
+  toggleRule2: foToggle = new foToggle('Rule 2', () => { this.applyRule2 = !this.applyRule2 }, () => { return { active: this.applyRule2 } })
+  toggleRule3: foToggle = new foToggle('Rule 3', () => { this.applyRule3 = !this.applyRule3 }, () => { return { active: this.applyRule3 } })
 }
 
 export let boidBehaviour: boidController = new boidController();
 boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, boidBehaviour.toggleRule3);
 
 export class boidMixin extends foShape2D {
-
-  public v: cPoint2D = new cPoint2D(0, 0);
+  myIndex: number;
+  public s: number = 10;
+  public h: number = 0;
   public p: cPoint2D = new cPoint2D(0, 0);
 
-  doAnimation = () => {
-    boidBehaviour.applyRules(this);
+  protected toJson(): any {
+    return Tools.mixin(super.toJson(), {
+      p: this.p,
+      h: this.h,
+      s: this.s,
+    });
+  }
 
-    this.v.sumTo(this.p);
+  get velosity() {
+    let x = this.s * Math.cos(this.h)
+    let y = this.s * Math.sin(this.h)
+    return new cPoint2D(x,y);
+  }
+
+  doAnimation = () => {
+    if (this.myIndex > 1) {
+     
+      let v = this.velosity;
+      let s = v.mag();
+      boidBehaviour.applyRules(this, dv => {
+          v = v.sum(dv).normal().scale(s);
+      });
+
+
+      v.sumTo(this.p);
+
+      this.s = v.mag();
+      this.h = v.atan();
+    } else {
+      boidBehaviour.ruleCenter(this).setTo(this.p);
+    }
     this.x = this.p.x;
     this.y = this.p.y;
+    this.angle = this.h * foGlyph.RAD_TO_DEG;
+
+
 
     if (this.isOffCanvasX) {
-      this.v.x = -this.v.x;
+      let x = Math.cos(this.h)
+      let y = Math.sin(this.h)
+      this.h = Math.atan2(y, -x)
     }
 
     if (this.isOffCanvasY) {
-      this.v.y = -this.v.y;
+      let x = Math.cos(this.h)
+      let y = Math.sin(this.h)
+      this.h = Math.atan2(-y, x)
     }
   };
 
 
   get isOffCanvasX(): boolean { // off the right side off the left side off the bottom
     let parent = this.myParent && this.myParent() as foShape2D;
-    if ( parent) {      
+    if (parent) {
       let width = parent.width;
       return this.x > width || this.x < 0;
     }
@@ -112,7 +178,7 @@ export class boidMixin extends foShape2D {
 
   get isOffCanvasY(): boolean { // off the right side off the left side off the bottom
     let parent = this.myParent && this.myParent() as foShape2D;
-    if ( parent) {
+    if (parent) {
       let height = parent.height;
       return this.y > height || this.y < 0;
     }
@@ -146,14 +212,16 @@ class BoidShape extends boidMixin {
 
 export class Boid extends BoidShape {
 
+
   constructor(properties?: any) {
     super(properties);
     globalBoidList.addMember(this);
+    this.myIndex = globalBoidList.length;
   }
 
   public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
     super.dropAt(x, y, angle);
-    this.p = new cPoint2D(this.x, this.y);
+    this.p = new cPoint2D(x, y);
     return this;
   }
 
@@ -166,12 +234,27 @@ export class Boid extends BoidShape {
     ctx.fill();
   }
 
+  drawSquare(ctx: CanvasRenderingContext2D, x1, y1, x2, y2) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x1, y2);
+    ctx.closePath();
+    ctx.fill();
+  }
+
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
     ctx.fillStyle = this.color;
     ctx.lineWidth = 1;
     ctx.globalAlpha = this.opacity;
-    this.drawTriangle(ctx, 0, this.height, this.width / 2, 0, this.width, this.height);
+    if (this.myIndex == 1) {
+      this.drawSquare(ctx, 0, 0, this.width, this.height);
+      this.drawSelected(ctx);
+    } else {
+      this.drawTriangle(ctx, 0, this.height, this.width, this.height/2, 0, 0);
+    }
   }
 }
 
@@ -180,13 +263,14 @@ let core = BoidStencil.mixin('core', {
   opacity: .5,
   width: 50,
   height: 50,
-  v: new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
+  s: Tools.randomInt(7, 11)
 });
 
 BoidStencil.define('Boid', Boid, {
   width: 20,
   height: 20,
-  v: function () { return new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7)) }
+  h: function () { return Tools.randomInt(0, Math.PI / 2) },
+  s: function () { return Tools.randomInt(7, 11) }
 });
 
 BoidStencil.define('Boid+', Boid, {
@@ -200,11 +284,15 @@ BoidStencil.define('Boid++', Boid, {
 
 }).onCreation(obj => {
   obj.color = Tools.randomRGBColor()
-  obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
+  obj.h = Tools.randomInt(0, Math.PI / 2);
+  obj.s = Tools.randomInt(7, 11)
+
+
 });
 
 
 
 import { RuntimeType } from '../foundry/foRuntimeType';
+import { foGlyph } from '../foundry/foGlyph.model';
 RuntimeType.define(Boid);
 

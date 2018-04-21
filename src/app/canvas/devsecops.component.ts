@@ -85,6 +85,15 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
       }
     }))
 
+    
+    boidBehaviour.addCommands(new foCommand('+1', () => {
+      let page = space.activePage;
+      let knowledge = BoidStencil.find('Boid++');
+        let result = knowledge.newInstance().defaultName() as foGlyph2D;  
+        result.dropAt(page.centerX, page.centerY)
+        .addAsSubcomponent(page)
+    }))
+
     this.currentDocument = this.workspace.document.override({
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,
