@@ -7,10 +7,12 @@ import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foStencilLibrary } from "../foundry/foStencil";
 import { foCollection } from "../foundry/foCollection.model";
-import { foController, foToggle } from "../foundry/foController";
+import { foController, foToggle, foCommand } from "../foundry/foController";
 
 export let BoidStencil: foStencilLibrary = new foStencilLibrary().defaultName('Boids');
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
+
+import { foWorkspace } from 'app/foundry/foWorkspace.model';
 
 
 export let globalBoidList: foCollection<boidMixin> = new foCollection<boidMixin>().setName('All Boids');
@@ -200,6 +202,8 @@ BoidStencil.define('Boid++', Boid, {
   obj.color = Tools.randomRGBColor()
   obj.v = new cPoint2D(Tools.randomInt(-7, 7), Tools.randomInt(-7, 7))
 });
+
+
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(Boid);

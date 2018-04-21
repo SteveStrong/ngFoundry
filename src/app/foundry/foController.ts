@@ -1,6 +1,8 @@
 
 import { foObject } from './foObject.model'
 
+//SRS integrate mYName , DisplayName and isVisible  into command rendering
+
 export class foCommand extends foObject{
     command:string;
     doAction: () => void;
@@ -31,19 +33,21 @@ export class foToggle extends foObject{
 
 export class foController extends foObject {
 
-    private _commands: Array<string> = new Array<string>();
-    addCommands(...cmds: string[]) {
-        this._commands && this._commands.push(...cmds)
+    private _commands: Array<foCommand> = new Array<foCommand>();
+    addCommands(...cmds: foCommand[]) {
+        this._commands.push(...cmds);
+        this._toggle.forEach(item => !item.hasParent && item.setParent(this))
         return this;
     }
   
-    get commands(): Array<string> {
+    get commands(): Array<foCommand> {
         return this._commands;
     }
 
     private _toggle: Array<foToggle> = new Array<foToggle>();
     addToggle(...cmds: foToggle[]) {
-        this._toggle && this._toggle.push(...cmds)
+        this._toggle.push(...cmds);
+        this._toggle.forEach(item => !item.hasParent && item.setParent(this))
         return this;
     }
   

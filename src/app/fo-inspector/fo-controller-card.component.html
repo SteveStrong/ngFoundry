@@ -3,9 +3,9 @@
   
       <div class="card-body">
         <ng-container *ngFor="let cmd of control.commands; let i = index; let isOdd = odd">
-          <button (click)="doCommand(cmd)" type="button" class="btn btn-success">{{cmd}}</button>
+          <button (click)="cmd.doAction()" type="button" class="btn btn-success">{{cmd.getLabel()}}</button>
         </ng-container>
-
+        <br/>
         <ng-container *ngFor="let toggle of control.toggles; let i = index; let isOdd = odd">
           <button (click)="toggle.doToggle()" type="button" class="btn" 
           [ngClass] = "toggle.getState().active ? 'btn-success' : 'btn-danger' ">{{toggle.command}}</button>
