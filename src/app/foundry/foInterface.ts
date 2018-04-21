@@ -1,5 +1,6 @@
 //https://www.typescriptlang.org/docs/handbook/decorators.html
 
+
 export interface Action<T> {
     (item: T): void;
 }
