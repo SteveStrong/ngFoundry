@@ -113,7 +113,7 @@ boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, bo
 
 export class boidMixin extends foShape2D {
   myIndex: number;
-  public s: number = 10;
+  public s: number = 0;
   public h: number = 0;
   public p: cPoint2D = new cPoint2D(0, 0);
 
@@ -269,8 +269,8 @@ let core = BoidStencil.mixin('core', {
 BoidStencil.define('Boid', Boid, {
   width: 20,
   height: 20,
-  h: function () { return Tools.randomInt(0, Math.PI / 2) },
-  s: function () { return Tools.randomInt(7, 11) }
+  h: function () { return Tools.random(0, Math.PI / 2) },
+  s: function () { return Tools.randomInt(1, 21) }
 });
 
 BoidStencil.define('Boid+', Boid, {
@@ -284,8 +284,8 @@ BoidStencil.define('Boid++', Boid, {
 
 }).onCreation(obj => {
   obj.color = Tools.randomRGBColor()
-  obj.h = Tools.randomInt(0, Math.PI / 2);
-  obj.s = Tools.randomInt(7, 11)
+  obj.h = Tools.random(0, 2 * Math.PI );
+  obj.s = Tools.randomInt(1, 21)
 
 
 });
