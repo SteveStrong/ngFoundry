@@ -4,30 +4,28 @@ import { foObject } from './foObject.model'
 //SRS integrate mYName , DisplayName and isVisible  into command rendering
 
 export class foCommand extends foObject{
-    command:string;
     doAction: () => void;
     getLabel: () => string;
 
-    constructor(command:string, doAction:()=>void, getLabel?: () => string) {
+    constructor(myName:string, doAction:()=>void, getLabel?: () => string) {
         super();
-        this.command = command;
+        this.myName = myName;
         this.doAction = doAction;
-        this.getLabel = getLabel ? getLabel : () => { return this.command; }
+        this.getLabel = getLabel ? getLabel : () => { return this.myName; }
     }
 }
 
 export class foToggle extends foObject{
-    command:string;
     doToggle: () => void;
     getState: () => any;
     getLabel: () => string;
 
-    constructor(command:string, doToggle:()=>void, getState: () => any, getLabel?: () => string) {
+    constructor(myName:string, doToggle:()=>void, getState: () => any, getLabel?: () => string) {
         super();
-        this.command = command;
+        this.myName = myName;
         this.doToggle = doToggle;
         this.getState = getState;
-        this.getLabel = getLabel ? getLabel : () => { return this.command; }
+        this.getLabel = getLabel ? getLabel : () => { return this.myName; }
     }
 }
 
