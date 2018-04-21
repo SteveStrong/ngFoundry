@@ -7,7 +7,7 @@ import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
 import { foStencilLibrary } from "../foundry/foStencil";
 import { foCollection } from "../foundry/foCollection.model";
-import { foController } from "../foundry/foController";
+import { foController, foToggle } from "../foundry/foController";
 
 export let BoidStencil: foStencilLibrary = new foStencilLibrary().defaultName('Boids');
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
@@ -69,21 +69,14 @@ class boidController extends foController {
     return center;
   }
 
-  doRule1() {
-    this.applyRule1 = !this.applyRule1;
-  }
 
-  doRule2() {
-    this.applyRule2 = !this.applyRule2;
-  }
-
-  doRule3() {
-    this.applyRule3 = !this.applyRule3;
-  }
+  toggleRule1:foToggle =  new foToggle('Rule 1', ()=> { this.applyRule1 = !this.applyRule1 }, () => { return {active: this.applyRule1}})
+  toggleRule2:foToggle =  new foToggle('Rule 2', ()=> { this.applyRule2 = !this.applyRule2 }, () => { return {active: this.applyRule2}})
+  toggleRule3:foToggle =  new foToggle('Rule 3', ()=> { this.applyRule3 = !this.applyRule3 }, () => { return {active: this.applyRule3}})
 }
 
 export let boidBehaviour: boidController = new boidController();
-boidBehaviour.addCommands("doRule1", "doRule3", "doRule2");
+boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, boidBehaviour.toggleRule3);
 
 export class boidMixin extends foShape2D {
 

@@ -1,20 +1,31 @@
 
-
 import { foObject } from './foObject.model'
 
+export class foCommand extends foObject{
+    command:string;
+    doAction: () => void;
+    getLabel: () => string;
 
-
+    constructor(command:string, doAction:()=>void, getLabel?: () => string) {
+        super();
+        this.command = command;
+        this.doAction = doAction;
+        this.getLabel = getLabel ? getLabel : () => { return this.command; }
+    }
+}
 
 export class foToggle extends foObject{
     command:string;
     doToggle: () => void;
     getState: () => any;
+    getLabel: () => string;
 
-    constructor(command:string, doToggle:()=>void, getState: () => any) {
+    constructor(command:string, doToggle:()=>void, getState: () => any, getLabel?: () => string) {
         super();
         this.command = command;
         this.doToggle = doToggle;
         this.getState = getState;
+        this.getLabel = getLabel ? getLabel : () => { return this.command; }
     }
 }
 
