@@ -15,6 +15,7 @@ import { SharingService } from "../common/sharing.service";
 import { DevSecOps } from "./devsecops.model";
 
 import { BoidStencil, boidBehaviour } from "./boid.model";
+import { FactoryStencil, factoryBehaviour } from "./factory.model";
 import { foCommand, foToggle } from '../foundry/foController';
 
 import { Star }  from "konva";
@@ -74,6 +75,8 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
     space.stencil.add(BoidStencil);
     space.controller.add(boidBehaviour);
 
+    space.stencil.add(FactoryStencil);
+    space.controller.add(factoryBehaviour);
 
     boidBehaviour.addCommands(new foCommand('100++', () => {
       let page = space.activePage;
