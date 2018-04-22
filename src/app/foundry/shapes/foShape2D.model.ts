@@ -9,7 +9,7 @@ import { Matrix2D } from './foMatrix2D'
 import { foGlue2D } from './foGlue2D'
 import { foConnectionPoint2D } from './foConnectionPoint2D'
 import { foCollection } from '../foCollection.model'
-import { foNode } from '../foNode.model'
+
 
 import { foGlyph2D } from './foGlyph2D.model'
 

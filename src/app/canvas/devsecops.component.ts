@@ -15,8 +15,10 @@ import { SharingService } from "../common/sharing.service";
 import { DevSecOps } from "./devsecops.model";
 
 import { BoidStencil, boidBehaviour } from "./boid.model";
+import { foCommand, foToggle } from '../foundry/foController';
 
 import { Star }  from "konva";
+
 
 @Component({
   selector: 'fo-devsecops',
@@ -24,7 +26,7 @@ import { Star }  from "konva";
   styleUrls: ['./devsecops.component.css']
 })
 export class DevSecOpsComponent implements OnInit, AfterViewInit {
-
+  showZones:boolean = true;
   workspace: foWorkspace = DevSecOps;
   model: foModel;
 
@@ -68,9 +70,43 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.workspace.stencil.add(BoidStencil);
-    this.workspace.controller.add(boidBehaviour);
+    let space = this.workspace;
+    space.stencil.add(BoidStencil);
+    space.controller.add(boidBehaviour);
 
+
+    boidBehaviour.addCommands(new foCommand('100++', () => {
+      let page = space.activePage;
+      let knowledge = BoidStencil.find('Boid++');
+      for(let i=0; i< 100; i++ ){
+        let result = knowledge.newInstance().defaultName() as foGlyph2D;  
+        result.dropAt(page.centerX, page.centerY)
+        .addAsSubcomponent(page)
+      }
+    }))
+
+    
+    boidBehaviour.addCommands(new foCommand('+1', () => {
+      let page = space.activePage;
+      let knowledge = BoidStencil.find('Boid++');
+        let result = knowledge.newInstance().defaultName() as foGlyph2D;  
+        result.dropAt(page.centerX, page.centerY)
+        .addAsSubcomponent(page)
+    }))
+
+    let root = this;
+    boidBehaviour.addToggle(new foToggle('zone', () => {
+      root.showZones = !root.showZones;
+      let page = space.activePage;
+      page.Subcomponents.forEach(boid => {
+        boid.isVisible = root.showZones;
+      })
+    }, 
+    () => { 
+      return { active: root.showZones } 
+    }))
+
+ 
     this.currentDocument = this.workspace.document.override({
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,

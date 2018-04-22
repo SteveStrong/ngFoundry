@@ -60,10 +60,42 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         return new cPoint2D(x, y, 'midpoint');
     }
 
+    mag():number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    atan():number {
+        return Math.atan2(this.y,  this.x);
+    }
+
+    normal():cPoint2D {
+        let mag = this.mag();
+        mag = mag ? mag : 1.0 //if zero set to 1 you get the same result
+        return new cPoint2D(this.x/mag, this.y/mag, 'normal');
+    }
+
+    sum(p: cPoint2D):cPoint2D {
+        this.x += p.x;
+        this.y += p.y;
+        return this;
+    }
+
     sumTo(p: cPoint2D):cPoint2D {
         p.x += this.x;
         p.y += this.y;
         return p;
+    }
+
+    setTo(p: cPoint2D):cPoint2D {
+        p.x = this.x;
+        p.y = this.y;
+        return p;
+    }
+
+    subtract(p: cPoint2D):cPoint2D {
+        this.x -= p.x;
+        this.y -= p.y;
+        return this;
     }
 
     deltaBetween(pt: cPoint2D): cPoint2D {

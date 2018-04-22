@@ -153,6 +153,14 @@ export class foObject implements iObject {
         return this.hasParent;
     }
 
+    setParent(newParent: foObject) {
+        let parent = this.myParent && this.myParent();
+        if (parent != newParent) {
+            this.myParent = () => { return newParent };
+        }
+        return this;
+    }
+
 
     public wait(time: number, func: () => void) {
         setTimeout(func, time);
