@@ -128,15 +128,37 @@ FactoryStencil.define('Package', packageShape, {
 class factoryController extends foController {
     //toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
 
-    createPackage(page: foPage, count: number = 1):Array<packageShape> {
-        let list:Array<packageShape> = new Array<packageShape>();
-        let knowledge = FactoryStencil.find('Package');
-        for (let i = 0; i<count; i++) {
-            let result = knowledge.newInstance().defaultName() as foGlyph2D;
-            result.dropAt(page.centerX, page.centerY)
-                .addAsSubcomponent(page).pushTo(list);
+    generateGrid(xStart: number = 100, xStep: number = 100, xCount = 5, yStart: number = 100, yStep: number = 100, yCount = 5): any[] {
+        let list: any[] = Array<any>()
+        for (let i = 0; i < xCount; i++) {
+            for (let j = 0; j < yCount; j++) {
+                let item = {
+                    x: xStart + i * xStep,
+                    y: yStart + j * yStep,
+                }
+                list.push(item);
+            }
         }
         return list;
+    }
+
+    createPackage(page: foPage, count: number = 1): Array<packageShape> {
+        let list: Array<packageShape> = new Array<packageShape>();
+        let knowledge = FactoryStencil.find('Package');
+        for (let i = 0; i < count; i++) {
+            let result = knowledge.newInstance().defaultName() as foGlyph2D;
+            result.addAsSubcomponent(page).pushTo(list);
+        }
+        return list;
+    }
+
+    buildFactory(page: foPage) {
+        let grid = this.generateGrid(100, 200, 6, 200, 150, 3);
+        let list = this.createPackage(page, grid.length);
+        let i = 0;
+        list.forEach(item => {
+            item.easeTween(grid[i++], 1.5);
+        })
     }
 
 }
