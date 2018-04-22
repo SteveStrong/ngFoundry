@@ -15,6 +15,7 @@ import { SharingService } from "../common/sharing.service";
 import { DevSecOps } from "./devsecops.model";
 
 import { BoidStencil, boidBehaviour } from "./boid.model";
+import { FactoryStencil, factoryBehaviour } from "./factory.model";
 import { foCommand, foToggle } from '../foundry/foController';
 
 import { Star }  from "konva";
@@ -71,28 +72,37 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     let space = this.workspace;
+
+
+    space.stencil.add(FactoryStencil);
+    space.controller.add(factoryBehaviour);
+
+    factoryBehaviour.addCommands(new foCommand('create', () => {
+      factoryBehaviour.createPackage(space.activePage);
+    }))
+
+    factoryBehaviour.addCommands(new foCommand('build factory', () => {
+      factoryBehaviour.buildFactory(space.activePage);
+    }))
+
+    factoryBehaviour.addCommands(new foCommand('run', () => {
+      factoryBehaviour.runFactory(space.activePage);
+    }))
+
+
     space.stencil.add(BoidStencil);
     space.controller.add(boidBehaviour);
 
-
     boidBehaviour.addCommands(new foCommand('100++', () => {
-      let page = space.activePage;
-      let knowledge = BoidStencil.find('Boid++');
-      for(let i=0; i< 100; i++ ){
-        let result = knowledge.newInstance().defaultName() as foGlyph2D;  
-        result.dropAt(page.centerX, page.centerY)
-        .addAsSubcomponent(page)
-      }
+      boidBehaviour.creatBoids(space.activePage, 100);
     }))
 
     
     boidBehaviour.addCommands(new foCommand('+1', () => {
-      let page = space.activePage;
-      let knowledge = BoidStencil.find('Boid++');
-        let result = knowledge.newInstance().defaultName() as foGlyph2D;  
-        result.dropAt(page.centerX, page.centerY)
-        .addAsSubcomponent(page)
+      boidBehaviour.creatBoids(space.activePage, 1);
     }))
+
+
 
     let root = this;
     boidBehaviour.addToggle(new foToggle('zone', () => {

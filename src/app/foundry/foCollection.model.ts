@@ -88,6 +88,10 @@ export class foCollection<T extends iObject> extends foObject {
         return loc != -1;
     }
 
+    push(obj:any){
+        this._members.push(obj);
+    }
+    
     addMember(obj: T): T {
         this._members.push(obj);
         return obj;

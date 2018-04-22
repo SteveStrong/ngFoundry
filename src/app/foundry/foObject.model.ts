@@ -103,6 +103,22 @@ export class foObject implements iObject {
         }
     }
 
+    public generateName() {
+        let short = this.myGuid.slice(-6);
+        this.myName = `${this.myType}_${short}`;     
+        return this;  
+    }
+
+    public defaultName(name?: string) {
+        if (name) {
+            this.myName = name;
+        }
+        else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
+            this.generateName();
+        }
+        return this;
+    }
+
     protected _displayName: string;
     get displayName() {
         if (this._displayName) return this._displayName;
