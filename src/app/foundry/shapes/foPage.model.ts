@@ -5,7 +5,8 @@ import { iPoint2D, Action } from '../foInterface'
 
 import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
-import { foDictionary } from "../foDictionary.model";
+import { foGlyph } from "../foGlyph.model";
+import { WhereClause } from "../foInterface";
 
 import { foSelectionBuffer, foCopyPasteBuffer } from "../foBuffer";
 
@@ -21,6 +22,7 @@ import { RuntimeType } from "../foRuntimeType";
 import { foShape1D } from "./foShape1D.model";
 
 import { foFileManager } from "../foFileManager";
+import { GlyphDictionary } from "../foGlyph.model";
 
 
 
@@ -76,7 +78,11 @@ export class foPage extends foShape2D {
 
     mouseLoc: any = {};
 
-    _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
+    _dictionary: GlyphDictionary = new GlyphDictionary();
+    selectGlyph(where: WhereClause<foGlyph>, list?: foCollection<foGlyph>, deep: boolean = true): foCollection<foGlyph> {
+        return this._dictionary.selectGlyph(where,list,deep);
+    }
+
     _ctx: CanvasRenderingContext2D;
 
     constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {

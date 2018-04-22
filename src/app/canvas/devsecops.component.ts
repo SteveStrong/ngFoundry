@@ -85,6 +85,10 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
       factoryBehaviour.buildFactory(space.activePage);
     }))
 
+    factoryBehaviour.addCommands(new foCommand('run', () => {
+      factoryBehaviour.runFactory(space.activePage);
+    }))
+
 
     space.stencil.add(BoidStencil);
     space.controller.add(boidBehaviour);

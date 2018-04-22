@@ -2,11 +2,35 @@ import { Tools } from './foTools';
 
 import { foObject } from './foObject.model';
 import { foCollection } from './foCollection.model';
+import { foDictionary } from './foDictionary.model';
 import { foNode } from './foNode.model';
 import { foInstance } from './foInstance.model';
 import { foHandle } from './foHandle';
 import { Lifecycle } from './foLifecycle';
 
+export class GlyphDictionary extends foDictionary<foNode>{
+    public establish = (name: string): foNode => {
+        this.findItem(name, () => {
+            this.addItem(name, new foGlyph({ myName: name }))
+        })
+        return this.getItem(name);
+    }
+
+    constructor(properties?: any, parent?: foObject) {
+        super(properties, parent);
+    }
+
+    selectGlyph(where: WhereClause<foGlyph>, list?: foCollection<foGlyph>, deep: boolean = true): foCollection<foGlyph> {
+        let result = list ? list : new foCollection<foGlyph>();
+
+        this.forEachKeyValue((key, value) => {
+            if (where(value)) result.addMember(value);
+            deep && value.selectGlyph(where, result, deep);
+        })
+
+        return result;
+    }
+}
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
 export class foGlyph extends foInstance {  
@@ -157,7 +181,16 @@ export class foGlyph extends foInstance {
     }
 
 
+    selectGlyph(where: WhereClause<foGlyph>, list?: foCollection<foGlyph>, deep: boolean = true): foCollection<foGlyph> {
+        let result = list ? list : new foCollection<foGlyph>();
 
+        this.nodes.forEach(value => {
+            if (where(value)) result.addMember(value);
+            deep && value.selectGlyph(where, result, deep);
+        })
+
+        return result;
+    }
 
 
     protected generateHandles(spec?: Array<any>, proxy?: Array<any>): foCollection<foHandle> {
@@ -204,6 +237,7 @@ export class foGlyph extends foInstance {
 }
 
 import { RuntimeType } from './foRuntimeType';
+import { WhereClause } from './foInterface';
 RuntimeType.define(foGlyph);
 
 

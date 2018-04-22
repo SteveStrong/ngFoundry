@@ -113,16 +113,28 @@ let core = FactoryStencil.mixin('core', {
 });
 
 
-FactoryStencil.define('Package', packageShape, {
+FactoryStencil.define('Package', Package, {
     color: 'green',
-    width: 150,
-    height: 150,
-}).mixin(core).onCreation(obj => {
+    opacity: .5,
+    width: 50,
+    height: 50,
+}).onCreation(obj => {
     //obj.color = Tools.randomRGBColor()
     obj.h = Tools.random(0, 2 * Math.PI);
     obj.s = Tools.random(1, 21);
     obj.gap = Tools.random(25, 100);
+});
 
+FactoryStencil.define('Station', packageShape, {
+    color: 'blue',
+    opacity: .5,
+    width: 150,
+    height: 150,
+}).onCreation(obj => {
+    //obj.color = Tools.randomRGBColor()
+    obj.h = Tools.random(0, 2 * Math.PI);
+    obj.s = Tools.random(1, 21);
+    obj.gap = Tools.random(25, 100);
 });
 
 class factoryController extends foController {
@@ -142,6 +154,16 @@ class factoryController extends foController {
         return list;
     }
 
+    createStation(page: foPage, count: number = 1): Array<packageShape> {
+        let list: Array<packageShape> = new Array<packageShape>();
+        let knowledge = FactoryStencil.find('Station');
+        for (let i = 0; i < count; i++) {
+            let result = knowledge.newInstance().defaultName() as foGlyph2D;
+            result.addAsSubcomponent(page).pushTo(list);
+        }
+        return list;
+    }
+
     createPackage(page: foPage, count: number = 1): Array<packageShape> {
         let list: Array<packageShape> = new Array<packageShape>();
         let knowledge = FactoryStencil.find('Package');
@@ -153,11 +175,23 @@ class factoryController extends foController {
     }
 
     buildFactory(page: foPage) {
-        let grid = this.generateGrid(100, 200, 6, 200, 150, 3);
-        let list = this.createPackage(page, grid.length);
+        let grid = this.generateGrid(100, 210, 6, 200, 200, 3);
+        let list = this.createStation(page, grid.length);
         let i = 0;
         list.forEach(item => {
-            item.easeTween(grid[i++], 1.5);
+            item.easeTween(grid[i++], Tools.random(1.5, 2.5));
+        })
+    }
+
+    runFactory(page: foPage) {
+        let stations = page.selectGlyph(item => Tools.matches(item.myClass, 'Station'));
+        let grid = stations.map( item => item.getLocation() )
+
+        let list = this.createPackage(page, 1);
+
+        let i = 0;
+        list.forEach(item => {
+            item.easeTween(grid[i++], Tools.random(1.5, 2.5));
         })
     }
 
