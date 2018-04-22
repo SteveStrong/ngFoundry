@@ -1,6 +1,6 @@
 <div class="col-sm-12" style="border:3">
     <div class="card" >
-  
+      <h3>{{control.myName}}</h3>
       <div class="card-body">
         <ng-container *ngFor="let cmd of control.commands; let i = index; let isOdd = odd">
           <button (click)="cmd.doAction()" type="button" class="btn btn-success">{{cmd.getLabel()}}</button>
