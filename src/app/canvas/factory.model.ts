@@ -9,16 +9,26 @@ import { foStencilLibrary } from "../foundry/foStencil";
 import { foCollection } from "../foundry/foCollection.model";
 import { foController, foToggle } from "../foundry/foController";
 
+export { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
-export { foShape1D } from "../foundry/shapes/foShape1D.model";
 
 export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName('Factory');
+
 
 
 class factoryController extends foController {
 }
 
 export let factoryBehaviour: factoryController = new factoryController();
+
+export class pathwayMixin extends foShape2D {
+    doAnimation = () => {
+    }
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        this.doAnimation();
+        super.render(ctx, deep);
+    }
+}
 
 export class packageMixin extends foShape2D {
     doAnimation = () => {
@@ -29,14 +39,7 @@ export class packageMixin extends foShape2D {
     }
 }
 
-export class pathwayMixin extends foShape1D {
-    doAnimation = () => {
-    }
-    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-        this.doAnimation();
-        super.render(ctx, deep);
-    }
-}
+
 
 class packageShape extends packageMixin {
 
