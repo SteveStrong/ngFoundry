@@ -36,14 +36,6 @@ export class packageMixin extends foShape2D {
         this.doAnimation();
         super.render(ctx, deep);
     }
-}
-
-
-
-class packageShape extends packageMixin {
-
-    //doAnimation = () => { };
-
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
@@ -57,15 +49,42 @@ class packageShape extends packageMixin {
     }
 }
 
-export class Package extends packageShape {
+export class stationMixin extends foShape2D {
+    doAnimation = () => {
+    }
+    public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+        this.doAnimation();
+        super.render(ctx, deep);
+    }
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        this.drawOutline(ctx);
+        this.drawPin(ctx);
+    }
+
+    findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+        return found;
+    }
+}
+
+
+
+export class Package extends packageMixin {
+    stations: foCollection<Station>;
+    currentStation: Station;
 
     constructor(properties?: any) {
         super(properties);
     }
 
-    public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
-        super.dropAt(x, y, angle);
-        return this;
+    doGoToNextStation() {
+        this.currentStation  = this.stations.members.pop();
+        if ( this.currentStation) {
+            let loc = this.currentStation.getLocation();
+            this.easeTween(loc, Tools.random(0.5, 2.5));
+        }
     }
 
     drawTriangle(ctx: CanvasRenderingContext2D, x1, y1, x2, y2, x3, y3) {
@@ -104,37 +123,57 @@ export class Package extends packageShape {
     }
 }
 
-let core = FactoryStencil.mixin('core', {
-    color: 'blue',
-    opacity: .5,
-    width: 50,
-    height: 50,
-    s: Tools.randomInt(7, 11)
-});
+export class Station extends stationMixin {
+
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+
+    drawSquare(ctx: CanvasRenderingContext2D, x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x1, y2);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    drawCircle(ctx: CanvasRenderingContext2D, x1, y1, radius: number = 100) {
+        ctx.beginPath();
+        ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+
+    public draw = (ctx: CanvasRenderingContext2D): void => {
+        ctx.fillStyle = this.color;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = this.opacity;
+
+        this.drawSquare(ctx, 0, 0, this.width, this.height);
+        this.drawCircle(ctx, 0, 0, this.width / 2);
+
+    }
+}
+
 
 
 FactoryStencil.define('Package', Package, {
     color: 'green',
     opacity: .5,
     width: 50,
-    height: 50,
+    height: 50
 }).onCreation(obj => {
-    //obj.color = Tools.randomRGBColor()
-    obj.h = Tools.random(0, 2 * Math.PI);
-    obj.s = Tools.random(1, 21);
-    obj.gap = Tools.random(25, 100);
 });
 
-FactoryStencil.define('Station', packageShape, {
+FactoryStencil.define('Station', Station, {
     color: 'blue',
     opacity: .5,
     width: 150,
     height: 150,
 }).onCreation(obj => {
-    //obj.color = Tools.randomRGBColor()
-    obj.h = Tools.random(0, 2 * Math.PI);
-    obj.s = Tools.random(1, 21);
-    obj.gap = Tools.random(25, 100);
 });
 
 class factoryController extends foController {
@@ -154,21 +193,21 @@ class factoryController extends foController {
         return list;
     }
 
-    createStation(page: foPage, count: number = 1): Array<packageShape> {
-        let list: Array<packageShape> = new Array<packageShape>();
+    createStation(page: foPage, count: number = 1): foCollection<Station> {
+        let list: foCollection<Station> = new foCollection<Station>();
         let knowledge = FactoryStencil.find('Station');
         for (let i = 0; i < count; i++) {
-            let result = knowledge.newInstance().defaultName() as foGlyph2D;
+            let result = knowledge.newInstance().defaultName() as Station;
             result.addAsSubcomponent(page).pushTo(list);
         }
         return list;
     }
 
-    createPackage(page: foPage, count: number = 1): Array<packageShape> {
-        let list: Array<packageShape> = new Array<packageShape>();
+    createPackage(page: foPage, count: number = 1): foCollection<Package> {
+        let list: foCollection<Package> = new foCollection<Package>();
         let knowledge = FactoryStencil.find('Package');
         for (let i = 0; i < count; i++) {
-            let result = knowledge.newInstance().defaultName() as foGlyph2D;
+            let result = knowledge.newInstance().defaultName() as Package;
             result.addAsSubcomponent(page).pushTo(list);
         }
         return list;
@@ -179,19 +218,18 @@ class factoryController extends foController {
         let list = this.createStation(page, grid.length);
         let i = 0;
         list.forEach(item => {
-            item.easeTween(grid[i++], Tools.random(1.5, 2.5));
+            item.easeTween(grid[i++], Tools.random(0.5, 2.5));
         })
     }
 
     runFactory(page: foPage) {
         let stations = page.selectGlyph(item => Tools.matches(item.myClass, 'Station'));
-        let grid = stations.map( item => item.getLocation() )
 
         let list = this.createPackage(page, 1);
 
-        let i = 0;
         list.forEach(item => {
-            item.easeTween(grid[i++], Tools.random(1.5, 2.5));
+            item.stations = <foCollection<Station>>stations;
+            item.doGoToNextStation();
         })
     }
 
