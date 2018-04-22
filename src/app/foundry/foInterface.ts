@@ -29,6 +29,7 @@ export interface iObject {
     getChildAt(i: number): iObject;
     override(properties?: any);
     hasAncestor(member?: iObject): boolean;
+    defaultName(name?: string);
     asJson: string;
     isPublic: boolean
 }

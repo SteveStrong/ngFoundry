@@ -11,6 +11,8 @@ import { foModel } from "../foundry/foModel.model";
   styleUrls: ['./fo-knowledge.component.css']
 })
 export class foKnowledgeComponent implements OnInit {
+  controllers:any;
+
   @Input()
   workspace: foWorkspace;
 
@@ -28,6 +30,8 @@ export class foKnowledgeComponent implements OnInit {
     this.model = this.workspace.model.getItem('default')
 
     this.list = this.workspace.library.members;
+    
+    this.controllers = this.workspace.controller.publicMembers;
 
   }
 

@@ -31,6 +31,10 @@ export class foToggle extends foObject{
 
 export class foController extends foObject {
 
+    constructor(){
+        super()
+    }
+    
     private _commands: Array<foCommand> = new Array<foCommand>();
     addCommands(...cmds: foCommand[]) {
         this._commands.push(...cmds);

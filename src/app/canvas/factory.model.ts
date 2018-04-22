@@ -17,9 +17,12 @@ export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName
 
 
 class factoryController extends foController {
+    toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
+
 }
 
-export let factoryBehaviour: factoryController = new factoryController();
+export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
+factoryBehaviour.addToggle(factoryBehaviour.toggleRule1);
 
 export class pathwayMixin extends foShape2D {
     doAnimation = () => {

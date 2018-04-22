@@ -160,7 +160,7 @@ class boidController extends foController {
   toggleRule4: foToggle = new foToggle('perch', () => { this.applyRule4 = !this.applyRule4 }, () => { return { active: this.applyRule4 } })
 }
 
-export let boidBehaviour: boidController = new boidController();
+export let boidBehaviour: boidController = new boidController().defaultName('Boids');;
 boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, boidBehaviour.toggleRule3, boidBehaviour.toggleRule4);
 
 export class boidMixin extends foShape2D {
