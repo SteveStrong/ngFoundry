@@ -80,10 +80,13 @@ export class Package extends packageMixin {
     }
 
     doGoToNextStation() {
-        this.currentStation  = this.stations.members.pop();
+        this.currentStation  = this.stations.members.shift();
         if ( this.currentStation) {
             let loc = this.currentStation.getLocation();
             this.easeTween(loc, Tools.random(0.5, 2.5));
+        } else {
+            this.easeTween({x:0,y:0}, Tools.random(0.5, 2.5));
+            this.color = 'red'
         }
     }
 
@@ -153,7 +156,7 @@ export class Station extends stationMixin {
         ctx.globalAlpha = this.opacity;
 
         this.drawSquare(ctx, 0, 0, this.width, this.height);
-        this.drawCircle(ctx, 0, 0, this.width / 2);
+        this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
 
     }
 }
@@ -214,7 +217,7 @@ class factoryController extends foController {
     }
 
     buildFactory(page: foPage) {
-        let grid = this.generateGrid(100, 210, 6, 200, 200, 3);
+        let grid = this.generateGrid(100, 210, 3, 200, 200, 2);
         let list = this.createStation(page, grid.length);
         let i = 0;
         list.forEach(item => {
@@ -229,7 +232,11 @@ class factoryController extends foController {
 
         list.forEach(item => {
             item.stations = <foCollection<Station>>stations;
-            item.doGoToNextStation();
+        })
+
+        let packages = page.selectGlyph(item => Tools.matches(item.myClass, 'Package'));
+        packages.forEach(item => {
+            (<Package>item).doGoToNextStation();
         })
     }
 
