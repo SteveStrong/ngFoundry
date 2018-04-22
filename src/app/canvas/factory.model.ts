@@ -5,26 +5,22 @@ import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
+import { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
+
 import { foStencilLibrary } from "../foundry/foStencil";
 import { foCollection } from "../foundry/foCollection.model";
 import { foController, foToggle } from "../foundry/foController";
 
 export { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
+import { foPage } from "../foundry/shapes/foPage.model";
+
 
 export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName('Factory');
 
+;
 
-
-class factoryController extends foController {
-    toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
-
-}
-
-export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
-factoryBehaviour.addToggle(factoryBehaviour.toggleRule1);
-
-export class pathwayMixin extends foShape2D {
+export class pathwayMixin extends foShape1D {
     doAnimation = () => {
     }
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
@@ -114,18 +110,39 @@ let core = FactoryStencil.mixin('core', {
     width: 50,
     height: 50,
     s: Tools.randomInt(7, 11)
-  });
+});
 
 
-  FactoryStencil.define('Package', packageShape, {
+FactoryStencil.define('Package', packageShape, {
     color: 'green',
-  }).mixin(core).onCreation(obj => {
+    width: 150,
+    height: 150,
+}).mixin(core).onCreation(obj => {
     //obj.color = Tools.randomRGBColor()
-    obj.h = Tools.random(0, 2 * Math.PI );
+    obj.h = Tools.random(0, 2 * Math.PI);
     obj.s = Tools.random(1, 21);
     obj.gap = Tools.random(25, 100);
-  
-  });
+
+});
+
+class factoryController extends foController {
+    //toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
+
+    createPackage(page: foPage, count: number = 1):Array<packageShape> {
+        let list:Array<packageShape> = new Array<packageShape>();
+        let knowledge = FactoryStencil.find('Package');
+        for (let i = 0; i<count; i++) {
+            let result = knowledge.newInstance().defaultName() as foGlyph2D;
+            result.dropAt(page.centerX, page.centerY)
+                .addAsSubcomponent(page).pushTo(list);
+        }
+        return list;
+    }
+
+}
+
+export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
+//factoryBehaviour.addToggle(factoryBehaviour.toggleRule1)
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(Package);

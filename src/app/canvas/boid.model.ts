@@ -11,7 +11,7 @@ import { foController, foToggle } from "../foundry/foController";
 
 export let BoidStencil: foStencilLibrary = new foStencilLibrary().defaultName('Boids');
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
-
+import { foPage } from "../foundry/shapes/foPage.model";
 
 
 export let globalBoidList: foCollection<boidMixin> = new foCollection<boidMixin>().setName('All Boids');
@@ -23,7 +23,7 @@ class boidController extends foController {
   applyRule3: boolean = false;
   applyRule4: boolean = false;
 
-  applyRules(boid: boidMixin, func:Action<cPoint2D>) {
+  applyRules(boid: boidMixin, func: Action<cPoint2D>) {
     let v = new cPoint2D();
     if (this.applyRule1) {
       this.rule1(boid).sumTo(v);
@@ -41,7 +41,7 @@ class boidController extends foController {
       this.rule4(boid).sumTo(v);
     }
 
-    if ( this.applyRule1 || this.applyRule2 || this.applyRule3 || this.applyRule4) {
+    if (this.applyRule1 || this.applyRule2 || this.applyRule3 || this.applyRule4) {
       func(v);
     }
   };
@@ -97,16 +97,16 @@ class boidController extends foController {
   }
 
   //Rule 2: Boids try to keep a small distance away from other objects (including other boids). 
-  rule2(boid: boidMixin, gap:number=100): cPoint2D {
+  rule2(boid: boidMixin, gap: number = 100): cPoint2D {
     let center = new cPoint2D();
 
     globalBoidList.forEach(item => {
       if (item != boid && item.myIndex > 1) {
         let delta = boid.p.deltaBetween(item.p)
         let dist = delta.mag();
-        if ( dist < gap) {
+        if (dist < gap) {
           delta.sumTo(center);
-        }   
+        }
       }
     })
 
@@ -137,21 +137,34 @@ class boidController extends foController {
     return speed;
   }
 
-    //Rule 4: Boids list to perch when they are tired. 
-    rule4(boid: boidMixin): cPoint2D {
-      //stop the motion and land
-      let stop = new cPoint2D();
+  //Rule 4: Boids list to perch when they are tired. 
+  rule4(boid: boidMixin): cPoint2D {
+    //stop the motion and land
+    let stop = new cPoint2D();
 
-      if ( boid.perchCountdown > 0 ) {
-        return stop;
-      }
-
-      if ( Tools.randomInt(0, 1000) < 2 ) {
-        boid.perchCountdown = Tools.randomInt(50, 60);
-      }
-  
+    if (boid.perchCountdown > 0) {
       return stop;
     }
+
+    if (Tools.randomInt(0, 1000) < 2) {
+      boid.perchCountdown = Tools.randomInt(50, 60);
+    }
+
+    return stop;
+  }
+
+
+  creatBoids(page: foPage, count: number = 1):Array<boidMixin> {
+    let list:Array<boidMixin> = new Array<boidMixin>();
+    let knowledge = BoidStencil.find('Boid++');
+
+    for (let i = 0; i < count; i++) {
+      let result = knowledge.newInstance().defaultName() as foGlyph2D;
+      result.dropAt(page.centerX, page.centerY)
+        .addAsSubcomponent(page).pushTo(list);
+    }
+    return list;
+  }
 
 
   toggleRule1: foToggle = new foToggle('group', () => { this.applyRule1 = !this.applyRule1 }, () => { return { active: this.applyRule1 } })
@@ -165,13 +178,13 @@ boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, bo
 
 export class boidMixin extends foShape2D {
   public myIndex: number;
-  public perchCountdown:number = 0;
+  public perchCountdown: number = 0;
   public gap: number = 50;
   public s: number = 0;
   public h: number = 0;
   public p: cPoint2D = new cPoint2D(0, 0);
 
-  
+
   public pinX = (): number => { return 0.5 * this.width; }
   public pinY = (): number => { return 0.5 * this.height; }
 
@@ -187,19 +200,19 @@ export class boidMixin extends foShape2D {
   get velosity() {
     let x = this.s * Math.cos(this.h)
     let y = this.s * Math.sin(this.h)
-    return new cPoint2D(x,y);
+    return new cPoint2D(x, y);
   }
 
   doAnimation = () => {
     if (this.myIndex > 1) {
-     
+
       let v = this.velosity;
       let s = v.mag();
       boidBehaviour.applyRules(this, dv => {
-          v = v.sum(dv).normal().scale(s);
+        v = v.sum(dv).normal().scale(s);
       });
 
-      if ( this.perchCountdown == 0 ) {
+      if (this.perchCountdown == 0) {
         v.sumTo(this.p);
         this.s = v.mag();
         this.h = v.atan();
@@ -307,9 +320,9 @@ export class Boid extends BoidShape {
     ctx.fill();
   }
 
-  drawCircle(ctx: CanvasRenderingContext2D, x1, y1, radius:number=100) {
+  drawCircle(ctx: CanvasRenderingContext2D, x1, y1, radius: number = 100) {
     ctx.beginPath();
-    ctx.arc(x1,y1,radius,0,2*Math.PI);
+    ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
     ctx.stroke();
   }
 
@@ -322,10 +335,10 @@ export class Boid extends BoidShape {
       this.drawSquare(ctx, 0, 0, this.width, this.height);
       this.drawSelected(ctx);
     } else {
-      this.drawTriangle(ctx, 0, this.height, this.width, this.height/2, 0, 0);
-      this.isVisible && this.drawCircle(ctx,this.pinX(),this.pinY(), this.gap)
+      this.drawTriangle(ctx, 0, this.height, this.width, this.height / 2, 0, 0);
+      this.isVisible && this.drawCircle(ctx, this.pinX(), this.pinY(), this.gap)
     }
-   
+
   }
 }
 
@@ -355,7 +368,7 @@ BoidStencil.define('Boid++', Boid, {
 
 }).onCreation(obj => {
   obj.color = Tools.randomRGBColor()
-  obj.h = Tools.random(0, 2 * Math.PI );
+  obj.h = Tools.random(0, 2 * Math.PI);
   obj.s = Tools.random(1, 21);
   obj.gap = Tools.random(25, 100);
 
