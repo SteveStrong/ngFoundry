@@ -21,6 +21,7 @@ class boidController extends foController {
   applyRule1: boolean = false;
   applyRule2: boolean = false;
   applyRule3: boolean = false;
+  applyRule4: boolean = false;
 
   applyRules(boid: boidMixin, func:Action<cPoint2D>) {
     let v = new cPoint2D();
@@ -29,13 +30,18 @@ class boidController extends foController {
     }
 
     if (this.applyRule2) {
-      this.rule2(boid).sumTo(v);
+      this.rule2(boid, boid.gap).sumTo(v);
     }
 
     if (this.applyRule3) {
       this.rule3(boid).sumTo(v);
     }
-    if ( this.applyRule1 || this.applyRule2 || this.applyRule3) {
+
+    if (this.applyRule4) {
+      this.rule4(boid).sumTo(v);
+    }
+
+    if ( this.applyRule1 || this.applyRule2 || this.applyRule3 || this.applyRule4) {
       func(v);
     }
   };
@@ -73,7 +79,7 @@ class boidController extends foController {
     let center = new cPoint2D();
 
     globalBoidList.forEach(item => {
-      if (item != boid || item.myIndex > 1) {
+      if (item != boid && item.myIndex > 1) {
         item.p.sumTo(center);
         count++;
       }
@@ -82,46 +88,99 @@ class boidController extends foController {
     if (count) {
       let g = 1.0 / count;
       center.scale(g);
-      let delta = boid.p.deltaBetween(center)
-      delta.scale(-0.1);
-      return delta;
+      center = boid.p.deltaBetween(center)
+      center.scale(-0.1);
     }
+
     return center;
 
   }
 
   //Rule 2: Boids try to keep a small distance away from other objects (including other boids). 
-  rule2(boid: boidMixin): cPoint2D {
+  rule2(boid: boidMixin, gap:number=100): cPoint2D {
     let center = new cPoint2D();
+
+    globalBoidList.forEach(item => {
+      if (item != boid && item.myIndex > 1) {
+        let delta = boid.p.deltaBetween(item.p)
+        let dist = delta.mag();
+        if ( dist < gap) {
+          delta.sumTo(center);
+        }   
+      }
+    })
+
     return center;
   }
 
   //Rule 3: Boids try to match velocity with near boids. 
   rule3(boid: boidMixin): cPoint2D {
-    let center = new cPoint2D();
-    return center;
+    //average of the velosity 
+
+    let count = 0;
+    let speed = new cPoint2D();
+
+    globalBoidList.forEach(item => {
+      if (item != boid && item.myIndex > 1) {
+        item.velosity.sumTo(speed);
+        count++;
+      }
+    })
+
+    if (count) {
+      let g = 1.0 / count;
+      speed.scale(g);
+      speed = boid.velosity.deltaBetween(speed)
+      speed.scale(0.2);
+    }
+
+    return speed;
   }
 
+    //Rule 4: Boids list to perch when they are tired. 
+    rule4(boid: boidMixin): cPoint2D {
+      //stop the motion and land
+      let stop = new cPoint2D();
 
-  toggleRule1: foToggle = new foToggle('Rule 1', () => { this.applyRule1 = !this.applyRule1 }, () => { return { active: this.applyRule1 } })
-  toggleRule2: foToggle = new foToggle('Rule 2', () => { this.applyRule2 = !this.applyRule2 }, () => { return { active: this.applyRule2 } })
-  toggleRule3: foToggle = new foToggle('Rule 3', () => { this.applyRule3 = !this.applyRule3 }, () => { return { active: this.applyRule3 } })
+      if ( boid.perchCountdown > 0 ) {
+        return stop;
+      }
+
+      if ( Tools.randomInt(0, 1000) < 2 ) {
+        boid.perchCountdown = Tools.randomInt(50, 60);
+      }
+  
+      return stop;
+    }
+
+
+  toggleRule1: foToggle = new foToggle('group', () => { this.applyRule1 = !this.applyRule1 }, () => { return { active: this.applyRule1 } })
+  toggleRule2: foToggle = new foToggle('no crash', () => { this.applyRule2 = !this.applyRule2 }, () => { return { active: this.applyRule2 } })
+  toggleRule3: foToggle = new foToggle('speed', () => { this.applyRule3 = !this.applyRule3 }, () => { return { active: this.applyRule3 } })
+  toggleRule4: foToggle = new foToggle('perch', () => { this.applyRule4 = !this.applyRule4 }, () => { return { active: this.applyRule4 } })
 }
 
 export let boidBehaviour: boidController = new boidController();
-boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, boidBehaviour.toggleRule3);
+boidBehaviour.addToggle(boidBehaviour.toggleRule1, boidBehaviour.toggleRule2, boidBehaviour.toggleRule3, boidBehaviour.toggleRule4);
 
 export class boidMixin extends foShape2D {
-  myIndex: number;
+  public myIndex: number;
+  public perchCountdown:number = 0;
+  public gap: number = 50;
   public s: number = 0;
   public h: number = 0;
   public p: cPoint2D = new cPoint2D(0, 0);
+
+  
+  public pinX = (): number => { return 0.5 * this.width; }
+  public pinY = (): number => { return 0.5 * this.height; }
 
   protected toJson(): any {
     return Tools.mixin(super.toJson(), {
       p: this.p,
       h: this.h,
       s: this.s,
+      gap: this.gap,
     });
   }
 
@@ -140,11 +199,15 @@ export class boidMixin extends foShape2D {
           v = v.sum(dv).normal().scale(s);
       });
 
+      if ( this.perchCountdown == 0 ) {
+        v.sumTo(this.p);
+        this.s = v.mag();
+        this.h = v.atan();
+      } else {
+        this.perchCountdown--;
+      }
 
-      v.sumTo(this.p);
 
-      this.s = v.mag();
-      this.h = v.atan();
     } else {
       boidBehaviour.ruleCenter(this).setTo(this.p);
     }
@@ -244,6 +307,12 @@ export class Boid extends BoidShape {
     ctx.fill();
   }
 
+  drawCircle(ctx: CanvasRenderingContext2D, x1, y1, radius:number=100) {
+    ctx.beginPath();
+    ctx.arc(x1,y1,radius,0,2*Math.PI);
+    ctx.stroke();
+  }
+
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
     ctx.fillStyle = this.color;
@@ -254,7 +323,9 @@ export class Boid extends BoidShape {
       this.drawSelected(ctx);
     } else {
       this.drawTriangle(ctx, 0, this.height, this.width, this.height/2, 0, 0);
+      this.isVisible && this.drawCircle(ctx,this.pinX(),this.pinY(), this.gap)
     }
+   
   }
 }
 
@@ -270,7 +341,7 @@ BoidStencil.define('Boid', Boid, {
   width: 20,
   height: 20,
   h: function () { return Tools.random(0, Math.PI / 2) },
-  s: function () { return Tools.randomInt(1, 21) }
+  s: function () { return Tools.random(1, 21) }
 });
 
 BoidStencil.define('Boid+', Boid, {
@@ -285,8 +356,8 @@ BoidStencil.define('Boid++', Boid, {
 }).onCreation(obj => {
   obj.color = Tools.randomRGBColor()
   obj.h = Tools.random(0, 2 * Math.PI );
-  obj.s = Tools.randomInt(1, 21)
-
+  obj.s = Tools.random(1, 21);
+  obj.gap = Tools.random(25, 100);
 
 });
 

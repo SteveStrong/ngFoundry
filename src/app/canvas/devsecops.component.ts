@@ -15,7 +15,7 @@ import { SharingService } from "../common/sharing.service";
 import { DevSecOps } from "./devsecops.model";
 
 import { BoidStencil, boidBehaviour } from "./boid.model";
-import { foCommand } from '../foundry/foController';
+import { foCommand, foToggle } from '../foundry/foController';
 
 import { Star }  from "konva";
 
@@ -26,7 +26,7 @@ import { Star }  from "konva";
   styleUrls: ['./devsecops.component.css']
 })
 export class DevSecOpsComponent implements OnInit, AfterViewInit {
-
+  showZones:boolean = true;
   workspace: foWorkspace = DevSecOps;
   model: foModel;
 
@@ -94,6 +94,19 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
         .addAsSubcomponent(page)
     }))
 
+    let root = this;
+    boidBehaviour.addToggle(new foToggle('zone', () => {
+      root.showZones = !root.showZones;
+      let page = space.activePage;
+      page.Subcomponents.forEach(boid => {
+        boid.isVisible = root.showZones;
+      })
+    }, 
+    () => { 
+      return { active: root.showZones } 
+    }))
+
+ 
     this.currentDocument = this.workspace.document.override({
       pageWidth: this.pageWidth,
       pageHeight: this.pageHeight,
