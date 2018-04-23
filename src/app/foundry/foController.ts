@@ -1,4 +1,4 @@
-import { foObject } from "./foObject.model";
+import { foObject } from './foObject.model';
 
 //SRS integrate mYName , DisplayName and isVisible  into command rendering
 
@@ -10,11 +10,7 @@ export class foCommand extends foObject {
     super();
     this.myName = myName;
     this.doAction = doAction;
-    this.getLabel = getLabel
-      ? getLabel
-      : () => {
-          return this.myName;
-        };
+    this.getLabel = getLabel ? getLabel : () => { return this.myName; };
   }
 }
 
