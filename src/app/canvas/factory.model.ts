@@ -283,15 +283,24 @@ class factoryController extends foController {
         })
     }
 
-    renderModel(page: foPage, model:foComponent) {
-
+    renderView(obj:foComponent, viewParent:foShape2D, grid:Array<any>):foShape2D {
         let knowledge = FactoryStencil.find('Environment');
         let result = knowledge.newInstance().defaultName() as Environment;
-        result.addAsSubcomponent(page);
+        result.addAsSubcomponent(viewParent);
 
+        let loc = grid.shift();
+        result.easeTween(loc, 0.5);
+
+        obj.nodes.forEach(item => {
+            this.renderView(item, result, grid)
+        })
+
+        return result;
+    }
+
+    renderModel(page: foPage, model:foComponent) {
         let grid = this.generateGrid(100, 210, 3, 200, 200, 2);
-        result.easeTween(grid[0], Tools.random(0.5, 2.5));
-
+        this.renderView(model, page, grid);
     }
 
 }
