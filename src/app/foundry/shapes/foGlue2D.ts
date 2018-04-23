@@ -1,6 +1,6 @@
 
 import { Tools } from '../foTools';
-import { ModelRef, iPoint2D, iGlueSignature } from '../foInterface'
+import { ModelRef, iPoint2D, iGlueSignature } from '../foInterface';
 
 import { foObject } from '../foObject.model';
 import { foNode } from '../foNode.model';
@@ -53,7 +53,7 @@ export class foGlue2D extends foNode {
             sourceName: this.sourceName,
             targetGuid: this.myTarget && this.myTarget() && this.myTarget().myGuid,
             targetName: this.targetName
-        }
+        };
     }
 
     is2D() { return this.mySource && this.mySource() && this.mySource().is2D(); }
@@ -86,6 +86,7 @@ export class foGlue2D extends foNode {
     }
 
     isEmpty() {
+        // tslint:disable-next-line:curly
         if (this.myTarget) return false;
         if (this.mySource) return false;
         if (this.doSourceMoveProxy) return false;
@@ -94,11 +95,11 @@ export class foGlue2D extends foNode {
     }
 
     sourceMoved(loc: iPoint2D) {
-        this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
+        return this.doSourceMoveProxy && this.doSourceMoveProxy(loc);
     }
 
     targetMoved(loc: iPoint2D) {
-        let pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
+        const pnt = this.targetHandle ? this.targetHandle.globalCenter() : loc;
         this.doTargetMoveProxy && this.doTargetMoveProxy(pnt);
     }
 
