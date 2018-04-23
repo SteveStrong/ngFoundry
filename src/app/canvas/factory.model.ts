@@ -86,7 +86,7 @@ export class Package extends packageMixin {
             this.easeTween(loc, Tools.random(0.5, 2.5));
         } else {
             this.easeTween({x: 0, y: 0}, Tools.random(0.5, 2.5));
-            this.color = 'red'
+            this.color = 'red';
         }
     }
 
@@ -226,13 +226,13 @@ class factoryController extends foController {
     // toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
 
     generateGrid(xStart: number = 100, xStep: number = 100, xCount = 5, yStart: number = 100, yStep: number = 100, yCount = 5): any[] {
-        const list: any[] = Array<any>()
+        const list: any[] = Array<any>();
         for (let i = 0; i < xCount; i++) {
             for (let j = 0; j < yCount; j++) {
                 const item = {
                     x: xStart + i * xStep,
                     y: yStart + j * yStep,
-                }
+                };
                 list.push(item);
             }
         }
@@ -265,7 +265,7 @@ class factoryController extends foController {
         let i = 0;
         list.forEach(item => {
             item.easeTween(grid[i++], Tools.random(0.5, 2.5));
-        })
+        });
     }
 
     runFactory(page: foPage) {
@@ -275,12 +275,12 @@ class factoryController extends foController {
 
         list.forEach(item => {
             item.stations = <foCollection<Station>>stations;
-        })
+        });
 
         const packages = page.selectGlyph(item => Tools.matches(item.myClass, 'Package'));
         packages.forEach(item => {
             (<Package>item).doGoToNextStation();
-        })
+        });
     }
 
     renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
@@ -292,8 +292,8 @@ class factoryController extends foController {
         result.easeTween(loc, 0.5);
 
         obj.nodes.forEach(item => {
-            this.renderView(item, result, grid)
-        })
+            this.renderView(item, result, grid);
+        });
 
         return result;
     }

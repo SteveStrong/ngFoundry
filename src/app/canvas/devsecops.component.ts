@@ -29,7 +29,7 @@ import { Star } from 'konva';
 export class DevSecOpsComponent implements OnInit, AfterViewInit {
   showZones: boolean = true;
   workspace: foWorkspace = DevSecOps;
-  model: foModel = DevSecOps.model.getItem('default')
+  model: foModel = DevSecOps.model.getItem('default');
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
@@ -78,26 +78,26 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
 
     factoryBehaviour.addCommands(new foCommand('create package', () => {
       factoryBehaviour.createPackage(space.activePage);
-    }))
+    }));
 
     factoryBehaviour.addCommands(new foCommand('build factory', () => {
       factoryBehaviour.buildFactory(space.activePage);
-    }))
+    }));
 
     factoryBehaviour.addCommands(new foCommand('run', () => {
       factoryBehaviour.runFactory(space.activePage);
-    }))
+    }));
 
     space.library.members.forEach( lib => {
       lib.solutions.publicMembers.forEach ( know => {
         factoryBehaviour.addCommands(new foCommand(know.myName, () => {
-          const model = space.model.establish('default')
+          const model = space.model.establish('default');
           const item = know.makeComponent(model).defaultName();
           factoryBehaviour.renderModel(space.activePage, item);
-        }))
-      })
+        }));
+      });
 
-    })
+    });
 
 
 
@@ -106,12 +106,12 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
 
     boidBehaviour.addCommands(new foCommand('100++', () => {
       boidBehaviour.creatBoids(space.activePage, 100);
-    }))
+    }));
 
 
     boidBehaviour.addCommands(new foCommand('+1', () => {
       boidBehaviour.creatBoids(space.activePage, 1);
-    }))
+    }));
 
 
 
@@ -121,11 +121,11 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
       const page = space.activePage;
       page.Subcomponents.forEach(boid => {
         boid.isVisible = root.showZones;
-      })
+      });
     },
     () => {
-      return { active: root.showZones }
-    }))
+      return { active: root.showZones };
+    }));
 
 
     this.currentDocument = this.workspace.document.override({
@@ -134,7 +134,7 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
     });
 
 
-    this.model = this.workspace.model.establish('default')
+    this.model = this.workspace.model.establish('default');
     //this.model = workspace.context()
   }
 
@@ -146,7 +146,7 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
 
     setTimeout( _ => {
       this.doSetCurrentPage(this.currentDocument.currentPage);
-    })
+    });
 
 
   }
@@ -159,15 +159,15 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
           ctx.strokeStyle = 'yellow';
           ctx.lineWidth = 4;
           shape.drawOutline(ctx);
-        }
+        };
       }
-    }
+    };
 
     page.onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
       if (shape) {
         shape.drawHover = undefined;
       }
-    }
+    };
 
     page.onItemOverlapEnter = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
@@ -179,16 +179,16 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
           ctx.strokeStyle = 'yellow';
           ctx.lineWidth = 4;
           shapeUnder.drawOutline(ctx);
-        }
+        };
       }
-    }
+    };
 
     page.onItemOverlapExit = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
       if (shapeUnder) {
         shapeUnder.drawHover = undefined;
       }
-    }
+    };
 
   }
 
@@ -203,7 +203,7 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
     //3) render pages side by side
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
       page.render(ctx);
-    }
+    };
     this.screen2D.go();
 
     this.addEventHooks(page);

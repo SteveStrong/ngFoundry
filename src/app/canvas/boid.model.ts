@@ -228,10 +228,10 @@ export class boidMixin extends foShape2D {
 
   public pinX = (): number => {
     return 0.5 * this.width;
-  };
+  }
   public pinY = (): number => {
     return 0.5 * this.height;
-  };
+  }
 
   protected toJson(): any {
     return Tools.mixin(super.toJson(), {
@@ -284,7 +284,7 @@ export class boidMixin extends foShape2D {
       const y = Math.sin(this.h);
       this.h = Math.atan2(-y, x);
     }
-  };
+  }
 
   get isOffCanvasX(): boolean {
     // off the right side off the left side off the bottom
@@ -318,7 +318,7 @@ class BoidShape extends boidMixin {
     ctx.lineWidth = 4;
     this.drawOutline(ctx);
     this.drawPin(ctx);
-  };
+  }
 
   findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
     const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
@@ -380,7 +380,7 @@ export class Boid extends BoidShape {
       this.isVisible &&
         this.drawCircle(ctx, this.pinX(), this.pinY(), this.gap);
     }
-  };
+  }
 }
 
 const core = BoidStencil.mixin('core', {
