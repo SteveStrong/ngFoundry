@@ -4,23 +4,23 @@ import { iPoint2D, Action } from '../foundry/foInterface';
 import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
-import { foShape2D } from "../foundry/shapes/foShape2D.model";
-import { foShape1D } from "../foundry/shapes/foShape1D.model";
+import { foShape2D } from '../foundry/shapes/foShape2D.model';
+import { foShape1D } from '../foundry/shapes/foShape1D.model';
 
-import { foStencilLibrary } from "../foundry/foStencil";
-import { foCollection } from "../foundry/foCollection.model";
-import { foController, foToggle } from "../foundry/foController";
-import { foPage } from "../foundry/shapes/foPage.model";
+import { foStencilLibrary } from '../foundry/foStencil';
+import { foCollection } from '../foundry/foCollection.model';
+import { foController, foToggle } from '../foundry/foController';
+import { foPage } from '../foundry/shapes/foPage.model';
 
-import { foInstance } from "../foundry/foInstance.model";
+import { foInstance } from '../foundry/foInstance.model';
 
-export { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
-export { foShape2D } from "../foundry/shapes/foShape2D.model";
+export { foShape1D, foConnect1D } from '../foundry/shapes/foShape1D.model';
+export { foShape2D } from '../foundry/shapes/foShape2D.model';
 
 
 export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName('Factory');
 
-export class pathwayMixin extends foShape1D {
+export class PathwayMixin extends foShape1D {
     doAnimation = () => {
     }
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
@@ -37,14 +37,14 @@ export class packageMixin extends foShape2D {
         super.render(ctx, deep);
     }
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = 'red';
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
     findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
-        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+        const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
         return found;
     }
 }
@@ -57,14 +57,14 @@ export class stationMixin extends foShape2D {
         super.render(ctx, deep);
     }
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = 'red';
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawPin(ctx);
     }
 
     findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
-        let found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+        const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
         return found;
     }
 }
@@ -82,10 +82,10 @@ export class Package extends packageMixin {
     doGoToNextStation() {
         this.currentStation  = this.stations.members.shift();
         if ( this.currentStation) {
-            let loc = this.currentStation.getLocation();
+            const loc = this.currentStation.getLocation();
             this.easeTween(loc, Tools.random(0.5, 2.5));
         } else {
-            this.easeTween({x:0,y:0}, Tools.random(0.5, 2.5));
+            this.easeTween({x: 0, y: 0}, Tools.random(0.5, 2.5));
             this.color = 'red'
         }
     }
@@ -223,10 +223,10 @@ FactoryStencil.define('Environment', Environment, {
 });
 
 class factoryController extends foController {
-    //toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
+    // toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
 
     generateGrid(xStart: number = 100, xStep: number = 100, xCount = 5, yStart: number = 100, yStep: number = 100, yCount = 5): any[] {
-        let list: any[] = Array<any>()
+        const list: any[] = Array<any>()
         for (let i = 0; i < xCount; i++) {
             for (let j = 0; j < yCount; j++) {
                 let item = {
@@ -251,17 +251,17 @@ class factoryController extends foController {
 
     createPackage(page: foPage, count: number = 1): foCollection<Package> {
         let list: foCollection<Package> = new foCollection<Package>();
-        let knowledge = FactoryStencil.find('Package');
+        const knowledge = FactoryStencil.find('Package');
         for (let i = 0; i < count; i++) {
-            let result = knowledge.newInstance().defaultName() as Package;
+            const result = knowledge.newInstance().defaultName() as Package;
             result.addAsSubcomponent(page).pushTo(list);
         }
         return list;
     }
 
     buildFactory(page: foPage) {
-        let grid = this.generateGrid(100, 210, 3, 200, 200, 2);
-        let list = this.createStation(page, grid.length);
+        const grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+        const list = this.createStation(page, grid.length);
         let i = 0;
         list.forEach(item => {
             item.easeTween(grid[i++], Tools.random(0.5, 2.5));
@@ -269,26 +269,26 @@ class factoryController extends foController {
     }
 
     runFactory(page: foPage) {
-        let stations = page.selectGlyph(item => Tools.matches(item.myClass, 'Station'));
+        const stations = page.selectGlyph(item => Tools.matches(item.myClass, 'Station'));
 
-        let list = this.createPackage(page, 1);
+        const list = this.createPackage(page, 1);
 
         list.forEach(item => {
             item.stations = <foCollection<Station>>stations;
         })
 
-        let packages = page.selectGlyph(item => Tools.matches(item.myClass, 'Package'));
+        const packages = page.selectGlyph(item => Tools.matches(item.myClass, 'Package'));
         packages.forEach(item => {
             (<Package>item).doGoToNextStation();
         })
     }
 
-    renderView(obj:foInstance, viewParent:foShape2D, grid:Array<any>):foShape2D {
-        let knowledge = FactoryStencil.find('Environment');
-        let result = knowledge.newInstance().defaultName() as Environment;
+    renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
+        const knowledge = FactoryStencil.find('Environment');
+        const result = knowledge.newInstance().defaultName() as Environment;
         result.addAsSubcomponent(viewParent);
 
-        let loc = grid.shift();
+        const loc = grid.shift();
         result.easeTween(loc, 0.5);
 
         obj.nodes.forEach(item => {
@@ -298,15 +298,15 @@ class factoryController extends foController {
         return result;
     }
 
-    renderModel(page: foPage, model:foInstance) {
-        let grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+    renderModel(page: foPage, model: foInstance) {
+        const grid = this.generateGrid(100, 210, 3, 200, 200, 2);
         this.renderView(model, page, grid);
     }
 
 }
 
 export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
-//factoryBehaviour.addToggle(factoryBehaviour.toggleRule1)
+// factoryBehaviour.addToggle(factoryBehaviour.toggleRule1)
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(Package);

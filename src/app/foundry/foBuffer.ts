@@ -1,5 +1,5 @@
-import { foCollection } from "./foCollection.model";
-import { foInstance } from "./foInstance.model";
+import { foCollection } from './foCollection.model';
+import { foInstance } from './foInstance.model';
 import { cPoint2D, cFrame } from './shapes/foGeometry2D';
 import { foGlyph2D } from './shapes/foGlyph2D.model'
 import { foHandle2D } from './shapes/foHandle2D';
@@ -16,23 +16,23 @@ export class foCopyPasteBuffer extends foBuffer<foInstance> {
         this.clearAll();
     }
 
-    addSelection(item:foInstance, clear:boolean=true) {
+    addSelection(item: foInstance, clear: boolean= true) {
         clear && this.clear(item);
 
-        
+
         if ( !this.isMember(item) ) {
             this.addMember(item);
         }
     }
 
-} 
+}
 
 
 export class foHandleBuffer extends foBuffer<foHandle2D> {
 
     findHandle(loc: cPoint2D): foHandle2D {
-        for (var i: number = 0; i < this.length; i++) {
-            let handle: foHandle2D = this.getChildAt(i);
+        for (let i = 0; i < this.length; i++) {
+            const handle: foHandle2D = this.getChildAt(i);
             if (handle.hitTest(loc)) {
                 return handle;
             }
@@ -42,8 +42,8 @@ export class foHandleBuffer extends foBuffer<foHandle2D> {
 }
 
 export class foSelectionBuffer extends foBuffer<foGlyph2D> {
-    protected _handles:foHandleBuffer = new foHandleBuffer();
-    protected lastFound:foGlyph2D;
+    protected _handles: foHandleBuffer = new foHandleBuffer();
+    protected lastFound: foGlyph2D;
 
     findHandle(loc: cPoint2D): foHandle2D {
         return this._handles.findHandle(loc);
@@ -66,7 +66,7 @@ export class foSelectionBuffer extends foBuffer<foGlyph2D> {
         this.clearAll();
     }
 
-    addSelection(item:foGlyph2D, clear:boolean=true) {
+    addSelection(item: foGlyph2D, clear: boolean= true) {
         clear && this.clear(item);
 
         item.isSelected = true;
@@ -76,7 +76,7 @@ export class foSelectionBuffer extends foBuffer<foGlyph2D> {
         }
     }
 
-    findSelected(){
+    findSelected() {
         return this.find(item => { return item.isSelected; })
     }
 
@@ -85,7 +85,7 @@ export class foSelectionBuffer extends foBuffer<foGlyph2D> {
         if (this.lastFound && this.lastFound.isSelected) {
             this.lastFound.sendKeys(e, keys);
         } else {
-            let found = this.findSelected();
+            const found = this.findSelected();
             if (found && found.sendKeys) {
                 found.sendKeys(e, keys);
                 this.lastFound = found;

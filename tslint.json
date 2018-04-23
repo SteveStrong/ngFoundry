@@ -4,7 +4,7 @@
   ],
   "rules": {
     "callable-types": true,
-    "class-name": true,
+    "class-name": false,
     "comment-format": [
       true,
       "check-space"
