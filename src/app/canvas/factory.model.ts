@@ -12,7 +12,7 @@ import { foCollection } from "../foundry/foCollection.model";
 import { foController, foToggle } from "../foundry/foController";
 import { foPage } from "../foundry/shapes/foPage.model";
 
-import { foComponent } from "../foundry/foComponent.model";
+import { foInstance } from "../foundry/foInstance.model";
 
 export { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
@@ -283,7 +283,7 @@ class factoryController extends foController {
         })
     }
 
-    renderView(obj:foComponent, viewParent:foShape2D, grid:Array<any>):foShape2D {
+    renderView(obj:foInstance, viewParent:foShape2D, grid:Array<any>):foShape2D {
         let knowledge = FactoryStencil.find('Environment');
         let result = knowledge.newInstance().defaultName() as Environment;
         result.addAsSubcomponent(viewParent);
@@ -298,7 +298,7 @@ class factoryController extends foController {
         return result;
     }
 
-    renderModel(page: foPage, model:foComponent) {
+    renderModel(page: foPage, model:foInstance) {
         let grid = this.generateGrid(100, 210, 3, 200, 200, 2);
         this.renderView(model, page, grid);
     }
