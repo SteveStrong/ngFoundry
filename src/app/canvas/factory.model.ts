@@ -229,7 +229,7 @@ class factoryController extends foController {
         const list: any[] = Array<any>()
         for (let i = 0; i < xCount; i++) {
             for (let j = 0; j < yCount; j++) {
-                let item = {
+                const item = {
                     x: xStart + i * xStep,
                     y: yStart + j * yStep,
                 }
@@ -240,17 +240,17 @@ class factoryController extends foController {
     }
 
     createStation(page: foPage, count: number = 1): foCollection<Station> {
-        let list: foCollection<Station> = new foCollection<Station>();
-        let knowledge = FactoryStencil.find('Station');
+        const list: foCollection<Station> = new foCollection<Station>();
+        const knowledge = FactoryStencil.find('Station');
         for (let i = 0; i < count; i++) {
-            let result = knowledge.newInstance().defaultName() as Station;
+            const result = knowledge.newInstance().defaultName() as Station;
             result.addAsSubcomponent(page).pushTo(list);
         }
         return list;
     }
 
     createPackage(page: foPage, count: number = 1): foCollection<Package> {
-        let list: foCollection<Package> = new foCollection<Package>();
+        const list: foCollection<Package> = new foCollection<Package>();
         const knowledge = FactoryStencil.find('Package');
         for (let i = 0; i < count; i++) {
             const result = knowledge.newInstance().defaultName() as Package;

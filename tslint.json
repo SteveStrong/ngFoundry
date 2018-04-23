@@ -6,7 +6,7 @@
     "callable-types": true,
     "class-name": false,
     "comment-format": [
-      true,
+      false,
       "check-space"
     ],
     "curly": true,
@@ -25,11 +25,7 @@
       140
     ],
     "member-access": false,
-    "member-ordering": [
-      true,
-      "static-before-instance",
-      "variables-before-functions"
-    ],
+    "member-ordering": [true, "static-before-instance"],
     "no-arg": true,
     "no-bitwise": true,
     "no-console": [
@@ -46,13 +42,13 @@
     "no-empty": false,
     "no-empty-interface": true,
     "no-eval": true,
-    "no-inferrable-types": [true, "ignore-params"],
+    "no-inferrable-types": [true, "ignore-params", "ignore-properties"],
     "no-shadowed-variable": true,
     "no-string-literal": false,
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": true,
-    "no-unused-expression": true,
+    "no-unused-expression": false,
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
@@ -99,7 +95,7 @@
     ],
 
     "directive-selector": [true, "attribute", "app", "camelCase"],
-    "component-selector": [true, "element", "app", "kebab-case"],
+    "component-selector": [false, "element", "app", "kebab-case"],
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,
     "use-host-property-decorator": true,
