@@ -5,20 +5,20 @@ import { cPoint2D } from '../foundry/shapes/foGeometry2D';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
 import { foShape2D } from "../foundry/shapes/foShape2D.model";
-import { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
+import { foShape1D } from "../foundry/shapes/foShape1D.model";
 
 import { foStencilLibrary } from "../foundry/foStencil";
 import { foCollection } from "../foundry/foCollection.model";
 import { foController, foToggle } from "../foundry/foController";
+import { foPage } from "../foundry/shapes/foPage.model";
+
+import { foComponent } from "../foundry/foComponent.model";
 
 export { foShape1D, foConnect1D } from "../foundry/shapes/foShape1D.model";
 export { foShape2D } from "../foundry/shapes/foShape2D.model";
-import { foPage } from "../foundry/shapes/foPage.model";
 
 
 export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName('Factory');
-
-;
 
 export class pathwayMixin extends foShape1D {
     doAnimation = () => {
@@ -162,6 +162,41 @@ export class Station extends stationMixin {
 }
 
 
+export class Environment extends stationMixin {
+
+    constructor(properties?: any) {
+        super(properties);
+    }
+
+
+    drawSquare(ctx: CanvasRenderingContext2D, x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x1, y2);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    drawCircle(ctx: CanvasRenderingContext2D, x1, y1, radius: number = 100) {
+        ctx.beginPath();
+        ctx.arc(x1, y1, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+
+    public draw = (ctx: CanvasRenderingContext2D): void => {
+        ctx.fillStyle = this.color;
+        ctx.lineWidth = 1;
+        ctx.globalAlpha = this.opacity;
+
+        this.drawSquare(ctx, 0, 0, this.width, this.height);
+        this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
+
+    }
+}
+
 
 FactoryStencil.define('Package', Package, {
     color: 'green',
@@ -176,6 +211,14 @@ FactoryStencil.define('Station', Station, {
     opacity: .5,
     width: 150,
     height: 150,
+}).onCreation(obj => {
+});
+
+FactoryStencil.define('Environment', Environment, {
+    color: 'orange',
+    opacity: .5,
+    width: 100,
+    height: 100,
 }).onCreation(obj => {
 });
 
@@ -238,6 +281,17 @@ class factoryController extends foController {
         packages.forEach(item => {
             (<Package>item).doGoToNextStation();
         })
+    }
+
+    renderModel(page: foPage, model:foComponent) {
+
+        let knowledge = FactoryStencil.find('Environment');
+        let result = knowledge.newInstance().defaultName() as Environment;
+        result.addAsSubcomponent(page);
+
+        let grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+        result.easeTween(grid[0], Tools.random(0.5, 2.5));
+
     }
 
 }

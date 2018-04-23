@@ -158,6 +158,7 @@ export class foWorkspace extends foKnowledge {
         return this._stencil;
     }
 
+
     public openFile(onComplete?: (item: fileSpec) => void) {
         let manager = new foFileManager();
         manager.userOpenFileDialog(result => {

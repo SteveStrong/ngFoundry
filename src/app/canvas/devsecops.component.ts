@@ -29,7 +29,7 @@ import { Star }  from "konva";
 export class DevSecOpsComponent implements OnInit, AfterViewInit {
   showZones:boolean = true;
   workspace: foWorkspace = DevSecOps;
-  model: foModel;
+  model: foModel = this.workspace.model.getItem('default')
 
   @ViewChild('canvas')
   public canvasRef: ElementRef;
@@ -72,12 +72,13 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     let space = this.workspace;
+    let model = this.model;
 
 
     space.stencil.add(FactoryStencil);
     space.controller.add(factoryBehaviour);
 
-    factoryBehaviour.addCommands(new foCommand('create', () => {
+    factoryBehaviour.addCommands(new foCommand('create package', () => {
       factoryBehaviour.createPackage(space.activePage);
     }))
 
@@ -88,6 +89,19 @@ export class DevSecOpsComponent implements OnInit, AfterViewInit {
     factoryBehaviour.addCommands(new foCommand('run', () => {
       factoryBehaviour.runFactory(space.activePage);
     }))
+
+    let libs = space.library.members;
+    libs.forEach( lib => {
+      let members = lib.concepts.members;
+      members.forEach ( concept => {
+        factoryBehaviour.addCommands(new foCommand(concept.myName, () => {
+          let item = concept.makeComponent(model).defaultName();
+          factoryBehaviour.renderModel(space.activePage,item);
+        }))
+      })
+
+    })
+
 
 
     space.stencil.add(BoidStencil);
