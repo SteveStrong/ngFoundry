@@ -1,4 +1,4 @@
-import { foLibrary } from '../foundry/foLibrary.model';
+
 import { foStencilLibrary } from '../foundry/foStencil';
 import { foWorkspace } from '../foundry/foWorkspace.model';
 
@@ -13,9 +13,11 @@ import { iPoint2D } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 import { foPath2D } from '../foundry/shapes/foPath2D.model';
 
+import { DevSecOpsKnowledge } from './devsecops.knowledge';
+
 import { RuntimeType } from '../foundry/foRuntimeType';
 
-export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
+
 
 export let DevSecOpsShapes: foStencilLibrary = new foStencilLibrary().defaultName('shapes');
 

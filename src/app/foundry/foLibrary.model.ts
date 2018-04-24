@@ -11,112 +11,131 @@ import { foCollection } from './foCollection.model';
 
 import { foNode } from './foNode.model';
 
-import { FactoryDictionary, ActionDictionary, PropertyDictionary, ConceptDictionary, StructureDictionary, SolutionDictionary } from './foDictionaries';
+import {
+  FactoryDictionary,
+  ActionDictionary,
+  PropertyDictionary,
+  ConceptDictionary,
+  StructureDictionary,
+  SolutionDictionary
+} from './foDictionaries';
 
 import { WhereClause } from './foInterface';
 
-
-
 export class foLibrary extends foKnowledge {
+  private _mixins: any = {};
 
-    private _mixins: any = {};
+  private _solutions: SolutionDictionary = new SolutionDictionary(
+    {
+      myName: 'solutions'
+    },
+    this
+  );
 
-    private _solutions: SolutionDictionary = new SolutionDictionary({
-        myName: 'solutions'
-    }, this);
+  private _structures: StructureDictionary = new StructureDictionary(
+    {
+      myName: 'structures',
+      concepts: this.concepts
+    },
+    this
+  );
 
-    private _structures: StructureDictionary = new StructureDictionary({
-        myName: 'structures',
-        concepts: this.concepts
-    }, this);
+  private _concepts: ConceptDictionary = new ConceptDictionary(
+    {
+      myName: 'concepts'
+    },
+    this
+  );
 
-    private _concepts: ConceptDictionary = new ConceptDictionary({
-        myName: 'concepts'
-    }, this);
+  private _properties: PropertyDictionary = new PropertyDictionary(
+    {
+      myName: 'properties'
+    },
+    this
+  );
 
-    private _properties: PropertyDictionary = new PropertyDictionary({
-        myName: 'properties'
-    }, this);
+  private _actions: ActionDictionary<foNode> = new ActionDictionary(
+    {
+      myName: 'actions'
+    },
+    this
+  );
 
-    private _actions: ActionDictionary<foNode> = new ActionDictionary({
-        myName: 'actions'
-    }, this);
+  private _factory: FactoryDictionary<foNode> = new FactoryDictionary(
+    {
+      myName: 'factories'
+    },
+    this
+  );
 
-    private _factory: FactoryDictionary<foNode> = new FactoryDictionary({
-        myName: 'factories'
-    }, this);
+  constructor(properties?: any, parent?: foKnowledge) {
+    super(properties, parent);
+  }
 
-    constructor(properties?: any, parent?: foKnowledge) {
-        super(properties, parent);
+  get debug() {
+    const result = {
+      base: this,
+      concepts: this.concepts,
+      properties: this.properties
+    };
+    return Tools.stringify(result);
+  }
+
+  protected toJson(): any {
+    return Tools.mixin(super.toJson(), {
+      concepts: Tools.asArray(this.concepts.asJson),
+      properties: Tools.asArray(this.properties.asJson)
+    });
+  }
+
+  public mixin(key: string, specification?: any): any {
+    let found = specification;
+    if (found) {
+      this._mixins[key] = found;
+    } else {
+      found = this._mixins[key];
     }
 
-    get debug() {
-        const result = {
-            base: this,
-            concepts: this.concepts,
-            properties: this.properties,
-        };
-        return Tools.stringify(result);
-    }
+    return found;
+  }
 
-    protected toJson(): any {
-        return Tools.mixin(super.toJson(), {
-            concepts: Tools.asArray(this.concepts.asJson),
-            properties: Tools.asArray(this.properties.asJson)
-        });
-    }
+  get actions() {
+    return this._actions;
+  }
 
-    public mixin(key: string, specification?: any): any {
-        let found = specification;
-        if (found ) {
-            this._mixins[key] = found;
-        } else {
-            found = this._mixins[key];
-        }
+  get factories() {
+    return this._factory;
+  }
 
-        return found;
-    }
+  get structures() {
+    return this._structures;
+  }
 
+  get solutions() {
+    return this._solutions;
+  }
 
-    get actions() {
-        return this._actions;
-    }
+  get concepts() {
+    return this._concepts;
+  }
 
-    get factories() {
-        return this._factory;
-    }
+  get properties() {
+    return this._properties;
+  }
 
-    get structures() {
-        return this._structures;
-    }
+  select(
+    where: WhereClause<foKnowledge>,
+    list?: foCollection<foKnowledge>,
+    deep: boolean = true
+  ): foCollection<foKnowledge> {
+    const result = super.select(where, list, deep);
 
-    get solutions() {
-        return this._solutions;
-    }
+    this.concepts.forEachKeyValue((key, value) => {
+      value.select(where, result, deep);
+    });
 
-
-    get concepts() {
-        return this._concepts;
-    }
-
-
-    get properties() {
-        return this._properties;
-    }
-
-
-    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
-        const result = super.select(where, list, deep);
-
-        this.concepts.forEachKeyValue((key, value) => {
-            value.select(where, result, deep);
-        });
-
-        return result;
-    }
-
-
-
+    return result;
+  }
 }
 
 import { RuntimeType } from './foRuntimeType';
