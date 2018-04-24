@@ -14,6 +14,7 @@ import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 import { foPath2D } from '../foundry/shapes/foPath2D.model';
 
 import { DevSecOpsKnowledge } from './devsecops.knowledge';
+export { DevSecOpsKnowledge } from './devsecops.knowledge';
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 

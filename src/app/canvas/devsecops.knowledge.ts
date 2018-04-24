@@ -1,9 +1,7 @@
 import { foComponent } from '../foundry/foComponent.model';
 import { foLibrary } from '../foundry/foLibrary.model';
 
-export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName(
-  'definitions'
-);
+export let DevSecOpsKnowledge: foLibrary = new foLibrary().defaultName('definitions');
 
 function Concept(name: string, spec?: any) {
   return DevSecOpsKnowledge.concepts.define(name, foComponent, spec).hide();
