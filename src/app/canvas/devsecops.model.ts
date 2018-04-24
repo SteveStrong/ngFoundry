@@ -1,7 +1,7 @@
 import { foLibrary } from '../foundry/foLibrary.model';
 import { foStencilLibrary } from '../foundry/foStencil';
 import { foWorkspace } from '../foundry/foWorkspace.model';
-import { foComponent } from '../foundry/foComponent.model';
+
 import { foModel } from '../foundry/foModel.model';
 import { foImage2D } from '../foundry/shapes/foImage2D.model';
 import { foInputText2D } from '../foundry/shapes/foText2D.model';
@@ -246,50 +246,6 @@ DevSecOpsSolids.define<foShape3D>('red box', foShape3D, {
   depth: 900
 });
 
-function getConcept(name: string, spec?: any) {
-  return DevSecOpsKnowledge.concepts.define(name, foComponent, spec).hide();
-}
-const root = getConcept('Root', {
-  pipelineName: 'dave'
-});
-
-const compile = getConcept('compile');
-compile.subComponent('details', {});
-
-const s1 = DevSecOpsKnowledge.structures
-  .define('stage1', {})
-  .concept(compile)
-  .hide();
-const s2 = DevSecOpsKnowledge.structures
-  .define('stage2', {})
-  .concept(getConcept('test'))
-  .hide();
-const s3 = DevSecOpsKnowledge.structures
-  .define('stage3', {})
-  .concept(getConcept('package'))
-  .hide()
-  .subComponent('local', {});
-
-const pipe = DevSecOpsKnowledge.structures
-  .define('Pipeline', {})
-  .concept(root)
-  .subComponent('s1', s1)
-  .subComponent('s2', s2)
-  .subComponent('s3', s3);
-
-DevSecOpsKnowledge.solutions
-  .define('DevOps')
-  .useStructure(pipe)
-  .subSolution(
-    'security',
-    DevSecOpsKnowledge.solutions.define('security').hide()
-  )
-  .subSolution('metrics', DevSecOpsKnowledge.solutions.define('metrics').hide())
-  .subSolution(
-    'governance',
-    DevSecOpsKnowledge.solutions.define('governance').hide()
-  );
-//.useStructureWhen(pipe, function(c) { return true});
 
 class legoCore extends foShape2D {
   description: string;

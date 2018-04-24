@@ -1,25 +1,25 @@
-import { Tools } from './foTools'
+import { Tools } from './foTools';
 
-import { foKnowledge } from './foKnowledge.model'
+import { foKnowledge } from './foKnowledge.model';
 
 //import { Knowcycle } from './foLifecycle';
-import { foCollection } from './foCollection.model'
+import { foCollection } from './foCollection.model';
 //import { foComponent } from './foComponent.model'
 //import { foConcept } from './foConcept.model'
 //import { foStructure } from './foStructure.model'
 //import { foProperty } from './foProperty.model'
 
-import { foNode } from './foNode.model'
+import { foNode } from './foNode.model';
 
-import { FactoryDictionary, ActionDictionary, PropertyDictionary, ConceptDictionary, StructureDictionary, SolutionDictionary } from './foDictionaries'
+import { FactoryDictionary, ActionDictionary, PropertyDictionary, ConceptDictionary, StructureDictionary, SolutionDictionary } from './foDictionaries';
 
-import { WhereClause } from "./foInterface";
+import { WhereClause } from './foInterface';
 
 
 
 export class foLibrary extends foKnowledge {
 
-    private _mixins:any = {};
+    private _mixins: any = {};
 
     private _solutions: SolutionDictionary = new SolutionDictionary({
         myName: 'solutions'
@@ -38,12 +38,12 @@ export class foLibrary extends foKnowledge {
         myName: 'properties'
     }, this);
 
-    private _actions: ActionDictionary<foNode> = new ActionDictionary({ 
-        myName: 'actions' 
+    private _actions: ActionDictionary<foNode> = new ActionDictionary({
+        myName: 'actions'
     }, this);
 
-    private _factory: FactoryDictionary<foNode> = new FactoryDictionary({ 
-        myName: 'factories' 
+    private _factory: FactoryDictionary<foNode> = new FactoryDictionary({
+        myName: 'factories'
     }, this);
 
     constructor(properties?: any, parent?: foKnowledge) {
@@ -51,11 +51,11 @@ export class foLibrary extends foKnowledge {
     }
 
     get debug() {
-        let result = {
+        const result = {
             base: this,
             concepts: this.concepts,
             properties: this.properties,
-        }
+        };
         return Tools.stringify(result);
     }
 
@@ -73,7 +73,7 @@ export class foLibrary extends foKnowledge {
         } else {
             found = this._mixins[key];
         }
-       
+
         return found;
     }
 
@@ -106,11 +106,11 @@ export class foLibrary extends foKnowledge {
 
 
     select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
-        let result = super.select(where, list, deep);
+        const result = super.select(where, list, deep);
 
         this.concepts.forEachKeyValue((key, value) => {
             value.select(where, result, deep);
-        })
+        });
 
         return result;
     }
@@ -120,6 +120,5 @@ export class foLibrary extends foKnowledge {
 }
 
 import { RuntimeType } from './foRuntimeType';
-import { foDictionary } from './foDictionary.model';
 
 RuntimeType.knowledge(foLibrary);
