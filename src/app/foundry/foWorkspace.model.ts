@@ -1,239 +1,265 @@
-import { Tools } from './foTools'
+import { Tools } from './foTools';
 
+import { foDocument } from './shapes/foDocument.model';
+import { foStudio } from './solids/foStudio.model';
+import { foKnowledge } from './foKnowledge.model';
+import { foDictionary } from './foDictionary.model';
 
-import { foDocument } from './shapes/foDocument.model'
-import { foStudio } from './solids/foStudio.model'
-import { foKnowledge } from "./foKnowledge.model";
-import { foDictionary } from './foDictionary.model'
+import { foLibrary } from './foLibrary.model';
+import { foModel } from './foModel.model';
+import { foObject, using } from './foObject.model';
 
-import { foLibrary } from './foLibrary.model'
-import { foModel } from './foModel.model'
-import { foObject, using } from './foObject.model'
+import { foFileManager, fileSpec } from './foFileManager';
+import { foHydrationManager } from './foHydrationManager';
+import { foInstance } from './foInstance.model';
 
-import { foFileManager, fileSpec } from './foFileManager'
-import { foHydrationManager } from './foHydrationManager'
-import { foInstance } from './foInstance.model'
+import { ContextDictionary } from './foDictionaries';
 
-import { ContextDictionary } from './foDictionaries'
-
-import { foCollection } from './foCollection.model'
-import { WhereClause } from "./foInterface";
+import { foCollection } from './foCollection.model';
+import { WhereClause } from './foInterface';
 import { foController } from './foController';
 import { foPage } from './shapes/foPage.model';
 import { foStage } from './solids/foStage.model';
 
+export class LibraryDictionary extends foDictionary<foLibrary> {
+  public establish = (name: string): foLibrary => {
+    this.findItem(name, () => {
+      this.addItem(name, new foLibrary({ myName: name }));
+    });
+    return this.getItem(name);
+  }
 
+  constructor(properties?: any, parent?: foObject) {
+    super(properties, parent);
+  }
 
-export class LibraryDictionary extends foDictionary<foLibrary>{
-    public establish = (name: string): foLibrary => {
-        this.findItem(name, () => {
-            this.addItem(name, new foLibrary({ myName: name }))
-        })
-        return this.getItem(name);
-    }
+  select(
+    where: WhereClause<foKnowledge>,
+    list?: foCollection<foKnowledge>,
+    deep: boolean = true
+  ): foCollection<foKnowledge> {
+    const result = list ? list : new foCollection<foKnowledge>();
 
-    constructor(properties?: any, parent?: foObject) {
-        super(properties, parent);
-    }
+    this.forEachKeyValue((key, value) => {
+      if (where(value)) { result.addMember(value); }
+      value.select(where, result, deep);
+    });
 
-    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
-        let result = list ? list : new foCollection<foKnowledge>();
-
-        this.forEachKeyValue((key, value) => {
-            if (where(value)) result.addMember(value);
-            value.select(where, result, deep);
-        })
-
-        return result;
-    }
+    return result;
+  }
 }
 
-export class ModelDictionary extends foDictionary<foModel>{
-    public establish = (name: string): foModel => {
-        this.findItem(name, () => {
-            this.addItem(name, new foModel({ myName: name }))
-        })
-        return this.getItem(name);
-    }
+export class ModelDictionary extends foDictionary<foModel> {
+  public establish = (name: string): foModel => {
+    this.findItem(name, () => {
+      this.addItem(name, new foModel({ myName: name }));
+    });
+    return this.getItem(name);
+  }
 
-    constructor(properties?: any, parent?: foObject) {
-        super(properties, parent);
-    }
+  constructor(properties?: any, parent?: foObject) {
+    super(properties, parent);
+  }
 
-    selectComponent(where: WhereClause<foObject>, list?: foCollection<foObject>, deep: boolean = true): foCollection<foObject> {
-        let result = list ? list : new foCollection<foObject>();
+  selectComponent(
+    where: WhereClause<foObject>,
+    list?: foCollection<foObject>,
+    deep: boolean = true
+  ): foCollection<foObject> {
+    const result = list ? list : new foCollection<foObject>();
 
-        this.forEachKeyValue((key, value) => {
-            if (where(value)) result.addMember(value);
-            value.select(where, result, deep);
-        })
+    this.forEachKeyValue((key, value) => {
+      if (where(value)) { result.addMember(value); }
+      value.select(where, result, deep);
+    });
 
-        return result;
-    }
+    return result;
+  }
 }
 
 export class foWorkspace extends foKnowledge {
+  public filenameExt: string;
 
-    public filenameExt: string;
+  private _library: LibraryDictionary = new LibraryDictionary(
+    { myName: 'library' },
+    this
+  );
+  private _stencil: LibraryDictionary = new LibraryDictionary(
+    { myName: 'stencil' },
+    this
+  );
 
-    private _library: LibraryDictionary = new LibraryDictionary({ myName: 'library' }, this);
-    private _stencil: LibraryDictionary = new LibraryDictionary({ myName: 'stencil' }, this);
+  private _model: ModelDictionary = new ModelDictionary(
+    { myName: 'model' },
+    this
+  );
+  private _context: ContextDictionary = new ContextDictionary(
+    { myName: 'context' },
+    this
+  );
 
-    private _model: ModelDictionary = new ModelDictionary({ myName: 'model' }, this);
-    private _context: ContextDictionary = new ContextDictionary({ myName: 'context' }, this);
+  private _document: foDocument = new foDocument({}, [], this);
+  private _studio: foStudio = new foStudio({}, [], this);
 
-    private _document: foDocument = new foDocument({}, [], this);
-    private _studio: foStudio = new foStudio({}, [], this);
+  private _controller: foDictionary<foController> = new foDictionary<
+    foController
+  >({ displayName: 'controls' }, this);
 
-    private _controller: foDictionary<foController> = new foDictionary<foController>({ displayName: 'controls' }, this);
+  constructor(spec?: any) {
+    super(spec);
+  }
 
+  //special for workspace
+  public reHydrate(json: any) {
+    return this;
+  }
 
-    constructor(spec?: any) {
-        super(spec);
-        
-    }
+  //special for workspace
+  public deHydrate(context?: any, deep: boolean = true) {
+    const data = {
+      library: this._library.deHydrate(context, deep),
+      stencil: this._stencil.deHydrate(context, deep),
+      model: this._model.deHydrate(context, deep),
+      context: this._context.deHydrate(context, deep),
+      document: this._document.deHydrate(context, deep),
+      studio: this._studio.deHydrate(context, deep)
+    };
 
-    //special for workspace
-    public reHydrate(json: any) {
-        return this;
-    }
+    return data;
+  }
 
-    //special for workspace
-    public deHydrate(context?: any, deep: boolean = true) {
-        let data = {
-            library: this._library.deHydrate(context, deep),
-            stencil: this._stencil.deHydrate(context, deep),
-            model: this._model.deHydrate(context, deep),
-            context: this._context.deHydrate(context, deep),
-            document: this._document.deHydrate(context, deep),
-            studio: this._studio.deHydrate(context, deep),
-        }
+  get activePage(): foPage {
+    return this._document.currentPage;
+  }
 
-        return data;
-    }
+  get activeStage(): foStage {
+    return this._studio.currentStage;
+  }
 
-    get activePage(): foPage {
-        return this._document.currentPage
-    }
+  select(
+    where: WhereClause<foKnowledge>,
+    list?: foCollection<foKnowledge>,
+    deep: boolean = true
+  ): foCollection<foKnowledge> {
+    const result = super.select(where, list, deep);
 
-    get activeStage(): foStage {
-        return this._studio.currentStage
-    }
+    this.library.select(where, result, deep);
 
-    select(where: WhereClause<foKnowledge>, list?: foCollection<foKnowledge>, deep: boolean = true): foCollection<foKnowledge> {
-        let result = super.select(where, list, deep);
+    this.stencil.select(where, result, deep);
 
-        this.library.select(where, result, deep);
+    return result;
+  }
 
-        this.stencil.select(where, result, deep);
+  get controller() {
+    return this._controller;
+  }
 
-        return result;
-    }
+  get studio() {
+    return this._studio;
+  }
 
-    get controller() {
-        return this._controller;
-    }
+  get document() {
+    return this._document;
+  }
 
-    get studio() {
-        return this._studio;
-    }
+  get model() {
+    return this._model;
+  }
 
-    get document() {
-        return this._document;
-    }
+  get context() {
+    return this._context;
+  }
 
-    get model() {
-        return this._model;
-    }
+  get library() {
+    return this._library;
+  }
 
-    get context() {
-        return this._context;
-    }
+  get stencil() {
+    return this._stencil;
+  }
 
-    get library() {
-        return this._library;
-    }
+  public openFile(onComplete?: (item: fileSpec) => void) {
+    const manager = new foFileManager();
+    manager.userOpenFileDialog(
+      result => {
+        this.filenameExt = result.filename;
+        onComplete && onComplete(result);
+      },
+      '.json',
+      this.myName
+    );
+  }
 
-    get stencil() {
-        return this._stencil;
-    }
+  public SaveInstanceAs(
+    obj: foInstance,
+    name: string,
+    ext: string = '.json',
+    onComplete?: (item: fileSpec) => void
+  ) {
+    const manager = new foFileManager();
+    const payload = this.deHydrateInstance(obj);
 
+    manager.writeTextFileAsync(payload, name, ext, result => {
+      this.filenameExt = result.filename;
+      onComplete && onComplete(result);
+    });
+    return true;
+  }
 
-    public openFile(onComplete?: (item: fileSpec) => void) {
-        let manager = new foFileManager();
-        manager.userOpenFileDialog(result => {
+  public SaveFileAs(
+    name: string,
+    ext: string = '.json',
+    onComplete?: (item: fileSpec) => void
+  ) {
+    const manager = new foFileManager();
+    const payload = this.deHydrateWorkspace();
 
-            this.filenameExt = result.filename;
-            onComplete && onComplete(result);
+    manager.writeTextFileAsync(payload, name, ext, result => {
+      this.filenameExt = result.filename;
+      onComplete && onComplete(result);
+    });
+    return true;
+  }
 
-        }, '.json', this.myName)
-    }
+  public autoSaveFile(onComplete?: (item: fileSpec) => void) {
+    if (!this.filenameExt) { return false; }
 
-    public SaveInstanceAs(obj: foInstance, name: string, ext: string = '.json', onComplete?: (item: fileSpec) => void) {
-        let manager = new foFileManager();
-        let payload = this.deHydrateInstance(obj);
+    const filespec = fileSpec.setFilenameExt(this.filenameExt);
+    const manager = new foFileManager();
+    const payload = this.deHydrateWorkspace();
 
-        manager.writeTextFileAsync(payload, name, ext, result => {
-            this.filenameExt = result.filename;
-            onComplete && onComplete(result);
-        })
-        return true;
-    }
+    manager.writeTextFileAsync(payload, filespec.name, filespec.ext, result => {
+      onComplete && onComplete(result);
+    });
+    return true;
+  }
 
-    public SaveFileAs(name: string, ext: string = '.json', onComplete?: (item: fileSpec) => void) {
-        let manager = new foFileManager();
-        let payload = this.deHydrateWorkspace();
+  public clearActivePage() {
+    this.activePage.clearPage();
+  }
 
-        manager.writeTextFileAsync(payload, name, ext, result => {
-            this.filenameExt = result.filename;
-            onComplete && onComplete(result);
-        })
-        return true;
-    }
+  public deHydrateWorkspace() {
+    return using(new foHydrationManager(this), manager => {
+      return manager.deHydrate(this);
+    });
+  }
 
-    public autoSaveFile(onComplete?: (item: fileSpec) => void) {
-        if (!this.filenameExt) return false;
+  public deHydrateInstance(obj: foInstance) {
+    return using(new foHydrationManager(this), manager => {
+      return manager.deHydrate(obj);
+    });
+  }
 
-        let filespec = fileSpec.setFilenameExt(this.filenameExt)
-        let manager = new foFileManager();
-        let payload = this.deHydrateWorkspace();
-
-        manager.writeTextFileAsync(payload, filespec.name, filespec.ext, (result) => {
-            onComplete && onComplete(result);
-        })
-        return true;
-    }
-
-    public clearActivePage() {
-        this.activePage.clearPage();
-    }
-
-
-
-
-    public deHydrateWorkspace() {
-        return using(new foHydrationManager(this), manager => {
-            return manager.deHydrate(this);
-        });
-    }
-
-    public deHydrateInstance(obj: foInstance) {
-        return using(new foHydrationManager(this), manager => {
-            return manager.deHydrate(obj);
-        });
-    }
-
-    public reHydratePayload(payload: any) {
-        return using(new foHydrationManager(this), manager => {
-            let data = Tools.isString(payload) ? JSON.parse(payload) : payload;
-            return manager.reHydrate(data);
-        });
-    }
-
+  public reHydratePayload(payload: any) {
+    return using(new foHydrationManager(this), manager => {
+      const data = Tools.isString(payload) ? JSON.parse(payload) : payload;
+      return manager.reHydrate(data);
+    });
+  }
 }
 
 export let globalWorkspace: foWorkspace = new foWorkspace();
 
-Tools['isaWorkspace'] = function (obj) {
-    return obj && obj.isInstanceOf(foWorkspace);
+Tools['isaWorkspace'] = function(obj) {
+  return obj && obj.isInstanceOf(foWorkspace);
 };
