@@ -33,7 +33,7 @@ export class foKnowledge extends foObject {
   }
 
   extract(target: any) {
-    let result = {};
+    const result = {};
     return result;
   }
 
@@ -50,14 +50,14 @@ export class foKnowledge extends foObject {
       this.myName = name;
     } else if (Tools.matches(this.myName, foNames.UNKNOWN)) {
       foKnowledge._counter += 1;
-      let count = ('0000' + foKnowledge._counter).slice(-4);
+      const count = ('0000' + foKnowledge._counter).slice(-4);
       this.myName = `${this.myType}_${count}`;
     }
     return this;
   }
 
   get displayName() {
-    if (this._displayName) return this._displayName;
+    if (this._displayName) { return this._displayName; }
     if (Tools.matches(this.myName, foNames.UNKNOWN)) {
       return this.defaultName().myName;
     }
@@ -72,8 +72,8 @@ export class foKnowledge extends foObject {
     list?: foCollection<foKnowledge>,
     deep: boolean = true
   ): foCollection<foKnowledge> {
-    let result = list ? list : new foCollection<foKnowledge>();
-    let self = <foKnowledge>this;
+    const result = list ? list : new foCollection<foKnowledge>();
+    const self = <foKnowledge>this;
     if (where(self)) {
       result.addMember(self);
     }
@@ -81,7 +81,7 @@ export class foKnowledge extends foObject {
   }
 
   extractCopySpec(keys?: string[]) {
-    let spec = this.asJson;
+    const spec = this.asJson;
     keys &&
       keys.forEach(key => {
         spec[key] = this[key];
@@ -90,12 +90,12 @@ export class foKnowledge extends foObject {
   }
 
   createCopy(keys?: string[]) {
-    let data = this.extractCopySpec(keys);
-    let { myType } = data;
+    const data = this.extractCopySpec(keys);
+    const { myType } = data;
 
-    let type = RuntimeType.find(myType);
+    const type = RuntimeType.find(myType);
     if (type) {
-      let copy = RuntimeType.construct(type, data);
+      const copy = RuntimeType.construct(type, data);
       return copy;
     }
   }
@@ -106,7 +106,7 @@ export class foKnowledge extends foObject {
   }
 
   public deHydrate(context?: any, deep: boolean = true) {
-    let data = this.extractCopySpec();
+    const data = this.extractCopySpec();
     return data;
   }
 }
