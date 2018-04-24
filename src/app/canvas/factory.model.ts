@@ -275,15 +275,17 @@ class factoryController extends foController {
 
   renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
     const knowledge = FactoryStencil.find('Environment');
-    const result = knowledge.newInstance().defaultName() as Environment;
+    const result = knowledge.newInstance({
+      myGuid: obj.myGuid,
+    }).defaultName() as Environment;
     result.addAsSubcomponent(viewParent);
-
-    const loc = grid.shift();
-    result.easeTween(loc, 0.5);
 
     obj.nodes.forEach(item => {
       this.renderView(item, result, grid);
     });
+
+    const loc = grid.shift();
+    result.easeTween(loc, 0.5);
 
     return result;
   }
