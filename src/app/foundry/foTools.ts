@@ -38,13 +38,16 @@ export class foTools {
   //http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
   generateUUID() {
     let d = new Date().getTime();
-    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      // tslint:disable-next-line:no-bitwise
-      const r = ((d + Math.random() * 16) % 16) | 0;
-      d = Math.floor(d / 16);
-      // tslint:disable-next-line:no-bitwise
-      return (c === 'x' ? r : (r & 0x7) | 0x8).toString(16);
-    });
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function(c) {
+        // tslint:disable-next-line:no-bitwise
+        const r = ((d + Math.random() * 16) % 16) | 0;
+        d = Math.floor(d / 16);
+        // tslint:disable-next-line:no-bitwise
+        return (c === 'x' ? r : (r & 0x7) | 0x8).toString(16);
+      }
+    );
     return uuid;
   }
 
@@ -81,7 +84,9 @@ export class foTools {
         case '_members':
           return value;
       }
-      if (key.startsWith('_')) { return; }
+      if (key.startsWith('_')) {
+        return;
+      }
       //if (this.isCustomLinkName(key)) {
       //    return resolveReference(value);
       //}
@@ -110,7 +115,7 @@ export class foTools {
   }
 
   getNamespace(obj) {
-    var myNamespace = obj.myType ? obj.myType.split('::') : [''];
+    let myNamespace = obj.myType ? obj.myType.split('::') : [''];
     myNamespace = myNamespace[0];
     return myNamespace;
   }
@@ -144,8 +149,12 @@ export class foTools {
   }
 
   matches(str1: string, str2: string) {
-    if (str1 === str2) { return true; }
-    return str1 && str2 && str1.toLocaleLowerCase() === str2.toLocaleLowerCase();
+    if (str1 === str2) {
+      return true;
+    }
+    return (
+      str1 && str2 && str1.toLocaleLowerCase() === str2.toLocaleLowerCase()
+    );
   }
 
   capitalizeFirstLetter(str1: string) {
@@ -161,7 +170,9 @@ export class foTools {
   }
 
   isArray(obj) {
-    if (Array.isArray) { return Array.isArray(obj); }
+    if (Array.isArray) {
+      return Array.isArray(obj);
+    }
     return Object.prototype.toString.call(obj) === '[object Array]'
       ? true
       : false;
@@ -197,23 +208,34 @@ export class foTools {
 
   isEmpty(obj) {
     // null and undefined are "empty"
-    if (obj == null) { return true; }
+    if (obj == null) {
+      return true;
+    }
 
     // Assume if it has a length property with a non-zero value
     // that that property is correct.
-    if (obj.length > 0) { return false; }
-    if (obj.length === 0) { return true; }
+    if (obj.length > 0) {
+      return false;
+    }
+    if (obj.length === 0) {
+      return true;
+    }
 
     // If it isn't an object at this point
     // it is empty, but it can't be anything *but* empty
     // Is it empty?  Depends on your application.
-    if (typeof obj !== 'object') { return true; }
+    if (typeof obj !== 'object') {
+      return true;
+    }
 
     // Otherwise, does it have any properties of its own?
     // Note that this doesn't handle
     // toString and valueOf enumeration bugs in IE < 9
+    // tslint:disable-next-line:prefer-const
     for (let key in obj) {
-      if (this.hasOwnProperty.call(obj, key)) { return false; }
+      if (this.hasOwnProperty.call(obj, key)) {
+        return false;
+      }
     }
 
     return true;
@@ -236,12 +258,12 @@ export class foTools {
   }
 
   decomposeHostPath(filename) {
-    var string = filename.toLowerCase();
+    let string = filename.toLowerCase();
     string = string.replace('http://', '');
     string = string.replace('https://', '');
 
-    var host = string.split('/')[0];
-    var path = string.replace(host, '');
+    const host = string.split('/')[0];
+    const path = string.replace(host, '');
     return {
       fullpath: filename,
       host: host,
@@ -250,7 +272,10 @@ export class foTools {
   }
 
   extend(target, source) {
-    if (!source) { return target; }
+    if (!source) {
+      return target;
+    }
+    // tslint:disable-next-line:prefer-const
     for (var key in source) {
       if (this.hasOwnProperty.call(source, key)) {
         target[key] = source[key];
@@ -260,18 +285,27 @@ export class foTools {
   }
 
   mixin(target, source) {
-    if (!source) { return target; }
-    if (!target) { return source; }
-    for (var key in source) {
+    if (!source) {
+      return target;
+    }
+    if (!target) {
+      return source;
+    }
+    // tslint:disable-next-line:forin
+    for (let key in source) {
       target[key] = source[key];
     }
     return target;
   }
 
   mixExact(target, source) {
-    if (!source) { return target; }
-    if (!target) { return source; }
-    for (var key in source) {
+    if (!source) {
+      return target;
+    }
+    if (!target) {
+      return source;
+    }
+    for (let key in source) {
       if (foTools.hasOwnProperty.call(target, key)) {
         target[key] = source[key];
       }
@@ -280,9 +314,13 @@ export class foTools {
   }
 
   mixout(target, source) {
-    if (!source) { return target; }
-    if (!target) { return source; }
-    for (var key in source) {
+    if (!source) {
+      return target;
+    }
+    if (!target) {
+      return source;
+    }
+    for (let key in source) {
       if (this.hasOwnProperty.call(target, key)) {
         delete target[key];
       }
@@ -300,20 +338,27 @@ export class foTools {
   }
 
   mixMap(target, source) {
-    if (!source) { return target; }
-    var result = {};
-    for (var key in target) {
-      var keyMap = source[key] || key;
+    if (!source) {
+      return target;
+    }
+
+    let result = {};
+    for (let key in target) {
+      let keyMap = source[key] || key;
       result[keyMap] = target[key];
     }
     return result;
   }
 
   intersect(target, source) {
-    if (!source) { return target; }
-    if (!target) { return source; }
-    var intersect = {};
-    for (var key in target) {
+    if (!source) {
+      return target;
+    }
+    if (!target) {
+      return source;
+    }
+    const intersect = {};
+    for (let key in target) {
       if (this.hasOwnProperty.call(source, key)) {
         intersect[key] = source[key];
       } else {
@@ -324,7 +369,7 @@ export class foTools {
   }
 
   union(target, source) {
-    var result = {};
+    let result = {};
     if (target) {
       for (var key in target) {
         result[key] = target[key];
@@ -362,8 +407,8 @@ export class foTools {
   }
 
   getMethods(obj) {
-    var list = [];
-    for (var m in obj.prototype) {
+    const list = [];
+    for (let m in obj.prototype) {
       if (typeof obj[m] === 'function') {
         list.push(m);
       }
@@ -372,7 +417,9 @@ export class foTools {
   }
 
   asArray(obj, funct?) {
-    if (this.isArray(obj)) { return obj; }
+    if (this.isArray(obj)) {
+      return obj;
+    }
     return this.mapOverKeyValue(obj, function(key, value) {
       return funct ? funct(key, value) : value;
     });
@@ -380,13 +427,15 @@ export class foTools {
 
   applyOverKeyValue(obj, mapFunc) {
     //funct has 2 args.. key,value
-    var body = {};
-    var keys = obj ? Object.keys(obj) : [];
+    const body = {};
+    const keys = obj ? Object.keys(obj) : [];
     keys.forEach(key => {
       if (this.hasOwnProperty.call(obj, key)) {
-        var value = obj[key];
-        var result = mapFunc(key, value);
-        if (result) { body[key] = result; }
+        const value = obj[key];
+        const result = mapFunc(key, value);
+        if (result) {
+          body[key] = result;
+        }
       }
     });
     return body;
@@ -394,13 +443,15 @@ export class foTools {
 
   mapOverKeyValue(obj, mapFunc) {
     //funct has 2 args.. key,value
-    var list = [];
-    var keys = obj ? Object.keys(obj) : [];
+    const list = [];
+    const keys = obj ? Object.keys(obj) : [];
     keys.forEach(key => {
       if (this.hasOwnProperty.call(obj, key)) {
-        var value = obj[key];
-        var result = mapFunc(key, value);
-        if (result) { list.push(result); }
+        let value = obj[key];
+        const result = mapFunc(key, value);
+        if (result) {
+          list.push(result);
+        }
       }
     });
     return list;
@@ -408,19 +459,21 @@ export class foTools {
 
   forEachKeyValue(obj, mapFunc) {
     //funct has 2 args.. key,value
-    var keys = obj ? Object.keys(obj) : [];
+    const keys = obj ? Object.keys(obj) : [];
     keys.forEach(key => {
       if (this.hasOwnProperty.call(obj, key)) {
-        var value = obj[key];
+        const value = obj[key];
         mapFunc(key, value);
       }
     });
   }
 
   findKeyForValue(obj, key) {
-    for (var name in obj) {
+    for (let name in obj) {
       if (this.hasOwnProperty.call(obj, key)) {
-        if (obj[name].matches(key)) { return name; }
+        if (obj[name].matches(key)) {
+          return name;
+        }
       }
     }
     return obj;
@@ -507,7 +560,7 @@ export class foTools {
   // xmlHttpGet(url:string, onComplete, onFailure) {
   //     let xmlHttp = new window.XMLHttpRequest();
   //     xmlHttp.onload = function () {
-  //         var result = xmlHttp.responseText;
+  //        let result = xmlHttp.responseText;
   //         onComplete && onComplete(result, xmlHttp);
   //     };
   //     try {
@@ -521,8 +574,8 @@ export class foTools {
   // loadAsScript(url:string, onComplete) {
   //     this.xmlHttpGet(url, function (text, xhr) {
   //         if (xhr.status == 200 || xhr.status == 304) {
-  //             var head = document.getElementsByTagName("head")[0];
-  //             var script = document.createElement('script');
+  //            let head = document.getElementsByTagName("head")[0];
+  //            let script = document.createElement('script');
   //             script.innerHTML = text;
   //             head.appendChild(script);
   //             onComplete && onComplete(script);

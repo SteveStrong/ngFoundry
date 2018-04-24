@@ -41,9 +41,7 @@ export class foHydrationManager implements IDisposable {
     return result;
   }
 
-  public reHydrate(json: any): foInstance {
-    let result: foInstance;
-
+  public reHydrate(json: any) {
     const { myType, myName } = json;
 
     const type = RuntimeType.find(myType);
@@ -61,8 +59,6 @@ export class foHydrationManager implements IDisposable {
       model && this.hydrateInstance(model, data);
       this.reHydrateModel(model, payload.subcomponents, true);
     }
-
-    return result;
   }
 
   private extractSpec(json: any) {
