@@ -86,11 +86,10 @@ export class foGlue2D extends foNode {
     }
 
     isEmpty() {
-        // tslint:disable-next-line:curly
-        if (this.myTarget) return false;
-        if (this.mySource) return false;
-        if (this.doSourceMoveProxy) return false;
-        if (this.doTargetMoveProxy) return false;
+        if (this.myTarget) { return false; }
+        if (this.mySource) { return false; }
+        if (this.doSourceMoveProxy) { return false; }
+        if (this.doTargetMoveProxy) { return false; }
         return true;
     }
 
