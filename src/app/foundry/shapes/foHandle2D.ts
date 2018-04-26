@@ -6,8 +6,6 @@ import { Matrix2D } from './foMatrix2D';
 import { iPoint2D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
-import { foNode } from '../foNode.model';
-import { foComponent } from '../foComponent.model';
 
 import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from '../foLifecycle';

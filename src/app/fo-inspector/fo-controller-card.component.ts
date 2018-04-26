@@ -7,7 +7,6 @@ import { foNode } from "../foundry/foNode.model";
 import { foController } from "../foundry/foController";
 import { Toast } from "../common/emitter.service";
 
-import { globalWorkspace } from "../foundry/foWorkspace.model";
 
 
 @Component({
