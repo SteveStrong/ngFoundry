@@ -14,6 +14,6 @@ export * from './foPage.model';
 export * from './foPath2D.model';
 export * from './foPathSVG';
 export * from './foShape1D.model';
-export * from './foPath2D.model';
+export * from './foShape2D.model';
 export * from './foText2D.model';
 
