@@ -33,7 +33,6 @@ export function using<T extends IDisposable>(
 // });
 
 export class foObject implements iObject {
-
   static beep() {
     const snd = new Audio(
       // tslint:disable-next-line:max-line-length
@@ -69,7 +68,7 @@ export class foObject implements iObject {
     this._isVisible = !value;
   }
 
-  show(value?: boolean) {
+  show(value: boolean = true) {
     this._isVisible = value ? true : false;
     return this;
   }
@@ -91,8 +90,6 @@ export class foObject implements iObject {
 
     this.override(properties);
   }
-
-
 
   //https://www.npmjs.com/package/reflect-metadata
   //https://stackoverflow.com/questions/13613524/get-an-objects-class-name-at-runtime-in-typescript
@@ -133,7 +130,9 @@ export class foObject implements iObject {
 
   protected _displayName: string;
   get displayName() {
-    if (this._displayName) { return this._displayName; }
+    if (this._displayName) {
+      return this._displayName;
+    }
     return `${this.myName} - ${this.myType}`;
   }
   set displayName(value: string) {
@@ -166,10 +165,14 @@ export class foObject implements iObject {
   }
 
   hasAncestor(member: iObject): boolean {
-    if (member === this) { return true; }
+    if (member === this) {
+      return true;
+    }
 
     const parent = this.myParent && this.myParent();
-    if (member === parent) { return true; }
+    if (member === parent) {
+      return true;
+    }
     return parent && parent.hasAncestor(member);
   }
 

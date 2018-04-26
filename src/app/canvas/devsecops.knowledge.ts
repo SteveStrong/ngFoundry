@@ -49,6 +49,7 @@ const pipe = Structure('Pipeline').show()
   .subComponent('stage2', stage2)
   .subComponent('stage3', stage3);
 
+
   Solution('DevOps').show()
   .useStructure(pipe)
   .subSolution('security', Solution('security'))
