@@ -3,7 +3,7 @@ import { Tools } from '../foundry/foTools';
 import { iPoint2D, Action } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
-import { foShape2D } from '../foundry/shapes/foShape2D.model';
+import { foShape2D, foText2D } from '../foundry/shapes';
 import { foShape1D } from '../foundry/shapes/foShape1D.model';
 
 import { foStencilLibrary } from '../foundry/foStencil';
@@ -47,24 +47,7 @@ export class packageMixin extends foShape2D {
   }
 }
 
-export class stationMixin extends foShape2D {
-  doAnimation = () => {};
-  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-    this.doAnimation();
-    super.render(ctx, deep);
-  }
-  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 4;
-    this.drawOutline(ctx);
-    this.drawPin(ctx);
-  }
 
-  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
-    const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
-    return found;
-  }
-}
 
 export class Package extends packageMixin {
   stations: foCollection<Station>;
@@ -120,6 +103,25 @@ export class Package extends packageMixin {
   }
 }
 
+export class stationMixin extends foShape2D {
+  doAnimation = () => {};
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.doAnimation();
+    super.render(ctx, deep);
+  }
+  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 4;
+    this.drawOutline(ctx);
+    this.drawPin(ctx);
+  }
+
+  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+    const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+    return found;
+  }
+}
+
 export class Station extends stationMixin {
   constructor(properties?: any) {
     super(properties);
@@ -151,9 +153,31 @@ export class Station extends stationMixin {
   }
 }
 
-export class Environment extends stationMixin {
+export class EnvironmentMixin extends foText2D {
+
+
+  doAnimation = () => {};
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.doAnimation();
+    super.render(ctx, deep);
+  }
+  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 4;
+    this.drawOutline(ctx);
+    this.drawPin(ctx);
+  }
+
+  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+    const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+    return found;
+  }
+}
+
+export class Environment extends EnvironmentMixin {
   constructor(properties?: any) {
     super(properties);
+    this.fontSize = 24;
   }
 
   drawSquare(ctx: CanvasRenderingContext2D, x1, y1, x2, y2) {
@@ -173,12 +197,13 @@ export class Environment extends stationMixin {
   }
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
-    ctx.fillStyle = this.color;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = this.opacity;
+    // ctx.fillStyle = this.color;
+    // ctx.lineWidth = 1;
+    // ctx.globalAlpha = this.opacity;
 
-    this.drawSquare(ctx, 0, 0, this.width, this.height);
-    this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
+    // this.drawSquare(ctx, 0, 0, this.width, this.height);
+    // this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
+    this.drawText(ctx);
   }
 }
 
@@ -197,8 +222,7 @@ FactoryStencil.define('Station', Station, {
 }).onCreation(obj => {});
 
 FactoryStencil.define('Environment', Environment, {
-  color: 'orange',
-  opacity: 0.5,
+  color: 'black',
   width: 100,
   height: 100
 }).onCreation(obj => {});
@@ -278,7 +302,7 @@ class factoryController extends foController {
   renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
     const knowledge = FactoryStencil.find('Environment');
     const result = knowledge
-      .newInstance({ myGuid: obj.myGuid })
+      .newInstance({ myGuid: obj.myGuid, text: obj.myName, fontSize: 50 })
       .defaultName() as Environment;
     result.addAsSubcomponent(viewParent);
 
@@ -293,7 +317,7 @@ class factoryController extends foController {
   }
 
   renderModel(page: foPage, model: foInstance) {
-    const grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+    const grid = this.generateGrid(100, 21, 3, 200, 20, 2);
     this.renderView(model, page, grid);
   }
 }
