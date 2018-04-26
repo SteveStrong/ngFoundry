@@ -140,11 +140,11 @@ export class foTools {
 
   randomRGBColor() {
     // tslint:disable-next-line:no-bitwise
-    const r = (255 * Math.random()) | 0,
+    const r = (255 * Math.random()) | 0;
       // tslint:disable-next-line:no-bitwise
-      g = (255 * Math.random()) | 0,
+    const g = (255 * Math.random()) | 0;
       // tslint:disable-next-line:no-bitwise
-      b = (255 * Math.random()) | 0;
+    const b = (255 * Math.random()) | 0;
     return `rgb(${r},${g},${b})`;
   }
 
@@ -154,6 +154,15 @@ export class foTools {
     }
     return (
       str1 && str2 && str1.toLocaleLowerCase() === str2.toLocaleLowerCase()
+    );
+  }
+
+  startsWith(str1: string, str2: string) {
+    if (str1 === str2) {
+      return true;
+    }
+    return (
+      str1 && str2 && str1.toLocaleLowerCase().startsWith(str2.toLocaleLowerCase())
     );
   }
 
@@ -291,8 +300,8 @@ export class foTools {
     if (!target) {
       return source;
     }
-    // tslint:disable-next-line:forin
-    for (let key in source) {
+
+    for (const key of source) {
       target[key] = source[key];
     }
     return target;

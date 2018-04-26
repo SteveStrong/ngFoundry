@@ -28,7 +28,7 @@ export class foText2D extends foShape2D {
   public margin: cMargin;
   public fontSize: number;
   public font: string;
-  public resize:boolean = false;
+  public resize: boolean = false;
 
   protected _background: string;
   get background(): string {
@@ -119,7 +119,7 @@ export class foText2D extends foShape2D {
 
     ctx.fillStyle = this.color;
     this.renderText(ctx, this.text, this.pinX() + left, this.pinY() + top);
-    
+
     ctx.restore();
   }
 

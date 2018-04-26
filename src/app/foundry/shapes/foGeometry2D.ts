@@ -13,7 +13,7 @@ export class cPoint2D extends Vector2 implements iPoint2D {
     }
 
     asVector(): Vector2 {
-        return new Vector2(this.x, this.y)
+        return new Vector2(this.x, this.y);
     }
 
     setValues(x: number = 0, y: number = 0) {
@@ -26,21 +26,21 @@ export class cPoint2D extends Vector2 implements iPoint2D {
         return new cPoint2D(this.x, this.y, this.myName);
     }
 
-    isEqualTo(p: cPoint2D):boolean {
-        return this.x == p.x && this.y == p.y;
+    isEqualTo(p: cPoint2D): boolean {
+        return this.x === p.x && this.y === p.y;
     }
 
-    isNear(p: cPoint2D, radius: number):boolean {
-        let dx = Math.abs(p.x - this.x);
+    isNear(p: cPoint2D, radius: number): boolean {
+        const dx = Math.abs(p.x - this.x);
         if (dx > radius) return false;
 
-        let dy = Math.abs(p.y - this.y);
+        const dy = Math.abs(p.y - this.y);
         if (dy > radius) return false;
         return true;
 
     }
 
-    addPoint(x: number = 0, y: number = 0):cPoint2D {
+    addPoint(x: number = 0, y: number = 0): cPoint2D {
         this.x += x;
         this.y += y;
         return this;
@@ -48,63 +48,63 @@ export class cPoint2D extends Vector2 implements iPoint2D {
 
 
 
-    subtractPoint(x: number = 0, y: number = 0):cPoint2D {
+    subtractPoint(x: number = 0, y: number = 0): cPoint2D {
         this.x -= x;
         this.y -= y;
         return this;
     }
 
     midPoint(pt: cPoint2D): cPoint2D {
-        let x = (this.x + pt.x) / 2;
-        let y = (this.y + pt.y) / 2;
+        const x = (this.x + pt.x) / 2;
+        const y = (this.y + pt.y) / 2;
         return new cPoint2D(x, y, 'midpoint');
     }
 
-    mag():number {
+    mag(): number {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    atan():number {
+    atan(): number {
         return Math.atan2(this.y,  this.x);
     }
 
-    normal():cPoint2D {
+    normal(): cPoint2D {
         let mag = this.mag();
-        mag = mag ? mag : 1.0 //if zero set to 1 you get the same result
-        return new cPoint2D(this.x/mag, this.y/mag, 'normal');
+        mag = mag ? mag : 1.0; //if zero set to 1 you get the same result
+        return new cPoint2D(this.x / mag, this.y / mag, 'normal');
     }
 
-    sum(p: cPoint2D):cPoint2D {
+    sum(p: cPoint2D): cPoint2D {
         this.x += p.x;
         this.y += p.y;
         return this;
     }
 
-    sumTo(p: cPoint2D):cPoint2D {
+    sumTo(p: cPoint2D): cPoint2D {
         p.x += this.x;
         p.y += this.y;
         return p;
     }
 
-    setTo(p: cPoint2D):cPoint2D {
+    setTo(p: cPoint2D): cPoint2D {
         p.x = this.x;
         p.y = this.y;
         return p;
     }
 
-    subtract(p: cPoint2D):cPoint2D {
+    subtract(p: cPoint2D): cPoint2D {
         this.x -= p.x;
         this.y -= p.y;
         return this;
     }
 
     deltaBetween(pt: cPoint2D): cPoint2D {
-        let x = this.x - pt.x;
-        let y = this.y - pt.y;
+        const x = this.x - pt.x;
+        const y = this.y - pt.y;
         return new cPoint2D(x, y, 'delta');
     }
 
-    scale(s: number):cPoint2D {
+    scale(s: number): cPoint2D {
         this.x *= s;
         this.y *= s;
         return this;
@@ -243,8 +243,8 @@ export class cFrame implements iFrame {
     }
 
     draw(ctx: CanvasRenderingContext2D, fill?: boolean) {
-        let width = this.x2 - this.x1;
-        let height = this.y2 - this.y1;
+        const width = this.x2 - this.x1;
+        const height = this.y2 - this.y1;
         if (fill) {
             ctx.fillRect(this.x1, this.y1, width, height);
         } else {

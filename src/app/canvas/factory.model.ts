@@ -3,7 +3,7 @@ import { Tools } from '../foundry/foTools';
 import { iPoint2D, Action } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
-import { foShape2D, foText2D } from '../foundry/shapes';
+import { foShape2D, foText2D, foLayout2D } from '../foundry/shapes';
 import { foShape1D } from '../foundry/shapes/foShape1D.model';
 
 import { foStencilLibrary } from '../foundry/foStencil';
@@ -232,26 +232,7 @@ FactoryStencil.define('Environment', Environment, {
 class factoryController extends foController {
   // toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
 
-  generateGrid(
-    xStart: number = 100,
-    xStep: number = 100,
-    xCount = 5,
-    yStart: number = 100,
-    yStep: number = 100,
-    yCount = 5
-  ): any[] {
-    const list: any[] = Array<any>();
-    for (let i = 0; i < xCount; i++) {
-      for (let j = 0; j < yCount; j++) {
-        const item = {
-          x: xStart + i * xStep,
-          y: yStart + j * yStep
-        };
-        list.push(item);
-      }
-    }
-    return list;
-  }
+
 
   createStation(page: foPage, count: number = 1): foCollection<Station> {
     const list: foCollection<Station> = new foCollection<Station>();
@@ -274,7 +255,8 @@ class factoryController extends foController {
   }
 
   buildFactory(page: foPage) {
-    const grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+    const layout: foLayout2D = new foLayout2D();
+    const grid = layout.generateGrid('factory', 100, 210, 3, 200, 200, 2).getPointsXY();
     const list = this.createStation(page, grid.length);
     let i = 0;
     list.forEach(item => {
@@ -319,7 +301,9 @@ class factoryController extends foController {
   }
 
   renderModel(page: foPage, model: foInstance) {
-    const grid = this.generateGrid(100, 21, 3, 200, 20, 2);
+    const layout: foLayout2D = new foLayout2D();
+    const grid = layout.generateGrid('factory', 100, 210, 3, 200, 200, 2).getPointsXY();
+
     this.renderView(model, page, grid);
   }
 }

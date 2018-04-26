@@ -6,6 +6,7 @@ export * from './foDisplay2D.model';
 export * from './foDocument.model';
 export * from './foGeometry2D';
 export * from './foGlue2D';
+export * from './foLayout2D';
 export * from './foGlyph2D.model';
 export * from './foHandle2D';
 export * from './foImage2D.model';
