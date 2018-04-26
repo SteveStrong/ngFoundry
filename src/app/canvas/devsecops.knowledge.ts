@@ -27,6 +27,7 @@ const environment = Concept('environment');
 const workpacket = Concept('workpacket');
 
 const developer = Concept('developer');
+developer.mix
 const test = Concept('test');
 
 const compile = Concept('compile');
