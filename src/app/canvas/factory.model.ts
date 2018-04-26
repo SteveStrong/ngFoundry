@@ -197,14 +197,14 @@ export class Environment extends EnvironmentMixin {
   }
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
-    // ctx.fillStyle = this.color;
-    // ctx.lineWidth = 1;
-    // ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = this.opacity;
 
-    // this.drawSquare(ctx, 0, 0, this.width, this.height);
-    // this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
+    this.drawSquare(ctx, 0, 0, this.width, this.height);
+    this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
     this.drawText(ctx);
-    this.renderText(ctx, 'show me more', -20, -30);
+   // this.renderText(ctx, 'show me more', -20, -30);
   }
 }
 
@@ -223,7 +223,8 @@ FactoryStencil.define('Station', Station, {
 }).onCreation(obj => {});
 
 FactoryStencil.define('Environment', Environment, {
-  color: 'black',
+  background: 'orange',
+  color: 'blue',
   width: 100,
   height: 100
 }).onCreation(obj => {});

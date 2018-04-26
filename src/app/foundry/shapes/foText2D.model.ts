@@ -28,6 +28,7 @@ export class foText2D extends foShape2D {
   public margin: cMargin;
   public fontSize: number;
   public font: string;
+  public resize:boolean = false;
 
   protected _background: string;
   get background(): string {
@@ -75,10 +76,11 @@ export class foText2D extends foShape2D {
 
   setupPreDraw() {
     const preDraw = (ctx: CanvasRenderingContext2D): void => {
-      const textMetrics = ctx.measureText(this.text);
-      this.width =
-        textMetrics.width + ((this.margin && this.margin.width) || 0);
-      this.height = this.size + ((this.margin && this.margin.height) || 0);
+      if ( this.resize) {
+        const textMetrics = ctx.measureText(this.text);
+        this.width = textMetrics.width + ((this.margin && this.margin.width) || 0);
+        this.height = this.size + ((this.margin && this.margin.height) || 0);
+      }
       this.createConnectionPoints();
       this.createHandles();
       this.preDraw = undefined;
@@ -114,11 +116,11 @@ export class foText2D extends foShape2D {
       ctx.fillStyle = this.background;
       ctx.fillRect(0, 0, this.width, this.height);
     }
-    ctx.restore();
 
     ctx.fillStyle = this.color;
-
     this.renderText(ctx, this.text, this.pinX() + left, this.pinY() + top);
+    
+    ctx.restore();
   }
 
   public draw: (ctx: CanvasRenderingContext2D) => void = this.drawText;
