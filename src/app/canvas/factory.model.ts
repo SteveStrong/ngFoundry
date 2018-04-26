@@ -16,7 +16,9 @@ import { foInstance } from '../foundry/foInstance.model';
 export { foShape1D, foConnect1D } from '../foundry/shapes/foShape1D.model';
 export { foShape2D } from '../foundry/shapes/foShape2D.model';
 
-export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName('Factory');
+export let FactoryStencil: foStencilLibrary = new foStencilLibrary().defaultName(
+  'Factory'
+);
 
 export class PathwayMixin extends foShape1D {
   doAnimation = () => {};
@@ -274,9 +276,10 @@ class factoryController extends foController {
   }
 
   renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
-    
     const knowledge = FactoryStencil.find('Environment');
-    const result = knowledge.newInstance({ myGuid: obj.myGuid }).defaultName() as Environment;
+    const result = knowledge
+      .newInstance({ myGuid: obj.myGuid })
+      .defaultName() as Environment;
     result.addAsSubcomponent(viewParent);
 
     const loc = grid.shift();
@@ -285,7 +288,6 @@ class factoryController extends foController {
     obj.nodes.forEach(item => {
       this.renderView(item, result, grid);
     });
-
 
     return result;
   }
@@ -296,9 +298,7 @@ class factoryController extends foController {
   }
 }
 
-export let factoryBehaviour: factoryController = new factoryController().defaultName(
-  'Factory'
-);
+export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
 // factoryBehaviour.addToggle(factoryBehaviour.toggleRule1)
 
 import { RuntimeType } from '../foundry/foRuntimeType';

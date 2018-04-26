@@ -26,12 +26,14 @@ const gitBranch = Concept('gitBranch');
 const environment = Concept('environment');
 const workpacket = Concept('workpacket');
 
-const developer = Concept('developer');
-developer.mix
+const user = Concept('user');
+const developer = Concept('developer').inheritsFrom(user);
+const tester = Concept('tester').inheritsFrom(user);
+
 const test = Concept('test');
 
 const compile = Concept('compile');
-compile.subComponent('details', {});
+compile.subComponent('details');
 
 const stage1 = Structure('stage1').concept(compile);
 
@@ -41,15 +43,13 @@ const stage3 = Structure('stage3')
   .concept(Concept('package'))
   .subComponent('local');
 
-const pipe = DevSecOpsKnowledge.structures
-  .define('Pipeline', {})
+const pipe = Structure('Pipeline').show()
   .concept(root)
   .subComponent('stage1', stage1)
   .subComponent('stage2', stage2)
   .subComponent('stage3', stage3);
 
-DevSecOpsKnowledge.solutions
-  .define('DevOps')
+  Solution('DevOps').show()
   .useStructure(pipe)
   .subSolution('security', Solution('security'))
   .subSolution('metrics', Solution('metrics'))

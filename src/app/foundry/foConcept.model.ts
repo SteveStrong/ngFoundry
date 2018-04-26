@@ -29,6 +29,16 @@ export class foConcept<T extends foNode> extends foKnowledge {
     return <T>new foNode(properties, subcomponents, parent);
   }
 
+  protected _superclass: Array<foConcept<T>> = new Array<foConcept<T>>();
+  protected _subclass: Array<foConcept<T>> = new Array<foConcept<T>>();
+  inheritsFrom(...concepts) {
+    concepts.forEach(concept => {
+      this._superclass.push(concept);
+      concept._subclass.push(this);
+    });
+    return this;
+  }
+
   private _commands: Array<string> = new Array<string>();
   addCommands(...cmds: string[]) {
     this._commands && this._commands.push(...cmds);
