@@ -118,7 +118,7 @@ export class foText2D extends foShape2D {
 
     ctx.fillStyle = this.color;
 
-    ctx.fillText(this.text, this.pinX() + left, this.pinY() + top);
+    this.renderText(ctx, this.text, this.pinX() + left, this.pinY() + top);
   }
 
   public draw: (ctx: CanvasRenderingContext2D) => void = this.drawText;

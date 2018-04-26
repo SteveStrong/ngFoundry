@@ -505,10 +505,9 @@ export class foGlyph2D extends foGlyph implements iShape {
 
   public renderText = (
     ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
     text: string,
-    size: number
+    x: number = 0,
+    y: number = 0
   ): void => {
     ctx.fillText(text, x, y);
   }

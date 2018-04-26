@@ -204,6 +204,7 @@ export class Environment extends EnvironmentMixin {
     // this.drawSquare(ctx, 0, 0, this.width, this.height);
     // this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
     this.drawText(ctx);
+    this.renderText(ctx, 'show me more', -20, -30);
   }
 }
 
