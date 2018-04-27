@@ -231,6 +231,8 @@ FactoryStencil.define('Environment', Environment, {
 
 class factoryController extends foController {
 
+  lastLayout:foLayout2D;
+
   createStation(page: foPage, count: number = 1): foCollection<Station> {
     const list: foCollection<Station> = new foCollection<Station>();
     const knowledge = FactoryStencil.find('Station');
@@ -252,24 +254,25 @@ class factoryController extends foController {
   }
 
   buildFactory(page: foPage) {
-    const layout: foLayout2D = new foLayout2D();
-    const grid = layout.generateGrid('factory', 100, 210, 3, 200, 200, 2).getPointsXY();
+    if ( !this.lastLayout) return;
+
+    const grid = this.lastLayout.getTransformedPointsXY();
     const list = this.createStation(page, grid.length);
     let i = 0;
     list.forEach(item => {
       item.easeTween(grid[i++], Tools.random(0.5, 2.5));
     });
+    this.lastLayout = undefined;
   }
 
   buildGrid(page: foPage) {
     const layout: foLayout2D = new foLayout2D();
-    layout.generateGrid('f1', 100, 210, 3, 200, 200, 2);
-    layout.generateGrid('f2', 110, 10, 13, 210, 200, 2);
-    layout.generateGrid('f3', 120, 20, 23, 220, 200, 2);
+    layout.generateGrid('f1', 0, 210, 5, 0, 200, 8);
     layout.fitSizeToPoints();
     page.addSubcomponent(layout);
-
+    this.lastLayout = layout;
   }
+
   runFactory(page: foPage) {
     const stations = page.selectGlyph(item =>
       Tools.matches(item.myClass, 'Station')

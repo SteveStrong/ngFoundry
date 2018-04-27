@@ -114,4 +114,18 @@ export class foLayout2D extends foGlyph2D {
     }
     return list;
   }
+
+  getTransformedPointsXY(points?: Array<cPoint2D>): Array<iXY> {
+    const list = new Array<iXY>();
+    if (points) {
+      points.forEach(pt => {
+        list.push({ x: pt.x + this.x, y: pt.y + this.y });
+      });
+    } else {
+      this._points.forEach(pt => {
+        list.push({ x: pt.x + this.x, y: pt.y + this.y });
+      });
+    }
+    return list;
+  }
 }
