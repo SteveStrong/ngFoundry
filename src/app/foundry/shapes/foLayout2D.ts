@@ -49,10 +49,40 @@ export class foLayout2D extends foGlyph2D {
     return this;
   }
 
+  public fitSizeToPoints() {
+    this._points.forEach(pt => {
+      this.width = pt.x > this.width ? pt.x : this.width;
+      this.height = pt.y > this.height ? pt.y : this.height;
+    });
+  }
+
+
+  public draw = (ctx: CanvasRenderingContext2D): void => {
+    ctx.fillStyle = 'black';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.setLineDash([10, 10]);
+    ctx.rect(0, 0, this.width, this.height);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.fillStyle = 'blue';
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#003300';
+    this._points.forEach(pt => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 6, 0, 2 * Math.PI, false);
+      ctx.fill();
+      ctx.stroke();
+    });
+    ctx.restore();
+
+  }
+
 
   findPoint(key: string, onFound?: Action<cPoint2D>, onMissing?): cPoint2D {
     if (this._points.has(key)) {
-      const pnt =  this._points.get(key);
+      const pnt = this._points.get(key);
       onFound && onFound(pnt);
       return pnt;
     } else if ( onMissing ) {

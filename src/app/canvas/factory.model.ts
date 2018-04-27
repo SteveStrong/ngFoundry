@@ -230,9 +230,6 @@ FactoryStencil.define('Environment', Environment, {
 }).onCreation(obj => {});
 
 class factoryController extends foController {
-  // toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
-
-
 
   createStation(page: foPage, count: number = 1): foCollection<Station> {
     const list: foCollection<Station> = new foCollection<Station>();
@@ -264,6 +261,15 @@ class factoryController extends foController {
     });
   }
 
+  buildGrid(page: foPage) {
+    const layout: foLayout2D = new foLayout2D();
+    layout.generateGrid('f1', 100, 210, 3, 200, 200, 2);
+    layout.generateGrid('f2', 110, 10, 13, 210, 200, 2);
+    layout.generateGrid('f3', 120, 20, 23, 220, 200, 2);
+    layout.fitSizeToPoints();
+    page.addSubcomponent(layout);
+
+  }
   runFactory(page: foPage) {
     const stations = page.selectGlyph(item =>
       Tools.matches(item.myClass, 'Station')
@@ -309,7 +315,6 @@ class factoryController extends foController {
 }
 
 export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
-// factoryBehaviour.addToggle(factoryBehaviour.toggleRule1)
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(Package);
