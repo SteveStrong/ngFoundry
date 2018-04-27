@@ -1,4 +1,4 @@
-import { Tools, foObject } from '../../foundry';
+import { Tools, foObject, Action } from '../../foundry';
 
 import { foGlyph2D } from '../shapes/foGlyph2D.model';
 import { cPoint2D } from '../shapes/foGeometry2D';
@@ -49,10 +49,22 @@ export class foLayout2D extends foGlyph2D {
     return this;
   }
 
+
+  findPoint(key: string, onFound?: Action<cPoint2D>, onMissing?): cPoint2D {
+    if (this._points.has(key)) {
+      const pnt =  this._points.get(key);
+      onFound && onFound(pnt);
+      return pnt;
+    } else if ( onMissing ) {
+      onMissing();
+      return this._points.get(key);
+    }
+  }
+
   getPointsByKey(key?: string): Array<cPoint2D> {
     const list = new Array<cPoint2D>();
     this._points.forEach(pt => {
-      if ( !key || Tools.startsWith(pt.myName, key) ) {
+      if (!key || Tools.startsWith(pt.myName, key)) {
         list.push(pt);
       }
     });
@@ -61,7 +73,7 @@ export class foLayout2D extends foGlyph2D {
 
   getPointsXY(points?: Array<cPoint2D>): Array<iXY> {
     const list = new Array<iXY>();
-    if ( points ){
+    if (points) {
       points.forEach(pt => {
         list.push({ x: pt.x, y: pt.y });
       });
@@ -72,6 +84,4 @@ export class foLayout2D extends foGlyph2D {
     }
     return list;
   }
-
-
 }

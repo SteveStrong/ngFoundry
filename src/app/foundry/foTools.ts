@@ -314,7 +314,7 @@ export class foTools {
     if (!target) {
       return source;
     }
-    for (let key in source) {
+    for (const key in source) {
       if (foTools.hasOwnProperty.call(target, key)) {
         target[key] = source[key];
       }
@@ -329,7 +329,7 @@ export class foTools {
     if (!target) {
       return source;
     }
-    for (let key in source) {
+    for (const key in source) {
       if (this.hasOwnProperty.call(target, key)) {
         delete target[key];
       }
@@ -353,7 +353,7 @@ export class foTools {
 
     let result = {};
     for (let key in target) {
-      let keyMap = source[key] || key;
+      const keyMap = source[key] || key;
       result[keyMap] = target[key];
     }
     return result;
@@ -367,7 +367,7 @@ export class foTools {
       return source;
     }
     const intersect = {};
-    for (let key in target) {
+    for (const key in target) {
       if (this.hasOwnProperty.call(source, key)) {
         intersect[key] = source[key];
       } else {
@@ -378,7 +378,7 @@ export class foTools {
   }
 
   union(target, source) {
-    let result = {};
+    const result = {};
     if (target) {
       for (var key in target) {
         result[key] = target[key];
@@ -417,7 +417,7 @@ export class foTools {
 
   getMethods(obj) {
     const list = [];
-    for (let m in obj.prototype) {
+    for (const m in obj.prototype) {
       if (typeof obj[m] === 'function') {
         list.push(m);
       }
@@ -456,7 +456,7 @@ export class foTools {
     const keys = obj ? Object.keys(obj) : [];
     keys.forEach(key => {
       if (this.hasOwnProperty.call(obj, key)) {
-        let value = obj[key];
+        const value = obj[key];
         const result = mapFunc(key, value);
         if (result) {
           list.push(result);
@@ -478,7 +478,7 @@ export class foTools {
   }
 
   findKeyForValue(obj, key) {
-    for (let name in obj) {
+    for (const name in obj) {
       if (this.hasOwnProperty.call(obj, key)) {
         if (obj[name].matches(key)) {
           return name;
