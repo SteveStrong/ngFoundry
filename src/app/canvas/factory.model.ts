@@ -288,7 +288,7 @@ class factoryController extends foController {
     this.lastLayout = layout;
   }
 
-  buildLayout(page: foPage) {
+  buildLayout(page: foPage): foGlyph {
     const layout: layoutFactory = new layoutFactory();
     layout.generateLayout();
 
@@ -296,6 +296,7 @@ class factoryController extends foController {
     layout.fitSizeToPoints();
     page.addSubcomponent(layout);
     this.lastLayout = layout;
+    return layout;
   }
 
   runFactory(page: foPage) {
@@ -354,4 +355,5 @@ export let factoryBehaviour: factoryController = new factoryController().default
 );
 
 import { RuntimeType } from '../foundry/foRuntimeType';
+import { foGlyph } from '../foundry/foGlyph.model';
 RuntimeType.define(Package);
