@@ -235,8 +235,8 @@ class layoutFactory extends foLayout2D {
   }
 
   generateLayout() {
-
-    this.generateGrid('f1', 0, 100, 3, 0, 100, 4);
+    this.width = 100;
+    this.height = 100;
     this.setCursorXY(20, 20);
     this.addPoint('drop here');
   }
