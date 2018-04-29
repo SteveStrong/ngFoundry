@@ -11,7 +11,7 @@ import { foCollection } from '../foundry/foCollection.model';
 import { foController, foToggle } from '../foundry/foController';
 import { foPage } from '../foundry/shapes/foPage.model';
 
-import { foInstance } from '../foundry/foInstance.model';
+import { foInstance, foObject } from '../foundry';
 
 export { foShape1D, foConnect1D } from '../foundry/shapes/foShape1D.model';
 export { foShape2D } from '../foundry/shapes/foShape2D.model';
@@ -39,15 +39,13 @@ export class packageMixin extends foShape2D {
     ctx.lineWidth = 4;
     this.drawOutline(ctx);
     this.drawPin(ctx);
-  }
+  };
 
   findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
     const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
     return found;
   }
 }
-
-
 
 export class Package extends packageMixin {
   stations: foCollection<Station>;
@@ -100,7 +98,7 @@ export class Package extends packageMixin {
 
     this.drawSquare(ctx, 0, 0, this.width, this.height);
     this.drawSelected(ctx);
-  }
+  };
 }
 
 export class stationMixin extends foShape2D {
@@ -114,7 +112,7 @@ export class stationMixin extends foShape2D {
     ctx.lineWidth = 4;
     this.drawOutline(ctx);
     this.drawPin(ctx);
-  }
+  };
 
   findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
     const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
@@ -150,12 +148,10 @@ export class Station extends stationMixin {
 
     this.drawSquare(ctx, 0, 0, this.width, this.height);
     this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
-  }
+  };
 }
 
 export class EnvironmentMixin extends foText2D {
-
-
   doAnimation = () => {};
   public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
     this.doAnimation();
@@ -166,7 +162,7 @@ export class EnvironmentMixin extends foText2D {
     ctx.lineWidth = 4;
     this.drawOutline(ctx);
     this.drawPin(ctx);
-  }
+  };
 
   findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
     const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
@@ -204,8 +200,8 @@ export class Environment extends EnvironmentMixin {
     this.drawSquare(ctx, 0, 0, this.width, this.height);
     this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
     this.drawText(ctx);
-   // this.renderText(ctx, 'show me more', -20, -30);
-  }
+    // this.renderText(ctx, 'show me more', -20, -30);
+  };
 }
 
 FactoryStencil.define('Package', Package, {
@@ -229,9 +225,18 @@ FactoryStencil.define('Environment', Environment, {
   height: 100
 }).onCreation(obj => {});
 
-class factoryController extends foController {
+class layoutFactory extends foLayout2D {
+  constructor(
+    properties?: any,
+    subcomponents?: Array<foGlyph2D>,
+    parent?: foObject
+  ) {
+    super(properties, subcomponents, parent);
+  }
+}
 
-  lastLayout:foLayout2D;
+class factoryController extends foController {
+  lastLayout: foLayout2D;
 
   createStation(page: foPage, count: number = 1): foCollection<Station> {
     const list: foCollection<Station> = new foCollection<Station>();
@@ -254,7 +259,7 @@ class factoryController extends foController {
   }
 
   buildFactory(page: foPage) {
-    if ( !this.lastLayout) return;
+    if (!this.lastLayout) return;
 
     const grid = this.lastLayout.getTransformedPointsXY();
     const list = this.createStation(page, grid.length);
@@ -266,8 +271,11 @@ class factoryController extends foController {
   }
 
   buildGrid(page: foPage) {
-    const layout: foLayout2D = new foLayout2D();
-    layout.generateGrid('f1', 0, 210, 5, 0, 200, 8);
+    const layout: foLayout2D = new layoutFactory();
+    layout.generateGrid('f1', 0, 100, 3, 0, 100, 4);
+    layout.setCursorXY(20, 20);
+    layout.addPoint('drop here');
+
     layout.fitSizeToPoints();
     page.addSubcomponent(layout);
     this.lastLayout = layout;
@@ -292,11 +300,16 @@ class factoryController extends foController {
     });
   }
 
-  renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
+  renderView(
+    obj: foInstance,
+    viewParent: foShape2D,
+    grid: Array<any>
+  ): foShape2D {
     const knowledge = FactoryStencil.find('Environment');
     const result = knowledge
       .newInstance({ myGuid: obj.myGuid, text: obj.myName, fontSize: 50 })
       .defaultName() as Environment;
+
     result.addAsSubcomponent(viewParent);
 
     const loc = grid.shift();
@@ -311,13 +324,17 @@ class factoryController extends foController {
 
   renderModel(page: foPage, model: foInstance) {
     const layout: foLayout2D = new foLayout2D();
-    const grid = layout.generateGrid('factory', 100, 210, 3, 200, 200, 2).getPointsXY();
+    const grid = layout
+      .generateGrid('factory', 100, 210, 3, 200, 200, 2)
+      .getPointsXY();
 
     this.renderView(model, page, grid);
   }
 }
 
-export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
+export let factoryBehaviour: factoryController = new factoryController().defaultName(
+  'Factory'
+);
 
 import { RuntimeType } from '../foundry/foRuntimeType';
 RuntimeType.define(Package);

@@ -10,6 +10,8 @@ export interface iXY {
 
 //and easy way to create a set of layout geometry
 export class foLayout2D extends foGlyph2D {
+  private _cursor: cPoint2D = new cPoint2D();
+  private _direction: cPoint2D = new cPoint2D(1, 0);
   private _points: Map<String, cPoint2D> = new Map<String, cPoint2D>();
 
   constructor(
@@ -18,6 +20,7 @@ export class foLayout2D extends foGlyph2D {
     parent?: foObject
   ) {
     super(properties, subcomponents, parent);
+    this._direction.normal();
   }
 
   protected toJson(): any {
@@ -56,6 +59,40 @@ export class foLayout2D extends foGlyph2D {
     });
   }
 
+  public drawCursor(ctx: CanvasRenderingContext2D) {
+    const { x, y } = this._cursor;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.setLineDash([5, 5]);
+    ctx.moveTo(x - 50, y);
+    ctx.lineTo(x + 50, y);
+    ctx.moveTo(x, y - 50);
+    ctx.lineTo(x, y + 50);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#003300';
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 4;
+    this.drawOutline(ctx);
+    this.drawHandles(ctx);
+    this.drawLabels(ctx);
+    this.drawPin(ctx);
+    this.drawCursor(ctx);
+  };
+
+  public drawLabels = (ctx: CanvasRenderingContext2D): void => {
+    ctx.save();
+    ctx.fillStyle = 'black';
+    this._points.forEach(pt => {
+      ctx.fillText(pt.myName, pt.x + 5, pt.y - 10);
+    });
+    ctx.restore();
+  };
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
     ctx.fillStyle = 'black';
@@ -76,16 +113,14 @@ export class foLayout2D extends foGlyph2D {
       ctx.stroke();
     });
     ctx.restore();
-
-  }
-
+  };
 
   findPoint(key: string, onFound?: Action<cPoint2D>, onMissing?): cPoint2D {
     if (this._points.has(key)) {
       const pnt = this._points.get(key);
       onFound && onFound(pnt);
       return pnt;
-    } else if ( onMissing ) {
+    } else if (onMissing) {
       onMissing();
       return this._points.get(key);
     }
@@ -127,5 +162,40 @@ export class foLayout2D extends foGlyph2D {
       });
     }
     return list;
+  }
+
+  newPoint(x: number, y: number, name: string): cPoint2D {
+    const point = new cPoint2D(x, y, name);
+    this._points.set(point.myName, point);
+    return point;
+  }
+
+  setCursor(point: cPoint2D) {
+    this._cursor.setValues(point.x, point.y);
+  }
+
+  setCursorXY(x: number, y: number) {
+    this._cursor.setValues(x, y);
+  }
+
+  moveCursor(d: number) {
+    this._cursor.addPoint(d * this._direction.x, d * this._direction.y);
+  }
+
+  moveCursorXY(dx: number, dy: number) {
+    this._cursor.addPoint(dx, dy);
+  }
+
+  setDirection(angle: number) {
+    const rads = angle * foGlyph2D.DEG_TO_RAD;
+    this._direction.setValues(Math.cos(rads), Math.sin(rads));
+  }
+
+  setDirectionXY(x: number, y: number) {
+    this._cursor.setValues(x, y).normal();
+  }
+
+  addPoint(name: string): cPoint2D {
+    return this.newPoint(this._cursor.x, this._cursor.y, name);
   }
 }

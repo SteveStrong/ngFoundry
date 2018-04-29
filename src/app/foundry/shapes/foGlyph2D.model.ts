@@ -13,7 +13,8 @@ import { foCollection } from '../foCollection.model';
 import { Lifecycle } from '../foLifecycle';
 
 //a Glyph is a graphic designed to draw on a canvas in absolute coordinates
-export class foGlyph2D extends foGlyph implements iShape {
+export class
+foGlyph2D extends foGlyph implements iShape {
   protected _subcomponents: foCollection<foGlyph2D>;
   get nodes(): foCollection<foGlyph2D> {
     return this._subcomponents;
