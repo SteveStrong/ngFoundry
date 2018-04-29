@@ -83,7 +83,7 @@ export class foLayout2D extends foGlyph2D {
     this.drawLabels(ctx);
     this.drawPin(ctx);
     this.drawCursor(ctx);
-  };
+  }
 
   public drawLabels = (ctx: CanvasRenderingContext2D): void => {
     ctx.save();
@@ -92,7 +92,7 @@ export class foLayout2D extends foGlyph2D {
       ctx.fillText(pt.myName, pt.x + 5, pt.y - 10);
     });
     ctx.restore();
-  };
+  }
 
   public draw = (ctx: CanvasRenderingContext2D): void => {
     ctx.fillStyle = 'black';
@@ -113,7 +113,7 @@ export class foLayout2D extends foGlyph2D {
       ctx.stroke();
     });
     ctx.restore();
-  };
+  }
 
   findPoint(key: string, onFound?: Action<cPoint2D>, onMissing?): cPoint2D {
     if (this._points.has(key)) {

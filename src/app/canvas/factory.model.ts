@@ -39,7 +39,7 @@ export class packageMixin extends foShape2D {
     ctx.lineWidth = 4;
     this.drawOutline(ctx);
     this.drawPin(ctx);
-  };
+  }
 
   findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
     const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
@@ -233,6 +233,13 @@ class layoutFactory extends foLayout2D {
   ) {
     super(properties, subcomponents, parent);
   }
+
+  generateLayout() {
+
+    this.generateGrid('f1', 0, 100, 3, 0, 100, 4);
+    this.setCursorXY(20, 20);
+    this.addPoint('drop here');
+  }
 }
 
 class factoryController extends foController {
@@ -275,6 +282,16 @@ class factoryController extends foController {
     layout.generateGrid('f1', 0, 100, 3, 0, 100, 4);
     layout.setCursorXY(20, 20);
     layout.addPoint('drop here');
+
+    layout.fitSizeToPoints();
+    page.addSubcomponent(layout);
+    this.lastLayout = layout;
+  }
+
+  buildLayout(page: foPage) {
+    const layout: layoutFactory = new layoutFactory();
+    layout.generateLayout();
+
 
     layout.fitSizeToPoints();
     page.addSubcomponent(layout);
