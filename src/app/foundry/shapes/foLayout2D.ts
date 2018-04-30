@@ -17,7 +17,7 @@ export class foLayout2D extends foShape2D {
 
   constructor(
     properties?: any,
-    subcomponents?: Array<foShape2D>,
+    subcomponents?: Array<foGlyph2D>,
     parent?: foObject
   ) {
     super(properties, subcomponents, parent);
@@ -139,31 +139,23 @@ export class foLayout2D extends foShape2D {
 
   getPointsXY(points?: Array<cPoint2D>): Array<iXY> {
     const list = new Array<iXY>();
+    const mtx = this.getGlobalMatrix();
+    let point = new cPoint2D();
+
     if (points) {
       points.forEach(pt => {
-        list.push({ x: pt.x, y: pt.y });
+        point = mtx.transformPoint(pt.x, pt.y, point);
+        list.push({ x: point.x, y: point.y });
       });
     } else {
       this._points.forEach(pt => {
-        list.push({ x: pt.x, y: pt.y });
+        point = mtx.transformPoint(pt.x, pt.y, point);
+        list.push({ x: point.x, y: point.y });
       });
     }
     return list;
   }
 
-  getTransformedPointsXY(points?: Array<cPoint2D>): Array<iXY> {
-    const list = new Array<iXY>();
-    if (points) {
-      points.forEach(pt => {
-        list.push({ x: pt.x + this.x, y: pt.y + this.y });
-      });
-    } else {
-      this._points.forEach(pt => {
-        list.push({ x: pt.x + this.x, y: pt.y + this.y });
-      });
-    }
-    return list;
-  }
 
   newPoint(x: number, y: number, name: string): cPoint2D {
     const point = new cPoint2D(x, y, name);

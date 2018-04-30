@@ -245,7 +245,7 @@ class layoutFactory extends foLayout2D {
     list.forEach(item => {
       this.moveCursor(150);
       this.addPoint(item);
-    })
+    });
 
     this.fitSizeToPoints();
 
