@@ -278,7 +278,7 @@ class factoryController extends foController {
   buildFactory(page: foPage) {
     if (!this.lastLayout) return;
 
-    const grid = this.lastLayout.getTransformedPointsXY();
+    const grid = this.lastLayout.getPointsXY();
     const list = this.createStation(page, grid.length);
     let i = 0;
     list.forEach(item => {
