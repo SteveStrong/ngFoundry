@@ -52,6 +52,32 @@ export class foShape2D extends foGlyph2D {
     public pinY = (): number => { return 0.5 * this.height; };
     public rotationZ = (): number => { return this.angle; };
 
+    public setPinLeft() {
+      this.pinX = (): number => { return 0.0 * this.width; };
+      return this;
+    }
+    public setPinRight() {
+      this.pinX = (): number => { return 1.0 * this.width; };
+      return this;
+    }
+    public setPinCenter() {
+      this.pinX = (): number => { return 0.5 * this.width; };
+      return this;
+    }
+
+    public setPinTop() {
+      this.pinY = (): number => { return 0.0 * this.height; };
+      return this;
+    }
+    public setPinMiddle() {
+      this.pinY = (): number => { return 0.5 * this.height; };
+      return this;
+    }
+    public setPinBottom() {
+      this.pinY = (): number => { return 1.0 * this.height; };
+      return this;
+    }
+
     pinVector(): Vector3 {
         return new Vector3(
             this.pinX(),

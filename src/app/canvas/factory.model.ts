@@ -237,8 +237,18 @@ class layoutFactory extends foLayout2D {
   generateLayout() {
     this.width = 100;
     this.height = 100;
-    this.setCursorXY(20, 20);
-    this.addPoint('drop here');
+    this.setDirection(0);
+    this.setCursorXY(0, this.height / 2);
+    this.addPoint('start');
+
+    const list = 'local;development;testing;staging;production;training'.split(';');
+    list.forEach(item => {
+      this.moveCursor(150);
+      this.addPoint(item);
+    })
+
+    this.fitSizeToPoints();
+
   }
 }
 

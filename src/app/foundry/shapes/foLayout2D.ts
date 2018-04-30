@@ -1,6 +1,7 @@
 import { Tools, foObject, Action } from '../../foundry';
 
 import { foGlyph2D } from '../shapes/foGlyph2D.model';
+import { foShape2D } from '../shapes/foShape2D.model';
 import { cPoint2D } from '../shapes/foGeometry2D';
 
 export interface iXY {
@@ -9,14 +10,14 @@ export interface iXY {
 }
 
 //and easy way to create a set of layout geometry
-export class foLayout2D extends foGlyph2D {
+export class foLayout2D extends foShape2D {
   private _cursor: cPoint2D = new cPoint2D();
   private _direction: cPoint2D = new cPoint2D(1, 0);
   private _points: Map<String, cPoint2D> = new Map<String, cPoint2D>();
 
   constructor(
     properties?: any,
-    subcomponents?: Array<foGlyph2D>,
+    subcomponents?: Array<foShape2D>,
     parent?: foObject
   ) {
     super(properties, subcomponents, parent);
