@@ -3,7 +3,7 @@ import { Tools } from '../foundry/foTools';
 import { iPoint2D, Action } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
-import { foShape2D } from '../foundry/shapes/foShape2D.model';
+import { foShape2D, foText2D, foLayout2D } from '../foundry/shapes';
 import { foShape1D } from '../foundry/shapes/foShape1D.model';
 
 import { foStencilLibrary } from '../foundry/foStencil';
@@ -11,7 +11,7 @@ import { foCollection } from '../foundry/foCollection.model';
 import { foController, foToggle } from '../foundry/foController';
 import { foPage } from '../foundry/shapes/foPage.model';
 
-import { foInstance } from '../foundry/foInstance.model';
+import { foInstance, foObject } from '../foundry';
 
 export { foShape1D, foConnect1D } from '../foundry/shapes/foShape1D.model';
 export { foShape2D } from '../foundry/shapes/foShape2D.model';
@@ -29,25 +29,6 @@ export class PathwayMixin extends foShape1D {
 }
 
 export class packageMixin extends foShape2D {
-  doAnimation = () => {};
-  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
-    this.doAnimation();
-    super.render(ctx, deep);
-  }
-  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 4;
-    this.drawOutline(ctx);
-    this.drawPin(ctx);
-  }
-
-  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
-    const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
-    return found;
-  }
-}
-
-export class stationMixin extends foShape2D {
   doAnimation = () => {};
   public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
     this.doAnimation();
@@ -117,6 +98,25 @@ export class Package extends packageMixin {
 
     this.drawSquare(ctx, 0, 0, this.width, this.height);
     this.drawSelected(ctx);
+  };
+}
+
+export class stationMixin extends foShape2D {
+  doAnimation = () => {};
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.doAnimation();
+    super.render(ctx, deep);
+  }
+  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 4;
+    this.drawOutline(ctx);
+    this.drawPin(ctx);
+  };
+
+  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+    const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+    return found;
   }
 }
 
@@ -148,12 +148,32 @@ export class Station extends stationMixin {
 
     this.drawSquare(ctx, 0, 0, this.width, this.height);
     this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
+  };
+}
+
+export class EnvironmentMixin extends foText2D {
+  doAnimation = () => {};
+  public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
+    this.doAnimation();
+    super.render(ctx, deep);
+  }
+  public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 4;
+    this.drawOutline(ctx);
+    this.drawPin(ctx);
+  };
+
+  findObjectUnderPoint(hit: iPoint2D, deep: boolean): foGlyph2D {
+    const found: foGlyph2D = this.hitTest(hit) ? this : undefined;
+    return found;
   }
 }
 
-export class Environment extends stationMixin {
+export class Environment extends EnvironmentMixin {
   constructor(properties?: any) {
     super(properties);
+    this.fontSize = 24;
   }
 
   drawSquare(ctx: CanvasRenderingContext2D, x1, y1, x2, y2) {
@@ -179,7 +199,9 @@ export class Environment extends stationMixin {
 
     this.drawSquare(ctx, 0, 0, this.width, this.height);
     this.drawCircle(ctx, this.pinX(), this.pinY(), this.width / 2);
-  }
+    this.drawText(ctx);
+    // this.renderText(ctx, 'show me more', -20, -30);
+  };
 }
 
 FactoryStencil.define('Package', Package, {
@@ -197,35 +219,41 @@ FactoryStencil.define('Station', Station, {
 }).onCreation(obj => {});
 
 FactoryStencil.define('Environment', Environment, {
-  color: 'orange',
-  opacity: 0.5,
+  background: 'orange',
+  color: 'blue',
   width: 100,
   height: 100
 }).onCreation(obj => {});
 
-class factoryController extends foController {
-  // toggleRule1: foToggle = new foToggle('group', () => { }, () => { return { active: true } })
-
-  generateGrid(
-    xStart: number = 100,
-    xStep: number = 100,
-    xCount = 5,
-    yStart: number = 100,
-    yStep: number = 100,
-    yCount = 5
-  ): any[] {
-    const list: any[] = Array<any>();
-    for (let i = 0; i < xCount; i++) {
-      for (let j = 0; j < yCount; j++) {
-        const item = {
-          x: xStart + i * xStep,
-          y: yStart + j * yStep
-        };
-        list.push(item);
-      }
-    }
-    return list;
+class layoutFactory extends foLayout2D {
+  constructor(
+    properties?: any,
+    subcomponents?: Array<foGlyph2D>,
+    parent?: foObject
+  ) {
+    super(properties, subcomponents, parent);
   }
+
+  generateLayout() {
+    this.width = 100;
+    this.height = 100;
+    this.setDirection(0);
+    this.setCursorXY(0, this.height / 2);
+    this.addPoint('start');
+
+    const list = 'local;development;testing;staging;production;training'.split(';');
+    list.forEach(item => {
+      this.moveCursor(150);
+      this.addPoint(item);
+    });
+
+    this.fitSizeToPoints();
+
+  }
+}
+
+class factoryController extends foController {
+  lastLayout: foLayout2D;
 
   createStation(page: foPage, count: number = 1): foCollection<Station> {
     const list: foCollection<Station> = new foCollection<Station>();
@@ -248,12 +276,37 @@ class factoryController extends foController {
   }
 
   buildFactory(page: foPage) {
-    const grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+    if (!this.lastLayout) return;
+
+    const grid = this.lastLayout.getPointsXY();
     const list = this.createStation(page, grid.length);
     let i = 0;
     list.forEach(item => {
       item.easeTween(grid[i++], Tools.random(0.5, 2.5));
     });
+    this.lastLayout = undefined;
+  }
+
+  buildGrid(page: foPage) {
+    const layout: foLayout2D = new layoutFactory();
+    layout.generateGrid('f1', 0, 100, 3, 0, 100, 4);
+    layout.setCursorXY(20, 20);
+    layout.addPoint('drop here');
+
+    layout.fitSizeToPoints();
+    page.addSubcomponent(layout);
+    this.lastLayout = layout;
+  }
+
+  buildLayout(page: foPage): foGlyph {
+    const layout: layoutFactory = new layoutFactory();
+    layout.generateLayout();
+
+
+    layout.fitSizeToPoints();
+    page.addSubcomponent(layout);
+    this.lastLayout = layout;
+    return layout;
   }
 
   runFactory(page: foPage) {
@@ -275,11 +328,16 @@ class factoryController extends foController {
     });
   }
 
-  renderView(obj: foInstance, viewParent: foShape2D, grid: Array<any>): foShape2D {
+  renderView(
+    obj: foInstance,
+    viewParent: foShape2D,
+    grid: Array<any>
+  ): foShape2D {
     const knowledge = FactoryStencil.find('Environment');
     const result = knowledge
-      .newInstance({ myGuid: obj.myGuid })
+      .newInstance({ myGuid: obj.myGuid, text: obj.myName, fontSize: 50 })
       .defaultName() as Environment;
+
     result.addAsSubcomponent(viewParent);
 
     const loc = grid.shift();
@@ -293,13 +351,19 @@ class factoryController extends foController {
   }
 
   renderModel(page: foPage, model: foInstance) {
-    const grid = this.generateGrid(100, 210, 3, 200, 200, 2);
+    const layout: foLayout2D = new foLayout2D();
+    const grid = layout
+      .generateGrid('factory', 100, 210, 3, 200, 200, 2)
+      .getPointsXY();
+
     this.renderView(model, page, grid);
   }
 }
 
-export let factoryBehaviour: factoryController = new factoryController().defaultName('Factory');
-// factoryBehaviour.addToggle(factoryBehaviour.toggleRule1)
+export let factoryBehaviour: factoryController = new factoryController().defaultName(
+  'Factory'
+);
 
 import { RuntimeType } from '../foundry/foRuntimeType';
+import { foGlyph } from '../foundry/foGlyph.model';
 RuntimeType.define(Package);

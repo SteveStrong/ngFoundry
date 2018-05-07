@@ -1,7 +1,7 @@
-import { Tools } from './foTools'
+import { Tools } from './foTools';
 
-import { foObject } from './foObject.model'
-import { iObject } from './foInterface'
+import { foObject } from './foObject.model';
+import { iObject } from './foInterface';
 
 export class foDictionary<T extends iObject> extends foObject {
 
@@ -12,11 +12,11 @@ export class foDictionary<T extends iObject> extends foObject {
     }
 
     find(key: string): T {
-        let result: T = this._lookup[key];
+        const result: T = this._lookup[key];
         return result;
     }
 
-    add(obj: T, key?:string): T {
+    add(obj: T, key?: string): T {
         if ( key ) obj.myName = key;
         return this.addItem(obj.myName, obj);
     }
@@ -31,13 +31,13 @@ export class foDictionary<T extends iObject> extends foObject {
     }
 
     removeItem(key: string): T {
-        let obj = this._lookup[key];
+        const obj = this._lookup[key];
         delete this._lookup[key];
         return obj;
     }
 
     getItem(key: string): T {
-        let result: T = this._lookup[key];
+        const result: T = this._lookup[key];
         return result;
     }
 
@@ -53,7 +53,7 @@ export class foDictionary<T extends iObject> extends foObject {
     }
 
     found(key: string, onFound?, onMissing?): T {
-        let found = this.findItem(key, onMissing, onFound);
+        const found = this.findItem(key, onMissing, onFound);
         return found;
     }
 
@@ -70,66 +70,66 @@ export class foDictionary<T extends iObject> extends foObject {
     }
 
     get members(): Array<T> {
-        let keys = this.keys;
-        let list = keys.map(key => this._lookup[key]);
+        const keys = this.keys;
+        const list = keys.map(key => this._lookup[key]);
         return list;
     }
 
     get publicMembers(): Array<T> {
-        let list = this.members.filter(item => item.isPublic)
+        const list = this.members.filter(item => item.isPublic);
         return list;
     }
 
     get values() {
-        let result = this._lookup;
+        const result = this._lookup;
         return result;
     }
 
     mapMembers(mapFunc) {  //funct has 2 args.. key,value
-        let keys = this.keys;
-        let list = keys.map(key => mapFunc(this._lookup[key]));
+        const keys = this.keys;
+        const list = keys.map(key => mapFunc(this._lookup[key]));
         return list;
-    };
+    }
 
     forEachKeyValue(mapFunc) {  //funct has 2 args.. key,value
-        let keys = this.keys;
+        const keys = this.keys;
         keys.forEach(key => {
-            let value = this._lookup[key];
+            const value = this._lookup[key];
             mapFunc(key, value);
         });
-    };
+    }
 
     mapKeyValue(mapFunc) {  //funct has 2 args.. key,value
-        let result = [];
-        let keys = this.keys;
+        const result = [];
+        const keys = this.keys;
         keys.forEach(key => {
-            let value = this._lookup[key];
+            const value = this._lookup[key];
             result.push(mapFunc(key, value));
         });
         return result;
-    };
+    }
 
     applyTo(mapFunc) {  //funct has 1 args.. value
-        for (let key in this._lookup) {
-            let value = this._lookup[key];
+        for (const key in this._lookup) {
+            const value = this._lookup[key];
             mapFunc(value);
-        };
-    };
+        }
+    }
 
     protected toJson(): any {
         return Tools.mixin(super.toJson(), this.jsonMerge(this._lookup));
     }
 
     public deHydrate(context?: any, deep: boolean = true) {
-        let data = {
+        const data = {
             subcomponents: []
-        }
- 
+        };
+
         if (deep ) {
-            data.subcomponents = this.mapKeyValue((key,item) => {
-                let child = item.deHydrate(context, deep);
+            data.subcomponents = this.mapKeyValue((key, item) => {
+                const child = item.deHydrate(context, deep);
                 return child;
-            })
+            });
         }
         return data;
     }

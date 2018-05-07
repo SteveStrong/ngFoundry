@@ -187,6 +187,17 @@ export class foGlyph extends foInstance {
     };
   }
 
+  public dropAt(
+    x: number = Number.NaN,
+    y: number = Number.NaN,
+    angle: number = Number.NaN
+  ) {
+    if (this.didLocationChange(x, y, angle)) {
+      Lifecycle.dropped(this, this.getLocation());
+    }
+    return this;
+  }
+
   unSelect(deep: boolean = true, exclude: foGlyph = null) {
     this.isSelected = this === exclude ? this.isSelected : false;
     this._handles && this._handles.forEach(item => (item.color = 'black'));
