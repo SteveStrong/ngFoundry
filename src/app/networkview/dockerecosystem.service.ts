@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient, Response } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
@@ -12,7 +12,7 @@ import { EmitterService } from '../common/emitter.service';
 @Injectable()
 export class DockerecosystemService {
 
-  constructor(private http: Http) { }
+  constructor(private http: HttpClient) { }
 
   getModel() {
     let model = new Observable(observer => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient, Response } from '@angular/http';
 import { Toast } from '../common/emitter.service';
 
 import { Observable } from 'rxjs/Observable';
@@ -17,7 +17,7 @@ export class SwimService {
   viewLaneDef: svgConcept = this.Dictionary.swimLaneDef;
   viewDef: svgConcept = this.Dictionary.swimDef;
 
-  constructor(private http: Http) { }
+  constructor(private http: HttpClient) { }
 
   private handleError(error: Response | any) {
     // In a real world app, you might use a remote logging infrastructure

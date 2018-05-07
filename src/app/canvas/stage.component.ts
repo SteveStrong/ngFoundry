@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/http';
 
 import { Screen2D } from '../foundry/shapes/canvasDriver';
 
@@ -57,7 +57,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   constructor(
     private sharing: SharingService,
-    private http: Http) {
+    private http: HttpClient) {
     super();
 
     this.myName = 'Page 1'

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/http';
 
 import * as d3 from 'd3';
 
@@ -12,7 +12,7 @@ import * as d3 from 'd3';
 export class TestForcediagramComponent implements OnInit {
   graph: any = {}
 
-  constructor(private http: Http, private vcr: ViewContainerRef) {
+  constructor(private http: HttpClient, private vcr: ViewContainerRef) {
 
   }
 
