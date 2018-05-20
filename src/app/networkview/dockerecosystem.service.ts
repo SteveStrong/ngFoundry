@@ -1,10 +1,10 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, Response } from '@angular/http';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
+
+
 
 import { foTools } from '../foundry/foTools'
 import { EmitterService } from '../common/emitter.service';
@@ -50,7 +50,7 @@ export class DockerecosystemService {
       message: errMsg
     }
     EmitterService.get("SHOWERROR").emit(toast);
-    return Observable.throw(errMsg);
+    return observableThrowError(errMsg);
   }
 
   getEcosystem() {

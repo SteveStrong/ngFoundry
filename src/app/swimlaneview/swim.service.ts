@@ -1,11 +1,11 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient, Response } from '@angular/http';
 import { Toast } from '../common/emitter.service';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
+
+
 
 import { Tools } from '../foundry/foTools'
 import { SwimDictionary, svgConcept, svgShapeView } from "./swim.model";
@@ -30,7 +30,7 @@ export class SwimService {
       errMsg = error.message ? error.message : error.toString();
     }
     Toast.error(errMsg, 'SwimService');
-    return Observable.throw(errMsg);
+    return observableThrowError(errMsg);
   }
 
 

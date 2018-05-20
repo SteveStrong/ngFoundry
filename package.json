@@ -41,6 +41,7 @@
     "raw-loader": "^0.5.1",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^6.1.0",
+    "rxjs-compat": "^6.1.0",
     "savery": "^1.2.0",
     "three": "^0.84.0",
     "webvr-polyfill": "^0.9.40",

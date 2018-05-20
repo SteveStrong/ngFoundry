@@ -3,12 +3,12 @@ import { Component, Input, ElementRef, AfterViewInit, ViewChild } from '@angular
 
 //https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/takeUntil';
-import 'rxjs/add/operator/pairwise';
-import 'rxjs/add/operator/switchMap';
+
+
+
+
 
 @Component({
   selector: 'app-testcanvas',

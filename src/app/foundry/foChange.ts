@@ -2,8 +2,7 @@ import { Action } from './foInterface';
 import { Tools } from './foTools';
 
 import { foObject } from './foObject.model';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Observable ,  Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 let counter = 0;
