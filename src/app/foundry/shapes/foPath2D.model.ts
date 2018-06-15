@@ -20,6 +20,9 @@ let star = "M 262.6 182.4 C 261.7 179.7 259.3 177.7 256.4 177.2 C 245.3 175.7 23
 let rocket = "M 201.2 222.1 C 210 216.5 218.6 210.1 225.7 203 C 249.9 178.8 252.6 157.5 250.1 149.9 C 253.7 146.3 257.3 142.7 260.9 139.1 C 261.9 138.1 261.9 136.5 260.9 135.5 C 259.9 134.5 258.3 134.5 257.3 135.5 C 253.7 139.1 250.1 142.7 246.5 146.3 C 238.9 143.8 217.6 146.5 193.4 170.7 C 186.3 177.8 179.9 186.4 174.3 195.2 C 166.2 193.2 152.1 193.2 142.3 204.1 C 131.1 216.4 137.7 228.1 140.2 225.7 C 142.2 223.6 145.6 211.3 160.4 220.8 C 158 225.8 158.1 228.9 159.7 230.4 C 161.8 232.5 163.9 234.6 166 236.7 C 167.6 238.3 170.6 238.5 175.7 236 C 185.1 250.8 172.8 254.2 170.8 256.3 C 168.3 258.7 180 265.3 192.3 254.1 C 203.2 244.3 203.2 230.2 201.2 222.1M 216.5 179.9 C 212.9 176.3 212.9 170.3 216.5 166.7 C 220.2 163 226.1 163 229.7 166.7 C 233.4 170.4 233.4 176.2 229.7 179.9 C 226.1 183.5 220.2 183.5 216.5 179.9M 156.4 233.5 C 156.4 233.5 146.4 235.3 142.7 253.7 C 161.1 250.1 162.9 240 162.9 240 C 160.8 237.8 158.6 235.7 156.4 233.5z";
 
 
+let body = "M13.38,201.93a101.41,101.41,0,0,1,2-19.62,99.45,99.45,0,0,1,27-50.85,96.1,96.1,0,0,1,21.5-16.3c1.32-.74,2-.19,2.86.56a64,64,0,0,0,82.22.46l2-1.62c34.2,17.57,52.4,55.17,51.68,87.36Z";
+let head = "M55.62,66.49c-.22-28.7,23.73-52.88,53.65-52.41,28,.44,51.48,24.15,51.41,52.53a52.53,52.53,0,1,1-105.06-.13Z";
+
 //https://codepen.io/osublake/pen/pRNYRM
 
 
@@ -36,9 +39,23 @@ declare var Path2D: Path2DConstructor;
 export class foPath2D extends foShape2D {
     path: string;
     scale: number;
+    tx: number = 0;
+    ty: number = 0;
+
+    symbol: Path2D;
 
     constructor(properties?: any, subcomponents?: Array<foGlyph2D>, parent?: foObject) {
         super(properties, subcomponents, parent);
+
+        this.setupPreDraw();
+    }
+
+
+    protected toJson(): any {
+        return Tools.mixin(super.toJson(), {
+            path: this.path,
+            scale: this.scale,
+        });
     }
 
     drawBox(ctx: CanvasRenderingContext2D) {
@@ -47,28 +64,58 @@ export class foPath2D extends foShape2D {
         ctx.fill(p);
     }
 
+    setupPreDraw() {
+
+        let preDraw = (ctx: CanvasRenderingContext2D): void => {
+            let scale = this.scale ? this.scale : 1;
+            let data = this.path ? this.path : heart;
+
+            let result = PathSVG.pathBounds(data);
+            this.symbol = new Path2D(result.normal);
+
+            let [left, top, right, bottom] = result.bounds
+            this.width = scale * (right - left);
+            this.height = scale * (bottom - top);
+
+            this.tx = -scale * left;
+            this.ty = -scale * top;
+
+            //https://github.com/jkroso/normalize-svg-path
+
+            this.preDraw = undefined;
+        };
+
+        this.preDraw = preDraw;
+    }
+
+
     public draw = (ctx: CanvasRenderingContext2D): void => {
         let scale = this.scale ? this.scale : 1;
+        //this.drawBox(ctx);
 
-        let data = this.path ? this.path : heart;
-        let [left, top, right, bottom] = PathSVG.pathBounds(data);
-        this.width = scale * (right - left);
-        this.height = scale * (bottom - top);
-
-        this.drawBox(ctx);
-
-        //https://github.com/jkroso/normalize-svg-path
-        let norm = PathSVG.convert(data);
-
-
-        //console.log (left, top, right, bottom);
         ctx.save();
-        ctx.translate(-scale * left, -scale * top);
+        ctx.translate(this.tx, this.ty);
         ctx.scale(scale, scale);
         ctx.fillStyle = this.color;
-        let path = new Path2D(norm);
-        ctx.fill(path);
+
+        ctx.fill(this.symbol);
         ctx.restore();
+    }
+
+    public drawOutline(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath()
+        ctx.setLineDash([15, 5]);
+        ctx.rect(0, 0, this.width, this.height);
+        ctx.stroke();
+    }
+
+    public drawSelected = (ctx: CanvasRenderingContext2D): void => {
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 1;
+        this.drawOutline(ctx);
+        this.drawHandles(ctx);
+        //this.drawConnectionPoints(ctx);
+        this.drawPin(ctx);
     }
 
 }

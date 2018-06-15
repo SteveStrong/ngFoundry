@@ -1,5 +1,6 @@
 import { Component, Input, ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 
+
 //https://medium.com/@tarik.nzl/creating-a-canvas-component-with-free-hand-drawing-with-rxjs-and-angular-61279f577415
 
 import { Observable } from 'rxjs/Observable';
@@ -11,18 +12,20 @@ import 'rxjs/add/operator/switchMap';
 
 @Component({
   selector: 'app-testcanvas',
-  template: '<canvas #canvas></canvas>',
+  template: '<canvas #canvas></canvas> <canvas #input></canvas>',
   styles: ['canvas { border: 1px solid #000; }']
 })
 export class CanvasTestComponent implements AfterViewInit {
   // a reference to the canvas element from our template
   @ViewChild('canvas') public canvas: ElementRef;
+  @ViewChild('input') public input: ElementRef;
 
   // setting a width and height for the canvas
   @Input() public width = 400;
   @Input() public height = 400;
 
   private cx: CanvasRenderingContext2D;
+
 
   public ngAfterViewInit() {
     // get the context
@@ -37,6 +40,9 @@ export class CanvasTestComponent implements AfterViewInit {
     this.cx.lineWidth = 3;
     this.cx.lineCap = 'round';
     this.cx.strokeStyle = '#000';
+
+    const inputEl: HTMLCanvasElement = this.input.nativeElement;
+
 
     // we'll implement this method to start capturing mouse events
     this.captureEvents(canvasEl);

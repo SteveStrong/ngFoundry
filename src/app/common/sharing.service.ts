@@ -179,11 +179,6 @@ export class SharingService {
   
     this.signalR.start().then(() => {
 
-      // function forceParent(shape: foGlyph) {
-      //   let parent = shape.myParent && shape.myParent();
-      //   if (!parent) shape.reParent(this.workspace.activePage);
-      // }
-
       this.signalR.subCommand("dropShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.found(cmd.guid, shape => {

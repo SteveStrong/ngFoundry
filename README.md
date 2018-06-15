@@ -38,7 +38,7 @@ ngFoundry mashes together computer science ideas from Object Oriented, programmi
 
 As an engineer practicing in the early days of computer programming, I was always disappointed that computer languages were created to procedurally execute instructions, and not semantically describe scenarios declaratively and optimize the outcome. I have learned that writing software is a process of primarily listening and coding toward the truth.  I believe visualization and collaboration leads to a deeper understanding of a problem and the people you are working with to build a solution.
 
-After 40 years of writing software I understand deeply understand why this must be true, but there is still a part of me that hopes by creating language elements that let non-programmers declarative describe their domain using their own vocabulary the task of creating software can become use error prone    
+After 40 years of writing software I understand deeply why this must be true, but there is still a part of me that hopes by creating language elements that let non-programmers declarative describe their domain using their own vocabulary the task of creating software can become use error prone    
 
 
 # Instructions for building and running ngFoundry yourself

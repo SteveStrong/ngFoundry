@@ -1,0 +1,17 @@
+<div class="col-sm-12" style="border:3">
+    <div class="card" >
+      <h3>{{control.myName}}</h3>
+      <div class="card-body">
+        <ng-container *ngFor="let cmd of control.commands; let i = index; let isOdd = odd">
+          <button (click)="cmd.doAction()" type="button" class="btn btn-success">{{cmd.getLabel()}}</button>
+        </ng-container>
+        <br/>
+        <ng-container *ngFor="let toggle of control.toggles; let i = index; let isOdd = odd">
+          <button (click)="toggle.doToggle()" type="button" class="btn" 
+          [ngClass] = "toggle.getState().active ? 'btn-success' : 'btn-danger' ">{{toggle.myName}}</button>
+        </ng-container>
+  
+        <pre *ngIf="showDetails" class="well">{{control.asJson | json }}</pre>
+      </div>
+    </div>
+  </div>

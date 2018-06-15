@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TestSvgComponent } from './test-svg.component';
+import { ShapeTestingComponent } from './shape-testing.component';
 
-describe('TestSvgComponent', () => {
-  let component: TestSvgComponent;
-  let fixture: ComponentFixture<TestSvgComponent>;
+describe('ShapeTestingComponent', () => {
+  let component: ShapeTestingComponent;
+  let fixture: ComponentFixture<ShapeTestingComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TestSvgComponent ]
+      declarations: [ ShapeTestingComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TestSvgComponent);
+    fixture = TestBed.createComponent(ShapeTestingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

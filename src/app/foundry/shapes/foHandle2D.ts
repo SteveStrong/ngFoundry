@@ -6,8 +6,6 @@ import { Matrix2D } from './foMatrix2D';
 import { iPoint2D } from '../foInterface';
 
 import { foObject } from '../foObject.model';
-import { foNode } from '../foNode.model';
-import { foComponent } from '../foComponent.model';
 
 import { foGlyph2D } from './foGlyph2D.model';
 import { Lifecycle } from '../foLifecycle';
@@ -31,7 +29,7 @@ export class foHandle2D extends foHandle {
         this.smash();
         this._x = value;
     }
-    get y(): number { return this._y || 0.0 }
+    get y(): number { return this._y || 0.0; }
     set y(value: number) {
         this.smash();
         this._y = value;
@@ -82,68 +80,68 @@ export class foHandle2D extends foHandle {
 
 
     updateContext(ctx: CanvasRenderingContext2D) {
-        let mtx = this.getMatrix();
+        const mtx = this.getMatrix();
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
         ctx.globalAlpha *= this.opacity;
     };
 
     getGlobalMatrix() {
-        let mtx = new Matrix2D(this.getMatrix());
-        let parent = <foGlyph2D>this.myParent()
+        const mtx = new Matrix2D(this.getMatrix());
+        const parent = <foGlyph2D>this.myParent();
         if (parent) {
             mtx.prependMatrix(parent.getGlobalMatrix());
         }
         return mtx;
-    };
+    }
 
     getMatrix() {
         if (this._matrix === undefined) {
             this._matrix = new Matrix2D();
-            let delta = this.size / 2;
+            const delta = this.size / 2;
             this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotation(), 0, 0, delta, delta);
         }
         return this._matrix;
-    };
+    }
 
     getInvMatrix() {
         if (this._invMatrix === undefined) {
             this._invMatrix = this.getMatrix().invertCopy();
         }
         return this._invMatrix;
-    };
+    }
 
     localToGlobal(x: number, y: number, pt?: cPoint2D) {
-        let mtx = this.getGlobalMatrix();
+        const mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y, pt);
-    };
+    }
 
     globalToLocal(x: number, y: number, pt?: cPoint2D) {
-        let inv = this.getGlobalMatrix().invertCopy();
+        const inv = this.getGlobalMatrix().invertCopy();
         return inv.transformPoint(x, y, pt);
-    };
+    }
 
     localToGlobalPoint(pt: cPoint2D): cPoint2D {
-        let mtx = this.getGlobalMatrix();
+        const mtx = this.getGlobalMatrix();
         return mtx.transformPoint(pt.x, pt.y, pt);
-    };
+    }
 
     globalCenter(): cPoint2D {
-        let { x, y } = this.pinLocation();
-        let mtx = this.getGlobalMatrix();
+        const { x, y } = this.pinLocation();
+        const mtx = this.getGlobalMatrix();
         return mtx.transformPoint(x, y);
-    };
+    }
 
     public getOffset = (loc: iPoint2D): iPoint2D => {
-        let x = this.x;
-        let y = this.y;
+        const x = this.x;
+        const y = this.y;
         return new cPoint2D(x - loc.x, y - loc.y);
     }
 
 
 
     protected localHitTest = (hit: any): boolean => {
-        let { x, y } = hit as iPoint2D
-        let loc = this.globalToLocal(x, y);
+        const { x, y } = hit as iPoint2D;
+        const loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.size) return false;
