@@ -38,7 +38,7 @@ export class SharingService {
 
       LifecycleLock.whenUnprotected(event.myGuid, this, _ => {
         let cmd = this[event.cmd];
-        let obj = event.object
+        let obj = event.object;
         if (cmd) {
           cmd = cmd.bind(this);
           cmd(event.object, event.value);
@@ -177,7 +177,9 @@ export class SharingService {
   public startSharing(next?: (self:SharingService) => {}) {
 
 
-    this.signalR.start().then(() => {
+
+    this.signalR.canStart() && this.signalR.start().then(() => {
+
 
       this.signalR.subCommand('dropShape', (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {

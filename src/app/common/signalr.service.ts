@@ -12,6 +12,7 @@ import { environment } from '../../environments/environment';
 @Injectable()
 export class SignalRService {
 
+  private _ignore: boolean = true;
   private _started: boolean = false;
 
   private hubURL = environment.local ? environment.signalRServer : environment.signalfoundry;
@@ -19,7 +20,7 @@ export class SignalRService {
   private _guid: string = Tools.generateUUID();
 
   constructor() {
-    if (!this.connection) {
+    if (!this._ignore && !this.connection) {
       this.connection = new signalr.HubConnectionBuilder()
       .withUrl(this.hubURL)
       .configureLogging(signalr.LogLevel.Information)
@@ -81,6 +82,10 @@ export class SignalRService {
     }
   }
 
+  canStart() {
+    return !this._ignore;
+  }
+  
   start(): Promise<void> {
     let promise: Promise<void>;
 
