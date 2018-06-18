@@ -60,7 +60,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     private http: Http) {
     super();
 
-    this.myName = 'Page 1'
+    this.myName = 'Page 1';
     globalWorkspace.document.currentPage = this;
   }
 
@@ -81,17 +81,17 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doVert() {
-    let pt = new cPoint2D(100, 150);
+    const pt = new cPoint2D(100, 150);
     this.layoutSubcomponentsVertical(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
-    })
+    });
   }
 
   doHorz() {
-    let pt = new cPoint2D(100, 150);
+    const pt = new cPoint2D(100, 150);
     this.layoutSubcomponentsHorizontal(false, 2).nodes.forEach(item => {
       item.moveBy(pt);
-    })
+    });
   }
 
   addEventHooks() {
@@ -107,9 +107,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           ctx.strokeStyle = 'yellow';
           ctx.lineWidth = 4;
           shape.drawOutline(ctx);
-        }
+        };
       }
-    }
+    };
 
     this.onItemHoverExit = (loc: cPoint2D, shape: foGlyph2D, keys?: any): void => {
 
@@ -121,7 +121,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       if (shape) {
         shape.drawHover = undefined;
       }
-    }
+    };
 
     this.onItemOverlapEnter = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
@@ -138,9 +138,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           ctx.strokeStyle = 'yellow';
           ctx.lineWidth = 4;
           shapeUnder.drawOutline(ctx);
-        }
+        };
       }
-    }
+    };
 
     this.onItemOverlapExit = (loc: cPoint2D, shape: foGlyph2D, shapeUnder: foGlyph2D, keys?: any): void => {
 
@@ -152,7 +152,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       if (shapeUnder) {
         shapeUnder.drawHover = undefined;
       }
-    }
+    };
 
     this.onHandleHoverEnter = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
       //let shape = handle.myParentGlyph();
@@ -164,7 +164,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Enter ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
-    }
+    };
 
     this.onTrackHandles = (loc: cPoint2D, handles: foCollection<foHandle2D>, keys?: any): void => {
       this.message = [];
@@ -174,9 +174,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         //}
         this.message.push(`onTrackHandles (${loc.x},${loc.y}) Move ${handle && handle.myName}`);
         handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
-      })
+      });
 
-    }
+    };
 
     this.onHandleMoving = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
       //let shape = handle.myParentGlyph();
@@ -188,7 +188,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       this.message.push(`Handle Hover (${loc.x},${loc.y}) Move ${handle && handle.myName}`);
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
-    }
+    };
 
     this.onHandleHoverExit = (loc: cPoint2D, handle: foHandle2D, keys?: any): void => {
       //let shape = handle.myParentGlyph();
@@ -201,7 +201,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       handle && this.message.push(handle.globalToLocal(loc.x, loc.y));
       //this.message.push(handle);
 
-    }
+    };
   }
 
   ngOnInit() {
@@ -212,9 +212,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     this.addEventHooks();
 
     Lifecycle.observable.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
       //Toast.info(event.cmd, event.myGuid )
-    })
+    });
 
     // this.onItemChangedParent = (shape: foGlyph): void => {
     //   //this.sharing.syncParent(shape);
@@ -226,9 +226,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.onMouseLocationChanged = (loc: cPoint2D, state: string, keys?: any): void => {
       this.mouseLoc = loc;
-      this.mouseLoc.state = state; 212
+      this.mouseLoc.state = state; 212;
       this.mouseLoc.keys = keys;
-    }
+    };
 
 
     Stencil.define('lego', ThreeByThreeCircle);
@@ -253,7 +253,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         item.doStart();
       });
 
-    let def = Stencil.define('particle', particleEngine, {
+    const def = Stencil.define('particle', particleEngine, {
       color: 'white',
       particleCount: 100,
       opacity: .1,
@@ -343,9 +343,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
           angle: Tools.randomInt(0, 300)
         }).addAsSubcomponent(this);
 
-        let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) }
+        let place = { x: 800 + Tools.randomInt(-70, 70), y: 200 + Tools.randomInt(-70, 70) };
         picture.easeTween(place, 1.5);
-      })
+      });
     }
 
     for (let i = 0; i < 8; i++) {
@@ -354,9 +354,9 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         picture.angle = Tools.randomInt(0, 300);
 
         //created forces a broadast of latest state
-        let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) }
+        let place = { x: 700 + Tools.randomInt(-70, 70), y: 300 + Tools.randomInt(-70, 70) };
         picture.easeTween(place, 2.5);
-      })
+      });
     }
 
 
@@ -373,7 +373,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     let size = {
       width: 200,
       height: 200,
-    }
+    };
 
     image.easeTween(size, 2.8, 'easeInOut');
 
@@ -475,27 +475,27 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
         Tools.forEachKeyValue(item, (key, value) => {
           let attr = attribute.newInstance({
             context: key,
-            text: function () { return this.context + ' : ' }
+            text: function () { return this.context + ' : '; }
           }).addAsSubcomponent(body);
 
           formula.newInstance({
             context: value,
-            text: function () { return this.context }
+            text: function () { return this.context; }
           }).addAsSubcomponent(attr);
 
           setTimeout(() => {
             attr.layoutMarginRight();
-          }, 10)
+          }, 10);
         });
 
         setTimeout(() => {
-          body.layoutMarginTop()
-        }, 10)
+          body.layoutMarginTop();
+        }, 10);
       });
 
       setTimeout(() => {
-        this.layoutSubcomponentsVertical(false)
-      }, 10)
+        this.layoutSubcomponentsVertical(false);
+      }, 10);
 
     });
 
@@ -516,7 +516,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       thickness: 1,
     });
 
-    let list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
+    const list = ['Steve', 'Stu', 'Don', 'Linda', 'Anne', 'Debra', 'Evan'];
     let objects = [];
 
     let y = 100;
@@ -530,19 +530,19 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       }).dropAt(350, y).addAsSubcomponent(this);
       y += 50;
 
-      objects.push(shape)
+      objects.push(shape);
       //foObject.jsonAlert(shape.asJson);
 
       if (!last) {
         last = shape;
       } else {
-        let wire = wireConcept.newInstance().addAsSubcomponent(this);
+        const wire = wireConcept.newInstance().addAsSubcomponent(this);
 
         wire.glueStartTo(last, shape2DNames.bottom);
         wire.glueFinishTo(shape, shape2DNames.top);
         last = shape;
       }
-    })
+    });
 
 
     // objects.forEach(shape => {
@@ -557,21 +557,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doConnector2D() {
-    let def = Stencil.define<foShape2D>('glue::shape', foShape2D, {
+    const def = Stencil.define<foShape2D>('glue::shape', foShape2D, {
       color: 'blue',
       width: 200,
       height: 150,
     });
 
-    let shape1 = def.newInstance().dropAt(300, 200).addAsSubcomponent(this);
-    let shape2 = def.newInstance().dropAt(600, 200).addAsSubcomponent(this);
+    const shape1 = def.newInstance().dropAt(300, 200).addAsSubcomponent(this);
+    const shape2 = def.newInstance().dropAt(600, 200).addAsSubcomponent(this);
 
-    let cord = Stencil.define<foShape1D>('glue::line', foShape1D, {
+    const cord = Stencil.define<foShape1D>('glue::line', foShape1D, {
       color: 'red',
       height: 15,
     });
 
-    let wire = cord.newInstance().addAsSubcomponent(this);
+    const wire = cord.newInstance().addAsSubcomponent(this);
 
 
     wire.glueStartTo(shape1, shape2DNames.right);
@@ -590,7 +590,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddSubGlyph() {
-    let shape = RuntimeType.create(foGlyph2D, {
+    const shape = RuntimeType.create(foGlyph2D, {
       color: 'purple',
       height: 150,
       width: 200,
@@ -606,7 +606,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddThreeByThree() {
-    let def = Stencil.define('my', ThreeByThreeCircle, {
+    const def = Stencil.define('my', ThreeByThreeCircle, {
       color: 'coral',
       x: 400,
       y: 400,
@@ -618,7 +618,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   doAddOneByOne() {
-    let shape = RuntimeType.create(OneByOne, {
+    const shape = RuntimeType.create(OneByOne, {
       color: 'red',
       x: 200,
       y: 200,
@@ -627,7 +627,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTwoByOne() {
-    let shape = RuntimeType.create(TwoByOne, {
+    const shape = RuntimeType.create(TwoByOne, {
       color: 'cyan'
     });
     this.addSubcomponent(shape);
@@ -647,8 +647,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doAddTwoByFour(properties?: any) {
 
     class localTwoByFour extends TwoByFour {
-      public pinX = (): number => { return 0.5 * this.width; }
-      public pinY = (): number => { return 0.5 * this.height; }
+      public pinX = (): number => { return 0.5 * this.width; };
+      public pinY = (): number => { return 0.5 * this.height; };
     }
 
     RuntimeType.define(localTwoByFour);
@@ -666,7 +666,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddOneByTen() {
-    let shape = RuntimeType.create(OneByTen, {
+    const shape = RuntimeType.create(OneByTen, {
       color: 'yellow',
       // height: 10,
       // width: function (): number { return this.height / 4; },
@@ -681,7 +681,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   }
 
   doAddTenByTen() {
-    let shape = RuntimeType.create(TenByTen, {
+    const shape = RuntimeType.create(TenByTen, {
       color: 'gray'
     }).dropAt(600, 300);
 
@@ -690,14 +690,14 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doAddStack(properties?: any) {
 
-    let shape = RuntimeType.create(TenByTen, {
+    const shape = RuntimeType.create(TenByTen, {
       myGuid: properties && properties.shape,
       opacity: .5,
       color: 'gray',
       angle: 10
     }).dropAt(600, 300).addAsSubcomponent(this);
 
-    let subShape = RuntimeType.create(TwoByFour, {
+    const subShape = RuntimeType.create(TwoByFour, {
       myGuid: properties && properties.subShape,
       color: 'red',
     }).addAsSubcomponent(shape, {
@@ -719,7 +719,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let angle = this.angle + .5;
       angle = angle >= 360 ? 0 : angle;
       this.angle = angle;
-    }
+    };
 
 
     // !properties && this.sharing.broadcast('doAddStack', {
@@ -731,11 +731,11 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doShape1D() {
 
-    let height = 60;
-    let x1 = 50;
-    let y1 = 100;
-    let x2 = 450;
-    let y2 = 100;
+    const height = 60;
+    const x1 = 50;
+    const y1 = 100;
+    const x2 = 450;
+    const y2 = 100;
 
     // let dX = x2 - x1;
     // let dY = y2 - y1;
@@ -779,21 +779,21 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
 
   doShapeGlue() {
-    let shape1 = RuntimeType.create(TwoByOne, {
+    const shape1 = RuntimeType.create(TwoByOne, {
       color: 'cyan',
       opacity: .8,
 
     }).dropAt(100, 300, 45).addAsSubcomponent(this);
-    let pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
+    const pt1 = shape1.localToGlobal(shape1.pinX(), shape1.pinY());
     //let pt2 = pt1.clone().add(200, 200);
 
-    let shape2 = RuntimeType.create(TwoByOne, {
+    const shape2 = RuntimeType.create(TwoByOne, {
       color: 'blue',
       opacity: .8,
     }).dropAt(300, 400).addAsSubcomponent(this);
 
-    shape2.pinX = (): number => { return 0.0; }
-    let pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
+    shape2.pinX = (): number => { return 0.0; };
+    const pt2 = shape2.localToGlobal(shape2.pinX(), shape2.pinY());
 
     //let pc = pt1.midpoint(pt2);
 
@@ -809,7 +809,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
     }).dropAt(600, 350).addAsSubcomponent(this);
 
 
-    let wire = RuntimeType.create<Line>(Line, {
+    const wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
       height: 30,
       startX: pt1.x,
@@ -826,16 +826,16 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doObjGlue() {
 
-    let wire = RuntimeType.create<Line>(Line, {
+    const wire = RuntimeType.create<Line>(Line, {
       opacity: .5,
       height: 20,
       color: 'black',
     }).dropAt(400, 400).addAsSubcomponent(this);
 
-    let shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
+    const shape1 = RuntimeType.create(dGlue).addAsSubcomponent(this);
 
-    let shape2 = RuntimeType.create(dGlue).addAsSubcomponent(this);
-    shape2.pinX = (): number => { return 0.0; }
+    const shape2 = RuntimeType.create(dGlue).addAsSubcomponent(this);
+    shape2.pinX = (): number => { return 0.0; };
 
     wire.glueStartTo(shape1);
     wire.glueFinishTo(shape2);
@@ -846,8 +846,8 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
   doObjRect() {
     class objRect extends dRectangle {
-      pinX = (): number => { return 0.0 * this.width; }
-      pinY = (): number => { return 0.5 * this.height; }
+      pinX = (): number => { return 0.0 * this.width; };
+      pinY = (): number => { return 0.5 * this.height; };
 
       Animation = (): void => {
         let angle = this.angle + .5;
@@ -870,10 +870,10 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
   doObjGroup() {
 
     class myRect extends dRectangle {
-      public pinX = (): number => { return 50; }
+      public pinX = (): number => { return 50; };
     }
 
-    let shape = RuntimeType.create(myRect, {
+    const shape = RuntimeType.create(myRect, {
       color: 'purple',
       myName: 'root  dRectangle',
       width: 300,
@@ -882,7 +882,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.addSubcomponent(shape);
 
-    let subShape = RuntimeType.create(dRectangle, {
+    const subShape = RuntimeType.create(dRectangle, {
       color: 'blue',
       myName: 'blue  child',
       width: 50,
@@ -894,7 +894,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
       let angle = this.angle + .5;
       angle = angle >= 360 ? 0 : angle;
       this.angle = angle;
-    }
+    };
 
     shape.doAnimation = subShape.doAnimation;
 
@@ -909,7 +909,7 @@ export class StageComponent extends foPage implements OnInit, AfterViewInit {
 
     this.screen2D.render = (ctx: CanvasRenderingContext2D) => {
       this.render(ctx);
-    }
+    };
 
     this.screen2D.go();
 

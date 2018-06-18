@@ -38,7 +38,7 @@ export class SharingService {
 
       LifecycleLock.whenUnprotected(event.myGuid, this, _ => {
         let cmd = this[event.cmd];
-        let obj = event.object
+        let obj = event.object;
         if (cmd) {
           cmd = cmd.bind(this);
           cmd(event.object, event.value);
@@ -176,8 +176,8 @@ export class SharingService {
   //------------------------------------------------
   public startSharing(next?: (self:SharingService) => {}) {
 
-  
-    this.signalR.start().then(() => {
+
+    this.signalR.canStart() && this.signalR.start().then(() => {
 
       this.signalR.subCommand("dropShape", (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
@@ -261,8 +261,8 @@ export class SharingService {
       this.signalR.subCommand("syncPage", (cmd, data) => {
         let pages = globalWorkspace.document.pages;
         LifecycleLock.protected(cmd.guid, this, _ => {
-          pages.findItem(cmd.name, () => {  
-            globalWorkspace.document.createPage(data);         
+          pages.findItem(cmd.name, () => {
+            globalWorkspace.document.createPage(data);
           }, found => {
             found.override(data);
           });
@@ -276,7 +276,7 @@ export class SharingService {
 
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.findItem(cmd.guid, () => {
-            //this.message.push(json);            
+            //this.message.push(json);
             let concept = Stencil.find(data.myClass);
             let shape = concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
             //foObject.jsonAlert(shape);
