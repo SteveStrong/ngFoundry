@@ -130,44 +130,44 @@ export class SharingService {
   }
 
   public easeTo(shape: foGlyph2D, value?: any) {
-    this.signalR.pubCommand("easeTo", { guid: shape.myGuid }, value ? value : shape.getLocation());
+    this.signalR.pubCommand('easeTo', { guid: shape.myGuid }, value ? value : shape.getLocation());
   }
 
   public easeTween(shape: foGlyph2D, value?: any) {
-    this.signalR.pubCommand("easeTween", { guid: shape.myGuid }, value);
+    this.signalR.pubCommand('easeTween', { guid: shape.myGuid }, value);
   }
 
 
   public selected(shape: foGlyph2D) {
-    this.signalR.pubCommand("selectShape", { guid: shape.myGuid }, shape.isSelected);
+    this.signalR.pubCommand('selectShape', { guid: shape.myGuid }, shape.isSelected);
     return this;
   }
 
   public defined(know: foObject) {
-    this.signalR.pubCommand("syncKnow", { guid: know.myGuid, type: know.myType }, know.asJson);
+    this.signalR.pubCommand('syncKnow', { guid: know.myGuid, type: know.myType }, know.asJson);
     return this;
   }
 
   public command(know: foObject, value: any) {
-    this.signalR.pubCommand("syncCommand", { guid: know.myGuid, method: value }, know.asJson);
+    this.signalR.pubCommand('syncCommand', { guid: know.myGuid, method: value }, know.asJson);
     return this;
   }
 
   public run(know: foObject, value: any) {
     let action = value.action;
     let params = value.params;
-    this.signalR.pubCommand("syncRun", { guid: know.myGuid, action: action }, params);
+    this.signalR.pubCommand('syncRun', { guid: know.myGuid, action: action }, params);
     return this;
   }
 
   public layout(know: foObject, value?: any) {
-    this.signalR.pubCommand("syncLayout", { guid: know.myGuid }, value);
+    this.signalR.pubCommand('syncLayout', { guid: know.myGuid }, value);
     return this;
   }
 
   //--------------------------------
   public clearPage() {
-    this.signalR.pubCommand("clearPage", {});
+    this.signalR.pubCommand('clearPage', {});
     return this;
   }
 
@@ -176,10 +176,10 @@ export class SharingService {
   //------------------------------------------------
   public startSharing(next?: (self:SharingService) => {}) {
 
-  
+
     this.signalR.start().then(() => {
 
-      this.signalR.subCommand("dropShape", (cmd, data) => {
+      this.signalR.subCommand('dropShape', (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.found(cmd.guid, shape => {
             shape.dropAt(data.x, data.y, data.angle);
@@ -188,7 +188,7 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("moveShape", (cmd, data) => {
+      this.signalR.subCommand('moveShape', (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.found(cmd.guid, shape => {
             shape.move(data.x, data.y, data.angle);
@@ -197,7 +197,7 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("easeTo", (cmd, data) => {
+      this.signalR.subCommand('easeTo', (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.found(cmd.guid, shape => {
             shape.easeTo(data.x, data.y, .8, Back.easeInOut);
@@ -206,7 +206,7 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("selectShape", (cmd, data) => {
+      this.signalR.subCommand('selectShape', (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.found(cmd.guid, shape => {
             shape.isSelected = data;
@@ -214,7 +214,7 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("destroyed", (cmd, data) => {
+      this.signalR.subCommand('destroyed', (cmd, data) => {
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.found(cmd.guid, shape => {
             this.workspace.activePage.destroyed(shape);
@@ -222,11 +222,11 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("clearPage", (cmd, data) => {
+      this.signalR.subCommand('clearPage', (cmd, data) => {
         this.workspace.activePage.clearPage();
       });
 
-      this.signalR.subCommand("syncKnow", (cmd, data) => {
+      this.signalR.subCommand('syncKnow', (cmd, data) => {
         //foObject.jsonAlert(data);
         KnowcycleLock.protected(cmd.guid, this, _ => {
           Stencil.hydrate(data);
@@ -245,7 +245,7 @@ export class SharingService {
 
       // });
 
-      this.signalR.subCommand("syncParent", (cmd, parentGuid) => {
+      this.signalR.subCommand('syncParent', (cmd, parentGuid) => {
         //foObject.jsonAlert(cmd);
 
         LifecycleLock.protected(cmd.guid, this, _ => {
@@ -258,11 +258,11 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("syncPage", (cmd, data) => {
+      this.signalR.subCommand('syncPage', (cmd, data) => {
         let pages = globalWorkspace.document.pages;
         LifecycleLock.protected(cmd.guid, this, _ => {
-          pages.findItem(cmd.name, () => {  
-            globalWorkspace.document.createPage(data);         
+          pages.findItem(cmd.name, () => {
+            globalWorkspace.document.createPage(data);
           }, found => {
             found.override(data);
           });
@@ -271,12 +271,12 @@ export class SharingService {
       });
 
 
-      this.signalR.subCommand("syncShape", (cmd, data) => {
+      this.signalR.subCommand('syncShape', (cmd, data) => {
         //foObject.jsonAlert(data);
 
         LifecycleLock.protected(cmd.guid, this, _ => {
           this.workspace.activePage.findItem(cmd.guid, () => {
-            //this.message.push(json);            
+            //this.message.push(json);
             let concept = Stencil.find(data.myClass);
             let shape = concept ? concept.newInstance(data) : RuntimeType.newInstance(data.myType, data);
             //foObject.jsonAlert(shape);
@@ -291,7 +291,7 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("syncLayout", (cmd, value) => {
+      this.signalR.subCommand('syncLayout', (cmd, value) => {
         // foObject.jsonAlert(value);
         let self = this;
         let { method, resize, space } = value;
@@ -303,7 +303,7 @@ export class SharingService {
         });
       });
 
-      this.signalR.subCommand("easeTween", (cmd, value) => {
+      this.signalR.subCommand('easeTween', (cmd, value) => {
         //foObject.jsonAlert(value);
         LifecycleLock.protected(cmd.guid, this, _ => {
           let { time, ease, to } = value;
@@ -314,12 +314,12 @@ export class SharingService {
 
       });
 
-      this.signalR.subCommand("syncCommand", (cmd, data) => {
+      this.signalR.subCommand('syncCommand', (cmd, data) => {
         let method = cmd.method;
         method && this.workspace.activePage[method](data);
       });
 
-      this.signalR.subCommand("syncRun", (cmd, value) => {
+      this.signalR.subCommand('syncRun', (cmd, value) => {
         // foObject.jsonAlert(value);
         let self = this;
         this.workspace.activePage.found(cmd.guid, item => {
@@ -331,7 +331,7 @@ export class SharingService {
       });
 
 
-      this.signalR.subCommand("syncGlue", (cmd, data) => {
+      this.signalR.subCommand('syncGlue', (cmd, data) => {
         //foObject.jsonAlert(data);
         let { sourceGuid, sourceName, targetGuid, targetName } = cmd as iGlueSignature;
         this.workspace.activePage.found<foShape2D>(sourceGuid, (source) => {
