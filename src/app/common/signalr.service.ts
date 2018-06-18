@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 @Injectable()
 export class SignalRService {
 
-  private _ignore: boolean = true;
+  private _ignore: boolean = false;
   private _started: boolean = false;
 
   private hubURL = environment.local ? environment.signalRServer : environment.signalfoundry;
@@ -85,7 +85,7 @@ export class SignalRService {
   canStart() {
     return !this._ignore;
   }
-  
+
   start(): Promise<void> {
     let promise: Promise<void>;
 
