@@ -252,7 +252,7 @@ class layoutFactory extends foLayout2D {
   }
 }
 
-class factoryController extends foController {
+export class factoryController extends foController {
   lastLayout: foLayout2D;
 
   createStation(page: foPage, count: number = 1): foCollection<Station> {

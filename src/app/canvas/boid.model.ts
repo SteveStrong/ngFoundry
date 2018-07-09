@@ -20,7 +20,7 @@ export let globalBoidList: foCollection<boidMixin> = new foCollection<
 >().setName('All Boids');
 // http://www.kfish.org/boids/pseudocode.html
 
-class boidController extends foController {
+export class boidController extends foController {
   applyRule1: boolean = false;
   applyRule2: boolean = false;
   applyRule3: boolean = false;
@@ -305,7 +305,7 @@ export class boidMixin extends foShape2D {
   }
 }
 
-class BoidShape extends boidMixin {
+export class BoidShape extends boidMixin {
   // doAnimation = () => { };
 
   public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {

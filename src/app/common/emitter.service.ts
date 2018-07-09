@@ -18,7 +18,7 @@ export class EmitterService {
     }
 }
 
-class popupToast {
+export class popupToast {
     error(message: string, title?: string) {
         let toast = {
             title: title || '',
