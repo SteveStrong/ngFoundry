@@ -1,6 +1,6 @@
 import { Tools } from '../foundry/foTools';
 
-import { iPoint2D, Action } from '../foundry/foInterface';
+import { iPoint2D } from '../foundry/foInterface';
 import { foGlyph2D } from '../foundry/shapes/foGlyph2D.model';
 
 import { foShape2D, foText2D, foLayout2D } from '../foundry/shapes';
@@ -8,7 +8,7 @@ import { foShape1D } from '../foundry/shapes/foShape1D.model';
 
 import { foStencilLibrary } from '../foundry/foStencil';
 import { foCollection } from '../foundry/foCollection.model';
-import { foController, foToggle } from '../foundry/foController';
+import { foController } from '../foundry/foController';
 import { foPage } from '../foundry/shapes/foPage.model';
 
 import { foInstance, foObject } from '../foundry';

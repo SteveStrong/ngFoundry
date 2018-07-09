@@ -12,40 +12,41 @@ export class EmitterService {
     // Set a new event in the store with a given ID
     // as key
     static get(ID: string): EventEmitter<any> {
-        if (!this._emitters[ID])
+        if (!this._emitters[ID]) {
             this._emitters[ID] = new EventEmitter();
+        }
         return this._emitters[ID];
     }
 }
 
 export class popupToast {
     error(message: string, title?: string) {
-        let toast = {
+        const toast = {
             title: title || '',
             message: message
-        }
-        EmitterService.get("SHOWERROR").emit(toast);
+        };
+        EmitterService.get('SHOWERROR').emit(toast);
     }
     warning(message: string, title?: string) {
-        let toast = {
+        const toast = {
             title: title || '',
             message: message
-        }
-        EmitterService.get("SHOWWARNING").emit(toast);
+        };
+        EmitterService.get('SHOWWARNING').emit(toast);
     }
     success(message: string, title?: string) {
-        let toast = {
+        const toast = {
             title: title || '',
             message: message
-        }
-        EmitterService.get("SHOWSUCCESS").emit(toast);
+        };
+        EmitterService.get('SHOWSUCCESS').emit(toast);
     }
     info(message: string, title?: string) {
-        let toast = {
+        const toast = {
             title: title || '',
             message: message
-        }
-        EmitterService.get("SHOWINFO").emit(toast);
+        };
+        EmitterService.get('SHOWINFO').emit(toast);
     }
 }
 
