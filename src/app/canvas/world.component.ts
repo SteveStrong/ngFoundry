@@ -85,7 +85,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
       });
 
     Lifecycle.observable.subscribe(event => {
-      console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
+      //console.log(event.id, event.cmd, event.myGuid, JSON.stringify(event.value));
     })
 
     let libs = this.rootWorkspace.stencil;
@@ -94,7 +94,7 @@ export class WorldComponent implements OnInit, AfterViewInit {
     libs.add(ShapeStencil);
     libs.add(SolidStencil);
     libs.add(PinStencil)
-  
+
 
     this.rootWorkspace.library.add(PersonDomain);
     this.rootWorkspace.model.addItem('default', new foModel({}))

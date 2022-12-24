@@ -17,9 +17,6 @@ export class Screen2D {
 
 
     public doAnimate = (): void => {
-        // if ( NgZone.assertInAngularZone() ) {
-        //     console.log('Screen2D: in the zone')
-        // }
         this.render(this.context);
         this._request = this.requestAnimation(this.doAnimate);
     }
@@ -45,9 +42,9 @@ export class Screen2D {
     }
 
     clear() {
-        this.context && this.context.clearRect(0,0, this.canvas.width, this.canvas.height);
+        this.context && this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    
+
     setRoot(nativeElement: HTMLCanvasElement, width: number, height: number): HTMLCanvasElement {
         this.canvas = nativeElement;
         this.context = this.canvas.getContext("2d");
@@ -101,31 +98,51 @@ export class Screen2D {
         //     return pt.set(x, y);
         // }
 
-        canvas.addEventListener('keypress', (e: KeyboardEvent) => {
+        function getKeys(e: KeyboardEvent) {
+            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, meta: e.metaKey }
+            return keys;
+        }
+        canvas.ownerDocument.addEventListener('keypress', (e: KeyboardEvent) => {
             e.preventDefault();
-            let keys = { code: e.keyCode, shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey }
+            let keys = getKeys(e);
             PubSub.Pub('onkeypress', e, keys);
         });
 
+        canvas.ownerDocument.addEventListener('keydown', (e: KeyboardEvent) => {
+            e.preventDefault();
+            let keys = getKeys(e);
+            PubSub.Pub('onkeydown', e, keys);
+        });
+
+        canvas.ownerDocument.addEventListener('keyup', (e: KeyboardEvent) => {
+            e.preventDefault();
+            let keys = getKeys(e);
+            PubSub.Pub('onkeyup', e, keys);
+        });
+
+        function getButton(e: MouseEvent) {
+            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            return keys;
+        }
 
         canvas.addEventListener('mousedown', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('mousedown', loc, e, keys);
         });
 
         canvas.addEventListener('mousemove', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('mousemove', loc, e, keys);
         });
 
         canvas.addEventListener('wheel', (e: WheelEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
 
             let scale = 1.1;
             let zoom = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail))) > 0 ? scale : 1 / scale;
@@ -138,35 +155,35 @@ export class Screen2D {
         canvas.addEventListener('dblclick', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('dblclick', loc, e, keys);
         });
 
         canvas.addEventListener('click', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('click', loc, e, keys);
         });
 
         canvas.addEventListener('mouseup', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('mouseup', loc, e, keys);
         });
 
         canvas.addEventListener('mouseover', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('mouseover', loc, e, keys);
         });
 
         canvas.addEventListener('mouseout', (e: MouseEvent) => {
             e.preventDefault()
             let loc = getMousePos(e);
-            let keys = { shift: e.shiftKey, ctrl: e.ctrlKey, alt: e.altKey, button: e.button }
+            let keys = getButton(e);
             PubSub.Pub('mouseout', loc, e, keys);
         });
 

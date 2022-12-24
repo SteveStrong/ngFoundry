@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HubConnection } from '@aspnet/signalr-client';
-import { Toast } from "../common/emitter.service";
+import * as signalr from '@aspnet/signalr';
+import { Toast } from '../common/emitter.service';
 
-import { Tools } from "../foundry/foTools";
+import { Tools } from '../foundry/foTools';
 
 
 import { environment } from '../../environments/environment';
@@ -12,20 +12,26 @@ import { environment } from '../../environments/environment';
 @Injectable()
 export class SignalRService {
 
+  private _ignore: boolean = false;
   private _started: boolean = false;
 
   private hubURL = environment.local ? environment.signalRServer : environment.signalfoundry;
-  private connection: HubConnection;
-  private _guid:string = Tools.generateUUID();
+  private connection: signalr.HubConnection;
+  private _guid: string = Tools.generateUUID();
 
   constructor() {
-    if (!this.connection) {
-      this.connection = new HubConnection(this.hubURL);
+    if (!this._ignore && !this.connection) {
+      this.connection = new signalr.HubConnectionBuilder()
+      .withUrl(this.hubURL)
+      .configureLogging(signalr.LogLevel.Information)
+      .build();
+
+     // Toast.info(JSON.stringify(this.connection), `build: ${this.hubURL}`);
     }
   }
 
 
-  public get hub(): HubConnection {
+  public get hub(): signalr.HubConnection {
     return this._started && this.connection;
   }
 
@@ -41,7 +47,7 @@ export class SignalRService {
     if (this.hub) {
       //console.log('pubChannel ' + name)
       command._channel = this._guid;
-      this.hub.invoke("command", name, command, payload);
+      this.hub.invoke('command', name, command, payload);
     }
   }
 
@@ -51,7 +57,7 @@ export class SignalRService {
       this.hub.on(name, (command, payload) => {
         //console.log(name + ':  command: ' + JSON.stringify(command, undefined, 3));
         //console.log(name + ':  payload: ' + JSON.stringify(payload, undefined, 3));
-        if ( command._channel != this._guid) {
+        if ( command._channel !== this._guid) {
           callback(command, payload);
         }
       });
@@ -66,7 +72,7 @@ export class SignalRService {
         callback(data);
       });
     } else {
-      Toast.warning("cannot connect at this moment", this.hubURL);
+      Toast.warning('cannot connect at this moment', this.hubURL);
     }
   }
 
@@ -74,6 +80,10 @@ export class SignalRService {
     if (this.hub) {
       this.hub.invoke('version');
     }
+  }
+
+  canStart() {
+    return !this._ignore;
   }
 
   start(): Promise<void> {
@@ -88,10 +98,11 @@ export class SignalRService {
         this._started = true;
         //Toast.success(this.hubURL, "Connected..");
         this.hub.on('version', message => {
-          Toast.success(this.hubURL, "Connected.. " + message);
+          Toast.success(this.hubURL, 'Connected.. ' + message);
         });
         this.askforVersion();
       }).catch(error => {
+        console.log(error);
         Toast.error(JSON.stringify(error), this.hubURL);
       });
     }

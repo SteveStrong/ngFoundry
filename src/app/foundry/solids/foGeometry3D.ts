@@ -47,5 +47,12 @@ export class cPoint3D extends Vector3 implements iPoint3D {
         let z = (this.z + pt.z) / 2;
         return new cPoint3D(x, y, z, 'midPoint');
     }
+
+    deltaBetween(p: cPoint3D) {
+        let x = this.x - p.x;
+        let y = this.y - p.y;
+        let z = this.z - p.z;
+        return new cPoint3D(x, y, z, 'delta');
+    }
 }
 

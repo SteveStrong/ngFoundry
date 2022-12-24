@@ -69,5 +69,5 @@ export class foStudio extends foNode {
 }
 
 import { RuntimeType } from '../foRuntimeType';
-import { Lifecycle } from 'app/foundry/foLifecycle';
+import { Lifecycle } from '../foLifecycle';
 RuntimeType.define(foStudio);

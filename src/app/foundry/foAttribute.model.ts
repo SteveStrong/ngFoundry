@@ -1,16 +1,12 @@
-
-import { foKnowledge } from './foKnowledge.model'
+import { foKnowledge } from './foKnowledge.model';
 
 export class foAttribute extends foKnowledge {
-
   constructor(properties?: any, parent?: foKnowledge) {
     super(properties, parent);
   }
-
 }
 
 export class foViewAttribute extends foAttribute {
-
   private _title: string;
   private _mySource: foAttribute = undefined;
 
@@ -28,6 +24,4 @@ export class foViewAttribute extends foAttribute {
   set title(name) {
     this._title = name;
   }
-
 }
-

@@ -132,7 +132,7 @@ export class foShape1D extends foShape2D {
         };
     }
 
-    public establishGlue(name: string, target: foShape2D, handleName?: string) {
+    public establishGlue(name: string, target: foShape2D, handleName?: string): foGlue2D {
         let binding = {}
         binding[shape1DNames.start] = this.setStart.bind(this);
         binding[shape1DNames.finish] = this.setFinish.bind(this);
@@ -143,22 +143,22 @@ export class foShape1D extends foShape2D {
         return glue;
     }
 
-    public glueStartTo(target: foShape2D, handleName?: string) {
+    public glueStartTo(target: foShape2D, handleName?: string): foGlue2D {
         let glue = this.establishGlue(shape1DNames.start, target, handleName);
         return glue;
     }
 
-    public glueFinishTo(target: foShape2D, handleName?: string) {
+    public glueFinishTo(target: foShape2D, handleName?: string): foGlue2D {
         let glue = this.establishGlue(shape1DNames.finish, target, handleName);
         return glue;
     }
 
-    public unglueStart() {
+    public unglueStart():foGlue2D {
         let glue = this.dissolveGlue(shape1DNames.start);
         return glue;
     }
 
-    public unglueFinish() {
+    public unglueFinish():foGlue2D {
         let glue = this.dissolveGlue(shape1DNames.finish);
         return glue;
     }
@@ -385,7 +385,12 @@ export class foShape1D extends foShape2D {
 
 
 import { RuntimeType } from '../foRuntimeType';
+import { foGlue2D } from './foGlue2D';
 RuntimeType.define(foShape1D);
 
+export class foConnect1D extends foShape1D {
+}
+
+RuntimeType.define(foConnect1D);
 
 

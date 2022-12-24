@@ -18,7 +18,7 @@ import { Screen3D } from "./threeDriver";
 
 import { Lifecycle } from '../foLifecycle';
 
-
+export { GlyphDictionary } from '../foGlyph.model'
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties

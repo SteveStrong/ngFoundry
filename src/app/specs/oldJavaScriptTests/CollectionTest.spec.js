@@ -1,12 +1,10 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
-
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.core.js" />
-/// <reference path="../Foundry/Foundry.rules.factory.js" />
+﻿import { Tools } from '../foundry/foTools';
+import { foCollection } from '../foundry/foCollection.model';
+import { foComponent } from '../foundry/foComponent.model';
 
 
-describe("Foundry: Collections", function () {
-    var obj;
+describe("Foundry: Collections", ()=> {
+    let obj;
 
     //if this is where the we define the spec
     //"should the right count on demand when adding items" will fail
@@ -21,11 +19,11 @@ describe("Foundry: Collections", function () {
     //});
 
     //this works correctly
-    beforeEach(function () {
+    beforeEach(() => {
         var collectionSpec = {
-            people: fo.makeCollection(),
+            people: new foCollection(),
         };
-        obj = fo.makeComponent(collectionSpec);
+        obj = new foComponent(collectionSpec);
         return obj;
     });
 

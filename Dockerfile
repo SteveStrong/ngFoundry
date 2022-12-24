@@ -35,3 +35,5 @@ COPY --from=builder /app/dist /usr/src/app
 ENV PORT 80
 
 CMD [ "node", "index.js" ]
+
+# docker build -t ngfoundry -f Dockerfile .

@@ -6,13 +6,14 @@ import { Screen3D } from "./threeDriver";
 
 import { foObject } from '../foObject.model'
 import { foCollection } from '../foCollection.model'
-import { foDictionary } from "../foDictionary.model";
+import { foGlyph } from "../foGlyph.model";
+import { WhereClause } from "../foInterface";
 
 import { foNode } from '../foNode.model'
 
 import { foComponent } from '../foComponent.model'
 
-import { foGlyph3D } from './foGlyph3D.model'
+import { foGlyph3D, GlyphDictionary } from './foGlyph3D.model'
 import { Lifecycle } from '../foLifecycle';
 
 
@@ -73,8 +74,10 @@ export class foStage extends foGlyph3D {
 
 
 
-    _dictionary: foDictionary<foNode> = new foDictionary<foNode>();
-
+    _dictionary: GlyphDictionary = new GlyphDictionary();
+    selectGlyph(where: WhereClause<foGlyph>, list?: foCollection<foGlyph>, deep: boolean = true): foCollection<foGlyph> {
+        return this._dictionary.selectGlyph(where,list,deep);
+    }
 
     constructor(properties?: any, subcomponents?: Array<foGlyph3D>, parent?: foObject) {
         super(properties, subcomponents, parent);

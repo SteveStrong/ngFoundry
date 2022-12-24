@@ -11,15 +11,17 @@ import { SignalRService } from "../common/signalr.service";
 
 @Component({
   selector: 'foundry-welcome',
-  templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.css']
+  templateUrl: './welcome.component.html'
 })
 export class WelcomeComponent implements OnInit {
-  @ViewChild('chat')  public inputRef: HTMLInputElement;
+
+  @ViewChild('chat')
+  public inputRef: HTMLInputElement;
+
   typeinText: string = '';
   postList: Array<any> = [];
   model = [];
-  
+
   def: foConcept<foNode> = new foConcept<foNode>();
 
   constructor(private signalR: SignalRService) {
@@ -51,7 +53,7 @@ export class WelcomeComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.signalR.start().then( () => {
+    this.signalR.canStart() && this.signalR.start().then( () => {
       this.signalR.receive(data => {
         Toast.info(JSON.stringify(data), "receive");
         this.postList.push(data);

@@ -1,12 +1,4 @@
-﻿/// <reference path="../Scripts/jasmine-1.3.1/jasmine.js" />
-
-/// <reference path="../Foundry/Foundry.trace.js" />
-/// <reference path="../Foundry/Foundry.core.js" />
-/// <reference path="../Foundry/Foundry.rules.factory.js" />
-/// <reference path="../Scripts/moment.min.js" />
-
-/// <reference path="../Foundry/Foundry.rules.filtering.js" />
-/// <reference path="../Foundry/Foundry.undo.js" />
+﻿
 
 
 describe("Do UnDo: Component", function () {

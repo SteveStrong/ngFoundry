@@ -6,6 +6,6 @@
 export const environment = {
   production: false,
   local: false,
-  signalRServer: 'http://localhost:5001/chathub',
-  signalfoundry: '/chathub'
+  signalRServer: 'http://localhost:5000/chathub',
+  signalfoundry: 'https://ngfoundrysignal.azurewebsites.net/chathub'
 };

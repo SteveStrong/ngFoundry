@@ -1,27 +1,27 @@
 
-import { Tools } from '../foTools'
+import { Tools } from '../foTools';
 import { cPoint2D } from './foGeometry2D';
 import { Vector2, Vector3 } from 'three';
-import { iPoint2D, iFrame } from '../foInterface'
+import { iPoint2D, iFrame } from '../foInterface';
 
-import { foObject } from '../foObject.model'
-import { Matrix2D } from './foMatrix2D'
-import { foGlue2D } from './foGlue2D'
-import { foConnectionPoint2D } from './foConnectionPoint2D'
-import { foCollection } from '../foCollection.model'
-import { foNode } from '../foNode.model'
+import { foObject } from '../foObject.model';
+import { Matrix2D } from './foMatrix2D';
+import { foGlue2D } from './foGlue2D';
+import { foConnectionPoint2D } from './foConnectionPoint2D';
+import { foCollection } from '../foCollection.model';
 
-import { foGlyph2D } from './foGlyph2D.model'
+
+import { foGlyph2D } from './foGlyph2D.model';
 
 import { Lifecycle } from '../foLifecycle';
 
 export enum shape2DNames {
-    left = "left",
-    right = "right",
-    top = "top",
-    bottom = "bottom",
-    center = "center"
-};
+    left = 'left',
+    right = 'right',
+    top = 'top',
+    bottom = 'bottom',
+    center = 'center'
+}
 
 //a Shape is a graphic designed to behave like a visio shape
 //and have all the same properties
@@ -37,7 +37,7 @@ export class foShape2D extends foGlyph2D {
     protected _glue: foCollection<foGlue2D>;
     get glue(): foCollection<foGlue2D> {
         if (!this._glue) {
-            this._glue = new foCollection<foGlue2D>()
+            this._glue = new foCollection<foGlue2D>();
         }
         return this._glue;
     }
@@ -48,25 +48,51 @@ export class foShape2D extends foGlyph2D {
         return this._connectionPoints;
     }
 
-    public pinX = (): number => { return 0.5 * this.width; }
-    public pinY = (): number => { return 0.5 * this.height; }
-    public rotationZ = (): number => { return this.angle; }
+    public pinX = (): number => { return 0.5 * this.width; };
+    public pinY = (): number => { return 0.5 * this.height; };
+    public rotationZ = (): number => { return this.angle; };
+
+    public setPinLeft() {
+      this.pinX = (): number => { return 0.0 * this.width; };
+      return this;
+    }
+    public setPinRight() {
+      this.pinX = (): number => { return 1.0 * this.width; };
+      return this;
+    }
+    public setPinCenter() {
+      this.pinX = (): number => { return 0.5 * this.width; };
+      return this;
+    }
+
+    public setPinTop() {
+      this.pinY = (): number => { return 0.0 * this.height; };
+      return this;
+    }
+    public setPinMiddle() {
+      this.pinY = (): number => { return 0.5 * this.height; };
+      return this;
+    }
+    public setPinBottom() {
+      this.pinY = (): number => { return 1.0 * this.height; };
+      return this;
+    }
 
     pinVector(): Vector3 {
         return new Vector3(
             this.pinX(),
             this.pinY(),
             0,
-        )
-    }    
-    
+        );
+    }
+
     protected originPosition(): Vector3 {
-        let pin = this.pinVector();
+        const pin = this.pinVector();
         return new Vector3(
             this.x - pin.x,
             this.y - pin.y,
             0,
-        )
+        );
     }
 
     public pinLocation() {
@@ -74,7 +100,7 @@ export class foShape2D extends foGlyph2D {
             x: this.pinX(),
             y: this.pinY(),
             z: 0,
-        }
+        };
     }
 
 
@@ -94,20 +120,20 @@ export class foShape2D extends foGlyph2D {
 
     public didLocationChange(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN): boolean {
         let changed = super.didLocationChange(x, y, angle);
-        if (!Number.isNaN(angle) && this.angle != angle) {
+        if (!Number.isNaN(angle) && this.angle !== angle) {
             changed = true;
             this.angle = angle;
-        };
+        }
         return changed;
     }
 
 
     public dropAt(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            let point = this.getLocation();
+            const point = this.getLocation();
             this._glue && this.glue.forEach(item => {
                 item.targetMoved(point);
-            })
+            });
             Lifecycle.dropped(this, point);
         }
         return this;
@@ -115,20 +141,20 @@ export class foShape2D extends foGlyph2D {
 
     public move(x: number = Number.NaN, y: number = Number.NaN, angle: number = Number.NaN) {
         if (this.didLocationChange(x, y, angle)) {
-            let point = this.getLocation();
+            const point = this.getLocation();
             this._glue && this.glue.forEach(item => {
                 item.targetMoved(point);
-            })
+            });
             Lifecycle.moved(this, point);
         }
         return this;
     }
 
     updateContext(ctx: CanvasRenderingContext2D) {
-        let mtx = this.getMatrix();
+        const mtx = this.getMatrix();
         ctx.transform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
         ctx.globalAlpha *= this.opacity;
-    };
+    }
 
     getMatrix() {
         if (this._matrix === undefined) {
@@ -136,12 +162,12 @@ export class foShape2D extends foGlyph2D {
             this._matrix.appendTransform(this.x, this.y, 1, 1, this.rotationZ(), 0, 0, this.pinX(), this.pinY());
         }
         return this._matrix;
-    };
+    }
 
 
     protected localHitTest = (hit: any): boolean => {
-        let { x, y } = hit as iPoint2D
-        let loc = this.globalToLocal(x, y);;
+        const { x, y } = hit as iPoint2D;
+        const loc = this.globalToLocal(x, y);
 
         if (loc.x < 0) return false;
         if (loc.x > this.width) return false;
@@ -159,7 +185,7 @@ export class foShape2D extends foGlyph2D {
 
 
     public overlapTest = (hit: iFrame): boolean => {
-        let frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
+        const frame = this.globalToLocalFrame(hit.x1, hit.y1, hit.x2, hit.y2);
 
         if (this.localContains(frame.x1, frame.y1)) return true;
         if (this.localContains(frame.x1, frame.y2)) return true;
@@ -180,19 +206,19 @@ export class foShape2D extends foGlyph2D {
     }
 
     public establishGlue(sourceName: string, target: foShape2D, targetName?: string) {
-        let glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
+        const glue = this.getGlue(`${this.myGuid}:${sourceName}->${target.myGuid}:${targetName}`);
         glue.glueTo(sourceName, target, targetName);
         return glue;
     }
 
     public glueConnectionPoints(target: foShape2D, sourceHandle?: string, targetHandle?: string) {
-        let glue = this.establishGlue(sourceHandle ? sourceHandle: shape2DNames.center, target, targetHandle ? targetHandle: shape2DNames.center);
+        const glue = this.establishGlue(sourceHandle ? sourceHandle : shape2DNames.center, target, targetHandle ? targetHandle : shape2DNames.center);
         return glue;
     }
 
     public dissolveGlue(name: string) {
         if (this._glue) {
-            let glue = this.glue.findMember(name);
+            const glue = this.glue.findMember(name);
             glue && glue.unglue();
             return glue;
         }
@@ -215,17 +241,17 @@ export class foShape2D extends foGlyph2D {
 
         let i = 0;
         if (!this._connectionPoints) {
-            this._connectionPoints = new foCollection<foConnectionPoint2D>()
+            this._connectionPoints = new foCollection<foConnectionPoint2D>();
             spec.forEach(item => {
-                let type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint2D);
-                let point = new type(item, undefined, this);
+                const type = item.myType ? item.myType : RuntimeType.define(foConnectionPoint2D);
+                const point = new type(item, undefined, this);
                 point.doMoveProxy = proxy && proxy[i];
                 this._connectionPoints.addMember(point);
                 i++;
             });
         } else {
             spec.forEach(item => {
-                let point = this._connectionPoints.getChildAt(i)
+                const point = this._connectionPoints.getChildAt(i);
                 point.override(item);
                 point.doMoveProxy = proxy && proxy[i];
                 i++;
@@ -235,9 +261,9 @@ export class foShape2D extends foGlyph2D {
     }
 
     public createConnectionPoints(): foCollection<foConnectionPoint2D> {
-        let w = this.width;
-        let h = this.height;
-        let spec = [
+        const w = this.width;
+        const h = this.height;
+        const spec = [
             { x: w / 2, y: 0, myName: shape2DNames.top, myType: RuntimeType.define(foConnectionPoint2D) },
             { x: w / 2, y: h, myName: shape2DNames.bottom, angle: 45 },
             { x: 0, y: h / 2, myName: shape2DNames.left },
@@ -254,8 +280,8 @@ export class foShape2D extends foGlyph2D {
     public findConnectionPoint(loc: cPoint2D, e): foConnectionPoint2D {
         if (!this._connectionPoints) return;
 
-        for (var i: number = 0; i < this.connectionPoints.length; i++) {
-            let point: foConnectionPoint2D = this.connectionPoints.getChildAt(i);
+        for (var i = 0; i < this.connectionPoints.length; i++) {
+            const point: foConnectionPoint2D = this.connectionPoints.getChildAt(i);
             if (point.hitTest(loc)) {
                 return point;
             }
@@ -266,7 +292,7 @@ export class foShape2D extends foGlyph2D {
     public drawConnectionPoints(ctx: CanvasRenderingContext2D) {
         this.connectionPoints.forEach(item => {
             item.render(ctx);
-        })
+        });
     }
 
     public render(ctx: CanvasRenderingContext2D, deep: boolean = true) {
@@ -291,14 +317,14 @@ export class foShape2D extends foGlyph2D {
 
 
     public drawOutline(ctx: CanvasRenderingContext2D) {
-        ctx.beginPath()
+        ctx.beginPath();
         ctx.setLineDash([15, 5]);
         ctx.rect(0, 0, this.width, this.height);
         ctx.stroke();
     }
 
     public drawSelected = (ctx: CanvasRenderingContext2D): void => {
-        ctx.strokeStyle = "red";
+        ctx.strokeStyle = 'red';
         ctx.lineWidth = 4;
         this.drawOutline(ctx);
         this.drawHandles(ctx);
@@ -315,6 +341,12 @@ export class foShape2D extends foGlyph2D {
 
 }
 
+
 import { RuntimeType } from '../foRuntimeType';
 RuntimeType.define(foShape2D);
+
+export class foGroup2D extends foShape2D {
+}
+
+RuntimeType.define(foGroup2D);
 

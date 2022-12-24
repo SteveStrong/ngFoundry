@@ -9,6 +9,7 @@ import { HttpModule } from '@angular/http';
 
 import { ToastModule } from 'ng2-toastr/ng2-toastr';
 import { MaptoKeysPipe, ModelJsonPipe } from './common/maptokeys.pipe';
+import { DateFormatPipe, MomentModule } from 'angular2-moment';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -64,6 +65,12 @@ import { DomainComponent } from './canvas/domain.component';
 import { foStructureCardComponent } from './fo-inspector/fo-structure-card.component';
 import { foSolutionCardComponent } from './fo-inspector/fo-solution-card.component';
 import { DevSecOpsComponent } from './canvas/devsecops.component';
+import { ShapeTestingComponent } from './specs/shape-testing/shape-testing.component';
+import { foControllerCardComponent } from './fo-inspector/fo-controller-card.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { CardAComponent } from './dashboard/card-a.component';
+import { CardBComponent } from './dashboard/card-b.component';
+import { CardCComponent } from './dashboard/card-c.component';
 
 @NgModule({
   declarations: [
@@ -113,7 +120,18 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
     DomainComponent,
     foStructureCardComponent,
     foSolutionCardComponent,
-    DevSecOpsComponent
+    DevSecOpsComponent,
+    ShapeTestingComponent,
+    foControllerCardComponent,
+    DashboardComponent,
+    CardAComponent,
+    CardBComponent,
+    CardCComponent
+  ],
+  entryComponents: [
+    CardAComponent,
+    CardBComponent,
+    CardCComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -122,6 +140,7 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
     TabsModule.forRoot(),
     ToastModule.forRoot(),
 
+    MomentModule,
     BrowserModule,
     FormsModule,
     HttpModule,
@@ -129,6 +148,7 @@ import { DevSecOpsComponent } from './canvas/devsecops.component';
   ],
   providers: [
     DockerecosystemService, 
+    DateFormatPipe,
     SwimService, 
     SignalRService,
     SharingService

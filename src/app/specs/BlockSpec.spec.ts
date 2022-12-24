@@ -5,7 +5,7 @@ import { foComponent } from '../foundry/foComponent.model'
 
 
 
-describe("Foundry: Block", function () {
+describe("Foundry: Block-spec", function () {
     var block: any;
 
     var blockSpec = {
